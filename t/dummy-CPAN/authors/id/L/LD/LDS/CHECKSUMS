@@ -1,0 +1,1053 @@
+0&&<<''; # this PGP-signed message is also valid perl
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+# CHECKSUMS file written on Sat Nov 15 19:33:56 2003 by CPAN::Checksums (v1.016)
+$cksum = {
+  'HTTPD-User-Manage-1.6.tar.gz' => {
+    'mtime' => '2002-06-02',
+    'md5-ungz' => '680dec853670f24c9b96fbe770b6bc0d',
+    'md5' => '4b7254b3ca58d8e23790ee40ec480689',
+    'size' => 112273
+  },
+  'GD-1.21.tar.gz' => {
+    'mtime' => '1999-08-31',
+    'md5-ungz' => 'c845cf8155f1d06359d87629ee42c925',
+    'md5' => 'd38596f2f16cf78145a9ea5504b4f10c',
+    'size' => 96177
+  },
+  'HTTPD-User-Manage-1.58.tar.gz' => {
+    'mtime' => '2001-02-20',
+    'md5-ungz' => '2cd6ea6370f331c59fd54771b52dccb0',
+    'md5' => 'b7d7b717b14e06e7edf20642d4608a61',
+    'size' => 112006
+  },
+  'Apache-MP3-2.02.tar.gz' => {
+    'mtime' => '2000-05-28',
+    'md5-ungz' => '974188b88255e0a27bac929e36465cbf',
+    'md5' => '33d46a444fad6835b9fb2cb0c2e4da61',
+    'size' => 148382
+  },
+  'GD-2.01.tar.gz' => {
+    'mtime' => '2002-08-09',
+    'md5-ungz' => '4308b7dcce798ed1f41c0eb2888fe395',
+    'md5' => 'ddc4743ecc2c50714dcc6a25406fc942',
+    'size' => 333177
+  },
+  'Apache-MP3-3.05.tar.gz' => {
+    'mtime' => '2003-10-06',
+    'md5-ungz' => 'a0c1a69e2ad5ca3cd942d8946b2fb863',
+    'md5' => 'f2009b0ddc7f17c1c1ccee391d187935',
+    'size' => 330594
+  },
+  'MP3-Napster-2.04.tar.gz' => {
+    'mtime' => '2000-12-07',
+    'md5-ungz' => '1e11fcee342ba88db390e60130681f38',
+    'md5' => 'b026324c6904b2a9cb4b88d6d61c81d1',
+    'size' => 2
+  },
+  'Apache-MP3-2.12.tar.gz' => {
+    'mtime' => '2000-11-21',
+    'md5-ungz' => '7c49b22fe5cefe03a873149e08ca6dab',
+    'md5' => 'b477a2fc78cc01d5bc3587e1933bd2c4',
+    'size' => 284292
+  },
+  'HTTPD-User-Manage-1.53.tar.gz' => {
+    'mtime' => '1998-12-31',
+    'md5-ungz' => '260e618c8a082083fb0b3fef7042bf00',
+    'md5' => '755944bf8a92a6b98637d0057a83500e',
+    'size' => 107293
+  },
+  'CGI.pm-2.98.tar.gz' => {
+    'mtime' => '2003-07-16',
+    'md5-ungz' => 'fa0b75b248dddf95b2391ed7d5aff16d',
+    'md5' => '46a8907605ea7f83bcab84eb57993293',
+    'size' => 202747
+  },
+  'Apache-MP3-2.26.tar.gz' => {
+    'mtime' => '2002-05-31',
+    'md5-ungz' => '50f4626ae27204adc1880c5125dbcdbf',
+    'md5' => '68a3b9b9297bf5312e9a92eb0b6bb993',
+    'size' => 292146
+  },
+  'Boulder-1.22.tar.gz' => {
+    'mtime' => '2001-06-11',
+    'md5-ungz' => '52337b5d167248e6f2733763ce6c3636',
+    'md5' => '70313bb2b321add52330f60e0f80e37a',
+    'size' => 84456
+  },
+  'GD-1.25.tar.gz' => {
+    'mtime' => '2000-02-22',
+    'md5-ungz' => '484810a3e2e2b390843dce87b54ab905',
+    'md5' => '8a9fefb48798629b2d716abbd1ec9d6d',
+    'size' => 98865
+  },
+  'Boulder-1.18.tar.gz' => {
+    'mtime' => '2000-06-08',
+    'md5-ungz' => 'bc7635457c994deb06ba2a485c7b805a',
+    'md5' => 'a35ec019ccb031fdfe32b8716919b5d9',
+    'size' => 82057
+  },
+  'Text-Shellwords-1.02.tar.gz' => {
+    'mtime' => '2003-06-22',
+    'md5-ungz' => 'c10adc91810e00957d1d776318edb85d',
+    'md5' => 'c24db2b2b2e582f6d08a5b90c1ada98c',
+    'size' => 2162
+  },
+  'CGI.pm-2.48.tar.gz' => {
+    'mtime' => '1999-02-19',
+    'md5-ungz' => '7aef793c165e937b1ec2f270f8fe54e1',
+    'md5' => '0dd3b797f6368c9732a4d452147828a8',
+    'size' => 156306
+  },
+  'GD-1.22.tar.gz' => {
+    'mtime' => '1999-09-30',
+    'md5-ungz' => '0b444a94af9bc0c6c57c4b34ab1fa3f1',
+    'md5' => '411854487a5e8e3f722ecf7aadf5f9b3',
+    'size' => 96795
+  },
+  'Apache-MP3-2.01.tar.gz' => {
+    'mtime' => '2000-05-27',
+    'md5-ungz' => '3fdabc2fc27450828fe8dce79899b8f1',
+    'md5' => '328aaae69218f42c340ce6340e939402',
+    'size' => 148028
+  },
+  'GD-1.30.tar.gz' => {
+    'mtime' => '2000-07-07',
+    'md5-ungz' => '9a43496f0a1bbc4af5a158fb92774f31',
+    'md5' => '81e422fb2d4839b6be7fc39f492ffbf1',
+    'size' => 247948
+  },
+  'CGI.pm-2.69.tar.gz' => {
+    'mtime' => '2000-07-28',
+    'md5-ungz' => '0d0fdcca21e62884b3b060cbd84c3650',
+    'md5' => '2556a567c8a460287cc8ad965feb3873',
+    'size' => 167891
+  },
+  'Boulder-1.19.tar.gz' => {
+    'mtime' => '2000-10-20',
+    'md5-ungz' => '53d6e3d43caccc5fa765d00087bb9b97',
+    'md5' => '18d89d518ae6a74170b5c76387e81f1d',
+    'size' => 82284
+  },
+  'IO-Sockatmark-1.00.tar.gz' => {
+    'mtime' => '2001-01-07',
+    'md5-ungz' => '55ea10296251b0db97e8f08db0d8b3d0',
+    'md5' => '7a082cb55055a261090aad153fa1c669',
+    'size' => 2315
+  },
+  'Boulder-1.20.tar.gz' => {
+    'mtime' => '2000-12-01',
+    'md5-ungz' => '7cf85b0bff4c28489620a047d85283a5',
+    'md5' => '27067fd5891476fa403290ce066196d0',
+    'size' => 82392
+  },
+  'Bundle-MP3-1.00.tar.gz' => {
+    'mtime' => '2000-03-08',
+    'md5-ungz' => '6b35c87fca3ac4755b2d5e1d8dfa6006',
+    'md5' => 'd75529d5f3966cc8f251ca2ccddd1b6f',
+    'size' => 788
+  },
+  'GD-2.00.tar.gz' => {
+    'mtime' => '2002-08-09',
+    'md5-ungz' => '2d7a476851d1b2f1c42ef9fef7ed03b3',
+    'md5' => '5c88255ac6073c04612c6138f12b7698',
+    'size' => 333116
+  },
+  'IO-Socket-Multicast-0.10.tar.gz' => {
+    'mtime' => '2000-07-18',
+    'md5-ungz' => '5706e01664cb2e25a1bb064fd2eca7d4',
+    'md5' => '245a97183628f748b6c0e37af5922304',
+    'size' => 7076
+  },
+  'Tie-DBI-0.91.tar.gz' => {
+    'mtime' => '2000-03-23',
+    'md5-ungz' => '8d5fef99e3e8ae652345ad35c5608774',
+    'md5' => 'c168bea09d31cdd5edecccf5af2dfa92',
+    'size' => 21880
+  },
+  'CGI.pm-2.89.tar.gz' => {
+    'mtime' => '2002-10-16',
+    'md5-ungz' => '8c6d4fffe795f93b6ac569d8574e503a',
+    'md5' => '22fb43824b8cb7cf2296fc884fa9bd7a',
+    'size' => 197003
+  },
+  'CGI.pm-2.752.tar.gz' => {
+    'mtime' => '2001-02-04',
+    'md5-ungz' => '92d1b5026271196d1c8c5ef26087a414',
+    'md5' => 'd00d07d5743e5d4b49b05708a8dcf136',
+    'size' => 171821
+  },
+  'GD-1.20.tar.gz' => {
+    'mtime' => '1999-08-31',
+    'md5-ungz' => '987b7f69e8a45bb9ec3de296bb167832',
+    'md5' => '8304515eaaf8dd976d199c33325ea718',
+    'size' => 107413
+  },
+  'CGI.pm-2.56.tar.gz' => {
+    'mtime' => '1999-09-13',
+    'md5-ungz' => '54884b24748fc2a249d6733cc2a154c1',
+    'md5' => '7a9106a4b2a6f1930799bab6d4227c99',
+    'size' => 161352
+  },
+  'Boulder-1.29.tar.gz' => {
+    'mtime' => '2002-11-05',
+    'md5-ungz' => 'a5d7d96d22dafc83f2f72f4b5634decf',
+    'md5' => 'fcd1e88bce4a139e303465d6f87c65ef',
+    'size' => 86324
+  },
+  'Text-Shellwords-1.01.tar.gz' => {
+    'mtime' => '2003-06-16',
+    'md5-ungz' => 'dc8a9e5d451ac7c2dd7c774974c84fb4',
+    'md5' => '741e46df8d9dd4593984405c7e26b991',
+    'size' => 2103
+  },
+  'Boulder-1.27.tar.gz' => {
+    'mtime' => '2002-02-04',
+    'md5-ungz' => 'bc9f8ebe82fb09869167ca0b36d66e4e',
+    'md5' => '57c9d0c0a6e46b1be2b630a177cc06f7',
+    'size' => 86228
+  },
+  'Crypt-CBC-1.10.tar.gz' => {
+    'mtime' => '1998-09-22',
+    'md5-ungz' => '0b89af10bf812998524aec3f04050652',
+    'md5' => 'caea9d87f927b5549e09ea28b015d078',
+    'size' => 5351
+  },
+  'Crypt-CBC-2.01.tar.gz' => {
+    'mtime' => '2001-12-10',
+    'md5-ungz' => 'e603d2b1995cc625a8f575b3427e523c',
+    'md5' => '5a8fa465c14a76b00d95e079b77a5195',
+    'size' => 9058
+  },
+  'HTTPD-User-Manage-1.57.tar.gz' => {
+    'mtime' => '2001-02-02',
+    'md5-ungz' => 'cf57906eed594e1290833b2a35d4d20c',
+    'md5' => 'c46cae7fc46e896abd9edee04ce9a438',
+    'size' => 108198
+  },
+  'Apache-MP3-2.11.tar.gz' => {
+    'mtime' => '2000-09-09',
+    'md5-ungz' => '8be66e6a5bf3bd2c2d3ab2a5e70c4487',
+    'md5' => 'f916fdb3ea27b4b8b04455c20e56a17a',
+    'size' => 281588
+  },
+  'CGI.pm-2.96.tar.gz' => {
+    'mtime' => '2003-06-16',
+    'md5-ungz' => '412867283c87e4d4797bff866fd7a669',
+    'md5' => 'dda62edb0afcc14479677ab1d2e64a47',
+    'size' => 202497
+  },
+  'GD-1.28.tar.gz' => {
+    'mtime' => '2000-06-23',
+    'md5-ungz' => 'dfb112fc832d092d2dca744ff86a2a87',
+    'md5' => '76b22df2357d248f413a1f20d655f835',
+    'size' => 242341
+  },
+  'Apache-MP3-1.00.tar.gz' => {
+    'mtime' => '2000-03-20',
+    'md5-ungz' => 'e7d4362834c7f42baa9248f908f0d9ca',
+    'md5' => '9f8abd154c1bf536210d47a79b2955b3',
+    'size' => 3534
+  },
+  'CGI.pm-2.77.tar.gz' => {
+    'mtime' => '2001-08-07',
+    'md5-ungz' => 'ad43a1ba29baede85da808758881539f',
+    'md5' => 'a161be7ae31a97ae04b9d2cb114eb986',
+    'size' => 174010
+  },
+  'CGI.pm-2.62.tar.gz' => {
+    'mtime' => '2000-03-28',
+    'md5-ungz' => 'f477cfb5a797199090bdb423b68406ef',
+    'md5' => '32977e8edeef1859fc1c84244beb70dd',
+    'size' => 164348
+  },
+  'Apache-MP3-3.00.tar.gz' => {
+    'mtime' => '2002-08-16',
+    'md5-ungz' => '0c0f65b23c7fbf2c58e0f83db2b51e5b',
+    'md5' => 'd252a36272fd6f70fcb4ad1f03fb713c',
+    'size' => 322558
+  },
+  'CGI.pm-2.52.tar.gz' => {
+    'mtime' => '1999-06-08',
+    'md5-ungz' => '45fa6ecc048cae6e00594830aeee5ece',
+    'md5' => '6b5cc265b358562fc45272cb76985a69',
+    'size' => 159211
+  },
+  'Boulder-1.30.tar.gz' => {
+    'mtime' => '2002-12-14',
+    'md5-ungz' => '61d9da707f17afe070caad72f3f0228b',
+    'md5' => '87b37e890c959d4ab567614263d64953',
+    'size' => 91202
+  },
+  'Tie-DBI-0.86.tar.gz' => {
+    'mtime' => '2000-08-04',
+    'md5-ungz' => '1e60aa77f607254546d66047734a5216',
+    'md5' => '663f905da74bd82535bd1cdde0feda57',
+    'size' => 22238
+  },
+  'Apache-MP3-3.03.tar.gz' => {
+    'mtime' => '2002-10-14',
+    'md5-ungz' => 'b9f0879d4a017f6b615ea0fd85ad47b7',
+    'md5' => '9ab483f3e603e2caf12ab41a03435c5f',
+    'size' => 323869
+  },
+  'CGI.pm-2.97.tar.gz' => {
+    'mtime' => '2003-06-17',
+    'md5-ungz' => '1f5a6b6f218c969addbf6980c1893ebc',
+    'md5' => '9648fede296c2cfad0a170a89f6211cf',
+    'size' => 202525
+  },
+  'AcePerl-1.80.tar.gz' => {
+    'mtime' => '2001-10-16',
+    'md5-ungz' => '94d77c4797c11ef8f580c854e72b54d8',
+    'md5' => '7e2dd942e450041fe9dc59070779df28',
+    'size' => 292527
+  },
+  'GD-2.05.tar.gz' => {
+    'mtime' => '2002-11-25',
+    'md5-ungz' => 'a09e6d7b449afa57b4f19f9236ca7458',
+    'md5' => 'c2b193b00da2ed35944dff7d4d58ec81',
+    'size' => 149280
+  },
+  'CGI.pm-2.87.tar.gz' => {
+    'mtime' => '2002-10-07',
+    'md5-ungz' => '423a0550bdf956c45114aa0a2a256a72',
+    'md5' => '05994f86951387d647b852aa17013b75',
+    'size' => 196603
+  },
+  'MP3-Napster-0.95.tar.gz' => {
+    'mtime' => '2000-03-08',
+    'md5-ungz' => '397b5d5523708d1a7349f308ae797faf',
+    'md5' => '2671865f3823f993a664e84721625aae',
+    'size' => 91177
+  },
+  'CGI.pm-2.61.tar.gz' => {
+    'mtime' => '2000-03-28',
+    'md5-ungz' => '074053773d86927778cd16d7cb7d9b10',
+    'md5' => '24901ea7a027efa66292014be5447ae2',
+    'size' => 164590
+  },
+  'CGI.pm-3.00.tar.gz' => {
+    'mtime' => '2003-08-18',
+    'md5-ungz' => 'ad2d0acd8c7255df96ca3cc3d6375f0c',
+    'md5' => '1c2ff7624b903a6d895c9a295e69fc82',
+    'size' => 202961
+  },
+  'Tie-DBI-0.93.tar.gz' => {
+    'mtime' => '2003-09-02',
+    'md5-ungz' => 'cdb417098beef6d159cbe9d07fbdf340',
+    'md5' => '7f049f9897ee24fb5adcacf25213adfe',
+    'size' => 23311
+  },
+  'Apache-MP3-2.05.tar.gz' => {
+    'mtime' => '2000-08-25',
+    'md5-ungz' => '816e0c565d787cb6d7153df0e24aef8b',
+    'md5' => 'a217cf6c75937551846442483e0ae52d',
+    'size' => 276512
+  },
+  'CGI.pm-2.751.tar.gz' => {
+    'mtime' => '2001-02-02',
+    'md5-ungz' => '4cd6e9a1f06f31e6199e676498ff664f',
+    'md5' => '924d9a6e423501b06fd18747293d1d44',
+    'size' => 171157
+  },
+  'GD-1.29.tar.gz' => {
+    'mtime' => '2000-06-23',
+    'md5-ungz' => '5cf10631e00cf35dae81110891df055d',
+    'md5' => '5d9883f2d6f405685c45223f1a1816b9',
+    'size' => 248326
+  },
+  'CGI.pm-2.47.tar.gz' => {
+    'mtime' => '1999-02-18',
+    'md5-ungz' => 'c9276b26d11babc015f84cee4f9adf48',
+    'md5' => 'f48a2f2167c3915190e9db21c095a68b',
+    'size' => 156309
+  },
+  'Crypt-CBC-1.23.tar.gz' => {
+    'mtime' => '2000-02-22',
+    'md5-ungz' => '6d4bb2ba4ea8d57b8abcf428bdca1fec',
+    'md5' => 'eeb3173733336977501d8712fa0945f3',
+    'size' => 6784
+  },
+  'GD-1.23.tar.gz' => {
+    'mtime' => '1999-11-11',
+    'md5-ungz' => 'a4164bf57161c8062a6d0751b082b0e4',
+    'md5' => '886dfacaec1837c05ffd2d673cd83a4f',
+    'size' => 97009
+  },
+  'Apache-MP3-2.06.tar.gz' => {
+    'mtime' => '2000-08-26',
+    'md5-ungz' => 'e4ae067e8b1f190ff373a1a4564531fb',
+    'md5' => '145e42d4bf1653276cd2437fbcead5b6',
+    'size' => 276613
+  },
+  'GD-1.41.tar.gz' => {
+    'mtime' => '2002-07-22',
+    'md5-ungz' => 'b4b73cd0c982c883c9ebc07caf880b59',
+    'md5' => '9f11b3f6bb73f04d2bc3f02df0662bdd',
+    'size' => 366673
+  },
+  'Apache-MP3-2.22.tar.gz' => {
+    'mtime' => '2002-01-06',
+    'md5-ungz' => '39fa034b6a4a1ceb638d943894482990',
+    'md5' => '9a59ffaabfd90afa2ad686c8ca9e09aa',
+    'size' => 290725
+  },
+  'GD-2.02.tar.gz' => {
+    'mtime' => '2002-10-14',
+    'md5-ungz' => '288acbe80317cbbd311d4cc7a887d1d5',
+    'md5' => '5327b567ebd804ac4608008c374546f7',
+    'size' => 333574
+  },
+  'Boulder-1.14.tar.gz' => {
+    'mtime' => '1999-11-30',
+    'md5-ungz' => '934100daacfd96525196223b781d8c05',
+    'md5' => '312f775ce155a53beae1584e2f996877',
+    'size' => 83258
+  },
+  'Crypt-CBC-1.22.tar.gz' => {
+    'mtime' => '2000-01-27',
+    'md5-ungz' => '7d9645b0747ec2f3487d455bf53f1806',
+    'md5' => '986e715f0e794412a8a5f5680f462db3',
+    'size' => 6721
+  },
+  'GD-1.38.tar.gz' => {
+    'mtime' => '2002-01-04',
+    'md5-ungz' => '8601afa825ff5ee851c9d71e1f0504bc',
+    'md5' => '89e238d9c9a3113a1b89e005921cd5c3',
+    'size' => 201870
+  },
+  'AcePerl-1.86.tar.gz' => {
+    'mtime' => '2003-05-12',
+    'md5-ungz' => 'b36ad1f6a548f8eac7ec55bcbf76ca5e',
+    'md5' => '133664b68a2a97c9f3c8cd7096ba472b',
+    'size' => 294461
+  },
+  'IO-Socket-Multicast-0.21.tar.gz' => {
+    'mtime' => '2002-07-15',
+    'md5-ungz' => 'c0b47bc70e22837aa91b151eb5eb601b',
+    'md5' => '63b9346b2e7e80af739cdab43de89f8e',
+    'size' => 8392
+  },
+  'GD-1.37.tar.gz' => {
+    'mtime' => '2001-12-19',
+    'md5-ungz' => 'b790ffdf99c75618be360e171bcb3d3b',
+    'md5' => '92a33235118058cc0fe030b8ee445079',
+    'size' => 201824
+  },
+  'AcePerl-1.82.tar.gz' => {
+    'mtime' => '2001-11-29',
+    'md5-ungz' => 'c4507e428380c2f6fbfe2096110e7a74',
+    'md5' => 'e90c1e3d1e28b92ce8bdb95704462a0d',
+    'size' => 293592
+  },
+  'CGI.pm-2.45.tar.gz' => {
+    'mtime' => '1998-11-26',
+    'md5-ungz' => '228d84febbd22c5134b2d1d3f9e7f66c',
+    'md5' => '2cb3774a171b2c4dcb2d644bb32817a4',
+    'size' => 153416
+  },
+  'AcePerl-1.76.tar.gz' => {
+    'mtime' => '2001-09-17',
+    'md5-ungz' => 'b3f727f24213772e190e847374f1e184',
+    'md5' => '80295ac7c014347f903473b9a059d817',
+    'size' => 249143
+  },
+  'CGI.pm-2.88.tar.gz' => {
+    'mtime' => '2002-10-14',
+    'md5-ungz' => '0f02f42c7c95a71087a3de7dfcab440c',
+    'md5' => 'd6aeb8729145e179ca58459781cdae03',
+    'size' => 196977
+  },
+  'Bio-Das-0.20.tar.gz' => {
+    'mtime' => '2002-11-01',
+    'md5-ungz' => '0a729504c52eb80be88cffec1be780a4',
+    'md5' => '104058abd676f1bb06630318e17f965e',
+    'size' => 23260
+  },
+  'Apache-MP3-2.10.tar.gz' => {
+    'mtime' => '2000-09-03',
+    'md5-ungz' => '7a7228c676d08e1a66095b7b878636c8',
+    'md5' => 'a5326b65714ed5b1662be9186d432cee',
+    'size' => 280139
+  },
+  'GD-1.16.tar.gz' => {
+    'mtime' => '1997-12-19',
+    'md5-ungz' => '43532367019998861a14beaaaab95944',
+    'md5' => 'f36120d94e1517cef39b9d7d500bc44c',
+    'size' => 102003
+  },
+  'CGI.pm-2.76.tar.gz' => {
+    'mtime' => '2001-07-26',
+    'md5-ungz' => '0c3314a1bb9918224f9006f68ad03c5f',
+    'md5' => '4bac3fa50bb57fd4543cce629ee6a0e1',
+    'size' => 173975
+  },
+  'Crypt-CBC-2.02.tar.gz' => {
+    'mtime' => '2002-01-24',
+    'md5-ungz' => 'ae99dda65543cb771612e231e01f984d',
+    'md5' => 'b60531afa22e678db24c445eddc161f1',
+    'size' => 9631
+  },
+  'Apache-MP3-2.16.tar.gz' => {
+    'mtime' => '2001-05-01',
+    'md5-ungz' => 'de20d7f0f645c15cb68d04faa1d08d74',
+    'md5' => 'dc68842add216a7c1feea95b7c6e5dd2',
+    'size' => 290738
+  },
+  'Bio-Das-0.17.tar.gz' => {
+    'mtime' => '2002-02-22',
+    'md5-ungz' => '1b04bf22d2f5f6c4a7e58d6f9b66c198',
+    'md5' => '571b0b2af649363fbe0ba2e900c09bdb',
+    'size' => 23065
+  },
+  'CGI.pm-2.79.tar.gz' => {
+    'mtime' => '2001-12-09',
+    'md5-ungz' => 'e3b117e3f9fa28410cf709211b73d7b3',
+    'md5' => '460c03e359aff964e125c579f7434066',
+    'size' => 193377
+  },
+  'Crypt-CBC-2.08.tar.gz' => {
+    'mtime' => '2002-09-11',
+    'md5-ungz' => '6e185fcfcb90af6889db69128cb531d4',
+    'md5' => '3e2cb1c3df6f58c72f5fe2ea41614ce5',
+    'size' => 9495
+  },
+  'CGI.pm-2.81.tar.gz' => {
+    'mtime' => '2002-04-10',
+    'md5-ungz' => 'bf0b5c166bbc1110ad7ffebd366f93b7',
+    'md5' => 'f8cc0a69809603b85f377179a6d55fec',
+    'size' => 193785
+  },
+  'Boulder-1.24.tar.gz' => {
+    'mtime' => '2001-06-14',
+    'md5-ungz' => '80d8970e46c41afee18a47b5ea942001',
+    'md5' => 'c630b043c5ebfbc69aba9c31f2f16207',
+    'size' => 84662
+  },
+  'CGI.pm-2.59.tar.gz' => {
+    'mtime' => '2000-03-24',
+    'md5-ungz' => 'c63340e190575e248105b27f8e9324b3',
+    'md5' => '86ca1c7bfc12291a979e515dd4434d62',
+    'size' => 164404
+  },
+  'GD-1.26.tar.gz' => {
+    'mtime' => '2000-03-18',
+    'md5-ungz' => 'e02e2ec4c50cff045f4c540ddb9111fd',
+    'md5' => 'f717c2b3f89674def6f16c9b03c59c56',
+    'size' => 189568
+  },
+  'GD-1.31.tar.gz' => {
+    'mtime' => '2001-09-26',
+    'md5-ungz' => '08a8c68817bc1b08bfe81da55ae801d8',
+    'md5' => '86bad5f9048929151e3eefa6382f25ff',
+    'size' => 201369
+  },
+  'CGI.pm-2.80.tar.gz' => {
+    'mtime' => '2002-01-12',
+    'md5-ungz' => 'c50ddbaae0e4cbf867cf568bdae4b154',
+    'md5' => '0ec8237f0201d11ebe26dac36bf250ee',
+    'size' => 193455
+  },
+  'CGI.pm-2.86.tar.gz' => {
+    'mtime' => '2002-09-12',
+    'md5-ungz' => '4202a9b175184c17e2a5205e171cf4f2',
+    'md5' => 'fd85467f10648115d8ea203915a6ef5d',
+    'size' => 196490
+  },
+  'AcePerl-1.83.tar.gz' => {
+    'mtime' => '2002-02-22',
+    'md5-ungz' => '58669a836132918beaaf09bd5b0b2a43',
+    'md5' => 'd1cc9e852ce7fb23a0f2eac739b040fb',
+    'size' => 294151
+  },
+  'Bio-Das-0.18.tar.gz' => {
+    'mtime' => '2002-04-05',
+    'md5-ungz' => '6c7c13c9ea6ad7bef1b55259e0ad8fa6',
+    'md5' => 'cf7aab8650d10be1a25b704e1062aba9',
+    'size' => 23047
+  },
+  'CGI.pm-2.65.tar.gz' => {
+    'mtime' => '2000-04-11',
+    'md5-ungz' => '8a086b18a9f04661c6fe68cae232b2b1',
+    'md5' => '92dbb0c530ee6372c06c88c05d824d09',
+    'size' => 165131
+  },
+  'CGI.pm-2.92.tar.gz' => {
+    'mtime' => '2003-04-28',
+    'md5-ungz' => '68388aa73ebd3c453685e8713b44e16b',
+    'md5' => 'a83e03c9ed676f6d7a5c61589f6406dc',
+    'size' => 201550
+  },
+  'Crypt-CBC-2.07.tar.gz' => {
+    'mtime' => '2002-08-08',
+    'md5-ungz' => 'aad46194f622f7cc09a03f7cb40c88ba',
+    'md5' => '469851c890d8a53ac79146336e385fa9',
+    'size' => 10205
+  },
+  'GD-1.39.tar.gz' => {
+    'mtime' => '2002-06-12',
+    'md5-ungz' => 'a365f3624f9005f395381b44e9546977',
+    'md5' => '188dce360f68f5a86e5c9c3851803129',
+    'size' => 263317
+  },
+  'Crypt-CBC-1.20.tar.gz' => {
+    'mtime' => '1998-12-20',
+    'md5-ungz' => '83e21a86871d9b0af897488428c639ce',
+    'md5' => '367aabe364846f46fdb052ce9e235f3e',
+    'size' => 5554
+  },
+  'GD-2.11.tar.gz' => {
+    'mtime' => '2003-10-07',
+    'md5-ungz' => '08dff03791a8f3a852e0cd3435097ef7',
+    'md5' => '8a24c811ec77e2de416ba07017d88f1c',
+    'size' => 154432
+  },
+  'GD-1.40.tar.gz' => {
+    'mtime' => '2002-06-19',
+    'md5-ungz' => 'f03da9d188eaf028b3863c9a4a33273b',
+    'md5' => '18f85d3cea640cb18adc676e674f65e5',
+    'size' => 268644
+  },
+  'CGI.pm-2.53.tar.gz' => {
+    'mtime' => '1999-06-09',
+    'md5-ungz' => '9a5b99955b8484371444acb921bad481',
+    'md5' => 'ab343443387b5c840332906362df2628',
+    'size' => 159363
+  },
+  'Apache-MP3-2.20.tar.gz' => {
+    'mtime' => '2001-09-26',
+    'md5-ungz' => 'de2d223f02538d65bf0fe4bbff0793c0',
+    'md5' => '04bed11644d901b0cb2ae8ba6d0a46c5',
+    'size' => 287505
+  },
+  'Boulder-1.23.tar.gz' => {
+    'mtime' => '2001-06-13',
+    'md5-ungz' => 'c03aeef1caa856e8d2dcec0930f14be2',
+    'md5' => 'eb751f0dbfe7508f57ce3b0eda175380',
+    'size' => 84641
+  },
+  'AcePerl-1.74.tar.gz' => {
+    'mtime' => '2001-06-13',
+    'md5-ungz' => '0ada2c48a84a8841099c4040a726541d',
+    'md5' => '3b75b317201dc932228b56dd67dcf69e',
+    'size' => 247477
+  },
+  'CGI.pm-2.66.tar.gz' => {
+    'mtime' => '2000-04-12',
+    'md5-ungz' => 'ef445ec653fff6de07b73cb040a2716e',
+    'md5' => 'ab1918a8d0d8eda10a50c84711b42259',
+    'size' => 165257
+  },
+  'CGI.pm-2.78.tar.gz' => {
+    'mtime' => '2001-09-26',
+    'md5-ungz' => '71b99b7cdac697271a4d56dc1fd686e1',
+    'md5' => 'da09987ebc118123f54331685f22e203',
+    'size' => 193509
+  },
+  'GD-1.36.tar.gz' => {
+    'mtime' => '2001-12-17',
+    'md5-ungz' => '751119adcee1b467c7f00acb5d5a922e',
+    'md5' => '38755b121370224b5ec663e24924c378',
+    'size' => 201753
+  },
+  'Crypt-CBC-1.24.tar.gz' => {
+    'mtime' => '2000-06-07',
+    'md5-ungz' => 'af025d60c8ba0bb4a44dd5b243da1f92',
+    'md5' => '1bf97284ba9e381c6d5c8b508ecc5bd8',
+    'size' => 6853
+  },
+  'GD-1.27.tar.gz' => {
+    'mtime' => '2000-03-22',
+    'md5-ungz' => 'dd6e49bc35e63be9cb2660505f36193e',
+    'md5' => '6ff031721c5c9ea8a5f8ca3049616c35',
+    'size' => 191667
+  },
+  'Apache-MP3-2.19.tar.gz' => {
+    'mtime' => '2001-07-17',
+    'md5-ungz' => '6b0871d8a5882cfb545f7ceb3d1bea8a',
+    'md5' => '7bb388daa65722bee536c5279932f3a7',
+    'size' => 287406
+  },
+  'CGI.pm-2.67.tar.gz' => {
+    'mtime' => '2000-05-16',
+    'md5-ungz' => '83f96208a1dfe0ef762f735c88e2f658',
+    'md5' => 'fa31117b19fa78d920c263680181e8a1',
+    'size' => 166739
+  },
+  'CGI.pm-2.54.tar.gz' => {
+    'mtime' => '1999-08-09',
+    'md5-ungz' => '71ac5a50600ec5f8e88f2bbddbb772a1',
+    'md5' => '3afa95d73aca399ff01812f769cec3ce',
+    'size' => 160670
+  },
+  'Crypt-CBC-1.25.tar.gz' => {
+    'mtime' => '2000-06-08',
+    'md5-ungz' => '00088579861276ec7e54eac834170f47',
+    'md5' => '0f77cf5536381e2face83d67d7d6099f',
+    'size' => 6899
+  },
+  'GD-1.32.tar.gz' => {
+    'mtime' => '2000-11-10',
+    'md5-ungz' => '6572deaa3e8895f7df316236281735a3',
+    'md5' => '1fa982def11e42809ef3b802e38a5eb8',
+    'size' => 249769
+  },
+  'HTTPD-User-Manage-1.59.tar.gz' => {
+    'mtime' => '2002-05-31',
+    'md5-ungz' => '30b40b16a23ad6813be2115c3cf3312c',
+    'md5' => 'e56d4eebb7c356ca0f617e7090d5c76a',
+    'size' => 112121
+  },
+  'Apache-MP3-2.18.tar.gz' => {
+    'mtime' => '2001-06-10',
+    'md5-ungz' => '024748b7368b1aa55865509fce20fd2a',
+    'md5' => 'f3ec4d08f475c8d349fdb0e5225c4584',
+    'size' => 291423
+  },
+  'Boulder-1.26.tar.gz' => {
+    'mtime' => '2002-01-24',
+    'md5-ungz' => '31880d89adc1a552825347cf29299bf2',
+    'md5' => 'db0ec9b536cf53b4b3575b63771dba9e',
+    'size' => 85366
+  },
+  'IO-Socket-Multicast-0.20.tar.gz' => {
+    'mtime' => '2000-08-04',
+    'md5-ungz' => '04365dba88d15483b3cc8da4d66cc1e3',
+    'md5' => '5e1b813d5aaa90bb62aa60907156607f',
+    'size' => 8454
+  },
+  'IO-Socket-Multicast-0.25.tar.gz' => {
+    'mtime' => '2001-01-07',
+    'md5-ungz' => '9a7b0530f693bcd8b50825f67c7996ae',
+    'md5' => '57e089b7edefa291e4542e7d8f051352',
+    'size' => 8477
+  },
+  'CGI.pm-2.71.tar.gz' => {
+    'mtime' => '2000-08-13',
+    'md5-ungz' => '99436884ab457cd86e2e2628e38f8655',
+    'md5' => 'd490f91a3151ce469bc86815c1386ab8',
+    'size' => 168391
+  },
+  'CGI.pm-2.93.tar.gz' => {
+    'mtime' => '2003-04-28',
+    'md5-ungz' => 'e3108669472b307b40b02d6a0c74b606',
+    'md5' => '0f61d70402d3c37a9ce38b36dd23d9b5',
+    'size' => 201559
+  },
+  'CGI.pm-2.68.tar.gz' => {
+    'mtime' => '2000-05-18',
+    'md5-ungz' => '9bd8d2a5d1af87fef1c11b08cbae7cac',
+    'md5' => '39d133e8be403082d306b93fea281f83',
+    'size' => 166164
+  },
+  'GD-2.041.tar.gz' => {
+    'mtime' => '2002-11-05',
+    'md5-ungz' => '1f8e32a901592ef7986bd26d1cd1bf57',
+    'md5' => '29837235f547054ebce72b6dd7f87a94',
+    'size' => 145433
+  },
+  'Crypt-CBC-2.03.tar.gz' => {
+    'mtime' => '2002-06-02',
+    'md5-ungz' => '51a4b889a456d232354e1a3933db275e',
+    'md5' => '08e8720a911a725af668ccf6ce55b409',
+    'size' => 9847
+  },
+  'AcePerl-1.79.tar.gz' => {
+    'mtime' => '2001-09-28',
+    'md5-ungz' => '0d9d1a8153f7d8fc877a9e03d01f0d4b',
+    'md5' => '5035fb87baa8579acfda62134cdd13cc',
+    'size' => 292315
+  },
+  'Bio-Das-0.75.tar.gz' => {
+    'mtime' => '2002-11-01',
+    'md5-ungz' => '0dbfd55e3fa8de589530864a4abd0fa8',
+    'md5' => 'ab9e605b52c61a7343102e855b2ac309',
+    'size' => 21844
+  },
+  'AcePerl-1.75.tar.gz' => {
+    'mtime' => '2001-07-20',
+    'md5-ungz' => '8c66009da1b7dc8ea351c81a4778d0d4',
+    'md5' => 'a59ce125e8373710bd18191464558cb0',
+    'size' => 248072
+  },
+  'Text-Shellwords-1.03.tar.gz' => {
+    'mtime' => '2003-11-15',
+    'md5-ungz' => '20bd8477adb26f55d30511e4ed393262',
+    'md5' => '2fd3766a11f8ab12b9f64c544c1f2961',
+    'size' => 2294
+  },
+  'HTTPD-User-Manage-1.54.tar.gz' => {
+    'mtime' => '2000-02-15',
+    'md5-ungz' => '46cae6f7407da04b0e3948b97e695aba',
+    'md5' => '9c8bc25f80baba67318f841c67387340',
+    'size' => 107682
+  },
+  'IO-Interface-0.90.tar.gz' => {
+    'mtime' => '2000-06-22',
+    'md5-ungz' => 'e64f511800b90f1072b27c74772bfe51',
+    'md5' => '2ae6708e84ec1177b5202f2cf8082969',
+    'size' => 6163
+  },
+  'Apache-MP3-2.08.tar.gz' => {
+    'mtime' => '2000-08-31',
+    'md5-ungz' => 'b4b013fb4d06d3d950b7361549d00e4c',
+    'md5' => '084ccfc3ff5a1fb86e20e77480546ae9',
+    'size' => 277359
+  },
+  'GD-1.24.tar.gz' => {
+    'mtime' => '2000-02-15',
+    'md5-ungz' => 'f664c2d1200c401e13d9f83b011cd4a3',
+    'md5' => 'c8277a3d18c5dc29e4147d4c5e01780e',
+    'size' => 98820
+  },
+  'GD-1.17.tar.gz' => {
+    'mtime' => '1998-01-16',
+    'md5-ungz' => '0bfda30ed96916b5a76e375c65d8ee74',
+    'md5' => 'fc3bcd1703fc7d530b3bd15962b3e24c',
+    'size' => 114441
+  },
+  'GD-2.07.tar.gz' => {
+    'mtime' => '2003-04-24',
+    'md5-ungz' => 'efe4ff553adb4deb8aed206cdbd3c156',
+    'md5' => '7a44d308e082471e824fcbff044d8300',
+    'size' => 153759
+  },
+  'Apache-MP3-2.15.tar.gz' => {
+    'mtime' => '2001-01-02',
+    'md5-ungz' => 'a4d49720439e1d3df38f4c9e2dd7271c',
+    'md5' => '64eb56a488dc60f5aa52c5908f4fdade',
+    'size' => 287973
+  },
+  'CGI.pm-2.46.tar.gz' => {
+    'mtime' => '1998-12-06',
+    'md5-ungz' => '9e3b8ded8b01729e13a56496816b4d26',
+    'md5' => '6dc4efd9f47f1f2276a9f3638d14dc97',
+    'size' => 153567
+  },
+  'Boulder-1.15.tar.gz' => {
+    'mtime' => '1999-12-02',
+    'md5-ungz' => 'ff42ee4c36f62cbc17dab51117d5b810',
+    'md5' => 'f78d43967bf705a2fd42d475c4a38bd0',
+    'size' => 81741
+  },
+  'GD-2.04.tar.gz' => {
+    'mtime' => '2002-11-01',
+    'md5-ungz' => '63ce45a1c42a773bc891e57944e1b01c',
+    'md5' => '5c3e5e139c08ce4276ba35d0e8f3588e',
+    'size' => 128734
+  },
+  'GD-1.19.tar.gz' => {
+    'mtime' => '1999-04-26',
+    'md5-ungz' => '5e66951d96a9645902cbb30802254602',
+    'md5' => '5ec418b7802cc2a1ae2d189b2a68b66b',
+    'size' => 114892
+  },
+  'CGI.pm-2.55.tar.gz' => {
+    'mtime' => '1999-08-31',
+    'md5-ungz' => 'ca6b4338b7300c4ae724af5d5e9e132b',
+    'md5' => 'bb2cc8e9a6ab193edf2d306e31c7aa3a',
+    'size' => 160761
+  },
+  'CGI.pm-2.753.tar.gz' => {
+    'mtime' => '2001-03-12',
+    'md5-ungz' => 'e953977644569bdb9958289c3eb3d847',
+    'md5' => 'ea1241dc3fda30b56a353b24b151ab28',
+    'size' => 171546
+  },
+  'IO-Interface-0.94.tar.gz' => {
+    'mtime' => '2000-08-01',
+    'md5-ungz' => 'ec0c6dd363b5f2534b54b3ae18eb2fdc',
+    'md5' => '3488c7120239b1f257728793f092d903',
+    'size' => 6524
+  },
+  'CGI.pm-2.72.tar.gz' => {
+    'mtime' => '2000-08-20',
+    'md5-ungz' => '7a57fb737775a3dc3d4bf0fe4d231d11',
+    'md5' => '9751b2af9aba507583cc3e36249a76dd',
+    'size' => 168672
+  },
+  'CGI.pm-2.70.tar.gz' => {
+    'mtime' => '2000-08-04',
+    'md5-ungz' => '79091f3bd67732e4e997ad8ead3c0701',
+    'md5' => 'f5caa65910ac85fa0abfc7f7afdca7b7',
+    'size' => 167429
+  },
+  'AcePerl-1.78.tar.gz' => {
+    'mtime' => '2001-09-28',
+    'md5-ungz' => '288ef642e9a5507abbf6aac5f7bf24c0',
+    'md5' => '7e42773db5661cfcd03355b6252565c4',
+    'size' => 292309
+  },
+  'Apache-MP3-3.01.tar.gz' => {
+    'mtime' => '2002-08-18',
+    'md5-ungz' => '6d6c7e68caf7e604640472dee7b20f3a',
+    'md5' => '22943d2c89d62504c2adc0ac8c47b5bc',
+    'size' => 322331
+  },
+  'Apache-MP3-2.04.tar.gz' => {
+    'mtime' => '2000-08-23',
+    'md5-ungz' => 'efec8d7003327b675a868e29de0ded9e',
+    'md5' => '8f6320a6ca404452bc4a4ac26df8220e',
+    'size' => 208966
+  },
+  'MP3-Napster-0.96.tar.gz' => {
+    'mtime' => '2000-03-14',
+    'md5-ungz' => '246aa2b510f4393e21c695338f709f45',
+    'md5' => '5a4d2767072e911cec4d396f51bcedcf',
+    'size' => 91175
+  },
+  'AcePerl-1.81.tar.gz' => {
+    'mtime' => '2001-11-19',
+    'md5-ungz' => 'f9de9a089fbd21851f4d73d5cce62533',
+    'md5' => '8ea0ab8d8f10318272c61545ede8e8de',
+    'size' => 293489
+  },
+  'AcePerl-1.87.tar.gz' => {
+    'mtime' => '2003-10-04',
+    'md5-ungz' => 'd5197dc11421e22144c650c307f84c79',
+    'md5' => 'e42bc9b26c34ff9604c30d103d445818',
+    'size' => 294891
+  },
+  'CGI.pm-2.91.tar.gz' => {
+    'mtime' => '2003-02-11',
+    'md5-ungz' => '1201e6fd75a7013c129b5a511810c5ff',
+    'md5' => 'b530ecea59b5d5c06bf6ceeedbd9057a',
+    'size' => 199584
+  },
+  'Apache-MP3-3.04.tar.gz' => {
+    'mtime' => '2003-02-15',
+    'md5-ungz' => '1e19fc813fdd62b70847d6bf63d95be8',
+    'md5' => '121fd629c8d8ff47f66b2601cdfb2805',
+    'size' => 329226
+  },
+  'IO-Interface-0.97.tar.gz' => {
+    'mtime' => '2001-05-14',
+    'md5-ungz' => '97e8c00f0ef3aab34057bcf70a92558b',
+    'md5' => 'b7e22f9e4e262e635cf9fd663952bf13',
+    'size' => 6895
+  },
+  'IO-Socket-Multicast-0.03.tar.gz' => {
+    'mtime' => '2000-07-18',
+    'md5-ungz' => 'ca841e30c0a7aa43174c1a5229108836',
+    'md5' => '714d2132be7b30b8ef1622eba857feec',
+    'size' => 7024
+  },
+  'GD-1.18.tar.gz' => {
+    'mtime' => '1998-01-26',
+    'md5-ungz' => 'ad4ae88e8c6b25496ca883fbed1ac561',
+    'md5' => '8615cefd90c7c972ee9ccada55488b36',
+    'size' => 114724
+  },
+  'CGI.pm-2.95.tar.gz' => {
+    'mtime' => '2003-06-13',
+    'md5-ungz' => '658545d24ac2aa162b0c1fae3a032fbb',
+    'md5' => 'f264a6e1a3d00b22fc3661d856bb5f1c',
+    'size' => 202443
+  },
+  'MP3-Napster-2.03.tar.gz' => {
+    'mtime' => '2001-03-12',
+    'md5-ungz' => '63e0ee9fb4141f8b3323bef0a84364fd',
+    'md5' => 'a087486314fd5779db92850c7004ed3d',
+    'size' => 120101
+  },
+  'IO-Socket-Multicast-0.11.tar.gz' => {
+    'mtime' => '2000-08-01',
+    'md5-ungz' => 'a3ed56b31347aa27e6a70630274b4a28',
+    'md5' => '49369f023b6c0cae704a50874eaf65cf',
+    'size' => 8274
+  },
+  'Crypt-CBC-2.05.tar.gz' => {
+    'mtime' => '2002-06-22',
+    'md5-ungz' => '6f0190d41aefa180cc1d851063b05aee',
+    'md5' => '4df51fb7fc05e2c4dfd11800c5df7237',
+    'size' => 9936
+  },
+  'GD-2.10.tar.gz' => {
+    'mtime' => '2003-10-06',
+    'md5-ungz' => 'f7477d1e8aee7173039301f09100b37c',
+    'md5' => '2288e12d38bcb03c1976edf396ed351c',
+    'size' => 154341
+  },
+  'GD-1.35.tar.gz' => {
+    'mtime' => '2001-12-06',
+    'md5-ungz' => 'f66ecc7828761744ed069d8a016bdb92',
+    'md5' => '9894d0ffbd6444566e033a73c964dbb6',
+    'size' => 265653
+  },
+  'Apache-MP3-2.14.tar.gz' => {
+    'mtime' => '2000-12-31',
+    'md5-ungz' => '57aec570124560b09452f735405586ea',
+    'md5' => '9fada796ff7782f70efb62578aa446da',
+    'size' => 287810
+  },
+  'Crypt-CBC-1.00.tar.gz' => {
+    'mtime' => '1998-06-19',
+    'md5-ungz' => '5ddcff6519bf07488053ca2be82cf1c1',
+    'md5' => 'c6ec4f4deff5a39cff44710b608e3bf5',
+    'size' => 5392
+  },
+  'Text-Shellwords-1.00.tar.gz' => {
+    'mtime' => '2001-12-14',
+    'md5-ungz' => '941ddfec496d1533227569a8c9786974',
+    'md5' => '016f95c2e40a760d261772a40025e543',
+    'size' => 1985
+  },
+  'CGI.pm-2.99.tar.gz' => {
+    'mtime' => '2003-08-01',
+    'md5-ungz' => 'deb013b211ea1c6523aead9c3698d73c',
+    'md5' => '8f12c0d0462409ab33447a44dbaefe2b',
+    'size' => 202656
+  },
+  'HTTPD-User-Manage-1.61.tar.gz' => {
+    'mtime' => '2003-01-16',
+    'md5-ungz' => '9080e651921c56f093dc8658ac0c565a',
+    'md5' => '72d1024c89c2e86f37e25e9a705782ce',
+    'size' => 113915
+  },
+  'CGI.pm-2.49.tar.gz' => {
+    'mtime' => '1999-02-23',
+    'md5-ungz' => 'd260a5da359284841916504f6573e7bd',
+    'md5' => '9bea7b846d877e5a7a14cc54524ccd55',
+    'size' => 156480
+  },
+  'GD-1.33.tar.gz' => {
+    'mtime' => '2001-04-05',
+    'md5-ungz' => '794c627241237d1b8a69dfd269e5118b',
+    'md5' => '48d9f13b2652a56a08a02ea5ed1aadf6',
+    'size' => 262191
+  },
+  'CGI.pm-2.74.tar.gz' => {
+    'mtime' => '2000-09-13',
+    'md5-ungz' => 'b9e5abf130e4c600ef1f987695b6c38f',
+    'md5' => 'ed84941bb444297527558a432c8c8195',
+    'size' => 169002
+  },
+  'Boulder-1.25.tar.gz' => {
+    'mtime' => '2001-12-28',
+    'md5-ungz' => 'ca3806336d56cf42868ce33ad67328a8',
+    'md5' => 'fb4a8f6cbb261e73eaa1909a80d621b1',
+    'size' => 84801
+  },
+  'GD-2.06.tar.gz' => {
+    'mtime' => '2003-01-08',
+    'md5-ungz' => '1e1cd5ddd354dd70fbbde28d2dbbfad8',
+    'md5' => '90025c06e22c91e22588cee1567d3c7c',
+    'size' => 143228
+  },
+  'CGI.pm-2.94.tar.gz' => {
+    'mtime' => '2003-06-09',
+    'md5-ungz' => 'a8f7ac3ef8c07ab6e3b991c782ac04a2',
+    'md5' => 'e08ef6530be4a11eb7cfbe8b846dbbb0',
+    'size' => 202379
+  }
+};
+__END__
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQE/tn+kMo2oZ0UPiewRAvp3AJ9Nx6my6nt75Ix8Oz0lnJAufRpn8gCaA3zL
+wZHsfA4uUH/VT5fmWsDm1sU=
+=QaE1
+-----END PGP SIGNATURE-----

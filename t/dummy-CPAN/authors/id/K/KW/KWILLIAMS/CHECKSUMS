@@ -1,0 +1,1080 @@
+0&&<<''; # this PGP-signed message is also valid perl
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+# CHECKSUMS file written on Tue Sep  7 04:57:35 2004 by CPAN::Checksums (v1.016)
+$cksum = {
+  'Image-Timeline-0.09.tar.gz' => {
+    'mtime' => '2004-02-24',
+    'md5-ungz' => '7a60277d8cb21ed68552db11931c3fc3',
+    'md5' => 'cead3e94be90c4f5131a4a068627ab51',
+    'size' => 16020
+  },
+  'Apache-Compress-1.003.tar.gz' => {
+    'mtime' => '2000-11-05',
+    'md5-ungz' => 'aa4366a877427bf3681ad23e9528f5d2',
+    'md5' => '9d1b571995961223bdb5e005f42e1c76',
+    'size' => 11028
+  },
+  'ExtUtils-CBuilder-0.02.meta' => {
+    'mtime' => '2004-02-20',
+    'md5' => '9745ae7ee10c2c54cb79eacc8dc400f6',
+    'size' => 1276
+  },
+  'Module-Build-0.21_02.tar.gz' => {
+    'mtime' => '2003-12-24',
+    'md5-ungz' => '3585e24ebb35c41c384db1b54799d768',
+    'md5' => '9c89d102025a939963168810acd72477',
+    'size' => 97388
+  },
+  'Module-Build-0.19_02.tar.gz' => {
+    'mtime' => '2003-07-21',
+    'md5-ungz' => 'f75bc23fa9e1744d1ea06090f5095046',
+    'md5' => 'a7cd9657d414be6cf1f4f1bc5a8810f1',
+    'size' => 77012
+  },
+  'Module-Build-0.19_05.tar.gz' => {
+    'mtime' => '2003-08-18',
+    'md5-ungz' => '21253c77a2b9359032d0345226377c53',
+    'md5' => 'be886d5da978abfed033e0005e42fdf4',
+    'size' => 80871
+  },
+  'File-Spec-0.86.meta' => {
+    'mtime' => '2003-09-26',
+    'md5' => '5975db2d8aa0d4e320f840ea87579912',
+    'size' => 869
+  },
+  'File-Spec-0.87.tar.gz' => {
+    'mtime' => '2003-12-19',
+    'md5-ungz' => '50e01b2c62dede25216f4cd04db73096',
+    'md5' => '50d51b37009897d8e16b8897f2c755a6',
+    'size' => 31610
+  },
+  'Cwd-2.13.meta' => {
+    'mtime' => '2004-01-03',
+    'md5' => 'f51cb1e24399cd38e1bd7531a1beaa21',
+    'size' => 508
+  },
+  'Module-Build-0.25_03.tar.gz' => {
+    'mtime' => '2004-09-05',
+    'md5-ungz' => '54b7122806fe61b79687bf90ca8442b9',
+    'md5' => '05f02e4700312407c6731e361a125a0b',
+    'size' => 116674
+  },
+  'Path-Class-0.06.meta' => {
+    'mtime' => '2004-04-17',
+    'md5' => 'edc0614a3f951c194b52c3b8e92bf6ce',
+    'size' => 562
+  },
+  'Tie-DB_Lock-0.07.tar.gz' => {
+    'mtime' => '2002-10-22',
+    'md5-ungz' => '11e9bd851efa951e4bc38782f53763c4',
+    'md5' => '1f1c9d69e6064c53a5df9fe4072f62e5',
+    'size' => 6876
+  },
+  'Path-Class-0.01.tar.gz' => {
+    'mtime' => '2003-03-13',
+    'md5-ungz' => '900a3e1f371a54566ea0877638000ba6',
+    'md5' => 'b44625f3402b757d31a57846b8a675f9',
+    'size' => 6095
+  },
+  'Module-Build-0.19.meta' => {
+    'mtime' => '2003-07-10',
+    'md5' => 'c7e0a1cddc2cf7e281862c8c25ea587c',
+    'size' => 2022
+  },
+  'Tie-TextDir-0.06.tar.gz' => {
+    'mtime' => '2003-09-09',
+    'md5-ungz' => '9742ae6d94be40d7f82280c2988be65f',
+    'md5' => '05a3fd9ee1632b9dc80d39e0646256fd',
+    'size' => 5344
+  },
+  'File-Spec-0.87.meta' => {
+    'mtime' => '2003-12-19',
+    'md5' => '77ff354c9ece6abd4f1f0ecba4373173',
+    'size' => 866
+  },
+  'Module-Build-0.18.tar.gz' => {
+    'mtime' => '2003-04-08',
+    'md5-ungz' => '1f5464c29163978852fe358acc2b2688',
+    'md5' => '18f35dc7e5751f8e56554f564293d0bc',
+    'size' => 60816
+  },
+  'ExtUtils-CBuilder-0.01.meta' => {
+    'mtime' => '2004-01-12',
+    'md5' => '0993e49cd8970b190a599e06b0f509e4',
+    'size' => 1238
+  },
+  'Module-Build-0.21.meta' => {
+    'mtime' => '2003-10-16',
+    'md5' => '3893f37349de1a70b4fe443e3126e954',
+    'size' => 2050
+  },
+  'File-Spec-0.85.tar.gz' => {
+    'mtime' => '2003-07-22',
+    'md5-ungz' => '7cff749a059357736b45e431596d26bd',
+    'md5' => '10bd668beb9f256442e5399074e4fb1c',
+    'size' => 28682
+  },
+  'ExtUtils-CBuilder-0.00_01.tar.gz' => {
+    'mtime' => '2003-12-02',
+    'md5-ungz' => '8c518a087a0a7232b5f6ea1286bc13ab',
+    'md5' => 'fcec1cccb088d34bc45fe5b374b6639c',
+    'size' => 5858
+  },
+  'AI-Categorizer-0.06.tar.gz' => {
+    'mtime' => '2003-04-22',
+    'md5-ungz' => '64915773f1c1ab404496ec0d1b924a45',
+    'md5' => '642a8cb97c0e0281a0c616c19d14ae1d',
+    'size' => 254644
+  },
+  'Tie-TextDir-0.04.tar.gz' => {
+    'mtime' => '2001-10-17',
+    'md5-ungz' => 'b8932b4eaa6197d11717adcc8c939abf',
+    'md5' => '2c8f942bec452bd0b4d629af21bf6e53',
+    'size' => 4716
+  },
+  'File-Spec-0.89.meta' => {
+    'mtime' => '2004-08-30',
+    'md5' => '20ead588494214c543ee8da86b12f976',
+    'size' => 914
+  },
+  'Module-Build-0.24.meta' => {
+    'mtime' => '2004-02-25',
+    'md5' => '3de17d81b5e4fb86d91f16a34597caf2',
+    'size' => 2314
+  },
+  'Path-Class-0.05.tar.gz' => {
+    'mtime' => '2004-01-20',
+    'md5-ungz' => 'fa275b03af1bf1da09afb361f9e44264',
+    'md5' => '09a47e595b39998b2ab64904327f0958',
+    'size' => 8961
+  },
+  'Module-Build-0.19_03.tar.gz' => {
+    'mtime' => '2003-07-24',
+    'md5-ungz' => '97f41faef839e82329f68863a6a21be3',
+    'md5' => '7aa7e0775485ea29b7b1ef5dbf9c37bc',
+    'size' => 77373
+  },
+  'Tie-TextDir-0.05.meta' => {
+    'mtime' => '2003-07-09',
+    'md5' => 'e89f6050b0a7a606e977a91423a722f7',
+    'size' => 259
+  },
+  'ExtUtils-ParseXS-2.00.tar.gz' => {
+    'mtime' => '2003-02-23',
+    'md5-ungz' => '7adfda6b91f89307103f357be2c9e9e7',
+    'md5' => 'fc2c234a0ae32a5f6283aa934ba20aa2',
+    'size' => 21680
+  },
+  'Cwd-2.21.tar.gz' => {
+    'mtime' => '2004-09-01',
+    'md5-ungz' => '1b2d0e3b9e2ac47c18ee7e707923ee2b',
+    'md5' => '030eeaa1957726b5e32d0eaada9c7bf6',
+    'size' => 16223
+  },
+  'Algorithm-NaiveBayes-0.01.meta' => {
+    'mtime' => '2003-03-19',
+    'md5' => '453efaf8cac12df41014fbf6443879e9',
+    'size' => 197
+  },
+  'Mail-Query-0.01.tar.gz' => {
+    'mtime' => '2001-10-22',
+    'md5-ungz' => '18710e2b94e87bdf5e3f87b5651170c7',
+    'md5' => '72ac3fa3571e1910a8b2c74aa436689f',
+    'size' => 7516
+  },
+  'ExtUtils-ParseXS-2.03.tar.gz' => {
+    'mtime' => '2003-08-16',
+    'md5-ungz' => 'c12c8aafd416db9f320662e099bb0f37',
+    'md5' => '583a4d00c3900c274b738b3a75160ad1',
+    'size' => 22196
+  },
+  'File-Spec-0.88.meta' => {
+    'mtime' => '2004-07-23',
+    'md5' => '21f4190bd07b3c9a01438f44160f024c',
+    'size' => 914
+  },
+  'Apache-SSI-2.16.tar.gz' => {
+    'mtime' => '2000-12-03',
+    'md5-ungz' => 'db325da740f4ebf2bd636a94cd339f6c',
+    'md5' => '341d1a126296d1b65cb38c5c921ff3a9',
+    'size' => 24483
+  },
+  'Tie-DB_Lock-0.05.tar.gz' => {
+    'mtime' => '1998-08-11',
+    'md5-ungz' => '540eec04afe47a43fdf0d188f85665ec',
+    'md5' => '7f73a5ac614731e2b5e889e464ad862e',
+    'size' => 6786
+  },
+  'Class-Container-0.10.tar.gz' => {
+    'mtime' => '2003-03-06',
+    'md5-ungz' => 'dfa1d352258212f19aae867b23bc7bde',
+    'md5' => '03ba631bba8783f0a0d458513dd85f31',
+    'size' => 18366
+  },
+  'File-Spec-0.86.tar.gz' => {
+    'mtime' => '2003-09-26',
+    'md5-ungz' => '268aac59d42bb32c07391a36c12bad8b',
+    'md5' => '281a4f82d39daba6374890d07c20bfa6',
+    'size' => 31548
+  },
+  'Apache-AuthCookie-2.010.tar.gz' => {
+    'mtime' => '2000-06-17',
+    'md5-ungz' => 'd42e0df077e38df2f233cf67f8752c34',
+    'md5' => '664e97ccba483b2a2462ad0ab919b33d',
+    'size' => 17587
+  },
+  'Cwd-2.12.tar.gz' => {
+    'mtime' => '2003-12-20',
+    'md5-ungz' => 'c16092c8627427f6f2b2929cbbcc659b',
+    'md5' => '39bcc108003639c6faaee9aa8ffca9be',
+    'size' => 12300
+  },
+  'Tie-LLHash-1.002.tar.gz' => {
+    'mtime' => '2000-04-01',
+    'md5-ungz' => 'f34851a75bf7fe8666fb1ba01f5f9716',
+    'md5' => '3c793c445fb1b59ffbd738ea9587c304',
+    'size' => 5869
+  },
+  'Statistics-Contingency-0.05.tar.gz' => {
+    'mtime' => '2002-10-30',
+    'md5-ungz' => '343fbbcea9f0b1c3ec89ab2b2430a052',
+    'md5' => '7bb614838d341f4971a1e19c88f64f62',
+    'size' => 6881
+  },
+  'File-Spec-0.85_03.tar.gz' => {
+    'mtime' => '2003-09-15',
+    'md5-ungz' => '0763c1b6bef57b4e03a8560050c34e18',
+    'md5' => 'a1ef5eadb4ea7dd53c7b65a632d34b40',
+    'size' => 31493
+  },
+  'Text-FillIn-0.05.tar.gz' => {
+    'mtime' => '1999-01-06',
+    'md5-ungz' => '94b914b530ea9cce0e47e8f48d3a911b',
+    'md5' => '23d1cfcc132ac15d19c560be53c4f831',
+    'size' => 10154
+  },
+  'File-Spec-0.84.tar.gz' => {
+    'mtime' => '2003-07-10',
+    'md5-ungz' => '425c88f500f102d51889208cfbb03c92',
+    'md5' => '2fc4e1c89b47dd95eb03b6ca508e4e25',
+    'size' => 27889
+  },
+  'Module-Build-0.19.tar.gz' => {
+    'mtime' => '2003-07-10',
+    'md5-ungz' => '10c7b28c14fbe5839f382ac4bab8c22f',
+    'md5' => 'c1647888d63033446583f9697fb7b426',
+    'size' => 74015
+  },
+  'ExtUtils-ParseXS-2.01.tar.gz' => {
+    'mtime' => '2003-03-20',
+    'md5-ungz' => 'b8d8d8b04bc2b7449c94ea385d06fc4a',
+    'md5' => '5e58bca9da387534a795fce130c9fbb1',
+    'size' => 21907
+  },
+  'Cwd-2.08_04.tar.gz' => {
+    'mtime' => '2003-11-06',
+    'md5-ungz' => '8b04a4e4d402c2a26473d176f107b0a1',
+    'md5' => 'c6e1ec74f09b140b58f0e5ac843667b8',
+    'size' => 12029
+  },
+  'ExtUtils-CBuilder-0.02.tar.gz' => {
+    'mtime' => '2004-02-20',
+    'md5-ungz' => '68767f6ffeb89eeb04c744307b5e0d3a',
+    'md5' => '29b54b5a6bd0aca41ab35d094b4aca83',
+    'size' => 10382
+  },
+  'File-Backup-0.02.tar.gz' => {
+    'mtime' => '1998-12-03',
+    'md5-ungz' => '0c9c1bc3e4e62d3db9a016bec707c3da',
+    'md5' => 'eab684da395c1df7c5275d0c0c911b95',
+    'size' => 3071
+  },
+  'PathTools-3.00.meta' => {
+    'mtime' => '2004-09-03',
+    'md5' => 'e837645663694cc06a7939217ff0b6fb',
+    'size' => 1055
+  },
+  'ExtUtils-CBuilder-0.03.tar.gz' => {
+    'mtime' => '2004-05-15',
+    'md5-ungz' => '0fd53047656a7f7d8e894e5ae9cf3a3d',
+    'md5' => '1af765d42e90e421ac7f0afaaeedf53e',
+    'size' => 10461
+  },
+  'PathTools-3.01.tar.gz' => {
+    'mtime' => '2004-09-07',
+    'md5-ungz' => 'ee1a96091e0f22986067f7679eb3a57a',
+    'md5' => '345340b241923ffb0bf1a541e8397855',
+    'size' => 48673
+  },
+  'Crypt-SKey-0.06.tar.gz' => {
+    'mtime' => '2003-02-17',
+    'md5-ungz' => '4ec37b04fe3193ab2975ea764ebfc7de',
+    'md5' => '2036f6f218941da859036d70cb53b169',
+    'size' => 12266
+  },
+  'ExtUtils-ParseXS-2.05.tar.gz' => {
+    'mtime' => '2003-09-29',
+    'md5-ungz' => '056af2247774dc28b13a19cc56cc951d',
+    'md5' => 'fe8cef659c8fae3e7987a6607a4b971d',
+    'size' => 23288
+  },
+  'AI-Categorizer-0.07.tar.gz' => {
+    'mtime' => '2003-06-16',
+    'md5-ungz' => '70253e7614e7522bd2ce433fa2ccc94b',
+    'md5' => 'ae1c1320c802337c7b1c2500476ffa9f',
+    'size' => 255814
+  },
+  'Module-Build-0.20_02.tar.gz' => {
+    'mtime' => '2003-09-15',
+    'md5-ungz' => 'e7e61e426765db7b1703731d4aac4de5',
+    'md5' => '068bbb96a33607d2836804720d431c5e',
+    'size' => 90671
+  },
+  'Class-Container-0.11.tar.gz' => {
+    'mtime' => '2004-03-04',
+    'md5-ungz' => '7b815e18b6692885a53e6ca245629e0d',
+    'md5' => '57bc137f6e167fab10d7173088157d5e',
+    'size' => 19208
+  },
+  'Cwd-2.17_03.tar.gz' => {
+    'mtime' => '2004-06-23',
+    'md5-ungz' => 'ba3680066ea7be1838e2f2b3eafaf23c',
+    'md5' => '4f3fcda31291912604e4544aa9617251',
+    'size' => 14514
+  },
+  'ExtUtils-ParseXS-2.07.meta' => {
+    'mtime' => '2004-01-25',
+    'md5' => 'd9813a7413f01258386b4105a5a17115',
+    'size' => 463
+  },
+  'Tie-LLHash-0.04.tar.gz' => {
+    'mtime' => '1999-12-02',
+    'md5-ungz' => '101d82c371ad51629d6fd1711a4045fc',
+    'md5' => 'a5c759c62d296fa080ceaf6ee09ea5f7',
+    'size' => 5646
+  },
+  'HTML-SimpleParse-0.11.tar.gz' => {
+    'mtime' => '2003-01-26',
+    'md5-ungz' => '72e05a8e5cb467740d05d8fcb0807a3f',
+    'md5' => '08a5d8cf9a2845add250479786e59f08',
+    'size' => 8154
+  },
+  'Module-Build-0.25.meta' => {
+    'mtime' => '2004-04-25',
+    'md5' => '0f42ebfba926fd303b3f71bd217d583d',
+    'size' => 2763
+  },
+  'Cwd-2.09.meta' => {
+    'mtime' => '2003-12-12',
+    'md5' => '341b5c6567f367d46748b4e43d821b26',
+    'size' => 338
+  },
+  'Cwd-2.20.meta' => {
+    'mtime' => '2004-07-22',
+    'md5' => '700cb99442ace7a373a3634036d7566a',
+    'size' => 398
+  },
+  'File-Spec-0.87_01.tar.gz' => {
+    'mtime' => '2004-06-13',
+    'md5-ungz' => '08ab51cd231dd6d5c9e60c89f33c7feb',
+    'md5' => '9386c42a708332b12bd732975cf2529e',
+    'size' => 32241
+  },
+  'Apache-Compress-1.004.tar.gz' => {
+    'mtime' => '2004-05-13',
+    'md5-ungz' => '423f00af288ebdcb80ed28d637596d0e',
+    'md5' => '477cb159476f22980f39b88da5ac732a',
+    'size' => 12330
+  },
+  'Module-Build-0.21_01.tar.gz' => {
+    'mtime' => '2003-12-17',
+    'md5-ungz' => 'a719f95b326ffbe9157e1e66a2720523',
+    'md5' => '6f57d67c6c29ff25256bdac474dd05db',
+    'size' => 96057
+  },
+  'Module-Build-0.20.tar.gz' => {
+    'mtime' => '2003-08-26',
+    'md5-ungz' => '549bad4204e29cda27508e38974346a1',
+    'md5' => '0a9e596924b9ef35142d085a5ef80294',
+    'size' => 81068
+  },
+  'Math-BaseCalc-1.011.tar.gz' => {
+    'mtime' => '2002-03-10',
+    'md5-ungz' => 'cd7431ca65bf547a924baf1b38546593',
+    'md5' => '0e539a438ff8717f22ab83f9dd113686',
+    'size' => 3706
+  },
+  'Lingua-CollinsParser-0.01.meta' => {
+    'mtime' => '2004-07-20',
+    'md5' => 'de89b56f3a4e1e059dbf83ca2f5f0ec7',
+    'size' => 458
+  },
+  'Tie-TextDir-0.05.tar.gz' => {
+    'mtime' => '2003-07-09',
+    'md5-ungz' => '26b5180d2e836d083738e58a925e1c25',
+    'md5' => 'dbcbf588582e6955aa18e306e2d04a7a',
+    'size' => 4736
+  },
+  'Path-Class-0.03_01.tar.gz' => {
+    'mtime' => '2003-08-01',
+    'md5-ungz' => '84d2b507e56392af3b826751d8c28f9a',
+    'md5' => 'd5531392cd65c9221e21627ef8dab2a2',
+    'size' => 7973
+  },
+  'Cwd-2.19.meta' => {
+    'mtime' => '2004-07-15',
+    'md5' => '9307566c8daba93b4b76e6464a11b2d9',
+    'size' => 398
+  },
+  'HTML-SimpleParse-0.12.tar.gz' => {
+    'mtime' => '2003-07-09',
+    'md5-ungz' => '409fd4c57a6b00d44b8fba0cb8865259',
+    'md5' => 'f557818d78932654f9ca8dfeae2566b1',
+    'size' => 8486
+  },
+  'Lingua-CollinsParser-0.04.meta' => {
+    'mtime' => '2004-08-04',
+    'md5' => '1c56c3eff8534ee183e6242c4851e88c',
+    'size' => 461
+  },
+  'Path-Class-0.02.tar.gz' => {
+    'mtime' => '2003-07-08',
+    'md5-ungz' => '74ffcf1a9d52ee18fdb0dd63bedfdcd0',
+    'md5' => '3df6a11ac89536fdda82d69649194bc7',
+    'size' => 7105
+  },
+  'AI-Categorizer-0.06.meta' => {
+    'mtime' => '2003-04-22',
+    'md5' => 'e8fe3a8f8c2cb8aaf524f98c1e7a4684',
+    'size' => 3439
+  },
+  'Module-Build-0.25_02.tar.gz' => {
+    'mtime' => '2004-07-25',
+    'md5-ungz' => '6a252d95945713d4af1a24abd6f414fc',
+    'md5' => 'd82e0be4b4a74a5092a7a0c78d6eda0c',
+    'size' => 114124
+  },
+  'Cwd-2.17.meta' => {
+    'mtime' => '2004-03-10',
+    'md5' => 'd57d96f044488d7a6d97271db84a6383',
+    'size' => 380
+  },
+  'AI-Categorizer-0.07.meta' => {
+    'mtime' => '2003-04-22',
+    'md5' => 'e8fe3a8f8c2cb8aaf524f98c1e7a4684',
+    'size' => 3439
+  },
+  'Cwd-2.18.tar.gz' => {
+    'mtime' => '2004-06-24',
+    'md5-ungz' => '214c5a24306b98fdb7c06c83f1e6e5c5',
+    'md5' => 'b026324c6904b2a9cb4b88d6d61c81d1',
+    'size' => 2
+  },
+  'Image-Timeline-0.11.meta' => {
+    'mtime' => '2004-02-26',
+    'md5' => '77596c05452b6bfbecea32af5e42c3bc',
+    'size' => 329
+  },
+  'Module-Build-0.19_04.tar.gz' => {
+    'mtime' => '2003-08-01',
+    'md5-ungz' => '0371a23a1eff1f0eb04add9955096d9f',
+    'md5' => '4d76aa3d09267e38b5525eaee6aabd56',
+    'size' => 78577
+  },
+  'Image-Timeline-0.09.meta' => {
+    'mtime' => '2004-02-24',
+    'md5' => '96d27d0e750fff49460e0be9d8ab9c8d',
+    'size' => 329
+  },
+  'ExtUtils-CBuilder-0.00_02.tar.gz' => {
+    'mtime' => '2003-12-04',
+    'md5-ungz' => '749fe40e901d23209967991fb7d04adc',
+    'md5' => '12da14d3e7bdbc03e84d53f4eb6dfc00',
+    'size' => 7536
+  },
+  'Cwd-2.19.tar.gz' => {
+    'mtime' => '2004-07-15',
+    'md5-ungz' => '2218d61c6e6f670a104b85a8bce8c84f',
+    'md5' => '53300676efc818ebc70060e23a899897',
+    'size' => 15492
+  },
+  'Path-Class-0.05.meta' => {
+    'mtime' => '2004-01-20',
+    'md5' => 'e597e8966d8269767fc8bfb31a75027e',
+    'size' => 607
+  },
+  'Cwd-2.16.meta' => {
+    'mtime' => '2004-03-07',
+    'md5' => 'b4e9b13aa82edca4880a971043f088c7',
+    'size' => 380
+  },
+  'Cwd-2.14.meta' => {
+    'mtime' => '2004-01-09',
+    'md5' => '08d8e6854df0510c5734ae2fa374f540',
+    'size' => 508
+  },
+  'Module-Build-0.25.tar.gz' => {
+    'mtime' => '2004-04-25',
+    'md5-ungz' => 'f26d788c5ec8b68ad359c41da2905c02',
+    'md5' => 'fbcf9fcbd1de321eb781ee8271bffd73',
+    'size' => 105336
+  },
+  'Cwd-2.11.meta' => {
+    'mtime' => '2003-12-15',
+    'md5' => 'aac82e9f714c1de0e7495a4c933940a4',
+    'size' => 338
+  },
+  'File-Spec-0.84.meta' => {
+    'mtime' => '2003-07-10',
+    'md5' => '1afdd83d88e3183871fb5efb9a141058',
+    'size' => 820
+  },
+  'Algorithm-NaiveBayes-0.02.meta' => {
+    'mtime' => '2003-03-19',
+    'md5' => '453efaf8cac12df41014fbf6443879e9',
+    'size' => 197
+  },
+  'Module-Build-0.21.tar.gz' => {
+    'mtime' => '2003-10-16',
+    'md5-ungz' => '8ee04c92acead74e9470dc6a6f4141a3',
+    'md5' => '3b9b9f5ea58d6a8250737555aa8b6caf',
+    'size' => 92982
+  },
+  'Lingua-CollinsParser-0.02.meta' => {
+    'mtime' => '2004-07-22',
+    'md5' => '674594e83da18e153caf5c9569b34b50',
+    'size' => 458
+  },
+  'Statistics-Contingency-0.06.tar.gz' => {
+    'mtime' => '2003-02-08',
+    'md5-ungz' => 'a4a60c6d52485e7b2653ca31d652d754',
+    'md5' => '270d65583f053b078af90359011fb5c9',
+    'size' => 7213
+  },
+  'Algorithm-NaiveBayes-0.01.tar.gz' => {
+    'mtime' => '2003-03-19',
+    'md5-ungz' => 'cf9da7f7b06ebd3a4c647464664f1f9e',
+    'md5' => 'fbffdfbf3b9e1f19deb3c9d284d46162',
+    'size' => 5313
+  },
+  'HTML-SimpleParse-0.12.meta' => {
+    'mtime' => '2003-07-09',
+    'md5' => 'b5e8002b35714da2042c863d5438b2d9',
+    'size' => 279
+  },
+  'Crypt-SKey-0.04.tar.gz' => {
+    'mtime' => '2002-08-30',
+    'md5-ungz' => '5c0d3b175acd0ebd4c3df09e09db5d48',
+    'md5' => '6c0524d4016323e7288e0ecf095b27da',
+    'size' => 11392
+  },
+  'Cwd-2.18_01.tar.gz' => {
+    'mtime' => '2004-07-04',
+    'md5-ungz' => '643176ee8f12ab4c525bcd5f3d40a395',
+    'md5' => 'fa97839f3b6924dd1ff70da79a3cecac',
+    'size' => 14667
+  },
+  'Algorithm-NaiveBayes-0.03.tar.gz' => {
+    'mtime' => '2004-05-18',
+    'md5-ungz' => '6761797d8679cd1037e5c8528296df31',
+    'md5' => '7a6507570d490ba6c1c5b8910d624f5c',
+    'size' => 7385
+  },
+  'Lingua-CollinsParser-0.03.tar.gz' => {
+    'mtime' => '2004-08-02',
+    'md5-ungz' => 'e2315d93ab67daba4d5e0dde7b50ed21',
+    'md5' => '6e4bd482142d917b3bf1b6157722412c',
+    'size' => 12390
+  },
+  'Module-Build-0.24.tar.gz' => {
+    'mtime' => '2004-02-25',
+    'md5-ungz' => '8c90adb174ee151ab2e1e0b6908f5e60',
+    'md5' => '4c975674c78c5eb6fd4e18bed589b9fb',
+    'size' => 102608
+  },
+  'Module-Build-0.25_01.tar.gz' => {
+    'mtime' => '2004-06-02',
+    'md5-ungz' => 'b6732e2443033d9565efc166eba3f3ca',
+    'md5' => 'a688c1ab05fcb5d5011cee44f6de92fa',
+    'size' => 108910
+  },
+  'Taco-0.04.tar.gz' => {
+    'mtime' => '1998-08-13',
+    'md5-ungz' => 'e5ecd0ac76512f08cf167b65241bf512',
+    'md5' => 'fd0ac1d70623533ede872343a33db8a0',
+    'size' => 29988
+  },
+  'Module-Build-0.20.meta' => {
+    'mtime' => '2003-08-26',
+    'md5' => '3e0f7099167881d7f46cd570a3f3b2dc',
+    'size' => 1954
+  },
+  'Cwd-2.20.tar.gz' => {
+    'mtime' => '2004-07-22',
+    'md5-ungz' => '9076bbfb7679e2736b3f3e206329c5ea',
+    'md5' => '62723463a36fde5f0fcbc505ca9784e0',
+    'size' => 16069
+  },
+  'Module-Build-0.18_01.tar.gz' => {
+    'mtime' => '2003-05-22',
+    'md5-ungz' => '84428e371478d6c2416e764ac43a24a9',
+    'md5' => 'c861c2e93b6ce106a44b9df54aa0a9a4',
+    'size' => 69342
+  },
+  'Image-Timeline-0.11.tar.gz' => {
+    'mtime' => '2004-02-26',
+    'md5-ungz' => 'e2c022d84508604e0b0634783853632c',
+    'md5' => 'f4b55f8f383f3e10f8de61713e2a821f',
+    'size' => 16137
+  },
+  'Cwd-2.08.meta' => {
+    'mtime' => '2003-09-28',
+    'md5' => '6c5dbab81dc909882cb3fbc81ba4d94f',
+    'size' => 319
+  },
+  'Cwd-2.17_02.tar.gz' => {
+    'mtime' => '2004-06-13',
+    'md5-ungz' => '6b82652c57cb98d2e30c23b554d611c5',
+    'md5' => 'cc337a9af1116fbf19e07981e9a36ed3',
+    'size' => 14443
+  },
+  'Lingua-CollinsParser-0.04.tar.gz' => {
+    'mtime' => '2004-08-04',
+    'md5-ungz' => '1db1575f24f38e497f12a208afd8b014',
+    'md5' => 'cc1796688d7e539c498e93d8cbee1e2b',
+    'size' => 12451
+  },
+  'File-Spec-0.90.tar.gz' => {
+    'mtime' => '2004-09-01',
+    'md5-ungz' => '40af4c60de91eb616e3b9c3790101071',
+    'md5' => '7b8d2c4db438ded45f78f79ee7562909',
+    'size' => 33064
+  },
+  'Path-Class-0.06.tar.gz' => {
+    'mtime' => '2004-04-17',
+    'md5-ungz' => '0758661ff62c7261fe3efe1b82542e54',
+    'md5' => '9ee1c112226035144b83fb7baef90832',
+    'size' => 9615
+  },
+  'Algorithm-NaiveBayes-0.02.tar.gz' => {
+    'mtime' => '2003-05-23',
+    'md5-ungz' => 'b34c60c5e68eabd337ae4e024544ae9b',
+    'md5' => '3477830a254449a26c5eb3e4c85b0054',
+    'size' => 6603
+  },
+  'ExtUtils-ParseXS-2.07.tar.gz' => {
+    'mtime' => '2004-01-25',
+    'md5-ungz' => '970df5a83e753023a0d1a465b15e897b',
+    'md5' => 'eafc31b06c764ab89768d94b11984f84',
+    'size' => 22040
+  },
+  'Cwd-2.16.tar.gz' => {
+    'mtime' => '2004-03-07',
+    'md5-ungz' => 'ba9ad8666f138c341f46ffa218c5f851',
+    'md5' => '62141b8f8fdfbfe5cabd6f710abbbc7a',
+    'size' => 12935
+  },
+  'Lingua-CollinsParser-0.02.tar.gz' => {
+    'mtime' => '2004-07-22',
+    'md5-ungz' => '53a48a0e7ef45d537f5331dadaf3417c',
+    'md5' => 'be2d1ff11e5e98dc3a63ce5f42e004c1',
+    'size' => 11561
+  },
+  'Math-BaseCalc-1.009.tar.gz' => {
+    'mtime' => '2001-03-30',
+    'md5-ungz' => 'c46131ae7055e7169b8dc6e38475b904',
+    'md5' => 'c5f7a687a40f7427dac55aad7c387027',
+    'size' => 4142
+  },
+  'Module-Build-0.18.meta' => {
+    'mtime' => '2003-04-08',
+    'md5' => 'cdd5eca92e77da712e7f3ba3cacd12be',
+    'size' => 2065
+  },
+  'File-Spec-0.87_02.tar.gz' => {
+    'mtime' => '2004-07-21',
+    'md5-ungz' => '6017efa33ce67fdf7623dba7e92c1fbb',
+    'md5' => 'e5bcc2d4e647724f65c1fb7e873a9bf2',
+    'size' => 32258
+  },
+  'PathTools-3.01.meta' => {
+    'mtime' => '2004-09-07',
+    'md5' => 'd7d1b156c7d671f0f300102069431996',
+    'size' => 1039
+  },
+  'Tie-TextDir-0.06.meta' => {
+    'mtime' => '2003-09-09',
+    'md5' => '27dddb589d78605ca93bf49f20c1e20f',
+    'size' => 325
+  },
+  'Crypt-SKey-0.05.tar.gz' => {
+    'mtime' => '2002-12-15',
+    'md5-ungz' => '723b61e9351f55c0eb4da0e01eba681b',
+    'md5' => '3d6f0266fa16e92abf62fa4c31a4d0f1',
+    'size' => 11521
+  },
+  'Cwd-2.08.tar.gz' => {
+    'mtime' => '2003-10-16',
+    'md5-ungz' => 'd2b9ac61a137d0b28f1dbe93667d590f',
+    'md5' => 'e6aee449d4ab95e162874fb590630006',
+    'size' => 10776
+  },
+  'Cwd-2.11.tar.gz' => {
+    'mtime' => '2003-12-15',
+    'md5-ungz' => '91ba0b26801dd4dec6246deaa35f8dce',
+    'md5' => '8b736303763edbe61945670f5b667c47',
+    'size' => 12149
+  },
+  'Cwd-2.18.meta' => {
+    'mtime' => '2004-06-24',
+    'md5' => 'c93247a121d6970b691a16c51dd0aace',
+    'size' => 398
+  },
+  'ExtUtils-ParseXS-2.08.meta' => {
+    'mtime' => '2004-02-21',
+    'md5' => '69823ec4e10040f92ae4d2519aac3c09',
+    'size' => 463
+  },
+  'Path-Class-0.07.tar.gz' => {
+    'mtime' => '2004-07-01',
+    'md5-ungz' => '602eb1e86d710acfe2bfa4b161093427',
+    'md5' => '295904ab2fb1d80d80310aa7e368371c',
+    'size' => 10649
+  },
+  'Image-Timeline-0.08.tar.gz' => {
+    'mtime' => '2003-07-09',
+    'md5-ungz' => '749eb6a4f58a1c93124d0c4804c34c3d',
+    'md5' => '03c2650e89f4d8b6ded36dcd341e57cf',
+    'size' => 14375
+  },
+  'Cwd-2.21.meta' => {
+    'mtime' => '2004-09-01',
+    'md5' => '0ff344cf22890363c726e325869a5cf7',
+    'size' => 398
+  },
+  'Lingua-CollinsParser-0.03.meta' => {
+    'mtime' => '2004-08-02',
+    'md5' => 'acbc96caccffc1c02a163599a20065d8',
+    'size' => 461
+  },
+  'PDL-Sparse-0.01.tar.gz' => {
+    'mtime' => '2002-06-10',
+    'md5-ungz' => 'fef37759fd33566e2b2de11c2d8219e4',
+    'md5' => '2df19ca69e1de3d8daef632ce01a2cd2',
+    'size' => 5834
+  },
+  'Apache-Compress-1.004.meta' => {
+    'mtime' => '2004-05-13',
+    'md5' => '91e9d0c56ea0578bfbb80c83c0fbf351',
+    'size' => 378
+  },
+  'AI-DecisionTree-0.07.tar.gz' => {
+    'mtime' => '2003-06-06',
+    'md5-ungz' => '0e4af0bbb83ab347e76f850833daa5ae',
+    'md5' => '019383de1f566235af6fe6e119d232e4',
+    'size' => 25387
+  },
+  'Path-Class-0.04.meta' => {
+    'mtime' => '2004-01-02',
+    'md5' => '35b2a184e34a9a9634958dfc2642229b',
+    'size' => 531
+  },
+  'Path-Class-0.03.tar.gz' => {
+    'mtime' => '2003-07-09',
+    'md5-ungz' => '7c77d15e3cd9f73d1d289b7bbe9f470a',
+    'md5' => 'df1d1b53bca60c8023848005bbac0699',
+    'size' => 7521
+  },
+  'ExtUtils-ParseXS-2.06.tar.gz' => {
+    'mtime' => '2003-12-26',
+    'md5-ungz' => 'e7009920121953dfccf40a82907a7b89',
+    'md5' => '81c5190fbf8aac4afe306bcd8d5fe696',
+    'size' => 23710
+  },
+  'ExtUtils-ParseXS-2.06.meta' => {
+    'mtime' => '2003-12-26',
+    'md5' => '2f47a07e425af59f1beb11480650aad4',
+    'size' => 501
+  },
+  'File-Spec-0.89.tar.gz' => {
+    'mtime' => '2004-08-30',
+    'md5-ungz' => '71af264c5e9e8ef236b0b0d7590d57ff',
+    'md5' => '8b326770a0cda92aa9b35e7783d4b8b8',
+    'size' => 32913
+  },
+  'Lingua-CollinsParser-0.01.tar.gz' => {
+    'mtime' => '2004-07-20',
+    'md5-ungz' => 'eff2763c0017b9c72928f396a38097d3',
+    'md5' => '8b8d8de56d6316b29062adc9d287fc96',
+    'size' => 11558
+  },
+  'Class-Container-0.09.tar.gz' => {
+    'mtime' => '2003-02-10',
+    'md5-ungz' => '35220fe19394c8c2d8166b06cc3b363c',
+    'md5' => '55e2e16ad5fd6616a5a1853627761656',
+    'size' => 18143
+  },
+  'Apache-Compress-1.002.tar.gz' => {
+    'mtime' => '2000-08-22',
+    'md5-ungz' => 'eb3fc2b50230ba88c754c612a331011f',
+    'md5' => '7fef7de82d46083a1b0f2ea1492d2faf',
+    'size' => 10708
+  },
+  'Cwd-2.14.tar.gz' => {
+    'mtime' => '2004-01-09',
+    'md5-ungz' => 'ba3980cd8c27a126a54c60614918946d',
+    'md5' => '191608f7b0679ee2653c2a4825fa6e4e',
+    'size' => 12513
+  },
+  'ExtUtils-ParseXS-2.02.tar.gz' => {
+    'mtime' => '2003-03-31',
+    'md5-ungz' => '0d98a494efecede38e7072f228a66051',
+    'md5' => 'f9f2b373789e91d673ed85654df3ea2b',
+    'size' => 22037
+  },
+  'Path-Class-0.07.meta' => {
+    'mtime' => '2004-07-01',
+    'md5' => '913578e147794ccac6ac62826c4f1cc2',
+    'size' => 562
+  },
+  'ExtUtils-CBuilder-0.01.tar.gz' => {
+    'mtime' => '2004-01-12',
+    'md5-ungz' => 'bc8d76f09e3c6c6f08cd6faa252dd000',
+    'md5' => 'e318cf8a2f53a11091bb535283818dcc',
+    'size' => 10248
+  },
+  'Apache-Filter-1.022.tar.gz' => {
+    'mtime' => '2003-01-31',
+    'md5-ungz' => '972865ad82c3f8ed458b898613748def',
+    'md5' => 'f2aa0a85081c28d6d86a14773149ebc5',
+    'size' => 26259
+  },
+  'File-Spec-0.84_01.tar.gz' => {
+    'mtime' => '2003-07-11',
+    'md5-ungz' => '7c23e78ad605a66afff8d4a0e0a2cc59',
+    'md5' => '291926f1041f9be192e244eb6d3d47a3',
+    'size' => 28220
+  },
+  'Module-Build-0.18_03.tar.gz' => {
+    'mtime' => '2003-07-01',
+    'md5-ungz' => '7b96125f65cb7a30459d87fa1be6aec0',
+    'md5' => 'a225922db012688fb16f3ad3850ac048',
+    'size' => 73797
+  },
+  'ExtUtils-ParseXS-2.08.tar.gz' => {
+    'mtime' => '2004-02-21',
+    'md5-ungz' => 'c1029507e09ff85ecad53a6ad3eca16a',
+    'md5' => '96a63d75e5ff2e2665ee97370690068a',
+    'size' => 22220
+  },
+  'Tie-LLHash-1.003.meta' => {
+    'mtime' => '2004-03-13',
+    'md5' => '718ae1e654e4909798b9fd6e0283ee23',
+    'size' => 297
+  },
+  'AI-DecisionTree-0.08.tar.gz' => {
+    'mtime' => '2003-07-07',
+    'md5-ungz' => '91ffc0532d014026a9f9313b1b23f3fc',
+    'md5' => 'eaed56886a22506b8ed5f6dab88e7060',
+    'size' => 25662
+  },
+  'Module-Build-0.23.tar.gz' => {
+    'mtime' => '2004-02-09',
+    'md5-ungz' => '5918731783144965d6a40c0145002d93',
+    'md5' => '712d8c3be8afda673acdf83bc82af4b9',
+    'size' => 100214
+  },
+  'Cwd-2.12.meta' => {
+    'mtime' => '2003-12-19',
+    'md5' => '2b23b5d2d43c79b11f43be0517103977',
+    'size' => 338
+  },
+  'Module-Build-0.18_04.tar.gz' => {
+    'mtime' => '2003-07-03',
+    'md5-ungz' => 'ae86ddf04cd55a59b3818db79983df39',
+    'md5' => '215e960d302925f65f26dd331b352349',
+    'size' => 73961
+  },
+  'Cwd-2.15.meta' => {
+    'mtime' => '2004-01-16',
+    'md5' => 'ee7e03e2106fe8b5c13274cd3be53241',
+    'size' => 508
+  },
+  'Apache-SSI-2.17.tar.gz' => {
+    'mtime' => '2002-01-14',
+    'md5-ungz' => 'dff305fd96d77deeabede72e6807b9ed',
+    'md5' => 'b229a3a25a82935cad2da1af637714be',
+    'size' => 25819
+  },
+  'Apache-AuthCookie-2.011.tar.gz' => {
+    'mtime' => '2000-06-17',
+    'md5-ungz' => 'be534ba753bf5fa022a7dcd13db72a6a',
+    'md5' => 'b4617ac3ed237e2ae5123e9c7756fc82',
+    'size' => 18530
+  },
+  'Cwd-2.17.tar.gz' => {
+    'mtime' => '2004-03-10',
+    'md5-ungz' => '4581ad0c892e5d9d7c7ca50497401bac',
+    'md5' => '4b0e74afb7d76cf9af7d7957d90fc7ca',
+    'size' => 13166
+  },
+  'Cwd-2.09.tar.gz' => {
+    'mtime' => '2003-12-12',
+    'md5-ungz' => '4c2470aa2d12c1c100ca7ce9ca83856d',
+    'md5' => 'dbd2cbfa51df2ae5c0ba8887124e0399',
+    'size' => 12026
+  },
+  'Module-Build-0.24_01.tar.gz' => {
+    'mtime' => '2004-04-14',
+    'md5-ungz' => '4926825859b56b3c7095d5de2fb4b115',
+    'md5' => 'be26e0d8f2c66f90262bfde5a09c0d1b',
+    'size' => 102519
+  },
+  'Module-Build-0.22.tar.gz' => {
+    'mtime' => '2004-01-11',
+    'md5-ungz' => '306599d500ecb191073ba53fa4babc06',
+    'md5' => 'a788154750c657d01c0bf97d72e787e2',
+    'size' => 98397
+  },
+  'File-Spec-0.85_02.tar.gz' => {
+    'mtime' => '2003-09-12',
+    'md5-ungz' => '01b5bd8067a5bb446fcd1b2a42814bd4',
+    'md5' => '59ee4532d8d2944440979255642fceeb',
+    'size' => 31148
+  },
+  'Cwd-2.13.tar.gz' => {
+    'mtime' => '2004-01-03',
+    'md5-ungz' => '80dd9cd2ccca02f05ce9ba221ecd785f',
+    'md5' => '448d040d0eb81b2affd38cac21529eec',
+    'size' => 12367
+  },
+  'Module-Build-0.23.meta' => {
+    'mtime' => '2004-02-09',
+    'md5' => '95bcfc520f11da65b3c88a6549557d92',
+    'size' => 2313
+  },
+  'ExtUtils-ParseXS-2.04.tar.gz' => {
+    'mtime' => '2003-09-04',
+    'md5-ungz' => '754b8e37a97db038713c2d00704567af',
+    'md5' => 'ab8c4d81c46dc7ff170df3f8dcddd14f',
+    'size' => 22451
+  },
+  'Class-Container-0.11.meta' => {
+    'mtime' => '2004-03-04',
+    'md5' => 'dbb0d2868ce4df41b0f9bcecebb1a4b0',
+    'size' => 590
+  },
+  'Module-Build-0.20_01.tar.gz' => {
+    'mtime' => '2003-09-09',
+    'md5-ungz' => 'c6249fd0ce59c609a7c2b9b8a7def8f6',
+    'md5' => '45448167182233db76d460b092b64dd0',
+    'size' => 84462
+  },
+  'Apache-Filter-1.021.tar.gz' => {
+    'mtime' => '2002-12-27',
+    'md5-ungz' => '377442a283902aed5a1bd40e6cf07abc',
+    'md5' => '443a104b72f00ae9420157b9c597b242',
+    'size' => 25422
+  },
+  'Algorithm-NaiveBayes-0.03.meta' => {
+    'mtime' => '2004-05-18',
+    'md5' => 'de30dc4f723a9afadff4fa269f62f527',
+    'size' => 676
+  },
+  'Cwd-2.15.tar.gz' => {
+    'mtime' => '2004-01-16',
+    'md5-ungz' => '68ba1edcd34c32dfa0e6e0b1b195fdfa',
+    'md5' => 'b2a4aaa86413c5cb52686b14e9ff4ae3',
+    'size' => 12877
+  },
+  'File-Spec-0.88.tar.gz' => {
+    'mtime' => '2004-07-23',
+    'md5-ungz' => 'dbd76dcb1fd0ee87749df3ed081c221b',
+    'md5' => '20b5a6894762d9eda7ba631515f8bbb3',
+    'size' => 32371
+  },
+  'Tie-LLHash-1.003.tar.gz' => {
+    'mtime' => '2004-03-13',
+    'md5-ungz' => '13fcc40aad72d2f678404778dd5cbd93',
+    'md5' => 'b5890351e3e4a1eab89267d9aa410147',
+    'size' => 5983
+  },
+  'File-Spec-0.90.meta' => {
+    'mtime' => '2004-09-01',
+    'md5' => 'a0c4c646e5240c4d91fc2ddcc1faea2b',
+    'size' => 914
+  },
+  'ExtUtils-CBuilder-0.03.meta' => {
+    'mtime' => '2004-05-15',
+    'md5' => 'db33cb6c6254a4f1c7d1968c27bd33cb',
+    'size' => 1361
+  },
+  'Module-Build-0.18_02.tar.gz' => {
+    'mtime' => '2003-06-03',
+    'md5-ungz' => '7e2ae515bdbe51fcffc104cca761fe48',
+    'md5' => '648f7e846743210e289c41207effc374',
+    'size' => 69838
+  },
+  'Module-Build-0.22.meta' => {
+    'mtime' => '2004-01-11',
+    'md5' => 'db5e416c3bc447943713f832ba5b90f4',
+    'size' => 2327
+  },
+  'Cwd-2.17_01.tar.gz' => {
+    'mtime' => '2004-06-13',
+    'md5-ungz' => '3a8587296307ab1a7aa1823fd2bad09a',
+    'md5' => '618c7742028d731ecd5e2b72d79f5515',
+    'size' => 14268
+  },
+  'Path-Class-0.04.tar.gz' => {
+    'mtime' => '2004-01-02',
+    'md5-ungz' => '277b93f495c9a60b74fc529791e31f92',
+    'md5' => 'ced1498cc6c8dfc1a2f02c37ad3bae12',
+    'size' => 8734
+  },
+  'Image-Timeline-0.07.tar.gz' => {
+    'mtime' => '2003-07-08',
+    'md5-ungz' => '56f72017ae090e630f975f169ad24ed5',
+    'md5' => 'ceb45f95b9084b1c470d271607cd42f9',
+    'size' => 14271
+  },
+  'PathTools-3.00.tar.gz' => {
+    'mtime' => '2004-09-03',
+    'md5-ungz' => 'a8b1fb7aa478512af2274723f1f3b9ec',
+    'md5' => 'cb9f9a575a02f7694105aec9471196c6',
+    'size' => 48596
+  },
+  'ExtUtils-CBuilder-0.00_03.tar.gz' => {
+    'mtime' => '2004-01-10',
+    'md5-ungz' => '36eb78858515606ad56999c99b333690',
+    'md5' => '765e245b8463b62c2dafb736264b0005',
+    'size' => 10303
+  },
+  'Algorithm-NaiveBayes-0.02_01.tar.gz' => {
+    'mtime' => '2003-09-27',
+    'md5-ungz' => '536f5608a279e119723cfd4172634d9e',
+    'md5' => 'b0d09696095467a3815ac6a7afb53a94',
+    'size' => 6782
+  },
+  'File-Spec-0.85_01.tar.gz' => {
+    'mtime' => '2003-09-11',
+    'md5-ungz' => '464bf2025252190c09892f41cb53d231',
+    'md5' => '8ecd0ea8dbf303d49a9b375d50cb056a',
+    'size' => 29455
+  },
+  'File-Spec-0.85.meta' => {
+    'mtime' => '2003-07-22',
+    'md5' => '82d561f78c06e71082e24155fb4b73ec',
+    'size' => 869
+  }
+};
+__END__
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.2.3 (GNU/Linux)
+
+iD8DBQFBPT+/Mo2oZ0UPiewRAmROAKCg3dhTlbRcuN/FRF9bF0SQKZhkLwCfRCZP
+kCDnK/eDmwLFqDyyMSC0OIs=
+=PO64
+-----END PGP SIGNATURE-----

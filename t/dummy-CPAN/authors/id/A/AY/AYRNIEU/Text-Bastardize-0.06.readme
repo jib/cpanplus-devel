@@ -1,0 +1,6 @@
+	Text::Bastardize 0.06  -  Mon May 10 20:08:13 1999
+	by Julian Fondren (julian@imaji.net), or ayrnieu of EFnet IRC.
+
+To install type:
+	perl Makefile.PL
+	make install

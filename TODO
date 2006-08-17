@@ -1,0 +1,63 @@
+### cpanplus 0.050_01 release requirements ###
+* use extutils::autoinstall to fetch chosen prereqs in makefile.pl
+    EU::AI doesn't support cpanplus' own new api yet, so it's not
+    feasible to have EU::AI install prereqs. bundle them for now.
+    * compat API added to CPANPLUS, but we still have a bootstrap issue
+      without some of these prereqs, so keep bundling anyway
+   
+   
+### todo code marks things that are present in 0.04x but not in 0.05x yet
+### wishlist is new features we want to add
+
+### TODO ###
+
+### installing ###
+* Support autobundle installation
+    low priority for now
+
+### testing ###
+* Perhaps add a check where one can't send out a certain report
+    more than once?
+    * depends on how long it takes for testers.cpan.org to pick
+        it up
+* Improve test coverage
+* offer module authors a way to include debugging output from 'make test'
+    with the automated reporting system
+    * POE and Test::Reporter both create extra debugging information on disk
+* skip t/20's install tests if PERL_CORE is set, to facilitate perl core
+    inclusion (mostly to compensate for the guesswork during makefile.pl)
+
+### UI ###
+* For the default shell, let 'h' show a help list, and '?' more details on
+  a specific command
+    - the syntax is supported now, but the help isn't written yet.
+* Conditional pager opens?
+* let 'o' take regexes. current workaround: m re*; o *;
+
+
+### dists ###
+* Dist::RPM, ::PPM, ::Ports, etc
+* We just split out 'create' into prepare & create
+    * stresstest (another beta release?)
+
+
+### WISHLIST ###
+* Version check on startup
+* Self update
+    - Acme::SoftwareUpdate?
+* Check if a module already exists in the package manager of choice?
+* Periodic host checking (see if they're still good mirrors)
+* Make error stack reports available on a per-module (dist) basis,
+    as discussed in '[Cpanplus-devel] error stack reporting a bit overzealous'
+* Test reports should only contain texts of the module they pertain to, 
+    rather than all modules in the current loop (like i 1..10 from the shell)
+    also reported as ticket [#11404]
+
+
+### ISSUES ###
+* Figure out what the best way is to check 'uptodateness' for modules,
+    especially because M::B version ranges are different from EU::MM
+    - perhaps use version.pm?
+        * yes, ping jpeacock
+    - use M::B?
+    - use M::L::Conditional?

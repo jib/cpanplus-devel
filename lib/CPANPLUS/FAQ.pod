@@ -1,0 +1,14 @@
+=pod
+
+=head1 NAME
+
+CPANPLUS::FAQ
+
+=head1 DESCRIPTION
+
+This document attempts to provide answers to commonly asked questions.
+
+    XXX Work in progress
+
+=cut
+

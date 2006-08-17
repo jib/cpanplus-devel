@@ -1,0 +1,545 @@
+Changes for 0.073_01    Wed Aug  2 15:40:38 CEST 2006
+=====================================================
+
+*   'install Bundle::CPANPLUS::Dependencies' should
+    now work properly from cpanp-boxed, even without
+    a --force option
+*   Up requirements to more recent versions of among
+    others Archive::Extract, CPANPLUS::Dist::Build,
+    File::Fetch & Module::Load::Conditional.
+*   Update bundled modules for cpanp-boxed
+*   Don't change versions of bundled modules, this 
+    breaks 'use Foo 1.0' statements in our dependencies
+    Uptodate check is now done with a new feature in
+    Module::Load::Conditional that can check %INC.
+*   Rework cpanp-boxed to deal better with bundled
+    modules and their uptodateness
+*   Move module::pluggable code to runtime rather than 
+    compiletime this makes 'require CPANPLUS' not run 
+    around the FS looking for config files until they 
+    are needed
+*   Address #20737 (Failed to Setup CLI Programs with 
+    Arguments) where the interactive configuration
+    wouldn't let you specify options to CLI programs
+*   Address #20640: Always Sent 'pass' Report With 
+    'force' => 1. Test reports are now marked as 
+    'fail' when they fail, even when 'force' is true.
+    *   sent mail to module-build@perl.org with the 
+        patch for C::D::Build to have the same behaviour
+    
+Changes for 0.072       Fri Jun 23 18:17:00 CEST 2006
+=====================================================
+
+*   This is a major release of CPANPLUS. It includes
+    all the changes from release 0.070_01, including
+    the following changes made after the beta was
+    released:
+*   The POD text of CPANPLUS.pm has been revamped to
+    be more of a guide than a technical reference.
+*   $module->status is now lazily initialized, lowering
+    overall RAM usage and startup time at the cost of
+    a runtime penalty. Overall, this improves performance
+    significantly.
+*   Address #20005: CPANPLUS does not check size of 
+    downloaded module this adds code that checks if 
+    the downloaded size is equal to the size specified 
+    by the checksums file
+*   Fix file fetching testing issue on Win32 (#18702)
+
+Changes for 0.070_01    Mon Jun 19 17:23:38 CEST 2006
+=====================================================
+*   This is a major beta release of CPANPLUS, revamping 
+    the configuration mechanism. From now on, CPANPLUS 
+    no longer requires a setup to be run at installation
+    time and should work 'out of the box' on most 
+    systems using a pre-built configuration file.
+*   CPANPLUS now supports stacked configuration files:
+    *   CPANPLUS::Config is the heuristic config file
+        which will always be installed sytemwide.
+    *   CPANPLUS::Config::System is the systemwide
+        config file which can be installed by an admin
+        in your perl installation path. This file will
+        be available for everyone and override settings
+        from CPANPLUS::Config
+    *   CPANPLUS::Config::User is the per-user config
+        which can be installed by any user in their
+        $HOME/.cpanplus directory. This file will be
+        available for the user only and override settings 
+        from CPANPLUS::Config and CPANPLUS::Config::System
+    *   $HOME/.cpanplus/lib gets added automatically to your
+        config search path.
+    *   All configuration types can be created and saved
+        via the interactive Setup. You can invoke it from
+        the default shell as follows:
+        
+        CPAN Terminal> s conf user      # per user config
+        CPAN Terminal> s conf system    # system wide config
+        
+        or during installation time like this:
+        
+        $ perl Makefile.PL --setup  
+*   Makefile.PL has been stripped from all it's magic    
+*   Setup is now menu based for a better user experience.    
+*   make loading plugin configs work, with priority 
+    for system & user configs before the rest
+*   address #19438: Key 'file' is of invalid type
+    Turns out it's a bug in Module::Build, reported as 
+    #19741, which creates a 'Build' file when running
+    'perl Makefile.PL' on a M::B generated Makefile.PL
+    Add a patch that detects this situation and informs 
+    the user
+*   Demand Test::Harness 2.62 to be installed due to 
+    bug #19505 in earlier versions
+*   IPC::Run is now required for Win32 & Cygwin
+*   use $Config{path_ext} instead of hardcoded ':' to 
+    seperate $PATH in cpanp-boxed
+*   Small test changes in 20.t to make sure no test output
+    counter mismatches occur.
+*   remove all 'clever' code from CPANPLUS::inc, as the
+    new config methodology makes it obsolete. Basic 
+    functionality is retained only for backwards compat.
+*   remove CPANPLUS config version checks back and forth 
+    -- should work without from now on
+*   make cpanp-boxed work from others dirs than just bin/..
+*   make use of package::constants
+*   Make sure Bundle-Foo.tgz also gets recognized as bundle
+*   Data::Dumper indenting style set to '1' in default shell
+*   make constants for libdir etc accept a list, not just 
+    a single param
+*   address #19738: bogus entry in @INC
+*   address: #18270: cpan2dist --archive breaks with 
+    relative path    
+*   address #18121: invalid value for 'checksum_value'
+    which showed that old .stored files can mess up CPANPLUS
+    untill they are rebuilt. From now on, Makefile.PL will
+    delete old .stored files when installing a new version
+*   mark all the versions of inc/ modules as -1, so we
+    are always 'not uptodate' when asked to install them
+*   remove old api that lets you set values in configure 
+    object via backend->new or configure->new, which was
+    impractical and unused.
+*   updated our bugreporting address to point at the
+    rt.cpan.org queue.
+*   Clean up source tree from obsolete files
+*   Have 'make clean' clean up all the generated files
+
+     
+
+    
+
+Changes for 0.061       Wed Mar 15 16:09:03 CET 2006
+=====================================================
+
+*   The template for the original configuration got shipped
+    with a few default values that will not work on every
+    system. Anyone who manually configures should not be
+    affected, but the automated configuration may draw
+    the wrong conclusion.
+    For safetey sake, and to minimize possible issues for
+    users, this release ships a template with sensible
+    cross-platform defaults again
+
+Changes for 0.060       Fri Mar 10 17:19:06 CET 2006
+=====================================================
+
+*   This is a major release of CPANPLUS, supporting
+    3rd party package creation and shell plugins
+*   include bin/cpanp-boxed for a bootstrapped version of cpanp;
+    this allows you to use cpanp without configuring/installing
+    anything.
+*   Include clear installation instructions in the README, beyond
+    the simple 'perl Makefile.PL; make; make install'
+*   save sources to disk after creating the trees, not at end of script
+    this should speed up closing the application, at a one time overhead
+    when parsing the sourcefiles
+*   add more diagnostics on updating source files    
+*   Make CPANPLUS::inc redundant -- bundled modules required for boot
+    strapping no longer get installed.
+*   Update bundled modules for bootstrapping to most recent versions
+*   Various tweaks to Makefile.PL to make installing friendlier
+*   perl Makefile.PL AUTOINSTALL=1 now no longer requires any user 
+    input (just like $ENV{PERL_MM_USE_DEFAULT} already did).
+*   Filter out .meta files from the CHECKSUMS file
+*   apply patch from yperl@club-internet.fr to stop Makefile.PL
+    from dying if user doesn't want to configure now, and doesn't
+    have an existing config.pm
+*   fix typo introduced in 0.052 that broke Classic.pm
+*   fix cpan2dist's ungraceful dying if the dist object was undefined
+    (fixes part of [#17568] bad diagnostics from checksum errors/cpan2dist)
+*   address #17655: [WISHLIST] Report bad signature send out a fail test 
+    report when a signature check fails
+*   address #17984: (Two Problems in Makefile.PL)
+
+Changes for 0.059_01    Sat Oct 15 14:20:16 CEST 2005
+=====================================================
+
+*   This is a development release supporting 3rd party
+    package creation and shell plugins
+*   Add new callback to filter prereqs 
+*   Add plugin support to the default shell
+*   Add a howto on writing plugins: 
+    CPANPLUS::Shell::Default::Plugins::HOWTO
+*   Set Data::Dumper::Indent to 1 in the default shell
+*   Document --update_source switch in the default shell
+*   Add 's mirrors' to the default shell documentation
+*   Improve Internals.pm documentation
+*   Add basic documentation to undocumented functions
+    in Utils.pm
+*   Implement proper 'ignore' option for cpan2dist and 
+    rename old 'ignore' to 'ban'
+*   Allow the --*list options to cpan2dist to be given
+    more than once.
+*   Fix typo in cpan2dist that wasn't setting the makefile
+    preference correctly
+*   Add an option to redirect output to cpan2dist
+*   Add alarm functionality to cpan2dist
+*   The 'sudo' setting is now being defaulted to its
+    previous setting during setup
+*   Attempt to show what previous config was found during
+    setup if possible.
+*   Disable checksums fetch when downloading readme
+*   Store found prereqs in the dist object when we can
+*   Use constants for strings where possible.
+*   Determine installer type in CPANPLUS::Module::dist()
+    if we haven't already
+*   Support both cp_error/error and cp_msg/msg as 
+    diagnostic functions
+*   When extracting files, make sure +x is set on directories
+*   When extracting files, store their names
+*   Renamed vcmp() to _vcmp() to mark it's privateness.
+*   Add a seperate method in Dist.pm to check if a prereq
+    has been satisfied, so modules subclassing Dist.pm may
+    override it (thanks to Ken Williams).
+*   Add an 'add_to_includepath' method to Module.pm, so
+    modules can add their build paths to @INC.
+*   Module::Build's 'perl version too low' diagnostic changed
+    between releases. Make sure our test reporter understands
+    both (fixes [#15197], thanks to Barbie)
+*   t/01_CPANPLUS-Configure.t doesn't load CPANPLUS::Config
+    directly anymore, as there may be an %ENV setting
+*   Fix t/05_CPANPLUS-Internals-Fetch.t to compensate
+    when being on non-unixy platforms [#1455]
+    pointing to the config file instead
+*   Update bundled modules to their latest version    
+
+
+Changes for 0.0561      Sat Aug 20 19:57:15 CEST 2005
+=====================================================
+
+*   This release holds no functional changes over 0.056
+*   The META.yml did not get included in this distribution,
+    meaning the PAUSE indexer indexed our include modules as
+    well. 
+    
+
+Changes for 0.056       Sat Aug 20 13:31:17 CEST 2005
+=====================================================
+
+*   This release is identical to 0.056_01 but no longer
+    marked as 'development release'.
+
+Changes for 0.056_01    Thu Aug 18 16:26:52 CEST 2005
+=====================================================
+
+*   This is a development release testing the splitting
+    off of CPANPLUS::Dist::Buid into it's own package.
+*   CPANPLUS::Dist::Deb got branched into it's own package
+*   Make 'i URI' work from the default shell, enabling commands
+    like 'i http://example.com/module.tgz'. parse_module() 
+    understands this as well (for API users) -- #11479
+*   Add test cases for lack of CPANPLUS::Dist::Deb
+*   Add new test tarballs that provide the simples possible
+    distributions
+*   Add prereq to CPANPLUS::Dist::Deb if the user prefers
+    to use Build.PL over Makefile.PL
+*   Add a depencendency on Win32::Process on Win32 (bundled
+    with AS perl, needed by IPC::Run)
+*   Quell warnings about empty prerequisite lists (#13111)
+*   Quell warnings about beta-versions being non-numeric (#14106)
+*   Platform dependant modules were /always/ getting an NA grade
+    regardless whether they failed or not (#13224)
+*   Config keys are now sorted when printed in the default shell
+    (as requested by Tux)
+*   Extracted files now only get +w for the owner, not '755',
+    as this interferes with some modules test suite ([#13358])
+*   Some modules uses module_name_version.ext rather than the
+    usual module-name-version.ext. CPANPLUS now parses both
+    correctly (#13367)
+*   's mirrors' in the default shell now lists your mirrors.
+    To alter them you must still edit the config using 's edit'
+*   Buffers are now autoflushed while invoking 'perl Makefile.PL';
+    Modules that asked questions during interactive install 
+    sometimes had their output held back in the buffer. Since not
+    all modules do $|++ in their Makefile.PL, we do it for them
+    (#12121)
+*   The diagnostic reporting functions 'msg' and 'error' from
+    CPANPLUS::Error got renamed to 'cp_msg' and 'cp_error'
+    respectively, to avoid conflicts with Log::Message::Simple.
+    (This only affects API developers).
+*   All bundled modules are updated to their most recent version.    
+    
+
+Changes for 0.055       Sat Jun  4 15:53:37 CEST 2005
+=====================================================
+
+*   This release just affects users of the Test::Reporter
+    and 'cpantest' utilities.
+*   The 'munge_test_report' callback was getting the 
+    grade passed as of 0.054, but the default callback
+    was now returning the wrong item. [#13086]
+
+Changes for 0.054       Fri Jun  3 17:44:40 CEST 2005
+=====================================================
+
+*   This release paves the way for the CPANPLUS::Dist::*
+    plugins, providing a framework from which to 
+    automatically create distributions from CPAN packages
+*   Redo the 'cpan2dist' commandline tool, adding many
+    new options
+*   Record all messages from the 'make' command on the
+    stack regardless.
+*   Use the word 'test' when testing modules, not 'create'
+*   Note in test reports that we skipped tests [#11587]
+*   Fix some small documentation error [#11570]
+*   Double check if a module is uptodate before asking 
+    the user -- another prereq may have installed it 
+    already [#11840]
+*   Do a 'grep unique' on missing prerequisites, so we 
+    dont list them more than once, even if the test output 
+    does -- fixes bug [#11637]    
+*   Make sure we use an empty 'dist_type' in the tests in
+    case the user set on in his config
+*   Add a _copy function to Utils.pm
+*   Make sure the 'force' flag is propagated properly to
+    the 'resolve_prereqs' function
+*   Add build_prereq flag to indicate prereqs should be 
+    built even when uptodate when run under a packagemanager
+*   When running CPANPLUS from a path not (absolutely) in 
+    your @INC, we add our own path to 'original_inc' which 
+    we restore on shell outs
+*   Pass the grade to the 'munge_report' handler    
+*   Many test report improvements as provided by Barbie 
+    in ticket #12302
+*   Not all prereqs live on CPAN -- skip noting them as a 
+    loaded prereq if we can't find it in the module tree 
+    (as reported in #12723)
+*   Bundled a version of T::H that does supports the 'no_plan' 
+    feature of Test::More (#13019):
+    We can't automatically do 'the right thing' as 'make test' 
+    invokes 'test_harness' which loads T::H before we can even 
+    interfere so we add a msg about too low version to the 
+    Makefile.PL instead and fall back to basic tests
+*   Tell users why their sudo password might be asked during
+    'make test'
+
+Changes for 0.053       Fri Feb 11 10:07:08 CET 2005
+====================================================
+
+*   0.052 did not ship with its META.yml, causing a few
+    of the bundles modules to be indexed. This release is
+    only relevant to the PAUSE indexer, and changes nothing
+    on the client side whatsoever.
+
+
+Changes for 0.052       Wed Feb  9 18:44:13 CET 2005
+====================================================
+
+*   Make auto-installation work (with some guess work) if
+    $ENV{PERL_MM_USE_DEFAULT} is set.
+*   Setup decent defaults for the callbacks, so scripts 
+    don't have to set them unless they want actual callback
+    behaviour (This helps ExtUtils::AutoInstall greatly).
+*   chmod() extracted files to 755 so we do not get permission
+    denied errors when trying to remove them or copy over them
+    if they were not +w for the user.
+*   Don't use sudo, even if it's configured, if the user is
+    root already.
+*   Default to 'prefer binary programs' if Compress::Zlib is
+    not installed.
+*   Make 'parse_module' deal better with paths that have sub
+    directories in them.
+*   Make 'parse_module' deal better with version numbers 
+    that have letters in them.
+*   Don't shell out to get the perl version if the perl we
+    looking for is $^X;
+*   Improve finding a proper homedir for cpanplus on VMS    
+*   Accept the perl version as an optional argument to 
+    'module_is_supplied_with_perl_core'
+*   Require Test::Reporter 1.27 for test reporting; it fixes
+    many bugs.
+*   Only load Module::Build when we really needed it, not on
+    any installation.
+*   Fix a bug that made 's reconfigure' not use the defaults
+    from your current config.
+*   RedHat 9.0's stock perl has a few serious bugs in it 
+    (they applied custom patches) and will break CPANPLUS
+    badly. Add a note to the makefile.pl that redhat users
+    should upgrade their perl.
+*   CPANPLUS::inc was encountering 'use' calls that had windows
+    paths rather than unix paths (???). Patch to compensate
+    for this.
+*   Module::Load::Conditional cache is being flushed in standard
+    flush runs now, allowing use of LWP (and similar) when it
+    becomes available, even if it previously wasn't.
+*   Don't copy 'Config.pm-orig' to 'Config.pm' during Makefile.PL
+    stage -- if the user has a custom config and forgets to set
+    the environment var, CPANPLUS' tests will use the wrong config.
+*   Some tarballs have '.' as directory, rather than project sub
+    directory. Guess first for extraction dir and verify, only 
+    then try the actual extract path.
+*   Improve documentation in the Default shell
+*   Improve test reporting texts as supplied by Barbie
+*   Add a callback to munge test reports before they are sent
+*   Add versions of loaded dependencies to the test reports.
+*   Make limited tests on skipped configuration work properly.    
+*   Don't use sudo to install into our own sandbox for 
+    Module::Build tests
+*   Skip module::build tests if we're under PERL_CORE and
+    M::B is not available (not yet integrated)
+*   Skip install tests if run under PERL_CORE
+*   Adjust include paths and paths to perl when tests are
+    run under PERL_CORE
+*   Update bundled IPC::Run to version 0.80    
+*   Update bundled Module::Build to version 0.26081
+*   Improve tests    
+
+Changes for 0.051       Fri Jan 14 15:10:02 CET 2005
+====================================================
+
+*   First official release in the ground-up rewrite '0.05x'
+    series
+*   When determining installed versions, don't parse
+    commented out versions
+*   Version numbers of 'undef' aren't really versions, they
+    are now treated as '0.0'
+*   Split out 'create' into 'prepare' and 'create' so that 
+    package manager plugins can provide an option to alter 
+    metadata before actually building the package
+*   Add convenience methods for 'prepare' and 'create'    
+*   Update CPANPLUS::Dist::Sample docs to reflect new
+    prepare functionality
+*   Use constants where possible    
+*   Add new methods 'contains' to get a list of modules 
+    contained in a package
+*   Update to bundle Module::Build 0.2607
+*   Return to prefering Build.PL over Makefile.PL
+*   Update various other bundled modules
+*   Bundle Module::Pluggable for Dist:: plugin support
+*   Missing test suites of module was not detected 
+    properly, resultings in undeserved 'pass' grade
+*   dslip data with ';' in it caused parse errors
+*   Mark a fatal error when loading the shell and not being
+    able to load a valid config file
+*   Various spelling fixes
+*   Improve tests
+
+
+Changes for 0.050_04    Sun Dec 26 16:54:46 CET 2004
+====================================================
+
+*   Add rsync support to CPANPLUS
+*   List rsync mirrors during setup
+*   Default to the email mentioned in Config.pm during setup
+*   Add timeout support for fetching files from mirrors
+*   Config version has gone up because of new timeout version
+    -- reconfiguration required
+*   Mention Bundle::CPANPLUS::Dependencies in the Makefile.PL    
+*   Add license information to dslip output
+*   Send N/A Grade to cpantesters when your perl version is
+    too low according to the Makefile.PL
+*   Drop dependancy on Mail::Send for test reporting, use a 
+    fixed version of Test::Reporter instead
+*   Alias $modobj->name to $modobj->module for more DWIMery    
+*   cpan2dist now allows creation of distributions from local
+    tarballs as well
+*   cpan2dist now uses the newly defined dist standard to find
+    out where distributions were created
+*   cpan2dist (and CPANPLUS::Dist) plugin detection is now regex
+    based
+*   Specifying CPANPLUS object id's when creating fake module 
+    or author objects is now optional
+*   Small backward-compat hack to make sure old versions of
+    ExtUtils::AutoInstall keep working with the new CPANPLUS
+*   Various documentation patches
+*   Update various bundled modules
+
+
+
+Changes for 0.050_03    Fri Dec 17 13:54:48 CET 2004
+====================================================
+
+*   Move to Module::Pluggable to find CPANPLUS::Dist::*
+    plugins.
+*   Make CPANPLUS::Dist::* generate a few required accessors
+    itself, rather than making all submodules do it themselves
+*   Rename cpan2dist.pl to cpan2dist to be more 'unixish'
+*   Improve cpan2dist diagnostics
+*   Add pod to cpan2dist
+*   Change config layout for distribution types (incompatible
+    change -- will require reconfiguration)
+*   Add 2-way version checking so cpanplus + its config can
+    both verify if their counterparts are compatible
+*   Move logic for 'best_path_to_module_build' to Module.pm    
+*   Make logic to detect installed modules follow symlinks
+    (required for among others, debian)
+*   'force install' will try even harder to install a module
+    if it can, even if it previously failed.
+*   Make test reports report the version of CPANPLUS, not the
+    version of the constants file the headers are in.
+*   Update various bundled modules to their newest versions
+*   Stringify '$@' to avoid clobbering by sub routine calls
+*   Various documentation improvements
+*   Various spelling fixes
+*   Clean up trailing whitespace from sources
+*   Add more files to MANIFEST.skip
+*   Update MANIFEST
+
+
+Changes for 0.050_02    Fri Dec 10 15:03:39 CET 2004
+====================================================
+
+*   Move CPANPLUS::Dist::(Deb|Ports) to it's own repository
+*   Fix error when Test::Reporter is unavaliable
+*   Various spelling fixes
+*   Added CPANPLUS::Hacking pod with instructions how to hack on
+    CPANPLUS
+*   Added an environment variable 'PERL5_CPANPLUS_IS_RUNNING' which
+    will be set to the current process id, so subprocesses can
+    recognize that they are running under CPANPLUS
+*   Some wordings have changed for the setup, to make things a bit
+    clearer
+*   Add 'do we have test::reporter support' probing code (used in
+    test suite)
+*   Add Mail::Send as a prerequisite for test::reporter support
+*   Don't attempt to actually send test reports from our test suite
+    -- Test::Reporter doesn't do that itself either, we might have 
+    failed tests due to Test::Reporter rather than ourselves
+*   Mention 'bundle::cpanplus::test::reporter' which has all the 
+    modules needed to have test::reporter support enabled
+*   Improved accuracy for core module detection logic and errors
+*   More support for connecting to remote machines using 
+    CPANPLUS::Daemon (not yet released, but will be soon)
+*   Add extra clean up arguments to our own Makefile to remove temp
+    files
+*   Extensive overhaul of CPANPLUS::Dist::Build to get Module::Build
+    support working properly (lots of workarounds for bugs in the M::B
+    API -- we now bundle a custom patched M::B (0.26061) to cope)
+*   Module::Build now accepts buildflags    
+*   Seperate inc path for installers (defacto only Module::Build
+    right now)
+*   Update various bundled modules like Object::Accessor, IPC::Cmd,
+    Archive::Extract.
+*   Smarter loading of bundled modules    
+*   Various speed optimizations
+*   't --force' can send a new test::report now
+*   Don't force current installer format onto prereqs, unless it's
+    explicitly requested
+*   Make the default shell be aware when it's running in noninteractive
+    mode, making sure it makes no suggestions with require interactivity
+*   Add a message about where the module was extracted to in verbose mode    
+    
+Changes for 0.050_1     Fri Dec 3 21:07:12 CET 2004
+====================================================    
+
+*   Initial beta release of CPANPLUS 0.050
+*   Complete ground up rewrite

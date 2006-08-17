@@ -1,0 +1,13 @@
+name: CPANPLUS
+version: 0.073_01
+abstract: Ameliorated interface to the CPAN
+author: Jos Boumans <kane@cpan.org>
+license: perl
+distribution_type: module
+requires:
+  perl: 5.6.1
+no_index:
+  directory:
+    - lib/CPANPLUS/inc
+    - inc
+generated_by: Module::Install version 0.36

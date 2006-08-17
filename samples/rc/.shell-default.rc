@@ -1,0 +1,8 @@
+### options to be passed to these commands by default ###
+x --update_source --verbose,
+p /tmp/log --verbose,
+
+login   v --verbose; m Acme;,
+logout  !print 'hello world',
+
+
