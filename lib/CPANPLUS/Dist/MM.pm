@@ -280,8 +280,14 @@ sub prepare {
             my $captured; my $makefile_pl = MAKEFILE_PL->();
             
             ### setting autoflush to true fixes issue from rt #8047
-            my $flush = OPT_AUTOFLUSH;
-            unless(scalar run(  command => "$perl $flush $makefile_pl $mmflags",
+            ### XXX this means that we need to keep the path to CPANPLUS
+            ### in @INC, stopping us from resolving dependencies on CPANPLUS
+            ### at bootstrap time properly.
+            # my $flush = OPT_AUTOFLUSH;
+            # unless(scalar run(  command => "$perl $flush $makefile_pl $mmflags",
+            my $cmd = qq[$perl -MEnglish -le\$OUTPUT_AUTOFLUSH++,] .
+                      qq[do"$makefile_pl" $mmflags];
+            unless( scalar run( command => $cmd,
                                 buffer  => \$captured,
                                 verbose => $run_verbose, # may be interactive   
             ) ) {
