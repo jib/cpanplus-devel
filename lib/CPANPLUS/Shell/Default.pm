@@ -31,6 +31,7 @@ BEGIN {
 
 load CPANPLUS::Shell;
 
+
 my $map = {
     'm'     => '_search_module',
     'a'     => '_search_author',
