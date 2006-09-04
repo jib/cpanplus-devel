@@ -809,9 +809,41 @@ sub _install {
     for my $mod (@$mods) {
         print $prompt, $mod->module, "\n";
 
+        my $log_length = length CPANPLUS::Error->stack_as_string;
+    
         ### store the status for look up when we're done with all
         ### install calls
         $status->{$mod} = $mod->install( %$opts, target => $target );
+        
+        ### would you like a log file of what happened?
+        if( $conf->get_conf('write_install_logs') ) {
+
+            my $dir = File::Spec->catdir(
+                            $conf->get_conf('base'),
+                            $conf->_get_build('install_log_dir'),
+                        );
+            ### create the dir if it doesn't exit yet
+            $cb->_mkdir( dir => $dir ) unless -d $dir;
+
+            my $file = File::Spec->catfile( 
+                            $dir,
+                            INSTALL_LOG_FILE->( $mod ) 
+                        );
+            if ( open my $fh, ">$file" ) {
+                my $stack = CPANPLUS::Error->stack_as_string;
+                ### remove everything in the log that was there *before*
+                ### we started this install
+                substr( $stack, 0, $log_length );
+                
+                print $fh $stack;
+                close $fh;
+                
+                print loc("*** Install log written to:\n  %1\n\n", $file);
+            } else {                
+                warn "Could not open '$file': $!\n";
+                next;
+            }                
+        }
     }
 
     my $flag;

@@ -255,6 +255,13 @@ use constant GET_XS_FILES   => sub { my $dir = $_[0] or return;
                                      return @files;
                                 };  
 
+use constant INSTALL_LOG_FILE 
+                            => sub { my $obj  = shift or return;
+                                     my $name = $obj->name; $name =~ s/::/-/g;
+                                     $name .= '-'. scalar(time) . '.log';
+                                     return $name;
+                                };                                        
+
 use constant ON_OLD_CYGWIN  => do { $^O eq 'cygwin' and $] < 5.008 
                                     ? loc("Your perl version for %1 is too low; ".
                                             "Require %2 or higher for this function",

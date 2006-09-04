@@ -82,6 +82,7 @@ my $Conf = {
                             check_install( module => 'Storable' )  ? 1 : 0 ),
         'timeout'                   => 300,
         'verbose'                   => $ENV{PERL5_CPANPLUS_VERBOSE} || 0,
+        'write_install_logs'        => 1,
     },
     ### Paths get stripped of whitespace on win32 in the constructor
     ### sudo gets emptied if there's no need for it in the constructor
@@ -117,13 +118,14 @@ my $Conf = {
         'mod'               => '02packages.details.txt.gz'
     },
     '_build' => {
-        'plugins'           => 'plugins/',
-        'moddir'            => 'build/',
+        'plugins'           => 'plugins',
+        'moddir'            => 'build',
         'startdir'          => '',
-        'distdir'           => 'dist/',
-        'autobundle'        => 'autobundle/',
+        'distdir'           => 'dist',
+        'autobundle'        => 'autobundle',
         'autobundle_prefix' => 'Snapshot',
-        'autdir'            => 'authors/',
+        'autdir'            => 'authors',
+        'install_log_dir'   => 'install-logs',
         'sanity_check'      => 1,
     },
     '_mirror' => {
