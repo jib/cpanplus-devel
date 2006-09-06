@@ -400,9 +400,12 @@ sub _format_version {
     ### fudge $version into the 'optimal' format
     $version = 0 if $version eq 'undef';
     $version =~ s/_//g; # everything after gets stripped off otherwise
-    $version = sprintf('%3.4f', $version);
+
+    ### allow 6 digits after the dot, as that's who perl stringifies
+    ### x.y.z numbers.
+    $version = sprintf('%3.6f', $version);
     $version = '' if $version == '0.00';
-    $version =~ s/(00?)$/' ' x (length $1)/e;
+    $version =~ s/(00{0,3})$/' ' x (length $1)/e;
 
     return $version;
 }
@@ -1191,13 +1194,13 @@ sub _uptodate {
 
     $self->_pager_open if scalar @rv >= $self->_term_rowcount;
 
-    my $format = "%5s %10s %10s %-40s %-10s\n";
+    my $format = "%5s %12s %12s %-36s %-10s\n";
 
     my $i = 1;
     for my $mod ( @rv ) {
         printf $format,
                 $i,
-                $self->_format_version( $mod->installed_version ) || 'None',
+                $self->_format_version($mod->installed_version) || 'Unparsable',
                 $self->_format_version( $mod->version ),
                 $mod->module,
                 $mod->author->cpanid();
