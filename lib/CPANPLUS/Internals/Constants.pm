@@ -25,6 +25,7 @@ use constant INSTALLER_BUILD
 use constant INSTALLER_MM   => 'CPANPLUS::Dist::MM';    
 use constant INSTALLER_SAMPLE   
                             => 'CPANPLUS::Dist::Sample';
+use constant INSTALLER_BASE => 'CPANPLUS::Dist::Base';                            
 
 use constant CONFIG         => 'CPANPLUS::Config';
 use constant CONFIG_USER    => 'CPANPLUS::Config::User';

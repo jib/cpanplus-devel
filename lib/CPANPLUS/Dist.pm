@@ -201,7 +201,10 @@ Returns a list of the CPANPLUS::Dist::* classes available
                             sub_name    => '_dist_types',
                             search_path => __PACKAGE__,
                             only        => qr/$only_re/,
-                            except      => [ INSTALLER_MM, INSTALLER_SAMPLE ]
+                            except      => [ INSTALLER_MM, 
+                                             INSTALLER_SAMPLE,
+                                             INSTALLER_BASE,
+                                        ]
                         );
             my %ignore = map { $_ => $_ } @Ignore;                        
                         
