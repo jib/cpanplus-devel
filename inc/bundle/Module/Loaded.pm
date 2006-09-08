@@ -12,7 +12,7 @@ BEGIN { use base 'Exporter';
 
 =head1 NAME 
 
-Module::Loaded -- mark modules as loaded or unloaded
+Module::Loaded - mark modules as loaded or unloaded
 
 =head1 SYNOPSIS
 

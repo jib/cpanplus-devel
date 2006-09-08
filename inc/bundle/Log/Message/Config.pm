@@ -115,7 +115,7 @@ __END__
 
 =head1 NAME
 
-Log::Message::Config -- Configuration options for Log::Message
+Log::Message::Config - Configuration options for Log::Message
 
 =head1 SYNOPSIS
 

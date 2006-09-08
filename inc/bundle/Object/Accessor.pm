@@ -6,12 +6,12 @@ use vars            qw[$FATAL $DEBUG $AUTOLOAD $VERSION];
 use Params::Check   qw[allow];
 use Data::Dumper;
 
-$VERSION    = '0.20';
+$VERSION    = '0.21';
 $FATAL      = 0;
 $DEBUG      = 0;
 
-use constant VALUE          => 0;       # array index in the hash value
-use constant ALLOW          => 1;       # array index in the hash value
+use constant VALUE => 0;    # array index in the hash value
+use constant ALLOW => 1;    # array index in the hash value
 
 =head1 NAME
 
@@ -455,6 +455,9 @@ generate the following code & errors:
 
     Can't modify non-lvalue subroutine call
 
+Note that C<lvalue> support on C<AUTOLOAD> routines is a
+C<perl 5.8.x> feature. See perldoc L<perl58delta> for details.
+
 =cut
 
 {   package Object::Accessor::Lvalue;
@@ -466,7 +469,7 @@ generate the following code & errors:
     *VALUE = *Object::Accessor::VALUE;
     *ALLOW = *Object::Accessor::ALLOW;
 
-    ### XXX largely copied from O::A::Autoload 
+    ### largely copied from O::A::Autoload 
     sub AUTOLOAD : lvalue {
         my $self    = shift;
         my($method) = ($AUTOLOAD =~ /([^:']+$)/);

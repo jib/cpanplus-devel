@@ -22,7 +22,7 @@ BEGIN {
 
 =head1 NAME
 
-Log::Message -- A generic message storing mechanism;
+Log::Message - A generic message storing mechanism;
 
 =head1 SYNOPSIS
 

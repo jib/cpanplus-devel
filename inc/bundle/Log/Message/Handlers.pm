@@ -5,7 +5,7 @@ use strict;
 
 =head1 NAME
 
-Log::Message::Handlers -- Message handlers for Log::Message
+Log::Message::Handlers - Message handlers for Log::Message
 
 =head1 SYNOPSIS
 

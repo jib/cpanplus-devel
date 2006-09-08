@@ -69,7 +69,7 @@ __END__
 
 =head1 NAME
 
-Log::Message::Item  -- Message objects for Log::Message
+Log::Message::Item  - Message objects for Log::Message
 
 =head1 SYNOPSIS
 

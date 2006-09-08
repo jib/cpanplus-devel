@@ -15,7 +15,7 @@ BEGIN {
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.10';
+    $VERSION        = '0.12';
     $VERBOSE        = 0;
     $FIND_VERSION   = 1;
     $CHECK_INC_HASH = 0;
@@ -155,7 +155,10 @@ sub check_install {
         return;
     }
 
-    my $file = File::Spec->catfile( split /::/, $args->{module} ) . '.pm';
+    my $file     = File::Spec->catfile( split /::/, $args->{module} ) . '.pm';
+    my $file_inc = File::Spec::Unix->catfile( 
+                        split /::/, $args->{module} 
+                    ) . '.pm';
 
     ### where we store the return value ###
     my $href = {
@@ -169,7 +172,7 @@ sub check_install {
     ### check the inc hash if we're allowed to
     if( $CHECK_INC_HASH ) {
         $filename = $href->{'file'} = 
-            $INC{ $file } if defined $INC{ $file };
+            $INC{ $file_inc } if defined $INC{ $file_inc };
 
         ### find the version by inspecting the package
         if( defined $filename && $FIND_VERSION ) {
@@ -206,7 +209,7 @@ sub check_install {
                     next;
                 }
     
-                $filename = $INC{$file} || $file;
+                $filename = $INC{$file_inc} || $file;
     
             } else {
                 $filename = File::Spec->catfile($dir, $file);

@@ -328,7 +328,7 @@ sub _read_tar {
             }
 
             ### throw away trailing garbage ###
-            substr ($$data, $entry->size) = "";
+            substr ($$data, $entry->size) = "" if defined $$data;
 
             ### part II of the @LongLink munging -- need to do /after/
             ### the checksum check.
@@ -435,6 +435,9 @@ sub extract {
     my @args    = @_;
     my @files;
 
+    # use the speed optimization for all extracted files
+    local($self->{cwd}) = cwd() unless $self->{cwd};
+
     ### you requested the extraction of only certian files
     if( @args ) {
         for my $file ( @args ) {
@@ -538,7 +541,7 @@ sub _extract_file {
 
     ### it's a relative path ###
     } else {
-        my $cwd     = cwd();
+        my $cwd     = (defined $self->{cwd} ? $self->{cwd} : cwd());
         my @dirs    = File::Spec::Unix->splitdir( $dirs );
         my @cwd     = File::Spec->splitdir( $cwd );
         $dir        = File::Spec->catdir( @cwd, @dirs );
@@ -1236,6 +1239,45 @@ method call instead.
     }
 }
 
+=head2 $tar->setcwd( $cwd );
+
+C<Archive::Tar> needs to know the current directory, and it will run
+C<Cwd::cwd()> I<every> time it extracts a I<relative> entry from the 
+tarfile and saves it in the file system. (As of version 1.30, however,
+C<Archive::Tar> will use the speed optimization described below 
+automatically, so it's only relevant if you're using C<extract_file()>).
+
+Since C<Archive::Tar> doesn't change the current directory internally
+while it is extracting the items in a tarball, all calls to C<Cwd::cwd()>
+can be avoided if we can guarantee that the current directory doesn't
+get changed externally.
+
+To use this performance boost, set the current directory via
+
+    use Cwd;
+    $tar->setcwd( cwd() );
+
+once before calling a function like C<extract_file> and
+C<Archive::Tar> will use the current directory setting from then on
+and won't call C<Cwd::cwd()> internally. 
+
+To switch back to the default behaviour, use
+
+    $tar->setcwd( undef );
+
+and C<Archive::Tar> will call C<Cwd::cwd()> internally again.
+
+If you're using C<Archive::Tar>'s C<exract()> method, C<setcwd()> will
+be called for you.
+
+=cut 
+
+sub setcwd {
+    my $self     = shift;
+    my $cwd      = shift;
+
+    $self->{cwd} = $cwd;
+}
 
 =head2 $bool = $tar->has_io_string
 

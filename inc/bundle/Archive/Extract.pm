@@ -26,7 +26,7 @@ use constant TBZ            => 'tbz';
 
 use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG];
 
-$VERSION        = '0.10';
+$VERSION        = '0.12';
 $PREFER_BIN     = 0;
 $WARN           = 1;
 $DEBUG          = 0;
@@ -37,7 +37,7 @@ local $Params::Check::VERBOSE = $Params::Check::VERBOSE = 1;
 
 =head1 NAME
 
-Archive::Extract -- A generic archive extracting mechanism
+Archive::Extract - A generic archive extracting mechanism
 
 =head1 SYNOPSIS
 
@@ -84,9 +84,9 @@ Archive::Extract -- A generic archive extracting mechanism
 Archive::Extract is a generic archive extraction mechanism.
 
 It allows you to extract any archive file of the type .tar, .tar.gz,
-.gz or .zip without having to worry how it does so, or use different
-interfaces for each type by using either perl modules, or commandline
-tools on your system.
+.gz, tar.bz, .tbz2, .bz2 or .zip without having to worry how it does 
+so, or use different interfaces for each type by using either perl 
+modules, or commandline tools on your system.
 
 See the C<HOW IT WORKS> section further down for details.
 
@@ -309,6 +309,12 @@ sub extract {
             $self->_error(loc("Could not chdir to '%1': %2", $dir, $!));
             $ok = 0; last EXTRACT;
         }
+
+        ### set files to an empty array ref, so there's always an array
+        ### ref IN the accessor, to avoid errors like:
+        ### Can't use an undefined value as an ARRAY reference at
+        ### ../lib/Archive/Extract.pm line 742. (rt #19815)
+        $self->files( [] );
 
         ### find what extractor method to use ###
         while( my($type,$method) = each %$Mapping ) {
@@ -758,7 +764,7 @@ sub _unzip_bin {
     }
 
     ### now, extract the archive ###
-    {   my $cmd = [ $self->bin_unzip, '-qq', $self->archive ];
+    {   my $cmd = [ $self->bin_unzip, '-qq', '-o', $self->archive ];
 
         my $buffer;
         unless( scalar run( command => $cmd,
@@ -817,7 +823,9 @@ sub _unzip_az {
 
 sub __get_extract_dir {
     my $self    = shift;
-    my $files   = shift or return;
+    my $files   = shift || [];
+    
+    return unless scalar @$files;
 
     my($dir1, $dir2);
     for my $aref ( [ \$dir1, 0 ], [ \$dir2, -1 ] ) {

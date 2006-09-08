@@ -55,7 +55,7 @@ use constant ON_UNIX        => ($^O ne 'MSWin32' and
 
 =head1 NAME
 
-File::Fetch -- A generic file fetching mechanism
+File::Fetch - A generic file fetching mechanism
 
 =head1 SYNOPSIS
 

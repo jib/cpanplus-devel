@@ -2,16 +2,13 @@ use strict;
 use Cwd;
 use CPANPLUS::Backend;
 
-my $Prefix      = '../../other/';           # updir from cpanplus/devel 
+my $Prefix      = '../';           # updir from cpanplus/devel 
 my $Libdir      = 'lib/';
 my $Target      = cwd() . '/inc/bundle';    # Target dir to copy to
 my $CB          = CPANPLUS::Backend->new;
 my $MineOnly    = @ARGV ? 1 : 0;
 
 $CB->configure_object->set_conf( verbose => 1 );
-
-### p4 open everything
-system("find $Target -type f | xargs p4 edit");
 
 ### from p4 
 {   my @Copy    = qw[
@@ -107,13 +104,7 @@ unless( $MineOnly ) {
 # }
 
 ### revert all that wasn't touched
-system("p4 revert -a");
-system("find $Target -type f | xargs p4 add");
-system("p4 diff | less");
-system("p4 submit");
+system("find $Target -type f | xargs svk add");
+system("svk diff | less");
+system("svk commit");
 
-
-__END__
-find $dir -type f | xargs p4 edit
-p4 revert -a
-find $dir -type f | xargs p4 add

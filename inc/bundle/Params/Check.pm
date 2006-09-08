@@ -39,7 +39,7 @@ my %known_keys = map { $_ => 1 }
 
 =head1 NAME
 
-Params::Check -- A generic input parsing/checking mechanism.
+Params::Check - A generic input parsing/checking mechanism.
 
 =head1 SYNOPSIS
 
