@@ -4,8 +4,6 @@ abstract: Ameliorated interface to the CPAN
 author: Jos Boumans <kane@cpan.org>
 license: perl
 distribution_type: module
-requires:
-  perl: 5.6.1
 no_index:
   directory:
     - lib/CPANPLUS/inc
