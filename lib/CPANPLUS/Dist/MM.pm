@@ -283,10 +283,18 @@ sub prepare {
             ### XXX this means that we need to keep the path to CPANPLUS
             ### in @INC, stopping us from resolving dependencies on CPANPLUS
             ### at bootstrap time properly.
-            # my $flush = OPT_AUTOFLUSH;
-            # unless(scalar run(  command => "$perl $flush $makefile_pl $mmflags",
-            my $cmd = qq[$perl -MEnglish -le\$OUTPUT_AUTOFLUSH++,] .
-                      qq[do"$makefile_pl" $mmflags];
+
+            ### XXX this fails under ipc::run due to the extra quotes,
+            ### but it works in ipc::open3. however, ipc::open3 doesn't work
+            ### on win32/cygwin. XXX TODO get a windows box and sort this out
+#              my $cmd =  qq[$perl -MEnglish -le ] . 
+#                         QUOTE_PERL_ONE_LINER->(
+#                             qq[\$OUTPUT_AUTOFLUSH++,do(q($makefile_pl))]
+#                         ) 
+#                         . $mmflags;
+
+            my $flush = OPT_AUTOFLUSH;
+            my $cmd     = "$perl $flush $makefile_pl $mmflags";
             unless( scalar run( command => $cmd,
                                 buffer  => \$captured,
                                 verbose => $run_verbose, # may be interactive   

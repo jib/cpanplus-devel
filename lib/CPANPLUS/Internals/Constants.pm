@@ -263,12 +263,29 @@ use constant INSTALL_LOG_FILE
                                      return $name;
                                 };                                        
 
-use constant ON_OLD_CYGWIN  => do { $^O eq 'cygwin' and $] < 5.008 
+use constant ON_WIN32       => $^O eq 'MSWin32';
+use constant ON_NETWARE     => $^O eq 'NetWare';
+use constant ON_CYGWIN      => $^O eq 'cygwin';
+use constant ON_VMS         => $^O eq 'VMS';
+
+use constant ON_OLD_CYGWIN  => do { ON_CYGWIN and $] < 5.008 
                                     ? loc("Your perl version for %1 is too low; ".
                                             "Require %2 or higher for this function",
                                             $^O, '5.8.0' )
                                     : '';                                                                           
                                 };
+
+use constant QUOTE_PERL_ONE_LINER 
+                            => sub { my $line = shift or return;
+
+                                     ### use double quotes on these systems
+                                     return qq["$line"] 
+                                        if ON_WIN32 || ON_NETWARE || ON_VMS;
+
+                                     ### single quotes on the rest
+                                     return qq['$line'];
+                            };   
+
 1;              
 
 # Local variables:
