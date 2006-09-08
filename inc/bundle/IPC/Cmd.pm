@@ -19,7 +19,7 @@ BEGIN {
                         $USE_IPC_RUN $USE_IPC_OPEN3
                     ];
 
-    $VERSION        = '0.24';
+    $VERSION        = '0.25';
     $VERBOSE        = 0;
     $USE_IPC_RUN    = $^O ne 'VMS';
     $USE_IPC_OPEN3  = $^O ne 'VMS';
@@ -247,54 +247,81 @@ sub _open3_run {
 
     ### Following code are adapted from Friar 'abstracts' in the
     ### Perl Monastery (http://www.perlmonks.org/index.pl?node_id=151886).
+    ### XXX that code didn't work.
+    ### we now use the following code, thanks to theorbtwo
 
-    my ($infh, $outfh, $errfh); # open3 handles
+    ### define them beforehand, so we always have defined FH's
+    ### to read from.
+    use Symbol;    
+    my $kidout      = Symbol::gensym();
+    my $kiderror    = Symbol::gensym();
 
-    my $pid = eval {
-        IPC::Open3::open3(
-            $infh   = Symbol::gensym(),
-            $outfh  = Symbol::gensym(),
-            $errfh  = Symbol::gensym(),
-            $cmd,
-        )
-    };
+    ### Dup the filehandle so we can pass 'our' STDIN to the
+    ### child process. This stops us from having to pump input
+    ### from ourselves to the childprocess. However, we will need
+    ### to revive the FH afterwards, as IPC::Open3 closes it.
+    my $save_stdin;
+    open $save_stdin, "<&STDIN" or (
+        warn(loc("Could not dup STDIN: %1",$!)),
+        return
+    );
+    
+    
+    my $pid = IPC::Open3::open3(
+                    '<&STDIN',
+                    $kidout,
+                    $kiderror,
+                    $cmd
+                );
 
+    #print "Subprocess is at $pid";
+    my $selector = IO::Select->new(
+                        $kiderror, 
+                        \*STDIN,    # use OUR stdin, not $kidin. Somehow,
+                        $kidout     # we never get the input.. so jump through
+                    );              # some hoops to do it :(
 
-    return (undef, $@) if $@;
+    STDOUT->autoflush(1);   STDERR->autoflush(1);   STDIN->autoflush(1);
+    $kidout->autoflush(1)   if UNIVERSAL::can($kidout,   'autoflush');
+    $kiderror->autoflush(1) if UNIVERSAL::can($kiderror, 'autoflush');
+  
+    ### add an epxlicit break statement
+    ### code courtesy of theorbtwo from #london.pm
+    OUTER: while ( my @ready = $selector->can_read ) {
 
-    my $sel = IO::Select->new; # create a select object
-    $sel->add($outfh, $errfh); # and add the fhs
-
-    STDOUT->autoflush(1); STDERR->autoflush(1);
-    $outfh->autoflush(1) if UNIVERSAL::can($outfh, 'autoflush');
-    $errfh->autoflush(1) if UNIVERSAL::can($errfh, 'autoflush');
-
-    while (my @ready = $sel->can_read) {
-        foreach my $fh (@ready) { # loop through buffered handles
-            # read up to 4096 bytes from this fh.
-            my $len = sysread $fh, my($buf), 4096;
-
-            if (not defined $len){
-                # There was an error reading
-                warn loc("Error from child: %1",$!);
-                return(undef, $!);
+        for my $h ( @ready ) {
+            my $buf;
+            
+            ### $len is the amount of bytes read
+            my $len = sysread( $h, $buf, 4096 );    # try to read 4096 bytes
+            
+            ### see perldoc -f sysread: it returns undef on error,
+            ### so bail out.
+            if( not defined $len ) {
+                warn(loc("Error reading from process: %1", $!));
+                last OUTER;
             }
-            elsif ($len == 0){
-                $sel->remove($fh); # finished reading
-                next;
-            }
-            elsif ($fh == $outfh) {
-                $_out_handler->($buf);
-            } elsif ($fh == $errfh) {
-                $_err_handler->($buf);
-            } else {
-                warn loc("%1 error", 'IO::Select');
-                return(undef, $!);
-            }
+            
+            ### check for $len. it may be 0, at which point we're
+            ### done reading, so don't try to process it.
+            ### if we would print anyway, we'd provide bogus information
+            $_out_handler->( "$buf" ) if $len && $h == $kidout;
+            $_err_handler->( "$buf" ) if $len && $h == $kiderror;
+            
+            ### child process is done printing.
+            last OUTER if $h == $kidout and $len == 0
         }
     }
 
     waitpid $pid, 0; # wait for it to die
+    
+    ### restore STDIN after duping, or STDIN will be closed for
+    ### this current perl process!
+    open STDIN, "<&", $save_stdin or (
+        warn(loc("Could not restore STDIN: %1", $!)),
+        return
+    );        
+    
     return 1;
 }
 
@@ -568,6 +595,11 @@ C<IPC::Run>, C<IPC::Open3>
 
 This module by
 Jos Boumans E<lt>kane@cpan.orgE<gt>.
+
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to James Mastros and Martijn van der Streek for their
+help in getting IPC::Open3 to behave nicely.
 
 =head1 COPYRIGHT
 
