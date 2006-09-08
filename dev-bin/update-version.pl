@@ -10,7 +10,7 @@ my %Files = (
         => [qw[ META.yml]],
 );        
 
-map { system( "p4 edit $_" ) } map { @$_ } values %Files;
+#map { system( "p4 edit $_" ) } map { @$_ } values %Files;
 
 while( my($re,$aref) = each %Files ) {
 
@@ -23,8 +23,8 @@ while( my($re,$aref) = each %Files ) {
     }
 }    
 
-system("p4 diff | less");
-system("p4 submit");
+system("svk diff | less");
+system("svk commit");
 
 
 
