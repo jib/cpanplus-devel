@@ -1,4 +1,4 @@
-package CPANPLUS::Dist::Base;
+package CPANPLUS::Installer::Base;
 
 use strict;
 
