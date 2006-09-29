@@ -62,6 +62,7 @@ lib/CPANPLUS/Config.pm
 lib/CPANPLUS/Configure.pm
 lib/CPANPLUS/Configure/Setup.pm
 lib/CPANPLUS/Dist.pm
+lib/CPANPLUS/Dist/Base.pm
 lib/CPANPLUS/Dist/MM.pm
 lib/CPANPLUS/Dist/Sample.pm
 lib/CPANPLUS/Error.pm

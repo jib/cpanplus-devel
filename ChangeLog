@@ -1,3 +1,17 @@
+Changes for 0.074       Fri Sep  8 13:12:37 CEST 2006
+=====================================================
+ * remove the requires: section in META.yml; CPAN.pm 
+   thinks it's authoritive for requirement declarations
+   and therefor gets our prereqs wrong.
+*  replace CPANPLUS::Dist::Sample with the actual
+   functional CPANPLUS::Dist::Base
+*  increase the number of digits after the comma displayed
+   in version numbers from 4 to 6, so that stringified x.y.z
+   versions display properly in the Default shell.
+*  add the writing of intsall-logs automatically from the 
+   default shell
+*  update bundled modules
+
 Changes for 0.073_01    Wed Aug  2 15:40:38 CEST 2006
 =====================================================
 
