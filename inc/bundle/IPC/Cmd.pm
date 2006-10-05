@@ -1,333 +1,32 @@
 package IPC::Cmd;
 
-use Params::Check               qw[check];
-use Module::Load::Conditional   qw[can_load];
-use Locale::Maketext::Simple    Style => 'gettext';
-
-use ExtUtils::MakeMaker();
-use File::Spec ();
-use Config;
-
 use strict;
 
-require Carp;
-$Carp::CarpLevel = 1;
-
 BEGIN {
+
+    use constant IS_VMS   => $^O ne 'VMS'                       ? 1 : 0;    
+    use constant IS_WIN32 => $^O eq 'MSWin32'                   ? 1 : 0;
+    use constant IS_WIN98 => (IS_WIN32 and !Win32::IsWinNT())   ? 1 : 0;
+
     use Exporter    ();
-    use vars        qw[ @ISA $VERSION @EXPORT_OK $VERBOSE
-                        $USE_IPC_RUN $USE_IPC_OPEN3
+    use vars        qw[ @ISA $VERSION @EXPORT_OK $VERBOSE $DEBUG
+                        $USE_IPC_RUN $USE_IPC_OPEN3 $WARN
                     ];
 
-    $VERSION        = '0.25';
+    $VERSION        = '0.29_01';
     $VERBOSE        = 0;
-    $USE_IPC_RUN    = $^O ne 'VMS';
-    $USE_IPC_OPEN3  = $^O ne 'VMS';
+    $DEBUG          = 0;
+    $WARN           = 1;
+    $USE_IPC_RUN    = IS_WIN32 && !IS_WIN98;
+    $USE_IPC_OPEN3  = not IS_VMS;
 
     @ISA            = qw[Exporter];
     @EXPORT_OK      = qw[can_run run];
 }
 
-### check if we can run some command ###
-sub can_run {
-    my $command = shift;
-
-    # a lot of VMS executables have a symbol defined
-    # check those first
-    if ( $^O eq 'VMS' ) {
-        require VMS::DCLsym;
-        my $syms = VMS::DCLsym->new;
-        return $command if scalar $syms->getsym( uc $command );
-    }
-
-    if( File::Spec->file_name_is_absolute($command) ) {
-        return MM->maybe_command($command);
-
-    } else {
-        for my $dir (split /\Q$Config{path_sep}\E/, $ENV{PATH}) {
-            my $abs = File::Spec->catfile($dir, $command);
-            return $abs if $abs = MM->maybe_command($abs);
-        }
-    }
-}
-
-
-### Execute a command: $cmd may be a scalar or an arrayref of cmd and args
-### $bufout is a scalar ref to store outputs, $verbose can override conf
-sub run {
-    my %hash = @_;
-
-    my $x = '';
-    my $tmpl = {
-        verbose => { default    => $VERBOSE },
-        command => { required   => 1,
-                     allow      => sub {my $cmd = pop();
-                                        !(ref $cmd) or ref $cmd eq 'ARRAY' }
-                   },
-        buffer  => { default => \$x },
-    };
-
-    my $args = check( $tmpl, \%hash, $VERBOSE )
-                or ( warn(loc(q[Could not validate input!])), return );
-
-    ### Kludge! This enables autoflushing for each perl process we launched.
-    ### XXX probably not really needed, and seems to throw quite a few
-    ### 'make test' etc off to have PERL5OPT set
-    #local $ENV{PERL5OPT} = ($ENV{PERL5OPT} || '') .
-    #                            ' -MIPC::Cmd::System=autoflush=1';
-
-    my $verbose     = $args->{verbose};
-    my $is_win98    = ($^O eq 'MSWin32' and !Win32::IsWinNT());
-
-    my $err;                # error flag
-    my $have_buffer;        # to indicate we executed via IPC::Run
-                            # or IPC::Open3 only then it makes sence
-                            # to return the buffers
-
-    my (@buffer,@buferr,@bufout);
-
-    ### STDOUT message handler
-    my $_out_handler = sub {
-    #sub _out_handler {
-        my $buf = shift;
-        return unless defined $buf;
-
-        print STDOUT $buf if $verbose;
-        push @buffer, $buf;
-        push @bufout, $buf;
-    };
-
-    ### STDERR message handler
-    my $_err_handler = sub {
-    #sub _err_handler {
-        my $buf = shift;
-        return unless defined $buf;
-
-        print STDERR $buf if $verbose;
-        push @buffer, $buf;
-        push @buferr, $buf;
-    };
-
-    my $cmd = $args->{command};
-    my @cmd = ref ($cmd) ? grep(length, @{$cmd}) : $cmd;
-
-    print loc(qq|Running [%1]...\n|,"@cmd") if $verbose;
-
-    ### First, we prefer Barrie Slaymaker's wonderful IPC::Run module.
-    if (!$is_win98 and $USE_IPC_RUN and
-        can_load(
-            modules => { 'IPC::Run' => '0.55' },
-            verbose => $verbose && ($^O eq 'MSWin32') )
-    ) {
-        STDOUT->autoflush(1); STDERR->autoflush(1);
-
-        $have_buffer++;
-
-        ### a command like:
-        # [
-        #     '/usr/bin/gzip',
-        #     '-cdf',
-        #     '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz',
-        #     '|',
-        #     '/usr/bin/tar',
-        #     '-tf -'
-        # ]
-        ### needs to become:
-        # [
-        #     ['/usr/bin/gzip', '-cdf',
-        #       '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz']
-        #     '|',
-        #     ['/usr/bin/tar', '-tf -']
-        # ]
-
-        my @command; my $special_chars;
-        if( ref $cmd ) {
-            my $aref = [];
-            for my $item (@cmd) {
-                if( $item =~ /[<>|&]/ ) {
-                    push @command, $aref, $item;
-                    $aref = [];
-                    $special_chars++;
-                } else {
-                    push @$aref, $item;
-                }
-            }
-            push @command, $aref;
-        } else {
-            @command = map { if( /[<>|&]/ ) {
-                                $special_chars++; $_;
-                             } else {
-                                [ split / +/ ]
-                             }
-                        } split( /\s*([<>|&])\s*/, $cmd );
-        }
-
-        ### due to the double '>' construct, stdout buffers are now ending
-        ### up in the stderr buffer. this is a bug in IPC::Run.
-        ### Mailed barries about this early june, no solution yet :(
-        ### update (23-6-04): so this thing with the double > makes
-        ### this command not even fill any buffer:
-        ###     perl -lewarn$$
-        ### so it looks like when there are no 'special' chars in the
-        ### command, like '|' and friends, best not use the '>' construct.
-        if( $special_chars ) {
-            IPC::Run::run(@command, \*STDIN, '>', $_out_handler,
-                                             '>', $_err_handler) or $err++;
-        } else {
-            IPC::Run::run(@command, \*STDIN, $_out_handler,
-                                         $_err_handler) or $err++;
-        }
-
-
-    ### Next, IPC::Open3 is know to fail on Win32, but works on Un*x.
-    } elsif (   $^O !~ /^(?:MSWin32|cygwin)$/
-                and $USE_IPC_OPEN3
-                and can_load(
-                    modules => { map{$_ => '0.0'}
-                                qw|IPC::Open3 IO::Select Symbol| },
-                    verbose => $verbose
-    ) ) {
-        my $rv;
-        ($rv,$err) = _open3_run(\@cmd, $_out_handler, $_err_handler);
-        $have_buffer++;
-
-
-    ### Abandon all hope; falls back to simple system() on verbose calls.
-    } elsif ($verbose) {
-        ### quote for if we have pipes or anything else in there
-        system("@cmd");
-        $err = $? ? $? : 0;
-
-    ### Non-verbose system() needs to have STDOUT and STDERR muted.
-    } else {
-        local *SAVEOUT; local *SAVEERR;
-
-        open(SAVEOUT, ">&STDOUT")
-            or warn(loc("couldn't dup STDOUT: %1",$!)),      return;
-        open(STDOUT, ">".File::Spec->devnull)
-            or warn "couldn't reopen STDOUT: $!",   return;
-
-        open(SAVEERR, ">&STDERR")
-            or warn(loc("couldn't dup STDERR: %1",$!)),      return;
-        open(STDERR, ">".File::Spec->devnull)
-            or warn(loc("couldn't reopen STDERR: %1",$!)),   return;
-
-        ### quote for if we have pipes or anything else in there
-        system("@cmd");
-
-        open(STDOUT, ">&SAVEOUT")
-            or warn(loc("couldn't restore STDOUT: %1",$!)), return;
-        open(STDERR, ">&SAVEERR")
-            or warn(loc("couldn't restore STDERR: %1",$!)), return;
-    }
-
-    ### unless $err has been set from _open3_run, set it to $? ###
-    $err ||= $?;
-
-    if ( scalar @buffer ) {
-        my $capture = $args->{buffer};
-        $$capture = join '', @buffer;
-    }
-
-    return wantarray
-                ? $have_buffer
-                    ? (!$err, $?, \@buffer, \@bufout, \@buferr)
-                    : (!$err, $? )
-                : !$err
-}
-
-
-### IPC::Run::run emulator, using IPC::Open3.
-sub _open3_run {
-    my ($cmdref, $_out_handler, $_err_handler, $verbose) = @_;
-
-    ### in case there are pipes in there;
-    ### IPC::Open3 will call exec and exec will do the right thing ###
-    my $cmd = join " ", @$cmdref;
-
-    ### Following code are adapted from Friar 'abstracts' in the
-    ### Perl Monastery (http://www.perlmonks.org/index.pl?node_id=151886).
-    ### XXX that code didn't work.
-    ### we now use the following code, thanks to theorbtwo
-
-    ### define them beforehand, so we always have defined FH's
-    ### to read from.
-    use Symbol;    
-    my $kidout      = Symbol::gensym();
-    my $kiderror    = Symbol::gensym();
-
-    ### Dup the filehandle so we can pass 'our' STDIN to the
-    ### child process. This stops us from having to pump input
-    ### from ourselves to the childprocess. However, we will need
-    ### to revive the FH afterwards, as IPC::Open3 closes it.
-    my $save_stdin;
-    open $save_stdin, "<&STDIN" or (
-        warn(loc("Could not dup STDIN: %1",$!)),
-        return
-    );
-    
-    
-    my $pid = IPC::Open3::open3(
-                    '<&STDIN',
-                    $kidout,
-                    $kiderror,
-                    $cmd
-                );
-
-    #print "Subprocess is at $pid";
-    my $selector = IO::Select->new(
-                        $kiderror, 
-                        \*STDIN,    # use OUR stdin, not $kidin. Somehow,
-                        $kidout     # we never get the input.. so jump through
-                    );              # some hoops to do it :(
-
-    STDOUT->autoflush(1);   STDERR->autoflush(1);   STDIN->autoflush(1);
-    $kidout->autoflush(1)   if UNIVERSAL::can($kidout,   'autoflush');
-    $kiderror->autoflush(1) if UNIVERSAL::can($kiderror, 'autoflush');
-  
-    ### add an epxlicit break statement
-    ### code courtesy of theorbtwo from #london.pm
-    OUTER: while ( my @ready = $selector->can_read ) {
-
-        for my $h ( @ready ) {
-            my $buf;
-            
-            ### $len is the amount of bytes read
-            my $len = sysread( $h, $buf, 4096 );    # try to read 4096 bytes
-            
-            ### see perldoc -f sysread: it returns undef on error,
-            ### so bail out.
-            if( not defined $len ) {
-                warn(loc("Error reading from process: %1", $!));
-                last OUTER;
-            }
-            
-            ### check for $len. it may be 0, at which point we're
-            ### done reading, so don't try to process it.
-            ### if we would print anyway, we'd provide bogus information
-            $_out_handler->( "$buf" ) if $len && $h == $kidout;
-            $_err_handler->( "$buf" ) if $len && $h == $kiderror;
-            
-            ### child process is done printing.
-            last OUTER if $h == $kidout and $len == 0
-        }
-    }
-
-    waitpid $pid, 0; # wait for it to die
-    
-    ### restore STDIN after duping, or STDIN will be closed for
-    ### this current perl process!
-    open STDIN, "<&", $save_stdin or (
-        warn(loc("Could not restore STDIN: %1", $!)),
-        return
-    );        
-    
-    return 1;
-}
-
-1;
-
-__END__
+use Params::Check               qw[check];
+use Module::Load::Conditional   qw[can_load];
+use Locale::Maketext::Simple    Style => 'gettext';
 
 =pod
 
@@ -341,7 +40,6 @@ IPC::Cmd - finding and running system commands made easy
 
     my $full_path = can_run('wget') or warn 'wget is not installed!';
 
-
     ### commands can be arrayrefs or strings ###
     my $cmd = "$full_path -b theregister.co.uk";
     my $cmd = [$full_path, '-b', 'theregister.co.uk'];
@@ -352,7 +50,7 @@ IPC::Cmd - finding and running system commands made easy
                     verbose => 0,
                     buffer  => \$buffer )
     ) {
-        print "fetched webpage successfully\n";
+        print "fetched webpage successfully: $buffer\n";
     }
 
 
@@ -365,6 +63,10 @@ IPC::Cmd - finding and running system commands made easy
         print join "", @$full_buf;
     }
 
+    ### check for features
+    print "IPC::Open3 available: "  . IPC::Cmd->can_use_ipc_open3;      
+    print "IPC::Run available: "    . IPC::Cmd->can_use_ipc_run;      
+    print "Can capture buffer: "    . IPC::Cmd->can_capture_buffer;     
 
     ### don't have IPC::Cmd be verbose, ie don't print to stdout or
     ### stderr when running commands -- default is '0'
@@ -380,9 +82,76 @@ and if so where, whereas the C<run> function can actually execute any
 of the commands you give it and give you a clear return value, as well
 as adhere to your verbosity settings.
 
+=head1 CLASS METHODS 
+
+=head2 $bool = IPC::Cmd->can_use_ipc_run( [VERBOSE] )
+
+Utility function that tells you if C<IPC::Run> is available. 
+If the verbose flag is passed, it will print diagnostic messages
+if C<IPC::Run> can not be found or loaded.
+
+=cut
+
+
+sub can_use_ipc_run     { 
+    my $self    = shift;
+    my $verbose = shift || 0;
+    
+    ### ipc::run doesn't run on win98    
+    return if IS_WIN98;
+
+    ### if we dont have ipc::run, we obviously can't use it.
+    return unless can_load(
+                        modules => { 'IPC::Run' => '0.55' },        
+                        verbose => ($WARN && $verbose),
+                    );
+                    
+    ### otherwise, we're good to go
+    return 1;                    
+}
+
+=head2 $bool = IPC::Cmd->can_use_ipc_open3( [VERBOSE] )
+
+Utility function that tells you if C<IPC::Open3> is available. 
+If the verbose flag is passed, it will print diagnostic messages
+if C<IPC::Open3> can not be found or loaded.
+
+=cut
+
+
+sub can_use_ipc_open3   { 
+    my $self    = shift;
+    my $verbose = shift || 0;
+
+    ### ipc::open3 works on every platform, but it can't capture buffers
+    ### on win32 :(
+    return unless can_load(
+        modules => { map {$_ => '0.0'} qw|IPC::Open3 IO::Select Symbol| },
+        verbose => ($WARN && $verbose),
+    );
+    
+    return 1;
+}
+
+=head2 $bool = IPC::Cmd->can_capture_buffer
+
+Utility function that tells you if C<IPC::Cmd> is capable of
+capturing buffers in it's current configuration.
+
+=cut
+
+sub can_capture_buffer {
+    my $self    = shift;
+
+    return 1 if $USE_IPC_RUN    && $self->can_use_ipc_run; 
+    return 1 if $USE_IPC_OPEN3  && $self->can_use_ipc_open3 && !IS_WIN32; 
+    return;
+}
+
+
 =head1 FUNCTIONS
 
-=head2 can_run
+=head2 $path = can_run( PROGRAM );
 
 C<can_run> takes but a single argument: the name of a binary you wish
 to locate. C<can_run> works much like the unix binary C<which> or the bash
@@ -395,7 +164,35 @@ will also work on, for example, Win32.
 It will return the full path to the binary you asked for if it was
 found, or C<undef> if it was not.
 
-=head2 run
+=cut
+
+sub can_run {
+    my $command = shift;
+
+    # a lot of VMS executables have a symbol defined
+    # check those first
+    if ( $^O eq 'VMS' ) {
+        require VMS::DCLsym;
+        my $syms = VMS::DCLsym->new;
+        return $command if scalar $syms->getsym( uc $command );
+    }
+
+    require Config;
+    require File::Spec;
+    require ExtUtils::MakeMaker;
+
+    if( File::Spec->file_name_is_absolute($command) ) {
+        return MM->maybe_command($command);
+
+    } else {
+        for my $dir (split /\Q$Config::Config{path_sep}\E/, $ENV{PATH}) {
+            my $abs = File::Spec->catfile($dir, $command);
+            return $abs if $abs = MM->maybe_command($abs);
+        }
+    }
+}
+
+=head2 $ok | ($ok, $err, $full_buf, $stdout_buff, $stderr_buff) = run( command => COMMAND, [verbose => BOOL, buffer => \$SCALAR] );
 
 C<run> takes 3 arguments:
 
@@ -477,23 +274,396 @@ This element will be C<undef> if this is not the case.
 
 =back
 
+See the C<HOW IT WORKS> Section below to see how C<IPC::Cmd> decides
+what modules or function calls to use when issuing a command.
+
+=cut
+
+sub run {
+    my %hash = @_;
+    
+    ### if the user didn't provide a buffer, we'll store it here.
+    my $def_buf = '';
+    
+    my($verbose,$cmd,$buffer);
+    my $tmpl = {
+        verbose => { default  => $VERBOSE,  store => \$verbose },
+        buffer  => { default  => \$def_buf, store => \$buffer },
+        command => { required => 1,         store => \$cmd,
+                     allow    => sub { !ref($_[0]) or ref($_[0]) eq 'ARRAY' } 
+        },
+    };
+
+    unless( check( $tmpl, \%hash, $VERBOSE ) ) {
+        carp(loc("Could not validate input: %1", Params::Check->last_error));
+        return;
+    };        
+
+    print loc("Running [%1]...\n", (ref $cmd ? "@$cmd" : $cmd)) if $verbose;
+
+    ### did the user pass us a buffer to fill or not? if so, set this
+    ### flag so we know what is expected of us
+    ### XXX this is now being ignored. in the future, we could add diagnostic
+    ### messages based on this logic
+    #my $user_provided_buffer = $buffer == \$def_buf ? 0 : 1;
+    
+    ### buffers that are to be captured
+    my( @buffer, @buff_err, @buff_out );
+
+    ### capture STDOUT
+    my $_out_handler = sub {
+        my $buf = shift;
+        return unless defined $buf;
+        
+        print STDOUT $buf if $verbose;
+        push @buffer,   $buf;
+        push @buff_out, $buf;
+    };
+    
+    ### capture STDERR
+    my $_err_handler = sub {
+        my $buf = shift;
+        return unless defined $buf;
+        
+        print STDERR $buf if $verbose;
+        push @buffer,   $buf;
+        push @buff_err, $buf;
+    };
+    
+
+    ### flag to indicate we have a buffer captured
+    my $have_buffer = __PACKAGE__->can_capture_buffer ? 1 : 0;
+    
+    ### flag indicating if the subcall went ok
+    my $ok;
+    
+    ### IPC::Run is first choice if $USE_IPC_RUN is set.
+    if( $USE_IPC_RUN and __PACKAGE__->can_use_ipc_run( 1 ) ) {
+        ### ipc::run handlers needs the command as a string or an array ref
+
+        __PACKAGE__->_debug( "# Using IPC::Run. Have buffer: $have_buffer" )
+            if $DEBUG;
+            
+        $ok = __PACKAGE__->_ipc_run( $cmd, $_out_handler, $_err_handler );
+
+    ### since IPC::Open3 works on all platforms, and just fails on
+    ### win32 for capturing buffers, do that ideally
+    } elsif ( $USE_IPC_OPEN3 and __PACKAGE__->can_use_ipc_open3( 1 ) ) {
+
+        __PACKAGE__->_debug( "# Using IPC::Open3. Have buffer: $have_buffer" )
+            if $DEBUG;
+
+        ### in case there are pipes in there;
+        ### IPC::Open3 will call exec and exec will do the right thing 
+        $ok = __PACKAGE__->_open3_run( 
+                                ( ref $cmd ? "@$cmd" : $cmd ),
+                                $_out_handler, $_err_handler, $verbose 
+                            );
+        
+    ### if we are allowed to run verbose, just dispatch the system command
+    } else {
+        __PACKAGE__->_debug( "# Using system(). Have buffer: $have_buffer" )
+            if $DEBUG;
+        $ok = __PACKAGE__->_system_run( (ref $cmd ? "@$cmd" : $cmd), $verbose );
+    }
+    
+    ### fill the buffer;
+    $$buffer = join '', @buffer if @buffer;
+    
+    ### return a list of flags and buffers (if available) in list
+    ### context, or just a simple 'ok' in scalar
+    return wantarray
+                ? $have_buffer
+                    ? ($ok, $?, \@buffer, \@buff_out, \@buff_err)
+                    : ($ok, $? )
+                : $ok
+    
+    
+}
+
+sub _open3_run { 
+    my $self            = shift;
+    my $cmd             = shift;
+    my $_out_handler    = shift;
+    my $_err_handler    = shift;
+    my $verbose         = shift || 0;
+
+    ### Following code are adapted from Friar 'abstracts' in the
+    ### Perl Monastery (http://www.perlmonks.org/index.pl?node_id=151886).
+    ### XXX that code didn't work.
+    ### we now use the following code, thanks to theorbtwo
+
+    ### define them beforehand, so we always have defined FH's
+    ### to read from.
+    use Symbol;    
+    my $kidout      = Symbol::gensym();
+    my $kiderror    = Symbol::gensym();
+
+    ### Dup the filehandle so we can pass 'our' STDIN to the
+    ### child process. This stops us from having to pump input
+    ### from ourselves to the childprocess. However, we will need
+    ### to revive the FH afterwards, as IPC::Open3 closes it.
+    ### We'll do the same for STDOUT and STDERR. It works without
+    ### duping them on non-unix derivatives, but not on win32.
+    my @fds_to_dup = ( IS_WIN32 && !$verbose 
+                            ? qw[STDIN STDOUT STDERR] 
+                            : qw[STDIN]
+                        );
+    __PACKAGE__->__dup_fds( @fds_to_dup );
+    
+
+    my $pid = IPC::Open3::open3(
+                    '<&STDIN',
+                    (IS_WIN32 ? '>&STDOUT' : $kidout),
+                    (IS_WIN32 ? '>&STDERR' : $kiderror),
+                    $cmd
+                );
+
+    ### use OUR stdin, not $kidin. Somehow,
+    ### we never get the input.. so jump through
+    ### some hoops to do it :(
+    my $selector = IO::Select->new(
+                        (IS_WIN32 ? \*STDERR : $kiderror), 
+                        \*STDIN,   
+                        (IS_WIN32 ? \*STDOUT : $kidout)     
+                    );              
+
+    STDOUT->autoflush(1);   STDERR->autoflush(1);   STDIN->autoflush(1);
+    $kidout->autoflush(1)   if UNIVERSAL::can($kidout,   'autoflush');
+    $kiderror->autoflush(1) if UNIVERSAL::can($kiderror, 'autoflush');
+
+    ### add an epxlicit break statement
+    ### code courtesy of theorbtwo from #london.pm
+    OUTER: while ( my @ready = $selector->can_read ) {
+
+        for my $h ( @ready ) {
+            my $buf;
+            
+            ### $len is the amount of bytes read
+            my $len = sysread( $h, $buf, 4096 );    # try to read 4096 bytes
+            
+            ### see perldoc -f sysread: it returns undef on error,
+            ### so bail out.
+            if( not defined $len ) {
+                warn(loc("Error reading from process: %1", $!));
+                last OUTER;
+            }
+            
+            ### check for $len. it may be 0, at which point we're
+            ### done reading, so don't try to process it.
+            ### if we would print anyway, we'd provide bogus information
+            $_out_handler->( "$buf" ) if $len && $h == $kidout;
+            $_err_handler->( "$buf" ) if $len && $h == $kiderror;
+            
+            ### child process is done printing.
+            last OUTER if $h == $kidout and $len == 0
+        }
+    }
+
+    waitpid $pid, 0; # wait for it to die
+
+    ### restore STDIN after duping, or STDIN will be closed for
+    ### this current perl process!
+    __PACKAGE__->__reopen_fds( @fds_to_dup );
+    
+    return 1;
+}
+
+
+sub _ipc_run {  
+    my $self            = shift;
+    my $cmd             = shift;
+    my $_out_handler    = shift;
+    my $_err_handler    = shift;
+    
+    STDOUT->autoflush(1); STDERR->autoflush(1);
+
+    ### a command like:
+    # [
+    #     '/usr/bin/gzip',
+    #     '-cdf',
+    #     '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz',
+    #     '|',
+    #     '/usr/bin/tar',
+    #     '-tf -'
+    # ]
+    ### needs to become:
+    # [
+    #     ['/usr/bin/gzip', '-cdf',
+    #       '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz']
+    #     '|',
+    #     ['/usr/bin/tar', '-tf -']
+    # ]
+
+    
+    my @command; my $special_chars;
+    if( ref $cmd ) {
+        my $aref = [];
+        for my $item (@$cmd) {
+            if( $item =~ /([<>|&])/ ) {
+                push @command, $aref, $item;
+                $aref = [];
+                $special_chars .= $1;
+            } else {
+                push @$aref, $item;
+            }
+        }
+        push @command, $aref;
+    } else {
+        @command = map { if( /([<>|&])/ ) {
+                            $special_chars .= $1; $_;
+                         } else {
+                            [ split / +/ ]
+                         }
+                    } split( /\s*([<>|&])\s*/, $cmd );
+    }
+ 
+    ### if there's a pipe in the command, *STDIN needs to 
+    ### be inserted *BEFORE* the pipe, to work on win32
+    ### this also works on *nix, so we should do it when possible
+    ### this should *also* work on multiple pipes in the command
+    ### if there's no pipe in the command, append STDIN to the back
+    ### of the command instead.
+    ### XXX seems IPC::Run works it out for itself if you just
+    ### dont pass STDIN at all.
+    #     if( $special_chars and $special_chars =~ /\|/ ) {
+    #         ### only add STDIN the first time..
+    #         my $i;
+    #         @command = map { ($_ eq '|' && not $i++) 
+    #                             ? ( \*STDIN, $_ ) 
+    #                             : $_ 
+    #                         } @command; 
+    #     } else {
+    #         push @command, \*STDIN;
+    #     }
+  
+ 
+    # \*STDIN is already included in the @command, see a few lines up
+    return IPC::Run::run(   @command, 
+                            fileno(STDOUT).'>',
+                            $_out_handler,
+                            fileno(STDERR).'>',
+                            $_err_handler
+                        );
+}
+
+sub _system_run { 
+    my $self    = shift;
+    my $cmd     = shift;
+    my $verbose = shift || 0;
+
+    my @fds_to_dup = $verbose ? () : qw[STDOUT STDERR];
+    __PACKAGE__->__dup_fds( @fds_to_dup );
+    
+    ### system returns 'true' on failure -- the exit code of the cmd
+    system( $cmd );
+    
+    __PACKAGE__->__reopen_fds( @fds_to_dup );
+    
+    return if $?;
+    return 1;
+}
+
+{   use File::Spec;
+    use Symbol;
+
+    my %Map = (
+        STDOUT => [qw|>&|, \*STDOUT, Symbol::gensym() ],
+        STDERR => [qw|>&|, \*STDERR, Symbol::gensym() ],
+        STDIN  => [qw|<&|, \*STDIN,  Symbol::gensym() ],
+    );
+
+    ### dups FDs and stores them in a cache
+    sub __dup_fds {
+        my $self    = shift;
+        my @fds     = @_;
+
+        __PACKAGE__->_debug( "# Closing the following fds: @fds" ) if $DEBUG;
+
+        for my $name ( @fds ) {
+            my($redir, $fh, $glob) = @{$Map{$name}} or (
+                carp(loc("No such FD: '%1'", $name)), next );
+            
+            open $glob, $redir,$fh or (
+                        carp(loc("Could not dup '$name': %1", $!)),
+                        return
+                    );        
+                
+            ### we should re-open this filehandle right now, not
+            ### just dup it
+            if( $redir eq '>&' ) {
+                open( $fh, '>', File::Spec->devnull ) or (
+                    carp(loc("Could not reopen '$name': %1", $!)),
+                    return
+                );
+            }
+        }
+        
+        return 1;
+    }
+
+    ### reopens FDs from the cache    
+    sub __reopen_fds {
+        my $self    = shift;
+        my @fds     = @_;
+
+        __PACKAGE__->_debug( "# Reopening the following fds: @fds" ) if $DEBUG;
+
+        for my $name ( @fds ) {
+            my($redir, $fh, $glob) = @{$Map{$name}} or (
+                carp(loc("No such FD: '%1'", $name)), next );
+
+            open( $fh, $redir,$glob ) or (
+                    carp(loc("Could not restore '$name': %1", $!)),
+                    return
+                ); 
+           
+            ### close this FD, we're not using it anymore
+            close $glob;                
+        }                
+        return 1;                
+    
+    }
+}    
+
+sub _debug {
+    my $self    = shift;
+    my $msg     = shift or return;
+    my $level   = shift || 0;
+    
+    require Carp;
+    local $Carp::CarpLevel += $level;
+    Carp::carp($msg);
+    
+    return 1;
+}
+
+
+1;
+
+
+__END__
+
+=head1 HOW IT WORKS
+
 C<run> will try to execute your command using the following logic:
 
 =over 4
 
 =item *
 
-If you are not on windows 98 and have C<IPC::Run> installed, use that
-to execute the command. You will have the full output available in
-buffers, interactive commands are sure to work  and you are guaranteed
-to have your verbosity settings honored cleanly.
+If you have C<IPC::Run> installed, and the variable C<$IPC::Cmd::USE_IPC_RUN>
+is set to true (See the C<GLOBAL VARIABLES> Section) use that to execute 
+the command. You will have the full output available in buffers, interactive commands are sure to work  and you are guaranteed to have your verbosity
+settings honored cleanly.
 
 =item *
 
-Otherwise, if you are not on MSWin32 or Cygwin, try to execute the
-command by using C<IPC::Open3>. Buffers will be available, interactive
-commands will still execute cleanly, and also your  verbosity settings
-will be adhered to nicely;
+Otherwise, if the variable C<$IPC::Cmd::USE_IPC_OPEN3> is set to true 
+(See the C<GLOBAL VARIABLES> Section), try to execute the command using
+C<IPC::Open3>. Buffers will be available on all platforms except C<Win32>,
+interactive commands will still execute cleanly, and also your  verbosity
+settings will be adhered to nicely;
 
 =item *
 
@@ -508,6 +678,8 @@ system() call with your command and then re-open STDERR and STDOUT.
 This is the method of last resort and will still allow you to execute
 your commands cleanly. However, no buffers will be available.
 
+=back
+
 =head1 Global Variables
 
 The behaviour of IPC::Cmd can be altered by changing the following
@@ -521,14 +693,21 @@ commands to the screen or not. The default is 0;
 =head2 $IPC::Cmd::USE_IPC_RUN
 
 This variable controls whether IPC::Cmd will try to use L<IPC::Run>
-when available and suitable. Defaults to true.
+when available and suitable. Defaults to true if you are on C<Win32>.
 
 =head2 $IPC::Cmd::USE_IPC_OPEN3
 
 This variable controls whether IPC::Cmd will try to use L<IPC::Open3>
 when available and suitable. Defaults to true.
 
-=head2 Caveats
+=head2 $IPC::Cmd::WARN
+
+This variable controls whether run time warnings should be issued, like
+the failure to load an C<IPC::*> module you explicitly requested.
+
+Defaults to true. Turn this off at your own risk.
+
+=head1 Caveats
 
 =over 4
 
@@ -570,21 +749,6 @@ Currently it is too complicated to parse your command for IO
 Redirections. For capturing STDOUT or STDERR there is a work around
 however, since you can just inspect your buffers for the contents.
 
-=item IPC::Run buffer capture bug
-
-Due to a bug in C<IPC::Run> versions upto and including the latest one
-at the time of writing (0.78), C<run()> calls executed via C<IPC::Run>
-will not be able to differentiate between C<STDOUT> and C<STDERR>
-output when C<special characters> are present in the command (like
-<,>,| and &); All output will be caught in the C<STDERR> buffer.
-
-Note that this is only a problem if you use the long output of C<run()>
-and not if you provide the C<buffer> option to the command.
-
-If this limitation is not acceptable to you, consider setting the
-global variable C<$IPC::Cmd::USE_IPC_RUN> to false.
-
-
 =back
 
 =head1 See Also
@@ -604,7 +768,7 @@ help in getting IPC::Open3 to behave nicely.
 =head1 COPYRIGHT
 
 This module is
-copyright (c) 2002,2003,2004 Jos Boumans E<lt>kane@cpan.orgE<gt>.
+copyright (c) 2002 - 2006 Jos Boumans E<lt>kane@cpan.orgE<gt>.
 All rights reserved.
 
 This library is free software;

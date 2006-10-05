@@ -744,7 +744,7 @@ sub _unzip_bin {
     ### first, get the files.. it must be 2 different commands with 'unzip' :(
     {   my $cmd = [ $self->bin_unzip, '-Z', '-1', $self->archive ];
 
-        my $buffer;
+        my $buffer = '';
         unless( scalar run( command => $cmd,
                             verbose => $DEBUG,
                             buffer  => \$buffer )

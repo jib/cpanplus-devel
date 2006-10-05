@@ -6,7 +6,11 @@ use vars            qw[$FATAL $DEBUG $AUTOLOAD $VERSION];
 use Params::Check   qw[allow];
 use Data::Dumper;
 
-$VERSION    = '0.21';
+### some objects might have overload enabled, we'll need to
+### disable string overloading for callbacks
+require overload;
+
+$VERSION    = '0.32';
 $FATAL      = 0;
 $DEBUG      = 0;
 
@@ -57,6 +61,15 @@ Object::Accessor
 
     ### enable debugging
     $Object::Accessor::DEBUG = 1;
+
+    ### advanced usage -- callbacks
+    {   my $obj = Object::Accessor->new('foo');
+        $obj->register_callback( sub { ... } );
+        
+        $obj->foo( 1 ); # these calls invoke the callback you registered
+        $obj->foo()     # which allows you to change the get/set 
+                        # behaviour and what is returned to the caller.
+    }        
 
     ### advanced usage -- lvalue attributes
     {   my $obj = Object::Accessor::Lvalue->new('foo');
@@ -206,7 +219,9 @@ by one to the C<can> method.
 =cut
 
 sub ls_accessors {
-    return sort keys %{$_[0]};
+    ### metainformation is stored in the stringified 
+    ### key of the object, so skip that when listing accessors
+    return sort grep { $_ ne "$_[0]" } keys %{$_[0]};
 }
 
 =head2 $ref = $self->ls_allow(KEY)
@@ -239,10 +254,23 @@ sub mk_clone {
     my $class   = ref $self;
 
     my $clone   = $class->new;
-    my %hash    = map { $_ => $self->ls_allow($_) } $self->ls_accessors;
+    
+    ### split out accessors with and without allow handlers, so we
+    ### don't install dummy allow handers (which makes O::A::lvalue
+    ### warn for exampel)
+    my %hash; my @list;
+    for my $acc ( $self->ls_accessors ) {
+        my $allow = $self->{$acc}->[ALLOW];
+        $allow ? $hash{$acc} = $allow : push @list, $acc;
+    }
 
-    # copy the accessors from $self to $clone
-    $clone->mk_accessors( \%hash );
+    ### copy the accessors from $self to $clone
+    $clone->mk_accessors( \%hash ) if %hash;
+    $clone->mk_accessors( @list  ) if @list;
+
+    ### copy callbacks
+    #$clone->{"$clone"} = $self->{"$self"} if $self->{"$self"};
+    $clone->___callback( $self->___callback );
 
     return $clone;
 }
@@ -289,6 +317,49 @@ sub mk_verify {
     return if $fail;
     return 1;
 }   
+
+=head2 $bool = $self->register_callback( sub { ... } );
+
+This method allows you to register a callback, that is invoked
+every time an accessor is called. This allows you to munge input
+data, access external data stores, etc.
+
+You are free to return whatever you wish. On a C<set> call, the
+data is even stored in the object.
+
+Below is an example of the use of a callback.
+    
+    $object->some_method( "some_value" );
+    
+    my $callback = sub {
+        my $self    = shift; # the object
+        my $meth    = shift; # "some_method"
+        my $val     = shift; # ["some_value"]  
+                             # could be undef -- check 'exists';
+                             # if scalar @$val is empty, it was a 'get'
+    
+        # your code here
+
+        return $new_val;     # the value you want to be set/returned
+    }        
+
+To access the values stored in the object, circumventing the
+callback structure, you should use the C<___get> and C<___set> methods
+documented further down. 
+
+=cut
+
+sub register_callback {
+    my $self    = shift;
+    my $sub     = shift or return;
+    
+    ### use the memory address as key, it's not used EVER as an
+    ### accessor --kane
+    $self->___callback( $sub );
+
+    return 1;
+}
+
 
 =head2 $bool = $self->can( METHOD_NAME )
 
@@ -339,14 +410,15 @@ sub AUTOLOAD {
     my $self    = shift;
     my($method) = ($AUTOLOAD =~ /([^:']+$)/);
 
-    $self->___autoload( $method, @_ ) or return;
+    my $val = $self->___autoload( $method, @_ ) or return;
 
-    return $self->{$method}->[VALUE];
+    return $val->[0];
 }
 
 sub ___autoload {
     my $self    = shift;
     my $method  = shift;
+    my $assign  = scalar @_;    # is this an assignment?
 
     ### a method on our object
     if( UNIVERSAL::isa( $self, 'HASH' ) ) {
@@ -365,8 +437,9 @@ sub ___autoload {
     }        
 
     ### assign?
-    if( @_ ) {
-        my $val = shift;
+    my $val = $assign ? shift(@_) : $self->___get( $method );
+
+    if( $assign ) {
 
         ### any binding?
         if( $_[0] ) {
@@ -402,16 +475,67 @@ sub ___autoload {
                 return 
             ); 
         }
-
-        ### if there's more arguments than $self, then
-        ### replace the method called by the accessor.
-        ### XXX implement rw vs ro accessors!
-        $self->{$method}->[VALUE] = $val;
     }
     
-    return 1;
+    ### callbacks?
+    if( my $sub = $self->___callback ) {
+        $val = eval { $sub->( $self, $method, ($assign ? [$val] : []) ) };
+        
+        ### register the error
+        $self->___error( $@, 1 ), return if $@;
+    }
+
+    ### now we can actually assign it
+    if( $assign ) {
+        $self->___set( $method, $val ) or return;
+    }
+    
+    return [$val];
 }
 
+=head2 $val = $self->___get( METHOD_NAME );
+
+Method to directly access the value of the given accessor in the
+object. It circumvents all calls to allow checks, callbakcs, etc.
+
+Use only if you C<Know What You Are Doing>! General usage for 
+this functionality would be in your own custom callbacks.
+
+=cut
+
+### XXX O::A::lvalue is mirroring this behaviour! if this
+### changes, lvalue's autoload must be changed as well
+sub ___get {
+    my $self    = shift;
+    my $method  = shift or return;
+    return $self->{$method}->[VALUE];
+}
+
+=head2 $bool = $self->___set( METHOD_NAME => VALUE );
+
+Method to directly set the value of the given accessor in the
+object. It circumvents all calls to allow checks, callbakcs, etc.
+
+Use only if you C<Know What You Are Doing>! General usage for 
+this functionality would be in your own custom callbacks.
+
+=cut 
+
+sub ___set {
+    my $self    = shift;
+    my $method  = shift or return;
+   
+    ### you didn't give us a value to set!
+    exists $_[0] or return;
+    my $val     = shift;
+ 
+    ### if there's more arguments than $self, then
+    ### replace the method called by the accessor.
+    ### XXX implement rw vs ro accessors!
+    $self->{$method}->[VALUE] = $val;
+
+    return 1;
+}
 
 sub ___debug {
     return unless $DEBUG;
@@ -431,6 +555,22 @@ sub ___error {
     my $lvl  = shift || 0;
     local $Carp::CarpLevel += ($lvl + 1);
     $FATAL ? croak($msg) : carp($msg);
+}
+
+### objects might be overloaded.. if so, we can't trust what "$self"
+### will return, which might get *really* painful.. so check for that
+### and get their unoverloaded stringval if needed.
+sub ___callback {
+    my $self = shift;
+    my $sub  = shift;
+    
+    my $mem  = overload::Overloaded( $self )
+                ? overload::StrVal( $self )
+                : "$self";
+
+    $self->{$mem} = $sub if $sub;
+    
+    return $self->{$mem};
 }
 
 =head1 LVALUE ACCESSORS
@@ -458,6 +598,30 @@ generate the following code & errors:
 Note that C<lvalue> support on C<AUTOLOAD> routines is a
 C<perl 5.8.x> feature. See perldoc L<perl58delta> for details.
 
+=head2 CAVEATS
+
+=over 4
+
+=item * Allow handlers
+
+Due to the nature of C<lvalue subs>, we never get access to the
+value you are assigning, so we can not check it againt your allow
+handler. Allow handlers are therefor unsupported under C<lvalue>
+conditions.
+
+See C<perldoc perlsub> for details.
+
+=item * Callbacks
+
+Due to the nature of C<lvalue subs>, we never get access to the
+value you are assigning, so we can not check provide this value
+to your callback. Furthermore, we can not distinguish between
+a C<get> and a C<set> call. Callbacks are therefor unsupported 
+under C<lvalue> conditions.
+
+See C<perldoc perlsub> for details.
+
+
 =cut
 
 {   package Object::Accessor::Lvalue;
@@ -473,13 +637,35 @@ C<perl 5.8.x> feature. See perldoc L<perl58delta> for details.
     sub AUTOLOAD : lvalue {
         my $self    = shift;
         my($method) = ($AUTOLOAD =~ /([^:']+$)/);
-    
+
         $self->___autoload( $method, @_ ) or return;
 
         ### *dont* add return to it, or it won't be stored
         ### see perldoc perlsub on lvalue subs
+        ### XXX can't use $self->___get( ... ), as we MUST have
+        ### the container that's used for the lvalue assign as
+        ### the last statement... :(
         $self->{$method}->[ VALUE() ];
     }
+
+    sub mk_accessors {
+        my $self    = shift;
+        my $is_hash = UNIVERSAL::isa( $_[0], 'HASH' );
+        
+        $self->___error(
+            "Allow handlers are not supported for '". __PACKAGE__ ."' objects"
+        ) if $is_hash;
+        
+        return $self->SUPER::mk_accessors( @_ );
+    }                    
+    
+    sub register_callback {
+        my $self = shift;
+        $self->___error(
+            "Callbacks are not supported for '". __PACKAGE__ ."' objects"
+        );
+        return;
+    }        
 }    
 
 

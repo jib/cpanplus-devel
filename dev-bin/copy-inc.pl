@@ -44,11 +44,12 @@ unless( $MineOnly ) {
         File::Spec
         IO::String
         IO::Zlib
-        IPC::Run
         Locale::Maketext::Simple
         Module::CoreList
         Module::Pluggable
     ];
+    
+    # IPC::Run no more!
     
     for my $module ( @Modules ) {
         print "Updating $module...";
