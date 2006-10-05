@@ -99,7 +99,8 @@ sub new {
     my $args    = check( $tmpl, \%hash ) or return;
     my $self    = bless {}, $class;
 
-    $self->mk_accessors( qw[ok args function rv] );
+#    $self->mk_accessors( qw[ok args function rv] );
+    $self->mk_accessors( keys %$tmpl );
 
     ### set the values passed in the struct ###
     while( my($key,$val) = each %$args ) {
@@ -110,11 +111,15 @@ sub new {
 }
 
 sub _ok { return shift->ok }
+#sub _stringify  { Carp::carp( "stringifying!" ); overload::StrVal( shift ) }
 
 ### make it easier to check if($rv) { foo() }
 ### this allows people to not have to explicitly say
 ### if( $rv->ok ) { foo() }
-use overload bool => \&_ok, fallback => 1;
+### XXX add an explicit stringify, so it doesn't fall back to "bool"? :(
+use overload bool       => \&_ok, 
+#             '""'       => \&_stringify,
+             fallback   => 1;
 
 =pod
 
