@@ -9,6 +9,7 @@ BEGIN {
     use Config;
     use FindBin;
     use File::Spec;
+    use File::Spec::Unix;
 
     use vars qw[@RUN_TIME_INC $LIB_DIR $BUNDLE_DIR $BASE $PRIV_LIB];
     $LIB_DIR        = File::Spec->catdir( $FindBin::Bin, qw[.. lib] );
@@ -38,6 +39,7 @@ BEGIN {
 
 }    
 
+use FindBin;
 use File::Find                          qw[find];
 use CPANPLUS::Error;
 use CPANPLUS::Configure;
@@ -46,10 +48,15 @@ use CPANPLUS::Internals::Utils;
 
 ### now, load in all the .pms from the bundle dir, so they're in
 ### memory. Skip the ones already loaded, and ignore failed requires.
+### XXX this section *somehow* makes 'system(cmd.exe)' return immediately
+### on win32, when run from cpanp-boxed (regular cpanp is fine). Probably
+### need to load only a subsection of these modules, for safety sake.
 {   my $base_re = quotemeta $BUNDLE_DIR;
 
     find( sub { my $file = $File::Find::name;
                 return unless -e $file && -f _ && -s _;
+                
+                return if $file =~ /\._/;   # osx temp files
                 
                 ### strip base dir. Might not end in / (or local
                 ### dir delimiter), so remove that if needed too
@@ -59,20 +66,39 @@ use CPANPLUS::Internals::Utils;
                 return if $INC{$file};
                
                 ### construct pm name and strip suffix
-                my $pm = join '::', File::Spec->splitdir( $file );
+                my $unixfile = File::Spec::Unix->catfile( 
+                                    File::Spec->splitdir( $file )
+                                );     
+                my $pm       = join '::', File::Spec->splitdir( $file );
                 $pm =~ s/\.pm$//i;
 
-                eval "require $pm ; 1";
-                ### dont enable warnings -- some modules
-                ### are OS specific. Uncomment only for debug
-                ### reasons
-                #warn $@ if $@;
+                ### make sure we *DONT* load these blatantly
+                #return if $pm =~ /(?:IPC::Run::)|(?:File::Spec::)/;
 
+                eval "require $pm ; 1";
+
+                ### if the require *FAILS* it's still added to %INC
+                ### in some cases (mostly if a require in the required
+                ### file fails or some such.. so remove it from our %INC!
+                if( $@ ) {
+                    push @failures, $unixfile;
+    
+                    ### dont enable warnings -- some modules
+                    ### are OS specific. Uncomment only for debug
+                    ### reasons
+                    #warn $@;
+
+
+                }
             }, $BUNDLE_DIR ); 
+
+    ### delete AFTER we've loaded everything!
+    delete $INC{$_} for @failures;
 
     ### set @INC back to our non-bundled version
     @INC = @RUN_TIME_INC;
 }
+
 
 ### setup the configuration
 my $ConfObj     = CPANPLUS::Configure->new;

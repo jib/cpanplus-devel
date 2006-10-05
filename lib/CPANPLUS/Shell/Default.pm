@@ -711,6 +711,7 @@ sub _shell {
         $cb->_chdir( dir => $mod->status->extract() )   or next;
 
         #local $ENV{PERL5OPT} = CPANPLUS::inc->original_perl5opt;
+
         if( system($shell) and $! ) {
             print loc("Error executing your subshell '%1': %2",
                         $shell, $!),"\n";
@@ -837,7 +838,7 @@ sub _install {
                 my $stack = CPANPLUS::Error->stack_as_string;
                 ### remove everything in the log that was there *before*
                 ### we started this install
-                substr( $stack, 0, $log_length );
+                substr( $stack, 0, $log_length, '' );
                 
                 print $fh $stack;
                 close $fh;

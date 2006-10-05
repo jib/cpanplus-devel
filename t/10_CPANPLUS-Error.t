@@ -63,6 +63,9 @@ my $map = {
         $sub->( $map->{$name}->[0], 1 );
     }
 
+    ### must close it for Win32 tests!
+    close output_handle;           
+
     ok( -s $file,           "   Output file now has size" );
     
     my $fh = FileHandle->new( $file );

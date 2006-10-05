@@ -86,6 +86,10 @@ BEGIN {
         
         *$func = sub {
                         my $msg     = shift;
+                        
+                        ### no point storing non-messages
+                        return unless defined $msg;
+                        
                         $log->store(
                                 message => $msg,
                                 tag     => uc $name,
