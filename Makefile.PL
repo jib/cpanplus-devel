@@ -155,7 +155,7 @@ Or let your package manager take care of it.
     $Prereq = {
         'File::Fetch'               => '0.08', # win32 ftp support
         'File::Spec'                => '0.82',
-        'IPC::Cmd'                  => '0.24',
+        'IPC::Cmd'                  => '0.29',
         'Locale::Maketext::Simple'  => '0.01',
         'Log::Message'              => '0.01',
         'Module::Load'              => '0.10',
@@ -181,19 +181,25 @@ Or let your package manager take care of it.
     {   if( !$Config->get_conf('prefer_makefile')  ) {
             $Prereq->{ 'CPANPLUS::Dist::Build' } = '0.04';
         }
-        
-        if( $^O eq 'MSWin32') {
-            $Prereq->{ 'Win32::Process' } = 0;
-        }
+
+        ### No longer requiring IPC::Run or win32::process; IPC::Cmd
+        ### is 'good enough' now to deal with running programs
+        ### it can't capture buffers on win32, but that's an 'ok'
+        ### penalty considering what a PITA it is to get IPC::Run going
+        ### so IPC::Run is also no longer bundled.
 
         ### used to have 0.80, but not it was never released by coral
         ### 0.79 *should* be good enough for now... asked coral to 
         ### release 0.80 on 10/3/2006
         ### Win32 and Cygwin users need it.. otherwise, no buffers
         ### can be captured
-        if( $^O eq 'MSWin32' or $^O eq 'Cygwin' ) {
-            $Prereq->{ 'IPC::Run' } = '0.79';
-        }            
+        #if( $^O eq 'MSWin32' or $^O eq 'Cygwin' ) {
+        #    $Prereq->{ 'IPC::Run' } = '0.79';
+        #}            
+
+        #if( $^O eq 'MSWin32') {
+        #    $Prereq->{ 'Win32::Process' } = 0;
+        #}
     }
 
 

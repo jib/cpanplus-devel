@@ -22,13 +22,6 @@ inc/bundle/File/Spec/Win32.pm
 inc/bundle/IO/String.pm
 inc/bundle/IO/Zlib.pm
 inc/bundle/IPC/Cmd.pm
-inc/bundle/IPC/Run.pm
-inc/bundle/IPC/Run/Debug.pm
-inc/bundle/IPC/Run/IO.pm
-inc/bundle/IPC/Run/Timer.pm
-inc/bundle/IPC/Run/Win32Helper.pm
-inc/bundle/IPC/Run/Win32IO.pm
-inc/bundle/IPC/Run/Win32Pump.pm
 inc/bundle/Locale/Maketext/Simple.pm
 inc/bundle/Log/Message.pm
 inc/bundle/Log/Message/Config.pm

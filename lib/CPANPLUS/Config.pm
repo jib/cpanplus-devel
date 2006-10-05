@@ -157,6 +157,9 @@ sub new {
     
     $obj->_clean_up_paths;
     
+    ### shut up IPC::Cmd warning about not findin IPC::Run on win32
+    $IPC::Cmd::WARN = 0;
+    
     return $obj;
 }
 
