@@ -1,5 +1,5 @@
 package Locale::Maketext::Simple;
-$Locale::Maketext::Simple::VERSION = '0.16';
+$Locale::Maketext::Simple::VERSION = '0.18';
 
 use strict;
 use 5.004;
@@ -10,8 +10,8 @@ Locale::Maketext::Simple - Simple interface to Locale::Maketext::Lexicon
 
 =head1 VERSION
 
-This document describes version 0.16 of Locale::Maketext::Simple,
-released May 3, 2006.
+This document describes version 0.18 of Locale::Maketext::Simple,
+released Septermber 8, 2006.
 
 =head1 SYNOPSIS
 
@@ -307,25 +307,32 @@ L<Locale::Maketext>, L<Locale::Maketext::Lexicon>
 
 Audrey Tang E<lt>cpan@audreyt.orgE<gt>
 
-=head1 COPYRIGHT (The "MIT" License)
+=head1 COPYRIGHT
 
 Copyright 2003, 2004, 2005, 2006 by Audrey Tang E<lt>cpan@audreyt.orgE<gt>.
+
+This software is released under the MIT license cited below.  Additionally,
+when this software is distributed with B<Perl Kit, Version 5>, you may also
+redistribute it and/or modify it under the same terms as Perl itself.
+
+=head2 The "MIT" License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is fur-
-nished to do so, subject to the following conditions:
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
-NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE X
-CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
-ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
 
 =cut

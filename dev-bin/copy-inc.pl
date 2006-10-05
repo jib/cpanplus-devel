@@ -4,7 +4,8 @@ use CPANPLUS::Backend;
 
 my $Prefix      = '../';           # updir from cpanplus/devel 
 my $Libdir      = 'lib/';
-my $Target      = cwd() . '/inc/bundle';    # Target dir to copy to
+my $Cwd         = cwd();
+my $Target      = $Cwd . '/inc/bundle';    # Target dir to copy to
 my $CB          = CPANPLUS::Backend->new;
 my $MineOnly    = @ARGV ? 1 : 0;
 
@@ -105,6 +106,7 @@ unless( $MineOnly ) {
 # }
 
 ### revert all that wasn't touched
+chdir $Cwd or die "Could not chdir back!";
 system("find $Target -type f | xargs svk add");
 system("svk diff | less");
 system("svk commit");
