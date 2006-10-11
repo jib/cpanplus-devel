@@ -17,13 +17,35 @@ $Params::Check::VERBOSE = 1;
 ### for the version ###
 require CPANPLUS::Internals;
 
-=head2 _have_query_report_modules
+=head1 NAME
+
+CPANPLUS::Internals::Report
+
+=head1 SYNOPSIS
+
+  ### enable test reporting
+  $cb->configure_object->set_conf( cpantest => 1 );
+    
+  ### set custom mx host, shouldn't normally be needed
+  $cb->configure_object->set_conf( cpantest_mx => 'smtp.example.com' );
+
+=head1 DESCRIPTION
+
+This module provides all the functionality to send test reports to
+C<http://testers.cpan.org> using the C<Test::Reporter> module.
+
+All methods will be called automatically if you have C<CPANPLUS>
+configured to enable test reporting (see the C<SYNOPSIS>).
+
+=head1 METHODS
+
+=head2 $bool = $cb->_have_query_report_modules
 
 This function checks if all the required modules are here for querying
 reports. It returns true and loads them if they are, or returns false
 otherwise.
 
-=head2 _have_send_report_modules
+=head2 $bool = $cb->_have_send_report_modules
 
 This function checks if all the required modules are here for sending
 reports. It returns true and loads them if they are, or returns false
@@ -76,7 +98,7 @@ otherwise.
     }
 }
 
-=head2 _query_report( module => $modobj, [all_versions => BOOL, verbose => BOOL] )
+=head2 @list = $cb->_query_report( module => $modobj, [all_versions => BOOL, verbose => BOOL] )
 
 This function queries the CPAN testers database at
 I<http://testers.cpan.org/> for test results of specified module objects,
@@ -180,7 +202,7 @@ sub _query_report {
 
 =pod
 
-=head2 _send_report( module => $modobj, buffer => $make_output, failed => BOOL, [save => BOOL, address => $email_to, dontcc => BOOL, verbose => BOOL, force => BOOL]);
+=head2 $bool = $cb->_send_report( module => $modobj, buffer => $make_output, failed => BOOL, [save => BOOL, address => $email_to, dontcc => BOOL, verbose => BOOL, force => BOOL]);
 
 This function sends a testers report to C<cpan-testers@perl.org> for a
 particular distribution.
@@ -425,7 +447,12 @@ sub _send_report {
                         grade           => $grade,
                         distribution    => $dist,
                         via             => "CPANPLUS $int_ver",
+                        debug           => $conf->get_conf('debug'),
                     );
+                    
+    ### set a custom mx, if requested
+    $reporter->mx( [ $conf->get_conf('cpantest_mx') ] ) 
+        if $conf->get_conf('cpantest_mx');
 
     ### set the from address ###
     $reporter->from( $conf->get_conf('email') )

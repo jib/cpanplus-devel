@@ -55,6 +55,7 @@ my $Conf = {
                                         __PACKAGE__->_home_dir, DOT_CPANPLUS ),
         'buildflags'                => '',
         'cpantest'                  => 0,
+        'cpantest_mx'               => '',
         'debug'                     => 0,
         'dist_type'                 => '',
         'email'                     => DEFAULT_EMAIL,

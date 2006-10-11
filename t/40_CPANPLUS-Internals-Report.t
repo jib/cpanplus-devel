@@ -25,7 +25,7 @@ my $send_tests  = 55;
 my $query_tests = 7;
 my $total_tests = $send_tests + $query_tests;
 
-use Test::More                  tests => 117;
+use Test::More                  tests => 125;
 use Module::Load::Conditional   qw[can_load];
 
 use FileHandle;
@@ -114,6 +114,21 @@ my $map = {
     },    
 };
 
+### test config settings 
+{   for my $opt ( qw[cpantest cpantest_mx] ) {
+        my $warnings;
+        local $SIG{__WARN__} = sub { $warnings .= "@_" };
+
+        my $org = $conf->get_conf( $opt );
+        ok( $conf->set_conf( $opt => $$ ),
+                                "Setting option $opt to $$" );
+        is( $conf->get_conf( $opt ), $$,
+                                "   Retrieved properly" );
+        ok( $conf->set_conf( $opt => $org ),
+                                "   Option $opt set back to original" );
+        ok( !$warnings,         "   No warnings" );                                
+    }
+}
 
 ### test constants ###
 {   {   my $to = CPAN_MAIL_ACCOUNT->('foo');
