@@ -424,6 +424,8 @@ sub parse_module {
 
     ### check only for allowed characters in a module name
     unless( $mod =~ /[^\w:]/ ) {
+
+        ### perhaps we can find it in the module tree?
         my $maybe = $self->module_tree($mod);
         return $maybe if IS_MODOBJ->( module => $maybe );
     }
@@ -449,6 +451,27 @@ sub parse_module {
         $modobj->status->_fetch_from( $mod );
         
         return $modobj;      
+    }
+    
+    ### perhaps we can find it's a third party module?
+    {   my $modobj = CPANPLUS::Module::Fake->new(
+                        module  => $mod,
+                        version => 0,
+                        package => $dist,
+                        path    => File::Spec::Unix->catdir(
+                                        $conf->_get_mirror('base'),
+                                        UNKNOWN_DL_LOCATION ),
+                        author  => CPANPLUS::Module::Author::Fake->new
+                    );
+        if( $modobj->is_third_party ) {
+            my $info = $modobj->third_party_information;
+            
+            $modobj->author->author( $info->{author}     );
+            $modobj->author->email(  $info->{author_url} );
+            $modobj->description(    $info->{url} );
+
+            return $modobj;
+        }
     }
 
     unless( $dist ) {

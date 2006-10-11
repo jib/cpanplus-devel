@@ -427,6 +427,7 @@ sub _resolve_prereqs {
             last;
         }
 
+        ### part of core?
         if( $modobj->package_is_perl_core ) {
             error(loc("Prerequisite '%1' is perl-core (%2) -- not ".
                       "installing that. Aborting install",

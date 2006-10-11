@@ -344,6 +344,19 @@ Returns a boolean indicating if the module you are looking at, is
 actually a bundle. Bundles are identified as modules whose name starts
 with C<Bundle::>.
 
+=head2 $mod->is_third_party
+
+Returns a boolean indicating whether the package is a known third-party 
+module (i.e. it's not provided by the standard Perl distribution and 
+is not available on the CPAN, but on a third party software provider).
+See L<Module::ThirdParty> for more details.
+
+=head2 $mod->third_party_information
+
+Returns a reference to a hash with more information about a third-party
+module. See the documentation about C<module_information()> in 
+L<Module::ThirdParty> for more details.
+
 =cut
 
 {
@@ -399,6 +412,22 @@ with C<Bundle::>.
     ### make sure Bundle-Foo also gets flagged as bundle
     sub is_bundle {
         return shift->module =~ /^bundle(?:-|::)/i ? 1 : 0;
+    }
+
+    sub is_third_party {
+        my $self = shift;
+        
+        return unless can_load( modules => { 'Module::ThirdParty' => 0 } );
+        
+        return Module::ThirdParty::is_3rd_party( $self->name );
+    }
+
+    sub third_party_information {
+        my $self = shift;
+
+        return unless $self->is_third_party; 
+
+        return Module::ThirdParty::module_information( $self->name );
     }
 }
 
@@ -755,6 +784,22 @@ sub install {
                       $], $self->module, $self->installed_version,
                       $self->version, $self->package ) );
         }
+        return;
+    
+    ### it might be a known 3rd party module
+    } elsif ( $self->is_third_party ) {
+        my $info = $self->third_party_information;
+        error(loc(
+            "%1 is a known third-party module.\n\n".
+            "As it isn't available on the CPAN, CPANPLUS can't install " .
+            "it automatically. Therefore you need to install it manually " .
+            "before proceeding.\n\n".
+            "%2 is part of %3, published by %4, and should be available ".
+            "for download at the following address:\n\t%5",
+            $self->name, $self->name, $info->{name}, $info->{author},
+            $info->{url}
+        ));
+        
         return;
     }
 

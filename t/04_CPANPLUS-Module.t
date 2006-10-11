@@ -245,6 +245,29 @@ is( $mod->author->author(), $auth->author,            "Module eq Author" );
     like( CPANPLUS::Error->stack_as_string, qr/core Perl/,
                                     "   Error properly logged" );
 }    
+
+### test third-party modules
+SKIP: {
+    skip "Module::ThirdParty not installed", 10 
+        unless eval { require Module::ThirdParty; 1 };
+
+    ok( !$mod->is_third_party, 
+                                "Not a 3rd party module: ". $mod->name );
+    
+    my $fake = $cb->parse_module( module => 'LOCAL/SVN-Core-1.0' );
+    ok( $fake,                  "Created module object for ". $fake->name );
+    ok( $fake->is_third_party,
+                                "   It is a 3rd party module" );
+
+    my $info = $fake->third_party_information;
+    ok( $info,                  "Got 3rd party package information" );
+    isa_ok( $info,              'HASH' );
+    
+    for my $item ( qw[name url author author_url] ) {
+        ok( length($info->{$item}),
+                                "   $item field is filled" );
+    }        
+}
  
 ### testing that the uptodate/installed tests don't find things in the
 ### cpanplus::inc tree
