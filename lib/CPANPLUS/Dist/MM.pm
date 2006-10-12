@@ -142,10 +142,12 @@ sub format_available {
         return;
     }
     
-    unless( $conf->get_program('make') ) { 
-        error( loc( "You do not have '%1' -- '%2' not available",
-                    'make', __PACKAGE__ ) ); 
-        return;
+    for my $pgm ( qw[make perlwrapper] ) {
+        unless( $conf->get_program( $pgm ) ) { 
+            error(loc("You do not have '%1'in your path -- '%2' not available",
+                        $pgm, __PACKAGE__ )); 
+            return;
+        }
     }
 
     return 1;     
@@ -287,14 +289,19 @@ sub prepare {
             ### XXX this fails under ipc::run due to the extra quotes,
             ### but it works in ipc::open3. however, ipc::open3 doesn't work
             ### on win32/cygwin. XXX TODO get a windows box and sort this out
-#              my $cmd =  qq[$perl -MEnglish -le ] . 
-#                         QUOTE_PERL_ONE_LINER->(
-#                             qq[\$OUTPUT_AUTOFLUSH++,do(q($makefile_pl))]
-#                         ) 
-#                         . $mmflags;
+            # my $cmd =  qq[$perl -MEnglish -le ] . 
+            #            QUOTE_PERL_ONE_LINER->(
+            #                qq[\$OUTPUT_AUTOFLUSH++,do(q($makefile_pl))]
+            #            ) 
+            #            . $mmflags;
 
-            my $flush = OPT_AUTOFLUSH;
-            my $cmd     = "$perl $flush $makefile_pl $mmflags";
+            # my $flush = OPT_AUTOFLUSH;
+            # my $cmd     = "$perl $flush $makefile_pl $mmflags";
+
+            my $run_perl    = $conf->get_program('perlwrapper');
+            my $cmd         = "$perl $run_perl $makefile_pl $mmflags";
+
+$DB::single = 1;            
             unless( scalar run( command => $cmd,
                                 buffer  => \$captured,
                                 verbose => $run_verbose, # may be interactive   
@@ -652,6 +659,7 @@ Returns true on success, false on failure.
 =cut
 
 sub install {
+
     ### just in case you did the create with ANOTHER dist object linked
     ### to the same module object
     my $dist = shift();

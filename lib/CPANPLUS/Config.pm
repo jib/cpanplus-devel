@@ -10,9 +10,11 @@ use base 'CPANPLUS::Internals::Utils';
 use Config;
 use File::Spec;
 use Module::Load;
+use CPANPLUS;
 use CPANPLUS::Error;
 use CPANPLUS::Internals::Constants;
 
+use File::Basename              qw[dirname];
 use IPC::Cmd                    qw[can_run];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 use Module::Load::Conditional   qw[check_install];
@@ -106,6 +108,34 @@ my $Conf = {
                               )
                             : can_run('sudo')
                         ),
+        ### perlwrapper that allows us to turn on autoflushing                        
+        'perlwrapper'   => (    ### parallel to your cpanp/cpanp-boxed
+                                do { my $f = File::Spec->rel2abs(
+                                        File::Spec->catdir( 
+                                            dirname($0), 'cpanp-run-perl' 
+                                        )
+                                     );
+                                    -e $f ? $f : undef
+                                } ||
+                                
+                                ### parallel to your CPANPLUS.pm:
+                                ### $INC{cpanplus}/../bin/cpanp-run-perl
+                                do { my $f = File::Spec->rel2abs(
+                                        File::Spec->catdir( 
+                                            dirname( $INC{'CPANPLUS.pm'} ),
+                                            '..',   # lib dir
+                                            'bin',  # bin dir
+                                            'cpanp-run-perl' 
+                                        )
+                                     );
+                                    -e $f ? $f : undef
+                                } ||
+                                
+                                ### in your path -- take this one last, the
+                                ### previous two assume extracted tarballs
+                                ### or user installs
+                                can_run('cpanp-run-perl'),
+                        ),         
     },
 
     ### _source, _build and _mirror are supposed to be static
