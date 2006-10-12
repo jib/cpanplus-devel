@@ -4,7 +4,7 @@ use strict;
 
 BEGIN {
 
-    use constant IS_VMS   => $^O ne 'VMS'                       ? 1 : 0;    
+    use constant IS_VMS   => $^O eq 'VMS'                       ? 1 : 0;    
     use constant IS_WIN32 => $^O eq 'MSWin32'                   ? 1 : 0;
     use constant IS_WIN98 => (IS_WIN32 and !Win32::IsWinNT())   ? 1 : 0;
 
@@ -13,7 +13,7 @@ BEGIN {
                         $USE_IPC_RUN $USE_IPC_OPEN3 $WARN
                     ];
 
-    $VERSION        = '0.29_01';
+    $VERSION        = '0.32';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -466,6 +466,7 @@ sub _open3_run {
     ### this current perl process!
     __PACKAGE__->__reopen_fds( @fds_to_dup );
     
+    return if $?;   # some error occurred
     return 1;
 }
 
