@@ -1,3 +1,16 @@
+Changes for 0.076       Fri Oct 13 14:37:27 CEST 2006
+=====================================================
+
+* run external perl commands using cpanp-run-perl to enable
+  autoflushing cross-platform, cross-ipc-module.
+* separate formats for printing 'conf' and 'program' sections
+* Add Module::ThirdParty support [rt #12131], see
+  'CPANPLUS::Module' documentation for usage
+* add cpantest_mx config option [rt #21346], see 
+  'CPANPLUS::Internals::Report' documentation for usage.
+* update bundled modules, most notably IPC::Cmd, which should
+  improve executing sub-commands significantly.
+
 Changes for 0.075_01    Thu Oct  5 17:08:27 CEST 2006
 =====================================================
 * Various small fixes to make CPANPLUS work better on Win32
