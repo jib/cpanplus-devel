@@ -301,7 +301,6 @@ sub prepare {
             my $run_perl    = $conf->get_program('perlwrapper');
             my $cmd         = "$perl $run_perl $makefile_pl $mmflags";
 
-$DB::single = 1;            
             unless( scalar run( command => $cmd,
                                 buffer  => \$captured,
                                 verbose => $run_verbose, # may be interactive   

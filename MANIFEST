@@ -1,6 +1,7 @@
 bin/cpan2dist
 bin/cpanp
 bin/cpanp-boxed
+bin/cpanp-run-perl
 ChangeLog
 inc/bundle/Archive/Extract.pm
 inc/bundle/Archive/Tar.pm
