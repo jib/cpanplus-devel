@@ -169,7 +169,7 @@ Or let your package manager take care of it.
         'Archive::Extract'          => '0.11', # bzip2 support
         'Archive::Tar'              => '1.23',
         'IO::Zlib'                  => '1.04',
-        'Object::Accessor'          => '0.03',
+        'Object::Accessor'          => '0.32', # overloaded stringification
         'Module::CoreList'          => '1.97',
         'Module::Pluggable'         => '2.4',
         'Module::Loaded'            => '0.01',
