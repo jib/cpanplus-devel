@@ -1,6 +1,7 @@
 package CPANPLUS::Selfupdate;
 
 use strict;
+use CPANPLUS::Error qw[error msg];
 
 =head2 $self = CPANPLUS::Selfupdate->new;
 
@@ -8,7 +9,8 @@ use strict;
 
 sub new {
     my $class = shift;
-    return bless {}, $class;
+    my $cb    = shift or return;
+    return bless sub { $cb }, $class;
 }    
 
 my %Modules = (
@@ -29,15 +31,18 @@ my %Modules = (
         'Archive::Extract'          => '0.11', # bzip2 support
         'Archive::Tar'              => '1.23',
         'IO::Zlib'                  => '1.04',
-        'Object::Accessor'          => '0.03',
-        'Module::CoreList'          => '1.97',
+        'Object::Accessor'          => '0.32', # overloaded stringification
+        'Module::CoreList'          => '2.09',
         'Module::Pluggable'         => '2.4',
         'Module::Loaded'            => '0.01',
     };
 
     features => {
-        prefer_makefile => {        # XXX ! negate!
-            'CPANPLUS::Dist::Build' => '0.04',
+        prefer_makefile => sub {
+            my $cb = shift;
+            $cb->configure_object->get_conf('prefer_makefile') 
+                ? { 'CPANPLUS::Dist::Build' => '0.04' }
+                : { 'CPANPLUS::Dist::MM'    => '0.0'  };
         },            
         cpantest        => {
             LWP              => '0.0',
@@ -72,10 +77,11 @@ my %Modules = (
     },
     core => {
         'CPANPLUS' => '0.0',
-    },        
+    },
+    
+    
+    
 );
-
-
 
 
 =head2 $self->selfupdate
@@ -86,9 +92,36 @@ my %Modules = (
 
 =cut
 
+sub modules_for_feature {
+    my $self    = shift;
+    my $feature = shift or return;
+    my $cb      = $self->();
+    
+    unless( exists $Modules{'features'}->{$feature} ) {
+        error(loc("Unknown feature '%1'", $feature));
+        return;
+    }
+    
+    my $ref = $Modules{'features'}->{$feature};
+    
+    ### it's either a list of modules/versions or a subroutine that
+    ### returns a list of modules/versions
+    my $href = UNIVERSAL::isa( $ref, 'HASH' ) ? $ref : $ref->();
+    
+    return unless $href;    # nothing needed for the feature?
+    
+    ### XXX this loses the version information!
+    return map { $cb->module_tree($_) } keys %$href;
+}
+
 =head2 $self->list_features
 
-=end
+=cut
+
+sub list_features {
+    my $self = shift;
+    return keys %{ $Modules->{'features'} };
+}
 
 =head2 $self->list_enabled_features
 
