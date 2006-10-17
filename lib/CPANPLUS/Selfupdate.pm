@@ -1,8 +1,120 @@
 package CPANPLUS::Selfupdate;
 
 use strict;
-use IPC::Cmd        qw[can_run];
-use CPANPLUS::Error qw[error msg];
+use IPC::Cmd                    qw[can_run];
+use CPANPLUS::Error             qw[error msg];
+use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
+
+
+### a config has describing our deps etc
+{
+
+    my $Modules = {
+        dependencies => {
+            'File::Fetch'               => '0.08', # win32 ftp support
+            'File::Spec'                => '0.82',
+            'IPC::Cmd'                  => '0.29',
+            'Locale::Maketext::Simple'  => '0.01',
+            'Log::Message'              => '0.01',
+            'Module::Load'              => '0.10',
+            'Module::Load::Conditional' => '0.10', # %INC lookup support
+            'Params::Check'             => '0.22',
+            'Package::Constants'        => '0.01',
+            'Term::UI'                  => '0.05',
+            'Test::Harness'             => '2.62', # due to bug #19505
+                                                   # only 2.58 and 2.60 are bad
+            'Test::More'                => '0.47', # to run our tests
+            'Archive::Extract'          => '0.11', # bzip2 support
+            'Archive::Tar'              => '1.23',
+            'IO::Zlib'                  => '1.04',
+            'Object::Accessor'          => '0.32', # overloaded stringification
+            'Module::CoreList'          => '2.09',
+            'Module::Pluggable'         => '2.4',
+            'Module::Loaded'            => '0.01',
+        },
+    
+        features => {
+            prefer_makefile => [
+                sub {
+                    my $cb = shift;
+                    $cb->configure_object->get_conf('prefer_makefile') 
+                        ? { 'CPANPLUS::Dist::Build' => '0.04' }
+                        : { 'CPANPLUS::Dist::MM'    => '0.0'  };
+                },
+                sub { return 1 },   # always enabled
+            ],            
+            cpantest        => [
+                {
+                    LWP              => '0.0',
+                    'LWP::UserAgent' => '0.0',
+                    'HTTP::Request'  => '0.0',
+                    URI              => '0.0',
+                    YAML             => '0.0',
+                    'Test::Reporter' => 1.27,
+                },
+                sub { 
+                    my $cb = shift;
+                    return $cb->configure_object->get_conf('cpantest');
+                },
+            ],                
+            dist_type => [
+                sub { 
+                    my $cb      = shift;
+                    my $dist    = $cb->configure_object->get_conf('dist_type');
+                    return { $dist => '0.0' } if $dist;
+                    return;
+                },            
+                sub { 
+                    my $cb = shift;
+                    return $cb->configure_object->get_conf('dist_type');
+                },
+            ],
+
+            md5 => [
+                {
+                    'Digest::MD5'   => '0.0',
+                },            
+                sub { 
+                    my $cb = shift;
+                    return $cb->configure_object->get_conf('md5');
+                },
+            ],
+            shell => [
+                sub { 
+                    my $cb      = shift;
+                    my $dist    = $cb->configure_object->get_conf('shell');
+                    return { $dist => '0.0' } if $dist;
+                    return;
+                },            
+                sub { return 1 },
+            ],                
+            signature => [
+                sub {
+                    my $cb      = shift;
+                    return if can_run('gpg') and 
+                        $cb->configure_object->get_conf('prefer_bin');
+                    return { 'Crypt::OpenPGP' => '0.0' };
+                },            
+                sub { 
+                    my $cb = shift;
+                    return $cb->configure_object->get_conf('signature');
+                },
+            ],
+            storable => [
+                { 'Storable' => '0.0' },         
+                sub { 
+                    my $cb = shift;
+                    return $cb->configure_object->get_conf('cpantest');
+                },
+            ],
+        },
+        core => {
+            'CPANPLUS' => '0.0',
+        },
+    };
+
+    sub _get_config { return $Modules }
+}
 
 =head2 $self = CPANPLUS::Selfupdate->new( $backend_object );
 
@@ -14,75 +126,6 @@ sub new {
     return bless sub { $cb }, $class;
 }    
 
-my %Modules = (
-    dependencies => {
-        'File::Fetch'               => '0.08', # win32 ftp support
-        'File::Spec'                => '0.82',
-        'IPC::Cmd'                  => '0.29',
-        'Locale::Maketext::Simple'  => '0.01',
-        'Log::Message'              => '0.01',
-        'Module::Load'              => '0.10',
-        'Module::Load::Conditional' => '0.10', # %INC lookup support
-        'Params::Check'             => '0.22',
-        'Package::Constants'        => '0.01',
-        'Term::UI'                  => '0.05',
-        'Test::Harness'             => '2.62', # due to bug #19505
-                                               # only 2.58 and 2.60 are bad
-        'Test::More'                => '0.47', # to run our tests
-        'Archive::Extract'          => '0.11', # bzip2 support
-        'Archive::Tar'              => '1.23',
-        'IO::Zlib'                  => '1.04',
-        'Object::Accessor'          => '0.32', # overloaded stringification
-        'Module::CoreList'          => '2.09',
-        'Module::Pluggable'         => '2.4',
-        'Module::Loaded'            => '0.01',
-    },
-
-    features => {
-        prefer_makefile => sub {
-            my $cb = shift;
-            $cb->configure_object->get_conf('prefer_makefile') 
-                ? { 'CPANPLUS::Dist::Build' => '0.04' }
-                : { 'CPANPLUS::Dist::MM'    => '0.0'  };
-        },            
-        cpantest        => {
-            LWP              => '0.0',
-            'LWP::UserAgent' => '0.0',
-            'HTTP::Request'  => '0.0',
-            URI              => '0.0',
-            YAML             => '0.0',
-            'Test::Reporter' => 1.27,
-        },
-        dist_type => sub { 
-            my $cb      = shift;
-            my $dist    = $cb->configure_object->get_conf('dist_type');
-            return { $dist => '0.0' } if $dist;
-            return;
-        },            
-        md5 => {
-            'Digest::MD5'   => '0.0',
-        },            
-        shell => sub { 
-            my $cb      = shift;
-            my $dist    = $cb->configure_object->get_conf('shell');
-            return { $dist => '0.0' } if $dist;
-            return;
-        },            
-        signature => sub {
-            my $cb      = shift;
-            return if can_run('gpg') and 
-                $cb->configure_object->get_conf('prefer_bin');
-            return { 'Crypt::OpenPGP' => '0.0' };
-        },            
-        storable => { 'Storable' => '0.0' }                
-    },
-    core => {
-        'CPANPLUS' => '0.0',
-    },
-    
-    
-    
-);
 
 
 =head2 $self->selfupdate
@@ -98,12 +141,12 @@ sub modules_for_feature {
     my $feature = shift or return;
     my $cb      = $self->();
     
-    unless( exists $Modules{'features'}->{$feature} ) {
+    unless( exists $self->_get_config->{'features'}->{$feature} ) {
         error(loc("Unknown feature '%1'", $feature));
         return;
     }
     
-    my $ref = $Modules{'features'}->{$feature};
+    my $ref = $self->_get_config->{'features'}->{$feature}->[0];
     
     ### it's either a list of modules/versions or a subroutine that
     ### returns a list of modules/versions
@@ -124,7 +167,7 @@ sub modules_for_feature {
 
 sub list_features {
     my $self = shift;
-    return keys %{ $Modules{'features'} };
+    return keys %{ $self->_get_config->{'features'} };
 }
 
 =head2 $self->list_enabled_features
@@ -154,17 +197,19 @@ sub list_features {
     sub new {
         my $class = shift;
         my $mod   = shift or return;
-        my $ver   = shift or return;
+        my $ver   = shift;          return unless defined $ver;
         
         my $obj   = $mod->clone;    # clone the module object
         bless $obj, $class;         # rebless it to our class
         
         $obj->$Acc( $ver );
+        
+        return $obj;
     }
     
     sub is_uptodate_for_cpanplus {
         my $self = shift;
-        return $self->is_uptodate( $self->$Acc );
+        return $self->is_uptodate( version => $self->$Acc );
     }
 }    
 
