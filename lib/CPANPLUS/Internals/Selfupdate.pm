@@ -3,7 +3,7 @@ package CPANPLUS::Selfupdate;
 use strict;
 use CPANPLUS::Error qw[error msg];
 
-=head2 $self = CPANPLUS::Selfupdate->new;
+=head2 $self = CPANPLUS::Selfupdate->new( $backend_object );
 
 =cut
 
@@ -35,7 +35,7 @@ my %Modules = (
         'Module::CoreList'          => '2.09',
         'Module::Pluggable'         => '2.4',
         'Module::Loaded'            => '0.01',
-    };
+    },
 
     features => {
         prefer_makefile => sub {
@@ -110,8 +110,11 @@ sub modules_for_feature {
     
     return unless $href;    # nothing needed for the feature?
     
-    ### XXX this loses the version information!
-    return map { $cb->module_tree($_) } keys %$href;
+    return map { 
+            CPANPLUS::Selfupdate::Module->new(
+                $cb->module_tree($_) => $href->{$_}
+            )
+        } keys %$href;
 }
 
 =head2 $self->list_features
@@ -120,7 +123,7 @@ sub modules_for_feature {
 
 sub list_features {
     my $self = shift;
-    return keys %{ $Modules->{'features'} };
+    return keys %{ $Modules{'features'} };
 }
 
 =head2 $self->list_enabled_features
@@ -130,6 +133,31 @@ sub list_features {
 =head2 $self->list_core_dependencies
 
 =cut
+
+
+{   package CPANPLUS::Selfupdate::Module;
+    use base 'CPANPLUS::Module';
+    
+    my $Acc = '_cpanplus_requires_version';
+    
+    sub new {
+        my $class = shift;
+        my $mod   = shift or return;
+        my $ver   = shift or return;
+        
+        my $obj   = $mod->clone;    # clone the module object
+        bless $obj, $class;         # rebless it to our class
+        
+        $obj->mk_accessors( $Acc );
+        
+        $obj->$Acc( $ver );
+    }
+    
+    sub is_uptodate_for_cpanplus {
+        my $self = shift;
+        return $self->is_uptodate( $self->$Acc );
+    }
+}    
 
 1;
 
