@@ -176,6 +176,17 @@ configure object.
 
 sub configure_object { return shift->_conf() };
 
+=head2 $su = $cb->selfupdate_object;
+
+Returns a copy of the C<CPANPLUS::Selfupdate> object.
+
+See the L<CPANPLUS::Selfupdate> manpage for the operations
+you can perform on the selfupdate object.
+
+=cut
+
+sub selfupdate_object { return shift->_selfupdate() };
+
 =pod
 
 =head2 search( type => TYPE, allow => AREF, [data => AREF, verbose => BOOL] )

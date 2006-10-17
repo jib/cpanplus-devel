@@ -10,6 +10,8 @@ use Config;
 
 use CPANPLUS::Error;
 
+use CPANPLUS::Selfupdate;
+
 use CPANPLUS::Internals::Source;
 use CPANPLUS::Internals::Extract;
 use CPANPLUS::Internals::Fetch;
@@ -86,7 +88,7 @@ is reset to this after each install.
 
 ### autogenerate accessors ###
 for my $key ( qw[_conf _id _lib _perl5lib _modules _hosts _methods _status
-                 _callbacks]
+                 _callbacks _selfupdate]
 ) {
     no strict 'refs';
     *{__PACKAGE__."::$key"} = sub {
@@ -181,6 +183,9 @@ Returns the object on success, or dies on failure.
                 } 
             );
         }
+
+        ### create a selfupdate object
+        $args->_selfupdate( CPANPLUS::Selfupdate->new( $args ) );
 
         ### initalize it as an empty hashref ###
         $args->_status->pending_prereqs( {} );

@@ -1,6 +1,7 @@
 package CPANPLUS::Selfupdate;
 
 use strict;
+use IPC::Cmd        qw[can_run];
 use CPANPLUS::Error qw[error msg];
 
 =head2 $self = CPANPLUS::Selfupdate->new( $backend_object );
@@ -106,7 +107,7 @@ sub modules_for_feature {
     
     ### it's either a list of modules/versions or a subroutine that
     ### returns a list of modules/versions
-    my $href = UNIVERSAL::isa( $ref, 'HASH' ) ? $ref : $ref->();
+    my $href = UNIVERSAL::isa( $ref, 'HASH' ) ? $ref : $ref->( $cb );
     
     return unless $href;    # nothing needed for the feature?
     
@@ -139,6 +140,16 @@ sub list_features {
     use base 'CPANPLUS::Module';
     
     my $Acc = '_cpanplus_requires_version';
+
+    ### create an accessor
+    ### XXX this is WHITEBOX code -- if the implementation of CPANPLUS::Module
+    ### changes, this code will break!
+    {   no strict 'refs';
+        *$Acc = sub {
+            $_[0]->{$Acc} = $_[1] if @_ > 1;
+            return $_[0]->{$Acc};
+        }
+    }
     
     sub new {
         my $class = shift;
@@ -147,8 +158,6 @@ sub list_features {
         
         my $obj   = $mod->clone;    # clone the module object
         bless $obj, $class;         # rebless it to our class
-        
-        $obj->mk_accessors( $Acc );
         
         $obj->$Acc( $ver );
     }
