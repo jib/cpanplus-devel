@@ -1,10 +1,39 @@
 package CPANPLUS::Selfupdate;
 
 use strict;
+use Params::Check               qw[check];
 use IPC::Cmd                    qw[can_run];
 use CPANPLUS::Error             qw[error msg];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
+use CPANPLUS::Internals::Constants;
+
+$Params::Check::VERBOSE = 1;
+
+=head1 NAME
+
+CPANPLUS::Selfupdate
+
+=head1 SYNOPSIS
+
+    $su     = $cb->selfupdate_object;
+    
+    @feats  = $su->list_features;
+    @feats  = $su->list_enabled_features;
+    
+    @mods   = $su->modules_for_feature( $_ ) for @feats;
+    @mods   = $su->list_core_dependencies;
+    @mods   = $su->list_core_modules;
+    
+    for ( @mods ) {
+        print $_->name " should be version " . $_->version_required;
+        print "Installed version is not uptodate!" 
+            unless $_->is_version_sufficient;
+    }
+    
+    $ok     = $su->selfupdate( update => 'all', latest => 0 );
+
+=cut
 
 ### a config has describing our deps etc
 {
@@ -116,7 +145,12 @@ use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
     sub _get_config { return $Modules }
 }
 
+=head1 METHODS
+
 =head2 $self = CPANPLUS::Selfupdate->new( $backend_object );
+
+Sets up a new selfupdate object. Called automatically when
+a new backend object is created.
 
 =cut
 
@@ -128,11 +162,79 @@ sub new {
 
 
 
-=head2 $self->selfupdate
+=head2 $bool = $self->selfupdate( update => "core|dependencies|enabled_features|features|all", latest => BOOL )
+
+Selfupdate CPANPLUS. You can update either the core (CPANPLUS itself),
+the core dependencies, all features you have currently turned on, or
+all features available, or everything.
+
+The C<latest> option determines whether it should update to the latest
+version on CPAN, or if the minimal required version for CPANPLUS is
+good enough.
+
+Returns true on success, false on error.
 
 =cut
 
-=head2 $self->modules_for_feature
+sub selfupdate {
+    my $self = shift;
+    my $cb   = $self->();
+    my $conf = $cb->configure_object;
+    my %hash = @_;
+
+    ### cache to find the relevant modules
+    my $cache = {
+        core                => sub { $self->list_core_modules               },
+        dependencies        => sub { $self->list_core_dependencies          },
+        enabled_features    => sub { map { $self->modules_for_feature( $_ ) }
+                                        $self->list_enabled_features   
+                                },
+        features            => sub { map { $self->modules_for_feature( $_ ) }
+                                     $self->list_features   
+                                },
+                                ### make sure to do 'core' first, in case
+                                ### we are out of date ourselves
+        all                 => [ qw|core dependencies enabled_features| ],
+    };
+    
+    my($type, $latest, $force);
+    my $tmpl = {
+        update  => { required => 1, store => \$type,
+                     allow    => [ keys %$cache ],  },
+        latest  => { default  => 0, store => \$latest,    allow => BOOLEANS },                     
+        force   => { default => $conf->get_conf('force'), store => \$force },
+    };
+    
+    check( $tmpl, \%hash ) or return;
+    
+    my $ref     = $cache->{$type};
+    my @mods    = UNIVERSAL::isa( $ref, 'ARRAY' )
+                    ? map { $cache->{$_}->() } @$ref
+                    : $ref->();
+    
+    ### do we need the latest versions?
+    @mods       = $latest 
+                    ? @mods 
+                    : grep { $_->is_installed_version_sufficient } @mods;
+    
+    my $flag;
+    for my $mod ( @mods ) {
+        unless( $mod->install( force => $force ) ) {
+            $flag++;
+            error(loc("Failed to update module '%1'", $mod->name));
+        }
+    }
+    
+    return if $flag;
+    return 1;
+}    
+ 
+=head2 @mods = $self->modules_for_feature( FEATURE )
+
+Returns a list of C<CPANPLUS::Selfupdate::Module> objects which 
+represent the modules required to support this feature.
+
+For a list of features, call the C<list_features> method.
 
 =cut
 
@@ -161,7 +263,9 @@ sub modules_for_feature {
         } keys %$href;
 }
 
-=head2 $self->list_features
+=head2 @features = $self->list_features
+
+Returns a list of features that are supported by CPANPLUS.
 
 =cut
 
@@ -170,29 +274,81 @@ sub list_features {
     return keys %{ $self->_get_config->{'features'} };
 }
 
-=head2 $self->list_enabled_features
+=head2 @features = $self->list_enabled_features
+
+Returns a list of features that are enabled in your current
+CPANPLUS installation.
 
 =cut
 
-=head2 $self->list_core_dependencies
+sub list_enabled_features {
+    my $self = shift;
+    my $cb   = $self->();
+    
+    my @enabled;
+    for my $feat ( $self->list_features ) {
+        my $ref = $self->_get_config->{'features'}->{$feat}->[1];
+        push @enabled, $feat if $ref->($cb);
+    }
+    
+    return @enabled;
+}
+
+=head2 @mods = $self->list_core_dependencies
+
+Returns a list of C<CPANPLUS::Selfupdate::Module> objects which 
+represent the modules that comprise the core dependencies of CPANPLUS.
 
 =cut
 
+sub list_core_dependencies {
+    my $self = shift;
+    my $cb   = $self->();
+    my $href = $self->_get_config->{'dependencies'};
+
+    return map { 
+            CPANPLUS::Selfupdate::Module->new(
+                $cb->module_tree($_) => $href->{$_}
+            )
+        } keys %$href;
+}
+
+=head2 @mods = $self->list_core_modules
+
+Returns a list of C<CPANPLUS::Selfupdate::Module> objects which 
+represent the modules that comprise the core of CPANPLUS.
+
+=cut
+
+sub list_core_modules {
+    my $self = shift;
+    my $cb   = $self->();
+    my $href = $self->_get_config->{'core'};
+
+    return map { 
+            CPANPLUS::Selfupdate::Module->new(
+                $cb->module_tree($_) => $href->{$_}
+            )
+        } keys %$href;
+}
+
+=head1 CPANPLUS::Selfupdate::Module
+
+C<CPANPLUS::Selfupdate::Module> extends C<CPANPLUS::Module> objects
+by providing accessors to aid in selfupdating CPANPLUS.
+
+These objects are returned by all methods on C<CPANPLUS::Selfupdate>
+that return module objects.
+
+=cut
 
 {   package CPANPLUS::Selfupdate::Module;
     use base 'CPANPLUS::Module';
     
-    my $Acc = '_cpanplus_requires_version';
-
-    ### create an accessor
-    ### XXX this is WHITEBOX code -- if the implementation of CPANPLUS::Module
-    ### changes, this code will break!
-    {   no strict 'refs';
-        *$Acc = sub {
-            $_[0]->{$Acc} = $_[1] if @_ > 1;
-            return $_[0]->{$Acc};
-        }
-    }
+    ### stores module name -> cpanplus required version
+    ### XXX only can deal with 1 pair!
+    my %Cache = ();
+    my $Acc   = 'version_required';
     
     sub new {
         my $class = shift;
@@ -206,11 +362,32 @@ sub list_features {
         
         return $obj;
     }
+
+=head2 $version = $mod->version_required
+
+Returns the version of this module required for CPANPLUS.
+
+=cut
     
-    sub is_uptodate_for_cpanplus {
+    sub version_required {
+        my $self = shift;
+        $Cache{ $self->name } = shift() if @_;
+        return $Cache{ $self->name };
+    }        
+
+=head2 $bool = $mod->is_installed_version_sufficient
+
+Returns true if the installed version of this module is sufficient
+for CPANPLUS, or false if it is not.
+
+=cut
+
+    
+    sub is_installed_version_sufficient {
         my $self = shift;
         return $self->is_uptodate( version => $self->$Acc );
     }
+
 }    
 
 1;

@@ -27,22 +27,25 @@ use Data::Dumper;
 BEGIN { require 'conf.pl'; }
 
 my $conf = gimme_conf();
+$conf->set_conf( verbose => 0 );
 
-my $CB      = CPANPLUS::Backend->new( $conf );
-my $Acc     = 'selfupdate_object';
-my $Conf    = CPANPLUS::Selfupdate->_get_config;
-my $Dep     = 'B::Deparse';   # has to be in our package file && core!
-my $Feat    = 'some_feature';
+my $Class       = 'CPANPLUS::Selfupdate';
+my $ModClass    = "CPANPLUS::Selfupdate::Module";
+my $CB          = CPANPLUS::Backend->new( $conf );
+my $Acc         = 'selfupdate_object';
+my $Conf        = $Class->_get_config;
+my $Dep         = 'B::Deparse';   # has to be in our package file && core!
+my $Feat        = 'some_feature';
 
 ### test the object
-{   ok( $CB,                        "New backend object created" );
-    can_ok( $CB,                    $Acc );
+{   ok( $CB,                    "New backend object created" );
+    can_ok( $CB,                $Acc );
 
-    ok( $Conf,                      "Got configuration hash" );
+    ok( $Conf,                  "Got configuration hash" );
 
     my $su = $CB->$Acc;
-    ok( $su,                        "Selfupdate object retrieved" );
-    isa_ok( $su,                    "CPANPLUS::Selfupdate" );
+    ok( $su,                    "Selfupdate object retrieved" );
+    isa_ok( $su,                "CPANPLUS::Selfupdate" );
 }
 
 ### test the feature list
@@ -55,28 +58,58 @@ my $Feat    = 'some_feature';
         $Conf->{'features'}->{$Feat}    = [ { $Dep => 0 }, sub { 1 } ];
     }
 
-    is_deeply( $Conf, CPANPLUS::Selfupdate->_get_config,
-                                    "Config updated succesfully" );
+    is_deeply( $Conf, $Class->_get_config,
+                                "Config updated succesfully" );
 
     my @feat = $CB->$Acc->list_features;
-    ok( scalar(@feat),              "Features list returned" );
+    ok( scalar(@feat),          "Features list returned" );
 
     ### test if we get modules for each feature
     for my $feat (@feat) {
         my @mods = $CB->$Acc->modules_for_feature( $feat );
         
-        ok( $feat,                  "Testing feature '$feat'" );
-        ok( scalar( @mods ),        "   Module list returned" );
+        ok( $feat,              "Testing feature '$feat'" );
+        ok( scalar( @mods ),    "   Module list returned" );
     
+        my $meth = 'is_installed_version_sufficient';
         for my $mod (@mods) {
-            isa_ok( $mod,           "CPANPLUS::Module" );
-            isa_ok( $mod,           "CPANPLUS::Selfupdate::Module" );
-            can_ok( $mod,           'is_uptodate_for_cpanplus' );
-            ok( $mod->is_uptodate_for_cpanplus,
-                                    "   Module uptodate" );
+            isa_ok( $mod,       "CPANPLUS::Module" );
+            isa_ok( $mod,       $ModClass );
+            can_ok( $mod,       $meth );
+            ok( $mod->$meth,    "   Module uptodate" );
         }                                    
     }
+
+    ### find enabled features
+    {   my $meth = 'list_enabled_features';
+        can_ok( $Class,         $meth );        
+        
+        my @list = $CB->$Acc->$meth;
+        ok( scalar(@list),      "Retrieved enabled features" );
+        is_deeply( [$Feat], \@list,
+                                "   Proper features found" );
+    }
     
-    ### test
+    ### find dependencies/core modules
+    for my $meth ( qw[list_core_dependencies list_core_modules] ) {
+        can_ok( $Class,         $meth );        
+        
+        my @list = $CB->$Acc->$meth;
+        ok( scalar(@list),      "Retrieved modules" );
+        is( scalar(@list), 1,   "   1 Found" );
+        isa_ok( $list[0],       $ModClass ); 
+        is( $list[0]->name, $Dep,
+                                "   Correct module found" );
+    }
+
+    ### now selfupdate ourselves
+    {   ### XXX just test the mechanics, make sure install returns true
+        local *CPANPLUS::Selfupdate::Module::install = sub { 1 };
     
+        my $meth = 'selfupdate';
+        can_ok( $Class,         $meth );
+        ok( $CB->$Acc->$meth( update => 'all'),   
+                                "   Selfupdate successful" );
+    }
 }    
+

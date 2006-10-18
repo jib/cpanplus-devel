@@ -1038,7 +1038,7 @@ sub _set_conf {
 
     ### possible options
     ### XXX hard coded, not optimal :(
-    my @types   = qw[reconfigure save edit program conf mirrors];
+    my @types   = qw[reconfigure save edit program conf mirrors selfupdate];
 
 
     my $args; my $opts; my $input;
@@ -1112,8 +1112,24 @@ sub _set_conf {
             $i++;
             print "\t[$i] $uri\n";
         }
-        
 
+    } elsif ( $type eq 'selfupdate' ) {
+        my %valid = map { $_ => $_ } 
+                        qw|core dependencies enabled_features features all|;
+
+        unless( $valid{$key} ) {
+            print loc( "To update your current CPANPLUS installation, ".
+                        "choose one of the these options:\n%1",
+                        (join $/, map {"\ts selfupdate $_"} sort keys %valid) );          
+        } else {
+            print loc( "Updating your CPANPLUS installation\n" );
+            $cb->selfupdate_object->selfupdate( 
+                                    update  => $key, 
+                                    latest  => 1,
+                                    %$opts 
+                                );
+        }
+        
     } else {
 
         if ( $type eq 'program' or $type eq 'conf' ) {

@@ -387,8 +387,9 @@ L<Module::ThirdParty> for more details.
             ### if the package is newer than installed, then it's dual-lifed
             return if $self->version > $self->installed_version;
 
-            ### if the package is newer than corelist, then it's dual-lifed
-            return if $self->version > $core;
+            ### if the package is newer or equal to the corelist, 
+            ### then it's dual-lifed
+            return if $self->version >= $core;
 
             ### otherwise, it's older than corelist, thus unsuitable.
             return 1;
