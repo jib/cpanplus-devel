@@ -228,40 +228,6 @@ sub selfupdate {
     return if $flag;
     return 1;
 }    
- 
-=head2 @mods = $self->modules_for_feature( FEATURE )
-
-Returns a list of C<CPANPLUS::Selfupdate::Module> objects which 
-represent the modules required to support this feature.
-
-For a list of features, call the C<list_features> method.
-
-=cut
-
-sub modules_for_feature {
-    my $self    = shift;
-    my $feature = shift or return;
-    my $cb      = $self->();
-    
-    unless( exists $self->_get_config->{'features'}->{$feature} ) {
-        error(loc("Unknown feature '%1'", $feature));
-        return;
-    }
-    
-    my $ref = $self->_get_config->{'features'}->{$feature}->[0];
-    
-    ### it's either a list of modules/versions or a subroutine that
-    ### returns a list of modules/versions
-    my $href = UNIVERSAL::isa( $ref, 'HASH' ) ? $ref : $ref->( $cb );
-    
-    return unless $href;    # nothing needed for the feature?
-    
-    return map { 
-            CPANPLUS::Selfupdate::Module->new(
-                $cb->module_tree($_) => $href->{$_}
-            )
-        } keys %$href;
-}
 
 =head2 @features = $self->list_features
 
@@ -294,43 +260,97 @@ sub list_enabled_features {
     return @enabled;
 }
 
-=head2 @mods = $self->list_core_dependencies
+=head2 @mods = $self->modules_for_feature( FEATURE [,AS_HASH] )
+
+Returns a list of C<CPANPLUS::Selfupdate::Module> objects which 
+represent the modules required to support this feature.
+
+For a list of features, call the C<list_features> method.
+
+If the C<AS_HASH> argument is provided, no module objects are
+returned, but a hashref where the keys are names of the modules,
+and values are their minimum versions.
+
+=cut
+
+sub modules_for_feature {
+    my $self    = shift;
+    my $feature = shift or return;
+    my $as_hash = shift || 0;
+    my $cb      = $self->();
+    
+    unless( exists $self->_get_config->{'features'}->{$feature} ) {
+        error(loc("Unknown feature '%1'", $feature));
+        return;
+    }
+    
+    my $ref = $self->_get_config->{'features'}->{$feature}->[0];
+    
+    ### it's either a list of modules/versions or a subroutine that
+    ### returns a list of modules/versions
+    my $href = UNIVERSAL::isa( $ref, 'HASH' ) ? $ref : $ref->( $cb );
+    
+    return unless $href;    # nothing needed for the feature?
+
+    return $href if $as_hash;
+    return $self->_hashref_to_module( $href );
+}
+
+
+=head2 @mods = $self->list_core_dependencies( [AS_HASH] )
 
 Returns a list of C<CPANPLUS::Selfupdate::Module> objects which 
 represent the modules that comprise the core dependencies of CPANPLUS.
 
+If the C<AS_HASH> argument is provided, no module objects are
+returned, but a hashref where the keys are names of the modules,
+and values are their minimum versions.
+
 =cut
 
 sub list_core_dependencies {
-    my $self = shift;
-    my $cb   = $self->();
-    my $href = $self->_get_config->{'dependencies'};
+    my $self    = shift;
+    my $as_hash = shift || 0;
+    my $cb      = $self->();
+    my $href    = $self->_get_config->{'dependencies'};
 
-    return map { 
-            CPANPLUS::Selfupdate::Module->new(
-                $cb->module_tree($_) => $href->{$_}
-            )
-        } keys %$href;
+    return $href if $as_hash;
+    return $self->_hashref_to_module( $href );
 }
 
-=head2 @mods = $self->list_core_modules
+=head2 @mods = $self->list_core_modules( [AS_HASH] )
 
 Returns a list of C<CPANPLUS::Selfupdate::Module> objects which 
 represent the modules that comprise the core of CPANPLUS.
 
+If the C<AS_HASH> argument is provided, no module objects are
+returned, but a hashref where the keys are names of the modules,
+and values are their minimum versions.
+
 =cut
 
 sub list_core_modules {
+    my $self    = shift;
+    my $as_hash = shift || 0;
+    my $cb      = $self->();
+    my $href    = $self->_get_config->{'core'};
+
+    return $href if $as_hash;
+    return $self->_hashref_to_module( $href );
+}
+
+sub _hashref_to_module {
     my $self = shift;
     my $cb   = $self->();
-    my $href = $self->_get_config->{'core'};
-
+    my $href = shift or return;
+    
     return map { 
             CPANPLUS::Selfupdate::Module->new(
                 $cb->module_tree($_) => $href->{$_}
             )
         } keys %$href;
-}
+}        
+    
 
 =head1 CPANPLUS::Selfupdate::Module
 

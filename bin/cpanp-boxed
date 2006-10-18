@@ -129,8 +129,8 @@ Your boxed CPANPLUS install is setup to use:
   Basedir:  $BASE
   Config:   $ConfigFile
 
-You can install all CPANPLUS dependencies by running:
-  i Bundle::CPANPLUS::Dependencies
+You can bootstrap your CPANPLUS by running:
+  s selfupdate all
 
 ===
     \n    

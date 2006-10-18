@@ -74,7 +74,6 @@ use constant BASIC_TESTS =>     qq[t/00_CPANPLUS-Internals-Utils.t];
 
 
 my $Tests;
-my $Prereq = {};    
 my $RunSetup;
 GetOptions( 'setup' => \$RunSetup );
 
@@ -139,7 +138,7 @@ Or let your package manager take care of it.
 
 ###################################################################
     
-    ", "$^X bin/cpanp-boxed -i Bundle::CPANPLUS::Dependencies" );  
+    ", "$^X bin/cpanp-boxed -s selfupdate all" );  
     print "\n";
 }
 
@@ -151,57 +150,11 @@ Or let your package manager take care of it.
 }
 
 ### write the makefile.pl
-{   
-    $Prereq = {
-        'File::Fetch'               => '0.08', # win32 ftp support
-        'File::Spec'                => '0.82',
-        'IPC::Cmd'                  => '0.32', # IPC::Open3 support
-        'Locale::Maketext::Simple'  => '0.01',
-        'Log::Message'              => '0.01',
-        'Module::Load'              => '0.10',
-        'Module::Load::Conditional' => '0.10', # %INC lookup support
-        'Params::Check'             => '0.22',
-        'Package::Constants'        => '0.01',
-        'Term::UI'                  => '0.05',
-        'Test::Harness'             => '2.62', # due to bug #19505
-                                               # only 2.58 and 2.60 are bad
-        'Test::More'                => '0.47', # to run our tests
-        'Archive::Extract'          => '0.11', # bzip2 support
-        'Archive::Tar'              => '1.23',
-        'IO::Zlib'                  => '1.04',
-        'Object::Accessor'          => '0.32', # overloaded stringification
-        'Module::CoreList'          => '1.97',
-        'Module::Pluggable'         => '2.4',
-        'Module::Loaded'            => '0.01',
-        #'Config::Auto'             => 0,   # not yet, not using it yet
-    };
-
-    ### depending on your choices, we might need to add some modules
-    ### to your PREREQ_PM
-    {   if( !$Config->get_conf('prefer_makefile')  ) {
-            $Prereq->{ 'CPANPLUS::Dist::Build' } = '0.04';
-        }
-
-        ### No longer requiring IPC::Run or win32::process; IPC::Cmd
-        ### is 'good enough' now to deal with running programs
-        ### it can't capture buffers on win32, but that's an 'ok'
-        ### penalty considering what a PITA it is to get IPC::Run going
-        ### so IPC::Run is also no longer bundled.
-
-        ### used to have 0.80, but not it was never released by coral
-        ### 0.79 *should* be good enough for now... asked coral to 
-        ### release 0.80 on 10/3/2006
-        ### Win32 and Cygwin users need it.. otherwise, no buffers
-        ### can be captured
-        #if( $^O eq 'MSWin32' or $^O eq 'Cygwin' ) {
-        #    $Prereq->{ 'IPC::Run' } = '0.79';
-        #}            
-
-        #if( $^O eq 'MSWin32') {
-        #    $Prereq->{ 'Win32::Process' } = 0;
-        #}
-    }
-
+{   my $su      = $Backend->selfupdate_object;
+    my %prereq  = ( %{ $su->list_core_dependencies( 'AS_HASH' ) },
+                    map { %{ $su->modules_for_feature( $_, 'AS_HASH' ) } }
+                        $su->list_enabled_features
+                );
 
     ### restore the original @INC, so proper probing of missing 
     ### prereqs can be done
@@ -213,14 +166,14 @@ Or let your package manager take care of it.
     license         ('perl');
     no_index        ( directory => 'lib/CPANPLUS/inc' );
     install_script  ($_) for glob('bin/*');
-    requires        (%$Prereq);
+    requires        (%prereq);
     makemaker_args  ( test => { TESTS => $Tests } ) if $Tests;
     makemaker_args  ( clean => { FILES => 't/.*.output .cpanplus t/dummy-cpanplus/* t/dummy-cpanplus/.cpanplus' } );
 
     ### write the makefile 
     ### this makes all prereqs rediscovered
     {   use Module::Loaded;
-        for ( keys %$Prereq ) {
+        for ( keys %prereq ) {
             mark_as_unloaded( $_ ) if is_loaded( $_ );
         }            
         

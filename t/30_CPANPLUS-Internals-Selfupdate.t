@@ -36,6 +36,7 @@ my $Acc         = 'selfupdate_object';
 my $Conf        = $Class->_get_config;
 my $Dep         = 'B::Deparse';   # has to be in our package file && core!
 my $Feat        = 'some_feature';
+my $Prereq      = { $Dep => 0 };
 
 ### test the object
 {   ok( $CB,                    "New backend object created" );
@@ -53,9 +54,9 @@ my $Feat        = 'some_feature';
     ### modules will be present in our bundled package files.
     ### XXX WHITEBOX TEST!!!!
     {   delete $Conf->{$_} for keys %$Conf;
-        $Conf->{'dependencies'}         = { $Dep => 0 };
-        $Conf->{'core'}                 = { $Dep => 0 };
-        $Conf->{'features'}->{$Feat}    = [ { $Dep => 0 }, sub { 1 } ];
+        $Conf->{'dependencies'}         = $Prereq;
+        $Conf->{'core'}                 = $Prereq;
+        $Conf->{'features'}->{$Feat}    = [ $Prereq, sub { 1 } ];
     }
 
     is_deeply( $Conf, $Class->_get_config,
@@ -66,18 +67,29 @@ my $Feat        = 'some_feature';
 
     ### test if we get modules for each feature
     for my $feat (@feat) {
-        my @mods = $CB->$Acc->modules_for_feature( $feat );
+        my $meth = 'modules_for_feature';
+        my @mods = $CB->$Acc->$meth( $feat );
         
         ok( $feat,              "Testing feature '$feat'" );
         ok( scalar( @mods ),    "   Module list returned" );
     
-        my $meth = 'is_installed_version_sufficient';
+        my $acc = 'is_installed_version_sufficient';
         for my $mod (@mods) {
             isa_ok( $mod,       "CPANPLUS::Module" );
             isa_ok( $mod,       $ModClass );
-            can_ok( $mod,       $meth );
-            ok( $mod->$meth,    "   Module uptodate" );
+            can_ok( $mod,       $acc );
+            ok( $mod->$acc,    "   Module uptodate" );
         }                                    
+        
+        ### check if we can get a hashref
+        {   my $href = $CB->$Acc->$meth( $feat, 1 );
+            ok( $href,          "Got result as hash" );
+            isa_ok( $href,      'HASH' );
+            is_deeply( $href, $Prereq,
+                                "   With the proper entries" );
+
+        }
+        
     }
 
     ### find enabled features
@@ -100,12 +112,23 @@ my $Feat        = 'some_feature';
         isa_ok( $list[0],       $ModClass ); 
         is( $list[0]->name, $Dep,
                                 "   Correct module found" );
+
+        ### check if we can get a hashref
+        {   my $href = $CB->$Acc->$meth( 1 );
+            ok( $href,          "Got result as hash" );
+            isa_ok( $href,      'HASH' );
+            is_deeply( $href, $Prereq,
+                                "   With the proper entries" );
+        }
     }
 
     ### now selfupdate ourselves
     {   ### XXX just test the mechanics, make sure install returns true
+        ### declare twice because warnings are hateful
+        ### declare in a block to quelch 'sub redefined' warnings.
+        { local *CPANPLUS::Selfupdate::Module::install = sub { 1 }; }
         local *CPANPLUS::Selfupdate::Module::install = sub { 1 };
-    
+        
         my $meth = 'selfupdate';
         can_ok( $Class,         $meth );
         ok( $CB->$Acc->$meth( update => 'all'),   
