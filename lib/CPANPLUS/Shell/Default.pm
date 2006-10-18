@@ -125,6 +125,7 @@ CPANPLUS::Shell::Default
     cpanp> s program         # show program settings
     cpanp> s edit            # edit config file
     cpanp> s reconfigure     # go through initial configuration again
+    cpanp> s selfupdate      # update your CPANPLUS install
     cpanp> s save            # save config to disk
     cpanp> s mirrors         # show currently selected mirrors
 
@@ -501,6 +502,7 @@ loc('    s program [OPT VALUE]  # set program locations for this session'       
 loc('    s conf    [OPT VALUE]  # set config options for this session'              ),
 loc('    s mirrors              # show currently selected mirrors' ),
 loc('    s reconfigure          # reconfigure settings ' ),
+loc('    s selfupdate           # update your CPANPLUS install '),
 loc('    s save [user|system]   # save settings for this user or systemwide' ),
 loc('    s edit [user|system]   # open configuration file in editor and reload'     ),
 loc('    ! EXPR                 # evaluate a perl statement'                        ),
