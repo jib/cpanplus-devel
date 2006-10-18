@@ -32,6 +32,7 @@ my $CB      = CPANPLUS::Backend->new( $conf );
 my $Acc     = 'selfupdate_object';
 my $Conf    = CPANPLUS::Selfupdate->_get_config;
 my $Dep     = 'B::Deparse';   # has to be in our package file && core!
+my $Feat    = 'some_feature';
 
 ### test the object
 {   ok( $CB,                        "New backend object created" );
@@ -49,9 +50,9 @@ my $Dep     = 'B::Deparse';   # has to be in our package file && core!
     ### modules will be present in our bundled package files.
     ### XXX WHITEBOX TEST!!!!
     {   delete $Conf->{$_} for keys %$Conf;
-        $Conf->{'dependencies'}                 = { $Dep => 0 };
-        $Conf->{'core'}                         = { $Dep => 0 };
-        $Conf->{'features'}->{'some_feature'}   = [ { $Dep => 0 }, sub { 1 } ];
+        $Conf->{'dependencies'}         = { $Dep => 0 };
+        $Conf->{'core'}                 = { $Dep => 0 };
+        $Conf->{'features'}->{$Feat}    = [ { $Dep => 0 }, sub { 1 } ];
     }
 
     is_deeply( $Conf, CPANPLUS::Selfupdate->_get_config,
@@ -74,5 +75,8 @@ my $Dep     = 'B::Deparse';   # has to be in our package file && core!
             ok( $mod->is_uptodate_for_cpanplus,
                                     "   Module uptodate" );
         }                                    
-    }        
+    }
+    
+    ### test
+    
 }    
