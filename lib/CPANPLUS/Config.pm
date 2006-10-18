@@ -78,6 +78,7 @@ my $Conf = {
         'prefer_makefile'           => 1,
         'prereqs'                   => PREREQ_ASK,
         'shell'                     => 'CPANPLUS::Shell::Default',
+        'show_startup_tip'          => 1,
         'signature'                 => ( (can_run( 'gpg' ) || 
                             check_install( module => 'Crypt::OpenPGP' ))?1:0 ),
         'skiptest'                  => 0,

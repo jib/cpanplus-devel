@@ -203,8 +203,10 @@ sub new {
 sub shell {
     my $self = shift;
     my $term = $self->term;
+    my $conf = $self->backend->configure_object;
 
     $self->_show_banner;
+    $self->_show_random_tip if $conf->get_conf('show_startup_tip');
     $self->_input_loop && print "\n";
     $self->_quit;
 }
@@ -1593,6 +1595,24 @@ sub _read_configuration_from_rc {
 
     return $href || {};
 }
+
+{   my @tips = (
+        loc( "You can update CPANPLUS by running: '%1'", 's selfupdate' ),
+        loc( "You can install modules by URL using '%1'", 'i URL' ),
+        loc( "You can turn off these tips using '%1'", 
+             's conf show_startup_tip 0' ),
+        loc( "You can use wildcards like '%1' and '%2' on search results",
+             '*', '..' ),
+        loc( "You can use plugins. Type '%1' to list available plugins",
+             '/plugins' ),
+    );
+    
+    sub _show_random_tip {
+        my $self = shift;
+        print $/, "Did you know...\n\t", $tips[ int rand scalar @tips ], $/;
+        return 1;
+    }
+}    
 
 1;
 
