@@ -132,7 +132,8 @@ Your boxed CPANPLUS install is setup to use:
   Config:   $ConfigFile
 
 You can bootstrap your CPANPLUS by running:
-  s selfupdate all
+  s selfupdate dependencies
+  s selfupdate enabled_features
 
 ===
     \n    
