@@ -153,8 +153,6 @@ sub _dispatch_on_input {
     ### the original force setting;
     my $force_store = $conf->get_conf( 'force' );
 
-
-    my $key;
     ### parse the input: the first part before the space
     ### is the command, followed by arguments.
     ### see the usage below
