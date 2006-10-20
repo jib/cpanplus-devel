@@ -1,4 +1,4 @@
-Changes for 0.077_01    Fri Oct 20 15:28:22 CEST 2006
+Changes for 0.077_02    Fri Oct 20 15:28:22 CEST 2006
 =====================================================
 * Implemented selfupdate functionality. You can use
   's selfupdate' from the default shell. This will also
