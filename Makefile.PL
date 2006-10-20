@@ -130,15 +130,17 @@ strapping purposes.
 
 You should install these prerequisites before continueing to
 install CPANPLUS. You can use the bootstrapped CPANPLUS to do
-this for you with the following command:
+this for you with the following commands:
 
     %1
+    %2
 
 Or let your package manager take care of it.
 
 ###################################################################
     
-    ", "$^X bin/cpanp-boxed -s selfupdate all" );  
+    ",  "$^X bin/cpanp-boxed -s selfupdate dependencies" ,
+        "$^X bin/cpanp-boxed -s selfupdate enabled_features" );  
     print "\n";
 }
 
