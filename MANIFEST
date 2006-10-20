@@ -79,6 +79,7 @@ lib/CPANPLUS/Module/Author/Fake.pm
 lib/CPANPLUS/Module/Checksums.pm
 lib/CPANPLUS/Module/Fake.pm
 lib/CPANPLUS/Module/Signature.pm
+lib/CPANPLUS/Selfupdate.pm
 lib/CPANPLUS/Shell.pm
 lib/CPANPLUS/Shell/Classic.pm
 lib/CPANPLUS/Shell/Default.pm
@@ -105,6 +106,7 @@ t/10_CPANPLUS-Error.t
 t/19_CPANPLUS-Dist.t
 t/20_CPANPLUS-Dist-MM.t
 t/21_CPANPLUS-Dist-No-Build.t
+t/30_CPANPLUS-Internals-Selfupdate.t
 t/40_CPANPLUS-Internals-Report.t
 t/dummy-CPAN/authors/01mailrc.txt.gz
 t/dummy-CPAN/authors/id/A/AY/AYRNIEU/CHECKSUMS

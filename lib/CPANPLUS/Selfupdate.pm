@@ -42,7 +42,7 @@ CPANPLUS::Selfupdate
         dependencies => {
             'File::Fetch'               => '0.08', # win32 ftp support
             'File::Spec'                => '0.82',
-            'IPC::Cmd'                  => '0.29',
+            'IPC::Cmd'                  => '0.34', # win32/ipc::open3 support
             'Locale::Maketext::Simple'  => '0.01',
             'Log::Message'              => '0.01',
             'Module::Load'              => '0.10',

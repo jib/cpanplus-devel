@@ -1,6 +1,21 @@
+Changes for 0.077_01    Fri Oct 20 15:28:22 CEST 2006
+=====================================================
+* Implemented selfupdate functionality. You can use
+  's selfupdate' from the default shell. This will also
+  work for bootstrapping purposes
+* Hints to use 'Bundle::CPANPLUS::Dependencies' have
+  been removed in favour of 's selfupdate'
+* The default shell now shows tips at start up
+* Dont throw an error if a core module has the same 
+  version as it's duallifed counterpart on CPAN -- 
+  we can still install from CPAN
+* Update bundled modules
+* Remove cpanplus inc dir from @INC once we dispatch to 
+  cpanp from cpanp-boxed
+* Depend on newer versions of Object::Accessor and IPC::Cmd
+
 Changes for 0.076       Fri Oct 13 14:37:27 CEST 2006
 =====================================================
-
 * run external perl commands using cpanp-run-perl to enable
   autoflushing cross-platform, cross-ipc-module.
 * separate formats for printing 'conf' and 'program' sections
@@ -21,7 +36,6 @@ Changes for 0.075_01    Thu Oct  5 17:08:27 CEST 2006
 * delete failed requires from %INC in cpanp-boxed
 * make sure we use 4-arg substr to avoid warning in default shell
 * skip undefined messages to error()/msg()
-
 
 Changes for 0.074       Fri Sep  8 13:12:37 CEST 2006
 =====================================================
