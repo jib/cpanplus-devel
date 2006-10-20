@@ -35,10 +35,9 @@ out of it's extraction dir, by typing:
 This may help you with bootstrap issues, or other situations 
 where you need to use CPANPLUS but can not use a system installation.
 
-You can install all of CPANPLUS' dependencies like this, before 
-installing CPANPLUS itself by running:
+You can install all of CPANPLUS and it's dependencies like this:
 
-    $ perl bin/cpanp-boxed -i Bundle::CPANPLUS::Dependencies
+    $ perl bin/cpanp-boxed -s selfupdate all
 
 All the modules bundled are found in the 'inc/bundle' directory. If
 you, for whatever reason, wish to not install these from cpan, you
