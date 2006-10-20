@@ -27,14 +27,14 @@ BEGIN {
                             $FindBin::Bin, '..', '.cpanplus', $who);
     $PRIV_LIB   = File::Spec->catfile( $BASE, 'lib' );
 
-    @RUN_TIME_INC   = ($LIB_DIR, $PRIV_LIB, @INC);
+    @RUN_TIME_INC   = ($PRIV_LIB, @INC);
     unshift @INC, $LIB_DIR, $BUNDLE_DIR;
     
     ### set it in the environment too, for when we shell out
     ### (like at 'perl makefile.pl' time.
     $ENV{'PERL5LIB'} = join $Config{'path_sep'}, grep { defined } 
                         $PRIV_LIB,              # to find the boxed config
-                        $LIB_DIR,               # the CPANPLUS libs  
+                        #$LIB_DIR,               # the CPANPLUS libs  
                         $ENV{'PERL5LIB'};       # original PERL5LIB       
 
 }    
@@ -51,9 +51,10 @@ use CPANPLUS::Internals::Utils;
 ### XXX this section *somehow* makes 'system(cmd.exe)' return immediately
 ### on win32, when run from cpanp-boxed (regular cpanp is fine). Probably
 ### need to load only a subsection of these modules, for safety sake.
-{   my $base_re = quotemeta $BUNDLE_DIR;
+{   for my $dir ( ($BUNDLE_DIR, $LIB_DIR) ) {
+        my $base_re = quotemeta $dir;
 
-    find( sub { my $file = $File::Find::name;
+        find( sub { my $file = $File::Find::name;
                 return unless -e $file && -f _ && -s _;
                 
                 return if $file =~ /\._/;   # osx temp files
@@ -70,7 +71,7 @@ use CPANPLUS::Internals::Utils;
                                     File::Spec->splitdir( $file )
                                 );     
                 my $pm       = join '::', File::Spec->splitdir( $file );
-                $pm =~ s/\.pm$//i;
+                $pm =~ s/\.pm$//i or return;    # not a .pm file
 
                 ### make sure we *DONT* load these blatantly
                 #return if $pm =~ /(?:IPC::Run::)|(?:File::Spec::)/;
@@ -90,7 +91,8 @@ use CPANPLUS::Internals::Utils;
 
 
                 }
-            }, $BUNDLE_DIR ); 
+            }, $dir ); 
+    }            
 
     ### delete AFTER we've loaded everything!
     delete $INC{$_} for @failures;
