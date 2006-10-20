@@ -13,7 +13,7 @@ BEGIN {
                         $USE_IPC_RUN $USE_IPC_OPEN3 $WARN
                     ];
 
-    $VERSION        = '0.32';
+    $VERSION        = '0.34';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -24,6 +24,7 @@ BEGIN {
     @EXPORT_OK      = qw[can_run run];
 }
 
+require Carp;
 use Params::Check               qw[check];
 use Module::Load::Conditional   qw[can_load];
 use Locale::Maketext::Simple    Style => 'gettext';
@@ -295,7 +296,7 @@ sub run {
     };
 
     unless( check( $tmpl, \%hash, $VERBOSE ) ) {
-        carp(loc("Could not validate input: %1", Params::Check->last_error));
+        Carp::carp(loc("Could not validate input: %1", Params::Check->last_error));
         return;
     };        
 
@@ -583,10 +584,10 @@ sub _system_run {
 
         for my $name ( @fds ) {
             my($redir, $fh, $glob) = @{$Map{$name}} or (
-                carp(loc("No such FD: '%1'", $name)), next );
+                Carp::carp(loc("No such FD: '%1'", $name)), next );
             
             open $glob, $redir,$fh or (
-                        carp(loc("Could not dup '$name': %1", $!)),
+                        Carp::carp(loc("Could not dup '$name': %1", $!)),
                         return
                     );        
                 
@@ -594,7 +595,7 @@ sub _system_run {
             ### just dup it
             if( $redir eq '>&' ) {
                 open( $fh, '>', File::Spec->devnull ) or (
-                    carp(loc("Could not reopen '$name': %1", $!)),
+                    Carp::carp(loc("Could not reopen '$name': %1", $!)),
                     return
                 );
             }
@@ -612,10 +613,10 @@ sub _system_run {
 
         for my $name ( @fds ) {
             my($redir, $fh, $glob) = @{$Map{$name}} or (
-                carp(loc("No such FD: '%1'", $name)), next );
+                Carp::carp(loc("No such FD: '%1'", $name)), next );
 
             open( $fh, $redir,$glob ) or (
-                    carp(loc("Could not restore '$name': %1", $!)),
+                    Carp::carp(loc("Could not restore '$name': %1", $!)),
                     return
                 ); 
            
@@ -632,7 +633,6 @@ sub _debug {
     my $msg     = shift or return;
     my $level   = shift || 0;
     
-    require Carp;
     local $Carp::CarpLevel += $level;
     Carp::carp($msg);
     
