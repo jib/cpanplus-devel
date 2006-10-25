@@ -1607,6 +1607,7 @@ sub _read_configuration_from_rc {
              '*', '..' ),
         loc( "You can use plugins. Type '%1' to list available plugins",
              '/plugins' ),
+        loc( "You can show all your out of date modules using '%1'", 'o' ),             
     );
     
     sub _show_random_tip {
