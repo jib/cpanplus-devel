@@ -371,9 +371,9 @@ sub usage {
     my $usage = << '=cut';
 =pod
 
-Usage: cpan2dist [--format FMT] [OPTS] Mod::Name [Mod::Name, ...]
-       cpan2dist [--format FMT] [OPTS] --modulelist /tmp/mods.list
-       cpan2dist [--format FMT] [OPTS] --archive /tmp/dist [/tmp/dist2] 
+ Usage: cpan2dist [--format FMT] [OPTS] Mod::Name [Mod::Name, ...]
+        cpan2dist [--format FMT] [OPTS] --modulelist /tmp/mods.list
+        cpan2dist [--format FMT] [OPTS] --archive /tmp/dist [/tmp/dist2] 
 
     Will create a distribution of type FMT of the modules
     specified on the command line, and all their prerequisites.
