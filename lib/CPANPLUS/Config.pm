@@ -131,11 +131,42 @@ my $Conf = {
                                      );
                                     -e $f ? $f : undef
                                 } ||
-                                
+                                ### you installed CPANPLUS in a custom prefix,
+                                ### so go paralel to /that/. PREFIX=/tmp/cp
+                                ### would put cpanp-run-perl in /tmp/cp/bin and
+                                ### CPANPLUS.pm in
+                                ### /tmp/cp/lib/perl5/site_perl/5.8.8
+                                do { my $f = File::Spec->rel2abs(
+                                        File::Spec->catdir( 
+                                            dirname( $INC{'CPANPLUS.pm'} ),
+                                            '..', '..', '..', '..', # 4x updir
+                                            'bin',                  # bin dir
+                                            'cpanp-run-perl' 
+                                        )
+                                     );
+                                    -e $f ? $f : undef
+                                } ||
                                 ### in your path -- take this one last, the
                                 ### previous two assume extracted tarballs
                                 ### or user installs
-                                can_run('cpanp-run-perl'),
+                                can_run('cpanp-run-perl') ||
+
+                                ### XXX try to be a no-op instead then.. 
+                                ### cross your fingers...
+                                ### pass '-P' to perl: "run program through C 
+                                ### preprocessor before compilation"
+                                do { 
+                                    error(loc(
+                                        "Could not find the '%1' in your path".
+                                        "--this may be a problem.\n".
+                                        "Please locate this program and set ".
+                                        "your '%1' config entry to its path.\n".                
+                                        "Attempting to provide a reasonable ".
+                                        "fallback...",
+                                        'cpanp-run-perl', 'perlwrapper'
+                                     ));                                        
+                                    '-P'
+                                },   
                         ),         
     },
 

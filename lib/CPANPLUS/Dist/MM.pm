@@ -144,8 +144,11 @@ sub format_available {
     
     for my $pgm ( qw[make perlwrapper] ) {
         unless( $conf->get_program( $pgm ) ) { 
-            error(loc("You do not have '%1'in your path -- '%2' not available",
-                        $pgm, __PACKAGE__ )); 
+            error(loc(
+                "You do not have '%1' in your path -- '%2' not available\n" .
+                "Please check your config entry for '%1'", 
+                $pgm, __PACKAGE__ , $pgm
+            )); 
             return;
         }
     }

@@ -168,7 +168,10 @@ use Carp ();
         my $old_fh = select $CPANPLUS::Error::ERROR_FH;
 
         ### is only going to be 1 for now anyway ###
-        my $cb      = (CPANPLUS::Internals->_return_all_objects)[0];
+        ### C::I may not be loaded, so do a can() check first
+        my $cb      = CPANPLUS::Internals->can('_return_all_objects')
+                        ? (CPANPLUS::Internals->_return_all_objects)[0]
+                        : undef;
 
         ### maybe we didn't initialize an internals object (yet) ###
         my $debug   = $cb ? $cb->configure_object->get_conf('debug') : 0;
