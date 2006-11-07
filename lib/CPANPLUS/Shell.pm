@@ -115,6 +115,7 @@ $TMPL = {
     backend         => { default => '' },
     term            => { default => '' },
     format          => { default => '' },
+    dist_format     => { default => '' },
     remote          => { default => undef },
     noninteractive  => { default => '' },
     cache           => { default => [ ] },

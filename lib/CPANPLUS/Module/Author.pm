@@ -177,8 +177,9 @@ sub distributions {
         my $clone = $mod->clone;
 
         $clone->package( $dist );
-        $clone->module( $clone->package_name );
+        $clone->module(  $clone->package_name );
         $clone->version( $clone->package_version );
+        $clone->mtime(   $href->{$dist}->{'mtime'} );   # release date
 
         ### .meta files are now also in the checksums file,
         ### which means we have to filter out things that dont

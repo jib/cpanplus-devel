@@ -157,11 +157,12 @@ sub new {
 
     my $cb      = new CPANPLUS::Backend;
     my $self    = $class->SUPER::_init(
-                            brand   => $Brand,
-                            term    => Term::ReadLine->new( $Brand ),
-                            prompt  => $Prompt,
-                            backend => $cb,
-                            format  => "%5s %-50s %8s %-10s\n",
+                            brand       => $Brand,
+                            term        => Term::ReadLine->new( $Brand ),
+                            prompt      => $Prompt,
+                            backend     => $cb,
+                            format      => "%4s %-55s %8s %-10s\n",
+                            dist_format => "%4s %-42s %-12s %8s %-10s\n",
                         );
     ### make it available package wide ###
     $Shell = $self;
@@ -428,11 +429,22 @@ sub __display_results {
             next unless $mod;   # first one is undef
                                 # humans start counting at 1
 
-            printf $self->format,
+            ### for dists only -- we have checksum info
+            if( $mod->mtime ) {
+                printf $self->dist_format,
+                            $i,
+                            $mod->module,
+                            $mod->mtime,
+                            $self->_format_version($mod->version),
+                            $mod->author->cpanid();
+
+            } else {
+                printf $self->format,
                             $i,
                             $mod->module,
                             $self->_format_version($mod->version),
                             $mod->author->cpanid();
+            }
             $i++;
         }
 

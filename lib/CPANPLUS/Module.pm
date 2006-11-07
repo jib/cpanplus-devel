@@ -72,6 +72,7 @@ my $tmpl = {
     _status     => { no_override => 1 },                # stores status object
     author      => { default => '', required => 1,
                      allow => IS_AUTHOBJ },             # module author
+    mtime       => { default => '' },
 };
 
 ### autogenerate accessors ###
