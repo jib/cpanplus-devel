@@ -837,12 +837,22 @@ Otherwise, select ASK to have us ask your permission to install them.
         my $type = 'prereqs';
         
         my @map = (
-            # conf value    UI value    diagnostic message
-            [ PREREQ_IGNORE, 'No',   loc("I won't install prerequisites")    ],
-            [ PREREQ_INSTALL,'Yes',  loc("I will install prerequisites")     ],
-            [ PREREQ_ASK,    'Ask',  loc("I will ask permission to install") ],
-            [ PREREQ_BUILD,  'Build',loc(
-                "I will only build, but not  install prerequisites" )        ],
+            [ PREREQ_IGNORE,                                # conf value 
+              loc('No, do not install prerequisites'),      # UI Value   
+              loc("I won't install prerequisites")          # diag message
+            ],
+            [ PREREQ_INSTALL,
+              loc('Yes, please install prerequisites'),  
+              loc("I will install prerequisites")     
+            ],
+            [ PREREQ_ASK,    
+              loc('Ask me before installing a prerequisite'),  
+              loc("I will ask permission to install") 
+            ],
+            [ PREREQ_BUILD,  
+              loc('Build prerequisites, but do not install them'),
+              loc( "I will only build, but not install prerequisites" )
+            ],
         );
        
         my %reply = map { $_->[1] => $_->[0] } @map; # choice => value
