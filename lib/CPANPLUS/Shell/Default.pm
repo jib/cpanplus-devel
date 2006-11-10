@@ -144,6 +144,10 @@ CPANPLUS::Shell::Default
     cpanp> /plugins          # list avialable plugins
     cpanp> /? PLUGIN         # list help test of <PLUGIN>                  
 
+    ### common options:
+    cpanp> i ... --skiptest # skip tests
+    cpanp> i ... --force    # force all operations
+    cpanp> i ... --verbose  # run in verbose mode
 
 =head1 DESCRIPTION
 
@@ -1409,6 +1413,7 @@ sub _reports {
 ### Load plugins
 {   my @PluginModules;
     my %Dispatch = ( 
+        showtip => [ __PACKAGE__, '_show_random_tip'], 
         plugins => [ __PACKAGE__, '_list_plugins'   ], 
         '?'     => [ __PACKAGE__, '_plugins_usage'  ],
     );        
@@ -1526,6 +1531,11 @@ sub _reports {
         return sprintf $help_format, 'plugins', loc("lists available plugins");
     }
 
+    ### registered as a plugin too
+    sub _show_random_tip_help {
+        return sprintf $help_format, 'showtip', loc("show usage tips" );
+    }   
+
     sub _plugins_usage {
         my $pkg     = shift;
         my $shell   = shift;
@@ -1619,12 +1629,17 @@ sub _read_configuration_from_rc {
              '*', '..' ),
         loc( "You can use plugins. Type '%1' to list available plugins",
              '/plugins' ),
-        loc( "You can show all your out of date modules using '%1'", 'o' ),             
+        loc( "You can show all your out of date modules using '%1'", 'o' ),  
+        loc( "Many operations take options, like '%1' or '%2'",
+             '--verbose', '--skiptest' ),
+        loc( "The documentation in %1 and %2 is very useful",
+             "CPANPLUS::Module", "CPANPLUS::Backend" ),
+        loc( "You can type '%1' for help and '%2' to exit", 'h', 'q' ),
     );
     
     sub _show_random_tip {
         my $self = shift;
-        print $/, "Did you know...\n\t", $tips[ int rand scalar @tips ], $/;
+        print $/, "Did you know...\n    ", $tips[ int rand scalar @tips ], $/;
         return 1;
     }
 }    
