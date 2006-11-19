@@ -153,14 +153,20 @@ Called from C<new()> to load user/system configurations
         push @confs, sort keys %confs;                    
     
         for my $plugin ( @confs ) {
-            msg(loc("Found plugin '%1'", $plugin),0);
+            msg(loc("Found config '%1'", $plugin),0);
             
             ### if we already did this the /last/ time around dont 
             ### run the setup agian.
-            next if Module::Loaded::is_loaded( $plugin );
-            msg(loc("Loading plugin '%1'", $plugin),0);
+            if( my $loc = Module::Loaded::is_loaded( $plugin ) ) {
+                msg(loc("  Already loaded '%1' (%2)", $plugin, $loc), 0);
+                next;
+            } else {
+                msg(loc("  Loading config '%1'", $plugin),0);
             
-            eval { load $plugin };
+                eval { load $plugin };
+                msg(loc("  Loaded '%1' (%2)", 
+                        $plugin, Module::Loaded::is_loaded( $plugin ) ), 0);
+            }                   
             
             if( $@ ) {
                 error(loc("Could not load '%1': %2", $plugin, $@));

@@ -212,6 +212,7 @@ sub shell {
     my $conf = $self->backend->configure_object;
 
     $self->_show_banner;
+    print "*** Type 'p' now to show start up log\n"; # XXX add to banner?
     $self->_show_random_tip if $conf->get_conf('show_startup_tip');
     $self->_input_loop && print "\n";
     $self->_quit;
