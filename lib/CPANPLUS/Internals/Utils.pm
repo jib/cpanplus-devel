@@ -371,7 +371,7 @@ sub _vcmp {
     return $x <=> $y;
 }
 
-=head2 $cb->_homedir
+=head2 $cb->_home_dir
 
 Returns the user's homedir, or C<cwd> if it could not be found
 
