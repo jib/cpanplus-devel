@@ -674,8 +674,8 @@ sub install {
     
     
     unless( $dist->status->created ) {
-        error( loc( "You have not successfully created a '%2' distribution yet " .
-                    "-- cannot install yet", __PACKAGE__ ) );
+        error(loc("You have not successfully created a '%2' distribution yet " .
+                  "-- cannot install yet", __PACKAGE__ ));
         return;
     }
  
@@ -728,7 +728,8 @@ sub install {
     my $cmd     = [$make, 'install', $makeflags];
     my $sudo    = $conf->get_program('sudo');
     unshift @$cmd, $sudo if $sudo and $>;
-    
+
+    $cb->flush('lib');
     unless(scalar run(  command => $cmd,
                         verbose => $verbose,
                         buffer  => \$captured,
