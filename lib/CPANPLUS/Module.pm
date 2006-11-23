@@ -1132,6 +1132,7 @@ sub details {
     ### if so, add version have and version on cpan
     $res->{'Version Installed'} = $self->installed_version
                                     if $self->installed_version;
+    $res->{'Installed File'} = $self->installed_file if $self->installed_file;
 
     my $i = 0;
     for my $item( split '', $self->dslip ) {
