@@ -279,19 +279,19 @@ sub dispatch_on_input {
             ### get the first letter of the input
             $input =~ s|^\s*([\w\?\!/])\w*||;
 
+            chomp $input;
+            $key =  lc($1);
+
             ### we figured out what the command was...
             ### if we have more input, that DOES NOT start with a white
             ### space char, we misparsed.. like 'Test::Foo::Bar', which
             ### would turn into 't', '::Foo::Bar'...
-            if( $input and $input !~ m/^\s+/ ) {
+            if( $input and $input !~ s/^\s+// ) {
                 print loc("Could not understand command: %1\n".
                           "Possibly missing command before argument(s)?\n",
                           $org_input); 
                 return;
             }     
-
-            chomp $input;
-            $key =  lc($1);
 
             ### allow overrides from the config file ###
             if( defined $rc->{$key} ) {
