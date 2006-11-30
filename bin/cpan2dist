@@ -441,7 +441,7 @@ Options:
                   set it to 0.
 
     ### builtin lists
-    --builtin-banlist    Use our builtin banlist. Works just like --ban
+    --default-banlist    Use our builtin banlist. Works just like --ban
                          and --banlist, but with pre-set lists. See the
                          "Builtin Lists" section for details.
     --default-ignorelist Use our builtin ignorelist. Works just like 
