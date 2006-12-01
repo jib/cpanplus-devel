@@ -149,8 +149,9 @@ Returns true on success, false on failure.
                 $warned++;
                 error(loc("Specifying a config file in your environment " .
                           "using %1 is obsolete.\nPlease follow the ".
-                          "directions outlined in %2 or in the default shell.",
-                          $env, "CPANPLUS::Configure->save"));
+                          "directions outlined in %2 or use the '%3' command\n".
+                          "in the default shell to use custom config files.",
+                          $env, "CPANPLUS::Configure->save", 's save'));
             }
         }            
         
