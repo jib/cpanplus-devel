@@ -46,7 +46,7 @@ CPANPLUS::Selfupdate
             'Locale::Maketext::Simple'  => '0.01',
             'Log::Message'              => '0.01',
             'Module::Load'              => '0.10',
-            'Module::Load::Conditional' => '0.10', # %INC lookup support
+            'Module::Load::Conditional' => '0.14', # $VERSION in POD bugfix
             'Params::Check'             => '0.22',
             'Package::Constants'        => '0.01',
             'Term::UI'                  => '0.05',
