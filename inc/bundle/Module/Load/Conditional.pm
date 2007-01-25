@@ -9,13 +9,14 @@ use Locale::Maketext::Simple Style => 'gettext';
 use Carp        ();
 use File::Spec  ();
 use FileHandle  ();
+#use version     qw[qv];
 
 BEGIN {
     use vars        qw[ $VERSION @ISA $VERBOSE $CACHE @EXPORT_OK 
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.12';
+    $VERSION        = '0.14';
     $VERBOSE        = 0;
     $FIND_VERSION   = 1;
     $CHECK_INC_HASH = 0;
@@ -228,30 +229,22 @@ sub check_install {
             ### user wants us to find the version from files
             if( $FIND_VERSION ) {
                 
+                my $in_pod = 0;
                 while (local $_ = <$fh> ) {
     
-                    ### skip commented out lines, they won't eval to anything.
-                    next if /^\s*#/;
-        
-                    ### the following regexp comes from the ExtUtils::MakeMaker
-                    ### documentation.
-                    ### Following #18892, which tells us the original
-                    ### regex breaks under -T, we must modifiy it so
-                    ### it captures the entire expression, and eval /that/
-                    ### rather than $_, which is insecure.
-                    if ( /([\$*][\w\:\']*\bVERSION\b.*\=.*)/ ) {
-         
-                        ### this will eval the version in to $VERSION if it
-                        ### was declared as $VERSION in the module.
-                        ### else the result will be in $res.
-                        ### this is a fix on skud's Module::InstalledVersion
-         
-                        local $VERSION;
-                        my $res = eval $1;
-         
-                        ### default to '0.0' if there REALLY is no version
-                        ### all to satisfy warnings
-                        $href->{version} = $VERSION || $res || '0.0';
+                    ### stolen from EU::MM_Unix->parse_version to address
+                    ### #24062: "Problem with CPANPLUS 0.076 misidentifying
+                    ### versions after installing Text::NSP 1.03" where a 
+                    ### VERSION mentioned in the POD was found before
+                    ### the real $VERSION declaration.
+                    $in_pod = /^=(?!cut)/ ? 1 : /^=cut/ ? 0 : $in_pod;
+                    next if $in_pod;
+                    
+                    ### try to find a version declaration in this string.
+                    my $ver = __PACKAGE__->_parse_version( $_ );
+
+                    if( defined $ver ) {
+                        $href->{version} = $ver;
         
                         last DIR;
                     }
@@ -281,6 +274,47 @@ sub check_install {
     }
 
     return $href;
+}
+
+sub _parse_version {
+    my $self    = shift;
+    my $str     = shift or return;
+    my $verbose = shift or 0;
+
+    ### skip commented out lines, they won't eval to anything.
+    return if $str =~ /^\s*#/;
+        
+    ### the following regexp comes from the ExtUtils::MakeMaker
+    ### documentation.
+    ### Following #18892, which tells us the original
+    ### regex breaks under -T, we must modifiy it so
+    ### it captures the entire expression, and eval /that/
+    ### rather than $_, which is insecure.
+
+    if ( $str =~ /([\$*][\w\:\']*\bVERSION\b.*\=.*)/ ) {
+
+        ### debug info
+        print "Evaluating: $1\n" if $verbose;
+
+        ### this will eval the version in to $VERSION if it
+        ### was declared as $VERSION in the module.
+        ### else the result will be in $res.
+        ### this is a fix on skud's Module::InstalledVersion
+
+        local $VERSION;
+        my $res = eval $1;
+
+        ### default to '0.0' if there REALLY is no version
+        ### all to satisfy warnings
+        my $version = $VERSION || $res || '0.0';
+
+        print($@ ? "Error: $@\n" : "Result: $version\n") if $verbose;  
+
+        return $version;
+    }
+    
+    ### unable to find a version in this string
+    return;
 }
 
 =head2 $bool = can_load( modules => { NAME => VERSION [,NAME => VERSION] }, [verbose => BOOL, nocache => BOOL] )
@@ -522,10 +556,8 @@ Jos Boumans E<lt>kane@cpan.orgE<gt>.
 
 =head1 COPYRIGHT
 
-This module is
-copyright (c) 2002 Jos Boumans E<lt>kane@cpan.orgE<gt>.
-All rights reserved.
+This module is copyright (c) 2002-2007 Jos Boumans 
+E<lt>kane@cpan.orgE<gt>. All rights reserved.
 
-This library is free software;
-you may redistribute and/or modify it under the same
-terms as Perl itself.
+This library is free software; you may redistribute and/or modify 
+it under the same terms as Perl itself.

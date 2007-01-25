@@ -13,7 +13,7 @@ BEGIN {
                         $USE_IPC_RUN $USE_IPC_OPEN3 $WARN
                     ];
 
-    $VERSION        = '0.34';
+    $VERSION        = '0.36';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -25,6 +25,7 @@ BEGIN {
 }
 
 require Carp;
+use File::Spec;
 use Params::Check               qw[check];
 use Module::Load::Conditional   qw[can_load];
 use Locale::Maketext::Simple    Style => 'gettext';
@@ -186,7 +187,10 @@ sub can_run {
         return MM->maybe_command($command);
 
     } else {
-        for my $dir (split /\Q$Config::Config{path_sep}\E/, $ENV{PATH}) {
+        for my $dir (
+            (split /\Q$Config::Config{path_sep}\E/, $ENV{PATH}),
+            File::Spec->curdir
+        ) {           
             my $abs = File::Spec->catfile($dir, $command);
             return $abs if $abs = MM->maybe_command($abs);
         }
@@ -586,7 +590,10 @@ sub _system_run {
             my($redir, $fh, $glob) = @{$Map{$name}} or (
                 Carp::carp(loc("No such FD: '%1'", $name)), next );
             
-            open $glob, $redir,$fh or (
+            ### MUST use the 2-arg version of open for dup'ing for 
+            ### 5.6.x compatibilty. 5.8.x can use 3-arg open
+            ### see perldoc5.6.2 -f open for details            
+            open $glob, $redir . fileno($fh) or (
                         Carp::carp(loc("Could not dup '$name': %1", $!)),
                         return
                     );        
@@ -615,7 +622,10 @@ sub _system_run {
             my($redir, $fh, $glob) = @{$Map{$name}} or (
                 Carp::carp(loc("No such FD: '%1'", $name)), next );
 
-            open( $fh, $redir,$glob ) or (
+            ### MUST use the 2-arg version of open for dup'ing for 
+            ### 5.6.x compatibilty. 5.8.x can use 3-arg open
+            ### see perldoc5.6.2 -f open for details
+            open( $fh, $redir . fileno($glob) ) or (
                     Carp::carp(loc("Could not restore '$name': %1", $!)),
                     return
                 ); 
@@ -663,7 +673,7 @@ settings honored cleanly.
 Otherwise, if the variable C<$IPC::Cmd::USE_IPC_OPEN3> is set to true 
 (See the C<GLOBAL VARIABLES> Section), try to execute the command using
 C<IPC::Open3>. Buffers will be available on all platforms except C<Win32>,
-interactive commands will still execute cleanly, and also your  verbosity
+interactive commands will still execute cleanly, and also your verbosity
 settings will be adhered to nicely;
 
 =item *
