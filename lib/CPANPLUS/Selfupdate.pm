@@ -42,20 +42,23 @@ CPANPLUS::Selfupdate
         dependencies => {
             'File::Fetch'               => '0.08', # win32 ftp support
             'File::Spec'                => '0.82',
-            'IPC::Cmd'                  => '0.34', # win32/ipc::open3 support
+            'IPC::Cmd'                  => '0.36', # 5.6.2 compat: 2-arg open
             'Locale::Maketext::Simple'  => '0.01',
             'Log::Message'              => '0.01',
             'Module::Load'              => '0.10',
-            'Module::Load::Conditional' => '0.14', # $VERSION in POD bugfix
+            'Module::Load::Conditional' => '0.16', # Better parsing: #23995
+            'version'                   => '0.69', # XXX needed for M::L::C
+                                                   # 0.69 pure-perl fails tests
+                                                   # on 5.6.2 though :(
             'Params::Check'             => '0.22',
             'Package::Constants'        => '0.01',
             'Term::UI'                  => '0.05',
             'Test::Harness'             => '2.62', # due to bug #19505
                                                    # only 2.58 and 2.60 are bad
             'Test::More'                => '0.47', # to run our tests
-            'Archive::Extract'          => '0.11', # bzip2 support
+            'Archive::Extract'          => '0.16', # ./Dir bug fix
             'Archive::Tar'              => '1.23',
-            'IO::Zlib'                  => '1.04',
+            'IO::Zlib'                  => '1.04', # needed for Archive::Tar
             'Object::Accessor'          => '0.32', # overloaded stringification
             'Module::CoreList'          => '2.09',
             'Module::Pluggable'         => '2.4',
@@ -357,7 +360,7 @@ sub _hashref_to_module {
 C<CPANPLUS::Selfupdate::Module> extends C<CPANPLUS::Module> objects
 by providing accessors to aid in selfupdating CPANPLUS.
 
-These objects are returned by all methods on C<CPANPLUS::Selfupdate>
+These objects are returned by all methods of C<CPANPLUS::Selfupdate>
 that return module objects.
 
 =cut
