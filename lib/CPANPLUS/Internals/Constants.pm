@@ -259,6 +259,7 @@ use constant GET_XS_FILES   => sub { my $dir = $_[0] or return;
 use constant INSTALL_LOG_FILE 
                             => sub { my $obj  = shift or return;
                                      my $name = $obj->name; $name =~ s/::/-/g;
+                                     $name .= '-'. $obj->version;
                                      $name .= '-'. scalar(time) . '.log';
                                      return $name;
                                 };                                        
@@ -269,9 +270,10 @@ use constant ON_CYGWIN      => $^O eq 'cygwin';
 use constant ON_VMS         => $^O eq 'VMS';
 
 use constant ON_OLD_CYGWIN  => do { ON_CYGWIN and $] < 5.008 
-                                    ? loc("Your perl version for %1 is too low; ".
-                                            "Require %2 or higher for this function",
-                                            $^O, '5.8.0' )
+                                    ? loc(
+                                       "Your perl version for %1 is too low; ".
+                                       "Require %2 or higher for this function",
+                                       $^O, '5.8.0' )
                                     : '';                                                                           
                                 };
 
