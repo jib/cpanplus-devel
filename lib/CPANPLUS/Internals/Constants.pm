@@ -242,7 +242,6 @@ use constant CALLING_FUNCTION
                             => sub { my $lvl = $_[0] || 0;
                                      return join '::', (caller(2+$lvl))[3] 
                                 };
-use constant DOT_EXISTS     => '.exists';     
 use constant PERL_CORE      => 'perl';
 
 use constant GET_XS_FILES   => sub { my $dir = $_[0] or return;
@@ -276,6 +275,9 @@ use constant ON_OLD_CYGWIN  => do { ON_CYGWIN and $] < 5.008
                                        $^O, '5.8.0' )
                                     : '';                                                                           
                                 };
+
+### XXX these 2 are probably obsolete -- check & remove;
+use constant DOT_EXISTS     => '.exists'; 
 
 use constant QUOTE_PERL_ONE_LINER 
                             => sub { my $line = shift or return;
