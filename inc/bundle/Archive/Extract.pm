@@ -17,6 +17,7 @@ use Locale::Maketext::Simple    Style => 'gettext';
 use constant ON_SOLARIS     => $^O eq 'solaris' ? 1 : 0;
 use constant FILE_EXISTS    => sub { -e $_[0] ? 1 : 0 };
 
+### If these are changed, update @TYPES and the new() POD
 use constant TGZ            => 'tgz';
 use constant TAR            => 'tar';
 use constant GZ             => 'gz';
@@ -26,10 +27,11 @@ use constant TBZ            => 'tbz';
 
 use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG];
 
-$VERSION        = '0.15_03';
+$VERSION        = '0.16';
 $PREFER_BIN     = 0;
 $WARN           = 1;
 $DEBUG          = 0;
+my @Types       = ( TGZ, TAR, GZ, ZIP, BZ2, TBZ ); # same as all constants
 
 local $Params::Check::VERBOSE = $Params::Check::VERBOSE = 1;
 
@@ -84,7 +86,7 @@ Archive::Extract - A generic archive extracting mechanism
 Archive::Extract is a generic archive extraction mechanism.
 
 It allows you to extract any archive file of the type .tar, .tar.gz,
-.gz, tar.bz, .tbz2, .bz2 or .zip without having to worry how it does 
+.gz, tar.bz2, .tbz, .bz2 or .zip without having to worry how it does 
 so, or use different interfaces for each type by using either perl 
 modules, or commandline tools on your system.
 
@@ -112,11 +114,12 @@ my $Mapping = {
 {
     my $tmpl = {
         archive => { required => 1, allow => FILE_EXISTS },
-        type    => { default => '', allow => [qw|tgz tar zip gz bz2 tbz2|] },
+        type    => { default => '', allow => [ @Types ] },
     };
 
     ### build accesssors ###
-    for my $method( keys %$tmpl, qw[_extractor _gunzip_to files extract_path],
+    for my $method( keys %$tmpl, 
+                    qw[_extractor _gunzip_to files extract_path],
                     qw[_error_msg _error_msg_long]
     ) {
         no strict 'refs';
@@ -369,6 +372,15 @@ C<Archive::Extract> object.
 This is the type of archive represented by this C<Archive::Extract>
 object. See accessors below for an easier way to use this.
 See the C<new()> method for details.
+
+=head2 $ae->types
+
+Returns a list of all known C<types> for C<Archive::Extract>'s
+C<new> method.
+
+=cut
+
+sub types { return @Types }
 
 =head2 $ae->is_tgz
 
@@ -947,7 +959,8 @@ sub _bunzip2_bin {
 #     my $use_list = { 'IO::Uncompress::Bunzip2' => '0.0' };
 #     unless( can_load( modules => $use_list ) ) {
 #         return $self->_error(loc("You do not have '%1' installed - Please " .
-#                         "install it as soon as possible.", 'IO::Uncompress::Bunzip2'));
+#                         "install it as soon as possible.",
+#                         'IO::Uncompress::Bunzip2'));
 #     }
 # 
 #     my $bz = IO::Uncompress::Bunzip2->new( $self->archive ) or
@@ -976,7 +989,8 @@ sub _bunzip2_cz2 {
     my $use_list = { 'IO::Uncompress::Bunzip2' => '0.0' };
     unless( can_load( modules => $use_list ) ) {
         return $self->_error(loc("You do not have '%1' installed - Please " .
-                        "install it as soon as possible.", 'IO::Uncompress::Bunzip2'));
+                        "install it as soon as possible.",
+                        'IO::Uncompress::Bunzip2'));
     }
 
     IO::Uncompress::Bunzip2::bunzip2($self->archive => $self->_gunzip_to)
@@ -1005,7 +1019,7 @@ sub _error {
     $self->_error_msg( $error );
     $self->_error_msg_long( Carp::longmess($error) );
     
-    ### set Archive::Tar::WARN to 0 to disable printing
+    ### set $Archive::Extract::WARN to 0 to disable printing
     ### of errors
     if( $WARN ) {
         carp $DEBUG ? $self->_error_msg_long : $self->_error_msg;
@@ -1113,7 +1127,7 @@ Jos Boumans E<lt>kane@cpan.orgE<gt>.
 =head1 COPYRIGHT
 
 This module is
-copyright (c) 2004 Jos Boumans E<lt>kane@cpan.orgE<gt>.
+copyright (c) 2004-2007 Jos Boumans E<lt>kane@cpan.orgE<gt>.
 All rights reserved.
 
 This library is free software;

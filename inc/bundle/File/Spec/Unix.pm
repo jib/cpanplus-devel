@@ -43,13 +43,12 @@ sub canonpath {
     my ($self,$path) = @_;
     
     # Handle POSIX-style node names beginning with double slash (qnx, nto)
-    # Handle network path names beginning with double slash (cygwin)
     # (POSIX says: "a pathname that begins with two successive slashes
     # may be interpreted in an implementation-defined manner, although
     # more than two leading slashes shall be treated as a single slash.")
     my $node = '';
-    my $double_slashes_special = $self->isa("File::Spec::Cygwin") || $^O =~ m/^(?:qnx|nto)$/;
-    if ( $double_slashes_special && $path =~ s:^(//[^/]+)(/|\z):/:s ) {
+    my $double_slashes_special = $^O eq 'qnx' || $^O eq 'nto';
+    if ( $double_slashes_special && $path =~ s{^(//[^/]+)(?:/|\z)}{/}s ) {
       $node = $1;
     }
     # This used to be
@@ -57,12 +56,12 @@ sub canonpath {
     # but that made tests 29, 30, 35, 46, and 213 (as of #13272) to fail
     # (Mainly because trailing "" directories didn't get stripped).
     # Why would cygwin avoid collapsing multiple slashes into one? --jhi
-    $path =~ s|/+|/|g;                             # xx////xx  -> xx/xx
-    $path =~ s@(/\.)+(/|\Z(?!\n))@/@g;             # xx/././xx -> xx/xx
-    $path =~ s|^(\./)+||s unless $path eq "./";    # ./xx      -> xx
-    $path =~ s|^/(\.\./)+|/|;                      # /../../xx -> xx
+    $path =~ s|/{2,}|/|g;                            # xx////xx  -> xx/xx
+    $path =~ s{(?:/\.)+(?:/|\z)}{/}g;                # xx/././xx -> xx/xx
+    $path =~ s|^(?:\./)+||s unless $path eq "./";    # ./xx      -> xx
+    $path =~ s|^/(?:\.\./)+|/|;                      # /../../xx -> xx
     $path =~ s|^/\.\.$|/|;                         # /..       -> /
-    $path =~ s|/\Z(?!\n)|| unless $path eq "/";          # xx/       -> xx
+    $path =~ s|/\z|| unless $path eq "/";          # xx/       -> xx
     return "$node$path";
 }
 
@@ -180,7 +179,7 @@ directory. (Does not strip symlinks, only '.', '..', and equivalents.)
 
 sub no_upwards {
     my $self = shift;
-    return grep(!/^\.{1,2}\Z(?!\n)/s, @_);
+    return grep(!/^\.{1,2}\z/s, @_);
 }
 
 =item case_tolerant
@@ -260,7 +259,7 @@ sub splitpath {
         $directory = $path;
     }
     else {
-        $path =~ m|^ ( (?: .* / (?: \.\.?\Z(?!\n) )? )? ) ([^/]*) |xs;
+        $path =~ m|^ ( (?: .* / (?: \.\.?\z )? )? ) ([^/]*) |xs;
         $directory = $1;
         $file      = $2;
     }
@@ -356,21 +355,21 @@ sub abs2rel {
     my($self,$path,$base) = @_;
     $base = $self->_cwd() unless defined $base and length $base;
 
-    for ($path, $base) { $_ = $self->canonpath($_) }
+    ($path, $base) = map $self->canonpath($_), $path, $base;
+
+    if (grep $self->file_name_is_absolute($_), $path, $base) {
+	($path, $base) = map $self->rel2abs($_), $path, $base;
+    }
+    else {
+	# save a couple of cwd()s if both paths are relative
+	($path, $base) = map $self->catdir('/', $_), $path, $base;
+    }
 
     my ($path_volume) = $self->splitpath($path, 1);
     my ($base_volume) = $self->splitpath($base, 1);
 
     # Can't relativize across volumes
     return $path unless $path_volume eq $base_volume;
-
-    if (grep $self->file_name_is_absolute($_), $path, $base) {
-	for ($path, $base) { $_ = $self->rel2abs($_) }
-    }
-    else {
-	# save a couple of cwd()s if both paths are relative
-	for ($path, $base) { $_ = $self->catdir('/', $_) }
-    }
 
     my $path_directories = ($self->splitpath($path, 1))[1];
     my $base_directories = ($self->splitpath($base, 1))[1];
