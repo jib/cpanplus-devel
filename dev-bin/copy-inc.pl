@@ -48,6 +48,7 @@ unless( $MineOnly ) {
         Locale::Maketext::Simple
         Module::CoreList
         Module::Pluggable
+        version
     ];
     
     # IPC::Run no more!
@@ -66,6 +67,14 @@ unless( $MineOnly ) {
             chdir $dir . "/lib" or die "Could not chdir: $!";
             system("cp -R . $Target") and die "Could not copy files";
 
+
+            ### XXX special case -- version.pm has Special Dirs :(
+            ### need the 'vperl/vpp.pm' file too
+            if( $module eq 'version' ) {
+                system("cp ../vperl/vpp.pm $Target/version/")
+                    and die "Could not copy special files for $module";
+            }
+            
             print "done\n";
             next;
         } 
