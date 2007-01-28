@@ -40,6 +40,7 @@ my $cb      = CPANPLUS::Backend->new( $conf );
 ### start with fresh sources ###
 ok( $cb->reload_indices( update_source => 0 ),  "Rebuilding trees" );  
 
+### XXX SOURCEFILES FIX
 my $auth    = $cb->author_tree('AYRNIEU');
 my $mod     = $cb->module_tree('Text::Bastardize');
 

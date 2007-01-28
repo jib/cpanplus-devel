@@ -24,6 +24,7 @@ use Data::Dumper;
 use CPANPLUS::Backend;
 use CPANPLUS::Internals::Constants;
 
+### XXX SOURCEFILES FIX
 BEGIN { require 'conf.pl'; }
 my $conf    = gimme_conf();
 my $cb      = CPANPLUS::Backend->new($conf);
@@ -67,6 +68,7 @@ for my $type ( CPANPLUS::Module::Author->accessors() ) {
     local $SIG{__WARN__} = sub { $warning .= "@_"; };
 
     {   ### try search that will yield nothing ###
+        ### XXX SOURCEFILES FIX
         my @list = $cb->search( type    => 'module',
                                 allow   => ['Foo::Bar'.$$] );
 

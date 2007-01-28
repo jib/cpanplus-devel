@@ -77,6 +77,7 @@ ok( $cb->reload_indices( update_source => 0 ),
 ok( $conf->set_conf( signature => 1 ),
                                 "Enabling signature checks" );
 
+### XXX SOURCEFILES FIX
 my $mod = $cb->module_tree('Text::Bastardize');
 
 ### format_available tests ###

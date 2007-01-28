@@ -37,6 +37,7 @@ my $CB      = CPANPLUS::Backend->new( $Conf );
     $Conf->set_conf( prefer_makefile => 0 );
 }
 
+### XXX SOURCEFILES FIX
 ### create a fake object, so we don't use the actual module tree
 my $Mod = CPANPLUS::Module::Fake->new(
                 module  => 'Foo::Bar',

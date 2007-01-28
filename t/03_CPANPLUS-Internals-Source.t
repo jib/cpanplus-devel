@@ -45,6 +45,7 @@ for my $name (qw[auth mod dslip] ) {
 ok( scalar keys %$at, "Authortree loaded successfully" );
 ok( scalar keys %$mt, "Moduletree loaded successfully" );
 
+### XXX SOURCEFILES FIX
 my $auth    = $at->{'AYRNIEU'};
 my $mod     = $mt->{'Text::Bastardize'};
 

@@ -36,8 +36,9 @@ BEGIN {
     require CPANPLUS::Dist;
     CPANPLUS::Dist->_add_dist_types( __PACKAGE__ );
 
-    sub init                { $_[0]->status->mk_accessors( qw[prepared created installed
-                                     _prepare_args _install_args _create_args]);
+    sub init                { $_[0]->status->mk_accessors( 
+                                qw[prepared created installed
+                                   _prepare_args _install_args _create_args]);
                               return $Init };
     sub format_available    { return $Available }
     sub prepare             { return shift->status->prepared($Prepare) }
@@ -85,6 +86,7 @@ use_ok('CPANPLUS::Dist');
 ok( $cb->reload_indices( update_source => 0 ),
                                 "Rebuilding trees" );
 
+### XXX SOURCEFILES FIX
 my $Mod  = $cb->module_tree('Text::Bastardize');
 ok( $Mod,                       "Got module object" );
 

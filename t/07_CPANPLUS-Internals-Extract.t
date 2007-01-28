@@ -31,6 +31,7 @@ my $conf = gimme_conf();
 
 my $cb = CPANPLUS::Backend->new( $conf );
 
+### XXX SOURCEFILES FIX
 my $mod     = $cb->module_tree('Text::Bastardize');
 
 isa_ok( $mod,  'CPANPLUS::Module' );

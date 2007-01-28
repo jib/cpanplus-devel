@@ -35,6 +35,7 @@ use constant NOBODY => 'nobody@xs4all.nl';
 
 BEGIN { require 'conf.pl'; }
 
+### XXX SOURCEFILES FIX
 my $conf    = gimme_conf();
 my $cb      = CPANPLUS::Backend->new( $conf );
 my $mod     = $cb->module_tree('Text::Bastardize');

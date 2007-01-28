@@ -49,6 +49,7 @@ ok( scalar keys %$at,       "Author tree has entries" );
 my $Name = 'Text::Bastardize';
 my $mod  = $cb->module_tree($Name);
 
+### XXX SOURCEFILES FIX
 {   my @mods = $cb->module_tree($Name,$Name);
     my $none = $cb->module_tree('fnurk');
     
