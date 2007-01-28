@@ -11,6 +11,15 @@ BEGIN {
     $ENV{'PERL5LIB'} = join ':', grep { defined } $ENV{'PERL5LIB'}, @paths;
 }
 
+BEGIN {
+    use IPC::Cmd;
+   
+    ### Win32 has issues with redirecting FD's properly in IPC::Run:
+    ### Can't redirect fd #4 on Win32 at IPC/Run.pm line 2801
+    $IPC::Cmd::USE_IPC_RUN = 0 if $^O eq 'MSWin32';
+    $IPC::Cmd::USE_IPC_RUN = 0 if $^O eq 'MSWin32';
+}
+
 use strict;
 use CPANPLUS::Configure;
 
@@ -32,6 +41,7 @@ sub gimme_conf {
     $conf->set_conf( base       => 'dummy-cpanplus' );
     $conf->set_conf( dist_type  => '' );
     $conf->set_conf( signature  => 0 );
+
 
     return $conf;
 };
