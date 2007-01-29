@@ -393,6 +393,10 @@ C<parse_module>;
 
 =item AYRNIEU/Text-Bastardize-1.06.tar.gz
 
+=item http://example.com/Text-Bastardize-1.06.tar.gz
+
+=item file:///tmp/Text-Bastardize-1.06.tar.gz
+
 =back
 
 These items would all come up with a C<CPANPLUS::Module> object for
@@ -402,7 +406,7 @@ Even if the version on CPAN is currently higher.
 
 If C<parse_module> is unable to actually find the module you are looking
 for in its module tree, but you supplied it with an author, module
-and version part in a distribution name, it will create a fake
+and version part in a distribution name or URI, it will create a fake
 C<CPANPLUS::Module> object for you, that you can use just like the
 real thing.
 
@@ -431,8 +435,11 @@ sub parse_module {
 
     ### ok, so it's not a module object, but a ref nonetheless?
     ### what are you smoking?
-    return if ref $mod;
-
+    if( ref $mod ) {
+        error(loc("Can not parse module string from reference '%1'", $mod ));
+        return;
+    }
+    
     ### check only for allowed characters in a module name
     unless( $mod =~ /[^\w:]/ ) {
 
@@ -509,11 +516,11 @@ sub parse_module {
 
     ### translate a distribution into a module name ###
     my $guess   = $dist;
+    
+    ### first, get the version and strip the .tgz suffix
+    ### versions must begin with a digit, but may contain letters 
+    ### (wtf?? silly cpan authors).
     $guess      =~ s/(?:-|_)(\d[.\w]*?)(?:\.[A-Za-z.]*)?$//; 
-                                    # versions must begin with a digit,
-                                    # but may contain letters (wtf?? silly
-                                    # cpan authors).
-                                    # strip version plus .tgz & co
     my $version = $1 || '';
     
     $guess      =~ s/-$//;                      # strip trailing -
@@ -528,9 +535,7 @@ sub parse_module {
             return $maybe;
 
         ### perhaps an outdated version instead?
-        } elsif (   ($maybe->package_name eq $pkg)
-                    and $version
-        ) {
+        } elsif ( $version ) {
             my $auth_obj; my $path;
 
             ### did you give us an author part? ###
@@ -550,19 +555,39 @@ sub parse_module {
             } else {
                 $auth_obj   = $maybe->author;
                 $path       = $maybe->path;
+            }        
+        
+            if( $maybe->package_name eq $pkg ) {
+    
+                my $modobj = CPANPLUS::Module::Fake->new(
+                    module  => $maybe->module,
+                    version => $version,
+                    package => $pkg . '-' . $version . '.' .
+                                    $maybe->package_extension,
+                    path    => $path,
+                    author  => $auth_obj,
+                    _id     => $maybe->_id
+                );
+                return $modobj;
+
+            ### you asked for a specific version?
+            ### assume our $maybe is the one you wanted,
+            ### and fix up the version.. 
+            } else {
+    
+                my $modobj = $maybe->clone;
+                $modobj->version( $version );
+                
+                ### you wanted a specific author, but it's not the one
+                ### from the module tree? we'll fix it up
+                if( $author and $author ne $modobj->author->cpanid ) {
+                    $modobj->author( $auth_obj );
+                    $modobj->path( $path );
+                }
+                
+                return $modobj;
             }
-
-            my $modobj = CPANPLUS::Module::Fake->new(
-                module  => $maybe->module,
-                version => $version,
-                package => $pkg . '-' . $version . '.' .
-                                $maybe->package_extension,
-                path    => $path,
-                author  => $auth_obj,
-                _id     => $maybe->_id
-            );
-            return $modobj;
-
+        
         ### you didn't care about a version, so just return the object then
         } elsif ( !$version ) {
             return $maybe;
@@ -576,6 +601,7 @@ sub parse_module {
         ### it's just a guess of course, but most dists are .tar.gz
         $dist .= '.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;
 
+        ### XXX duplication from above for generating author obj + path...
         my $modobj = CPANPLUS::Module::Fake->new(
             module  => $guess,
             version => $version,
