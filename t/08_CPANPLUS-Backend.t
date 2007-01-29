@@ -46,7 +46,7 @@ ok( scalar keys %$mt,       "Module tree has entries" );
 ok( scalar keys %$at,       "Author tree has entries" ); 
 
 ### module_tree tests ###
-my $Name = 'Foo::Bar::EU::NOXS';
+my $Name = TEST_CONF_MODULE;
 my $mod  = $cb->module_tree($Name);
 
 ### XXX SOURCEFILES FIX
@@ -76,77 +76,72 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
 
 
 ### parse_module tests ###
-{   ### basic tests to find a single module
-    for my $guess ( qw[ Foo::Bar::EU::NOXS
-                        Foo-Bar-EU-NOXS
-                        Foo-Bar-EU-NOXS-0.01
-                        EUNOXS/Foo-Bar-EU-NOXS
-                        EUNOXS/Foo-Bar-EU-NOXS-0.01
-                    ],
-                    $mod
-    ) {
+{   my @map = (     # author                package             version
+        $Name   => [ $mod->author->cpanid,  $mod->package_name, $mod->version ],
+        $mod    => [ $mod->author->cpanid,  $mod->package_name, $mod->version ],
+        'Foo-Bar-EU-NOXS'
+                => [ $mod->author->cpanid,  $mod->package_name, $mod->version ],
+        'Foo-Bar-EU-NOXS-0.01'
+                => [ $mod->author->cpanid,  $mod->package_name, '0.01' ],
+        'EUNOXS/Foo-Bar-EU-NOXS'
+                => [ 'EUNOXS',              $mod->package_name, $mod->version ],
+        'EUNOXS/Foo-Bar-EU-NOXS-0.01'
+                => [ 'EUNOXS',              $mod->package_name, '0.01' ],
+        'Foo-Bar-EU-NOXS-0.09'
+                => [ $mod->author->cpanid,  $mod->package_name, '0.09' ],
+        'MBXS/Foo-Bar-EU-NOXS-0.01'
+                => [ 'MBXS',                $mod->package_name, '0.01' ],
+        'EUNOXS/Foo-Bar-EU-NOXS-0.09'
+                => [ 'EUNOXS',              $mod->package_name, '0.09' ],
+        'EUNOXS/Foo-Bar-EU-NOXS-0.09.zip'
+                => [ 'EUNOXS',              $mod->package_name, '0.09' ],
+        'FROO/Flub-Flob-1.1.zip'
+                => [ 'FROO',                'Flub-Flob',        '1.1' ],
+        'G/GO/GOYALI/SMS_API_3_01.tar.gz'
+                => [ 'GOYALI',              'SMS_API',          '3_01' ],
+        'E/EY/EYCK/Net/Lite/Net-Lite-FTP-0.091'
+                => [ 'EYCK',                'Net-Lite-FTP',     '0.091' ],
+        'EYCK/Net/Lite/Net-Lite-FTP-0.091'
+                => [ 'EYCK',                'Net-Lite-FTP',     '0.091' ],
+        'M/MA/MAXDB/DBD-MaxDB-7.5.00.24a'
+                => [ 'MAXDB',               'DBD-MaxDB',        '7.5.00.24a' ],
+        'EUNOXS/perl5.005_03.tar.gz'
+                => [ 'EUNOXS',              'perl',             '5.005_03' ],
+        'FROO/Flub-Flob-v1.1.0.tbz'
+                => [ 'FROO',                'Flub-Flob',        'v1.1.0' ],
+    );       
 
+    while ( my($guess, $attr) = splice @map, 0, 2 ) {
+        my( $author, $pkg, $version ) = @$attr;
+        
         ok( $guess,             "Attempting to parse $guess" );
 
         my $obj = $cb->parse_module( module => $guess );
-        my ($auth) = $guess =~ m|(.+?)/| ? $1 : $obj->author->cpanid;
-
+        
         ok( IS_MODOBJ->( mod => $obj ), 
                                 "   parse_module success by '$guess'" );     
-        like( $obj->author->cpanid, "/$auth/i", 
-                                "   proper author found");
-        like( $obj->path,           "/$auth/i", 
-                                "   proper path found" );
-    }
-
-    ### find different authors, extensions and so on
-    for my $guess ( qw[
-                    Foo-Bar-EU-NOXS-0.09
-                    MBXS/Foo-Bar-EU-NOXS-0.01
-                    EUNOXS/Foo-Bar-EU-NOXS-0.09
-                    EUNOXS/Foo-Bar-EU-NOXS-0.09.zip
-                    FROO/Flub-Flob-1.1.zip
-                    G/GO/GOYALI/SMS_API_3_01.tar.gz
-    ] ) {
-        my $obj = $cb->parse_module( module => $guess );
-        my ($auth) = $guess =~ m|^(.+?)/| ? $1 : $obj->author->cpanid;
         
-        ok( IS_FAKE_MODOBJ->(mod => $obj), "parse_module success by '$guess'" );     
-        like( $obj->author->cpanid, "/$auth/i", "   proper author found" );
-        like( $obj->path,           "/$auth/i", "   proper path found" );
-
+        is( $obj->version, $version,
+                                "   Proper version found: $version" );
+        is( $obj->package_version, $version,
+                                "       Found in package_version as well" );
+        is( $obj->package_name, $pkg,
+                                "   Proper package found: $pkg" );
+        unlike( $obj->package_name, qr/\d/,
+                                "       No digits in package name" );
+        like( $obj->author->cpanid, "/$author/i", 
+                                "   Proper author found: $author");
+        like( $obj->path,           "/$author/i", 
+                                "   Proper path found: " . $obj->path );
     }
 
-    ### more complicated ones 
-    for my $guess ( qw[ E/EY/EYCK/Net/Lite/Net-Lite-FTP-0.091
-                        EYCK/Net/Lite/Net-Lite-FTP-0.091
-                        M/MA/MAXDB/DBD-MaxDB-7.5.00.24a
-                    ] 
-    ) {
-        my $obj     = $cb->parse_module( module => $guess );
-        my ($ver)   = $guess =~ m|-([^-]+)$|            ? $1 : '';
-        my ($auth)  = $guess =~ m|(?:./../)?(.+?)/|     ? $1 : '';
-        my ($path)  = $guess =~ m|^(.+)/|               ? $1 : '';
-
-        ok( IS_FAKE_MODOBJ->(mod => $obj), "parse_module success by '$guess'" );
-
-        ok( $auth,                  "   Author '$auth' parsed from '$guess'");
-        ok( $path,                  "   Path '$path' parsed from '$guess'");
-        ok( $ver,                   "   Version '$ver' parsed from '$guess'");
-
-        like( $obj->author->cpanid, qr/^$auth$/i, 
-                                    "   proper author found" );
-        like( $obj->path,           qr/$path$/i, 
-                                    "   proper path found" );
-        is( $obj->version, $ver,    "   proper version found" );        
-    }
 
     ### test for things that look like real modules, but aren't ###
     {   local $CPANPLUS::Error::MSG_FH    = output_handle() if $Trap_Output;
         local $CPANPLUS::Error::ERROR_FH  = output_handle() if $Trap_Output;
         
         my @map = (
-            [ 'Foo::Bar'.$$ => [
+            [  $Name . $$ => [
                 [qr/does not contain an author/,"Missing author part detected"],
                 [qr/Cannot find .+? in the module tree/,"Unable to find module"]
             ] ],
@@ -219,7 +214,7 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
 }
 
 ### installed tests ###
-{   $DB::single = 1;
+{   
     ok( scalar $cb->installed,    "Found list of installed modules" );
 }    
                 

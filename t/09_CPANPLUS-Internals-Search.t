@@ -26,9 +26,10 @@ use CPANPLUS::Internals::Constants;
 
 ### XXX SOURCEFILES FIX
 BEGIN { require 'conf.pl'; }
-my $conf    = gimme_conf();
-my $cb      = CPANPLUS::Backend->new($conf);
-my $mod     = $cb->module_tree('Foo::Bar::EU::NOXS');
+my $Conf    = gimme_conf();
+my $CB      = CPANPLUS::Backend->new($Conf);
+my $ModName = TEST_CONF_MODULE;
+my $Mod     = $CB->module_tree( $ModName );
 
 
 ### search for modules ###
@@ -36,11 +37,11 @@ for my $type ( CPANPLUS::Module->accessors() ) {
 
     ### don't muck around with references/objects
     ### or private identifiers
-    next if ref $mod->$type() or $type =~/^_/;
+    next if ref $Mod->$type() or $type =~/^_/;
 
-    my @aref = $cb->search(
+    my @aref = $CB->search(
                     type    => $type,
-                    allow   => [$mod->$type()],
+                    allow   => [$Mod->$type()],
                 );
 
     ok( scalar @aref,       "Module found by '$type'" );
@@ -50,9 +51,9 @@ for my $type ( CPANPLUS::Module->accessors() ) {
 }
 
 ### search for authors ###
-my $auth = $mod->author;
+my $auth = $Mod->author;
 for my $type ( CPANPLUS::Module::Author->accessors() ) {
-    my @aref = $cb->search(
+    my @aref = $CB->search(
                     type    => $type,
                     allow   => [$auth->$type()],
                 );
@@ -69,15 +70,15 @@ for my $type ( CPANPLUS::Module::Author->accessors() ) {
 
     {   ### try search that will yield nothing ###
         ### XXX SOURCEFILES FIX
-        my @list = $cb->search( type    => 'module',
-                                allow   => ['Foo::Bar'.$$] );
+        my @list = $CB->search( type    => 'module',
+                                allow   => [$ModName.$$] );
 
         is( scalar(@list), 0,   "Valid search yields no results" );
         is( $warning, '',       "   No warnings issued" );
     }
 
     {   ### try bogus arguments ###
-        my @list = $cb->search( type => '', allow => ['foo'] );
+        my @list = $CB->search( type => '', allow => ['foo'] );
 
         is( scalar(@list), 0,   "Broken search yields no results" );
         like( $warning, qr/^Key 'type'.* is of invalid type for/,

@@ -40,7 +40,7 @@ ok( IS_AUTHOBJ->( $f_auth ),        "   IS_AUTHOBJ recognizes it" );
 ok( IS_FAKE_AUTHOBJ->( $f_auth ),   "   IS_FAKE_AUTHOBJ recognizes it" );
 
 my $f_mod = CPANPLUS::Module::Fake->new(
-                module  => 'Foo::Bar',
+                module  => TEST_CONF_INST_MODULE ,
                 path    => 'some/where',
                 package => 'Foo-Bar-1.2.tgz',
                 _id     => $cb->_id,

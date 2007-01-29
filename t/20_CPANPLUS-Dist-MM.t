@@ -42,7 +42,7 @@ my $cb      = CPANPLUS::Backend->new( $conf );
 my $noperms = ($< and not $conf->get_program('sudo')) &&
               ($conf->get_conf('makemakerflags') or
                 not -w $Config{installsitelib} );
-my $ModName = 'Foo::Bar';
+my $ModName = TEST_CONF_INST_MODULE;
 my $File    = 'Bar.pm';
 
 

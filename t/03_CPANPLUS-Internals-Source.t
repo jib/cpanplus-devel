@@ -31,8 +31,9 @@ my $conf = gimme_conf();
 my $cb = CPANPLUS::Backend->new( $conf );
 isa_ok($cb, "CPANPLUS::Internals" );
 
-my $mt = $cb->_module_tree;
-my $at = $cb->_author_tree;
+my $mt      = $cb->_module_tree;
+my $at      = $cb->_author_tree;
+my $modname = TEST_CONF_MODULE;
 
 for my $name (qw[auth mod dslip] ) {
     my $file = File::Spec->catfile( 
@@ -46,7 +47,7 @@ ok( scalar keys %$at, "Authortree loaded successfully" );
 ok( scalar keys %$mt, "Moduletree loaded successfully" );
 
 my $auth    = $at->{'EUNOXS'};
-my $mod     = $mt->{'Foo::Bar::EU::NOXS'};
+my $mod     = $mt->{$modname};
 
 isa_ok( $auth, 'CPANPLUS::Module::Author' );
 isa_ok( $mod,  'CPANPLUS::Module' );

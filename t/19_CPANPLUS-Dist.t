@@ -71,8 +71,8 @@ local $CPANPLUS::Error::MSG_FH   = output_handle() unless @ARGV;
 ### obsolete
 #my $Format = '_test';
 my $Module      = 'CPANPLUS::Dist::_Test';
-my $ModName     = 'Foo::Bar::EU::NOXS';
-my $ModPrereq   = 'Foo::Bar::EU::XS';
+my $ModName     = TEST_CONF_MODULE; 
+my $ModPrereq   = TEST_CONF_INST_MODULE;
 ### XXX this version doesn't exist, but we don't check for it either ###
 my $Prereq      = { $ModPrereq => '1000' };
 

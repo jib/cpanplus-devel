@@ -38,7 +38,7 @@ local $CPANPLUS::Error::MSG_FH   = output_handle() unless @ARGV;
 my $cb = CPANPLUS::Backend->new( $conf );
 isa_ok($cb, "CPANPLUS::Internals" );
 
-my $mod = $cb->module_tree('Foo::Bar::EU::NOXS');
+my $mod = $cb->module_tree( TEST_CONF_MODULE );
 isa_ok( $mod,  'CPANPLUS::Module' );
 
 ### fail host tests ###
