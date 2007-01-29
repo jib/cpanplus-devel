@@ -46,7 +46,7 @@ my $Prereq      = { $Dep => 0 };
 
     my $su = $CB->$Acc;
     ok( $su,                    "Selfupdate object retrieved" );
-    isa_ok( $su,                "CPANPLUS::Selfupdate" );
+    isa_ok( $su,                $Class );
 }
 
 ### test the feature list
