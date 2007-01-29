@@ -45,9 +45,8 @@ for my $name (qw[auth mod dslip] ) {
 ok( scalar keys %$at, "Authortree loaded successfully" );
 ok( scalar keys %$mt, "Moduletree loaded successfully" );
 
-### XXX SOURCEFILES FIX
-my $auth    = $at->{'AYRNIEU'};
-my $mod     = $mt->{'Text::Bastardize'};
+my $auth    = $at->{'EUNOXS'};
+my $mod     = $mt->{'Foo::Bar::EU::NOXS'};
 
 isa_ok( $auth, 'CPANPLUS::Module::Author' );
 isa_ok( $mod,  'CPANPLUS::Module' );
