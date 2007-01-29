@@ -28,7 +28,7 @@ use CPANPLUS::Internals::Constants;
 BEGIN { require 'conf.pl'; }
 my $conf    = gimme_conf();
 my $cb      = CPANPLUS::Backend->new($conf);
-my $mod     = $cb->module_tree('Text::Bastardize');
+my $mod     = $cb->module_tree('Foo::Bar::EU::NOXS');
 
 
 ### search for modules ###
