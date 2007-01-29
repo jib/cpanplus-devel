@@ -124,7 +124,7 @@ sub module_tree {
 
     if( @_ ) {
         my @rv;
-        for my $name (@_) {
+        for my $name ( grep { defined } @_) {
             push @rv, $modtree->{$name} || '';
         }
         return @rv == 1 ? $rv[0] : @rv;
@@ -513,19 +513,13 @@ sub parse_module {
     } else {
         $author = shift @parts || '';
     }
-
+    
+    my($pkg, $version, $ext) = 
+        $self->_split_package_string( package => $dist );
+    
     ### translate a distribution into a module name ###
-    my $guess   = $dist;
-    
-    ### first, get the version and strip the .tgz suffix
-    ### versions must begin with a digit, but may contain letters 
-    ### (wtf?? silly cpan authors).
-    $guess      =~ s/(?:-|_)(\d[.\w]*?)(?:\.[A-Za-z.]*)?$//; 
-    my $version = $1 || '';
-    
-    $guess      =~ s/-$//;                      # strip trailing -
-    my $pkg     = $guess;
-    $guess      =~ s/-/::/g;
+    my $guess = $pkg; 
+    $guess =~ s/-/::/g if $guess; 
 
     my $maybe = $self->module_tree( $guess );
     if( IS_MODOBJ->( module => $maybe ) ) {
@@ -577,6 +571,11 @@ sub parse_module {
     
                 my $modobj = $maybe->clone;
                 $modobj->version( $version );
+                $modobj->package( 
+                        $maybe->package_name .'-'. 
+                        $version .'.'. 
+                        $maybe->package_extension 
+                );
                 
                 ### you wanted a specific author, but it's not the one
                 ### from the module tree? we'll fix it up

@@ -360,29 +360,28 @@ L<Module::ThirdParty> for more details.
 
 =cut
 
-{
-    my $regex = qr/^(
-                        perl                # perlVERSION or a standard
-                        |                   # package name like 
-                        .+(?!-)             # like 'A-B-VERSION' 
-                    )
-                    (.+?)                   # the version number
-                    \.                      # followed by a .
-                    ((?:tar\.gz|zip|tgz))   # and the suffix for the compression
-                /xi;
-
-    ### fetches the test reports for a certain module ###
-    sub package_name {
-        return $1 if shift->package() =~ $regex;
-    }
-
-    sub package_version {
-        return $2 if shift->package() =~ $regex;
-    }
-
-    sub package_extension {
-        return $3 if shift->package() =~ $regex;
-    }
+{   ### fetches the test reports for a certain module ###
+    my %map = (
+        name        => 0,
+        version     => 1,
+        extension   => 2,
+    );        
+    
+    while ( my($type, $index) = each %map ) {
+        my $name    = 'package_' . $type;
+        
+        no strict 'refs';
+        *$name = sub {
+            my $self = shift;
+            my @res  = $self->parent->_split_package_string(     
+                            package => $self->package 
+                       );
+     
+            ### return the corresponding index from the result
+            return $res[$index] if @res;
+            return;
+        };
+    }        
 
     sub package_is_perl_core {
         my $self = shift;

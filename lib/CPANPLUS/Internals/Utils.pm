@@ -389,6 +389,108 @@ sub _home_dir {
     return cwd();
 }
 
+=head2 ($pkg, $version, $ext) = $cb->_split_package_string( package => PACKAGE_STRING );
+
+Splits the name of a CPAN package string up in it's package, version 
+and extension parts.
+
+For example, C<Foo-Bar-1.2.tar.gz> would return the following parts:
+
+    Package:    Foo-Bar
+    Version:    1.2
+    Extension:  tar.gz
+
+=cut
+
+{   my $del_re = qr/[-_]/i;             # delimiter between elements
+    my $pkg_re = qr/[a-z]               # any letters followed by 
+                    [a-z\d]*            # any letters, numbers
+                    (?:                 # optionally repeating:
+                        $del_re         #   followed by a delimiter
+                        [a-z]           #   any letters followed by 
+                        [a-z\d]*        #   any letters, numbers                        
+                    )*
+                /xi;   
+    
+    my $ver_re = qr/[a-z]*\d+[a-z]*     # contains a digit and possibly letters
+                    (?:
+                        [-._]           # followed by a delimiter
+                        [a-z\d]+        # and more digits and or letters
+                    )*?
+                /xi;
+ 
+    my $ext_re = qr/[a-z]               # a letter, followed by
+                    [a-z\d]*            # letters and or digits, optionally
+                    (?:                 
+                        \.              #   followed by a dot and letters
+                        [a-z\d]+        #   and or digits (like .tar.bz2)
+                    )?                  #   optionally
+                /xi;
+
+    my $ver_ext_re = qr/
+                        ($ver_re+)      # version, optional
+                        (?:
+                            \.          # a literal .
+                            ($ext_re)   # extension,
+                        )?              # optional, but requires version
+                /xi;
+                
+    ### composed regex for CPAN packages
+    my $full_re = qr/
+                    ^
+                    ($pkg_re+)          # package
+                    (?: 
+                        $del_re         # delimiter
+                        $ver_ext_re     # version + extension
+                    )?
+                    $                    
+                /xi;
+                
+    ### composed regex for perl packages
+    my $perl    = PERL_CORE;
+    my $perl_re = qr/
+                    ^
+                    ($perl)             # package name for 'perl'
+                    (?:
+                        $ver_ext_re     # version + extension
+                    )?
+                    $
+                /xi;       
+
+
+sub _split_package_string {
+        my $self = shift;
+        my %hash = @_;
+        
+        my $str;
+        my $tmpl = { package => { required => 1, store => \$str } };
+        check( $tmpl, \%hash ) or return;
+        
+        
+        ### 2 different regexes, one for the 'perl' package, 
+        ### one for ordinary CPAN packages.. try them both, 
+        ### first match wins.
+        for my $re ( $full_re, $perl_re ) {
+            
+            ### try the next if the match fails
+            $str =~ $re or next;
+
+            my $pkg = $1 || ''; 
+            my $ver = $2 || '';
+            my $ext = $3 || '';
+
+            ### this regex resets the capture markers!
+            ### strip the trailing delimiter
+
+            $pkg =~ s/$del_re$//;
+
+            return ($pkg, $ver, $ext );
+        }
+        
+        return;
+    }
+}
+
 1;
 
 # Local variables:
