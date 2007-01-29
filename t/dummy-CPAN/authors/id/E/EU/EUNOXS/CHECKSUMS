@@ -14,7 +14,6 @@ $cksum = {
     'md5' => '2b70961796a2ed7ca21fbf7e0c615643',
     'size' => 119
   },
-
 };
 __END__
 -----BEGIN PGP SIGNATURE-----

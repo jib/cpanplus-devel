@@ -42,6 +42,9 @@ my $cb      = CPANPLUS::Backend->new( $conf );
 my $noperms = ($< and not $conf->get_program('sudo')) &&
               ($conf->get_conf('makemakerflags') or
                 not -w $Config{installsitelib} );
+my $ModName = 'Foo::Bar';
+my $File    = 'Bar.pm';
+
 
 ### don't start sending test reports now... ###
 $cb->_callbacks->send_test_report( sub { 0 } );
@@ -77,8 +80,7 @@ ok( $cb->reload_indices( update_source => 0 ),
 ok( $conf->set_conf( signature => 1 ),
                                 "Enabling signature checks" );
 
-### XXX SOURCEFILES FIX
-my $mod = $cb->module_tree('Text::Bastardize');
+my $Mod = $cb->module_tree( $ModName );
 
 ### format_available tests ###
 {   ok( CPANPLUS::Dist::MM->format_available,
@@ -100,32 +102,37 @@ my $mod = $cb->module_tree('Text::Bastardize');
     CPANPLUS::Error->flush;
 }
 
-ok( $mod->fetch,                "Fetching module" );
-ok( $mod->extract,              "Extracting module" );
+ok( $Mod->fetch,                "Fetching module" );
+ok( $Mod->extract,              "Extracting module" );
 
-ok( $mod->test,                 "Testing module" );
-ok( $mod->status->dist_cpan->status->test,
+ok( $Mod->test,                 "Testing module" );
+ok( $Mod->status->dist_cpan->status->test,
                                 "   Test success registered as status" );
-ok( $mod->status->dist_cpan->status->prepared,
+ok( $Mod->status->dist_cpan->status->prepared,
                                 "   Prepared status registered" );
-ok( $mod->status->dist_cpan->status->created,
+ok( $Mod->status->dist_cpan->status->created,
                                 "   Created status registered" );
-is( $mod->status->dist_cpan->status->distdir, $mod->status->extract,
+is( $Mod->status->dist_cpan->status->distdir, $Mod->status->extract,
                                 "   Distdir status registered properly" );
 
 ### test the convenience methods
-ok( $mod->prepare,              "Preparing module" );
-ok( $mod->create,               "Creating module" );
+ok( $Mod->prepare,              "Preparing module" );
+ok( $Mod->create,               "Creating module" );
 
-ok( $mod->dist,                 "Building distribution" );
-ok( $mod->status->dist_cpan,    "   Dist registered as status" );
-isa_ok( $mod->status->dist_cpan,    "CPANPLUS::Dist::MM" );
+ok( $Mod->dist,                 "Building distribution" );
+ok( $Mod->status->dist_cpan,    "   Dist registered as status" );
+isa_ok( $Mod->status->dist_cpan,    "CPANPLUS::Dist::MM" );
 
 ### flush the lib cache
 ### otherwise, cpanplus thinks the module's already installed
 ### since the blib is already in @INC
 $cb->_flush( list => [qw|lib|] );
 
+### XXX new EU::I should be forthcoming pending this patch from Steffen
+### Mueller on p5p: http://www.xray.mpe.mpg.de/mailing-lists/ \ 
+###     perl5-porters/2007-01/msg00895.html
+### This should become EU::I 1.42.. if so, we should upgrade this bit
+### of code and remove the diag, since we can then install in our dummy dir..
 diag("\nSorry, installing into your real perl dir, rather than our test area");
 diag('since ExtUtils::Installed does not probe for .packlists in other dirs');
 diag('than those in %Config. See bug #6871 on rt.cpan.org for details');
@@ -141,9 +148,9 @@ SKIP: {
     diag(q[Note: 'sudo' might ask for your password to do the install test])
         if $conf->get_program('sudo');
 
-    ok( $mod->install( force =>1 ),
+    ok( $Mod->install( force =>1 ),
                                 "Installing module" );
-    ok( $mod->status->installed,"   Module installed according to status" );
+    ok( $Mod->status->installed,"   Module installed according to status" );
 
 
     SKIP: {   ### EU::Installed tests ###
@@ -154,18 +161,18 @@ SKIP: {
             if ON_OLD_CYGWIN;
 
         {   ### validate
-            my @missing = $mod->validate;
+            my @missing = $Mod->validate;
 
             is_deeply( \@missing, [],
                                     "No missing files" );
         }
 
         {   ### files
-            my @files = $mod->files;
+            my @files = $Mod->files;
 
             ### number of files may vary from OS to OS
             ok( scalar(@files),     "All files accounted for" );
-            ok( grep( /Bastardize\.pm/, @files),
+            ok( grep( /$File/, @files),
                                     "   Found the module" );
 
             ### XXX does this work on all OSs?
@@ -174,19 +181,19 @@ SKIP: {
         }
 
         {   ### packlist
-            my ($obj) = $mod->packlist;
+            my ($obj) = $Mod->packlist;
             isa_ok( $obj,           "ExtUtils::Packlist" );
         }
 
         {   ### directory_tree
-            my @dirs = $mod->directory_tree;
+            my @dirs = $Mod->directory_tree;
             ok( scalar(@dirs),      "Directory tree obtained" );
 
             my $found;
             for my $dir (@dirs) {
                 ok( -d $dir,        "   Directory exists" );
 
-                my $file = File::Spec->catfile( $dir, "Bastardize.pm" );
+                my $file = File::Spec->catfile( $dir, $File );
                 $found = $file if -e $file;
             }
 
@@ -197,14 +204,14 @@ SKIP: {
             skip("Probably no permissions to uninstall", 1)
                 if $noperms;
 
-            ok( $mod->uninstall,    "Uninstalling module" );
+            ok( $Mod->uninstall,    "Uninstalling module" );
         }
     }
 }
 
 ### test exceptions in Dist::MM->create ###
-{   ok( $mod->status->mk_flush, "Old status info flushed" );
-    my $dist = CPANPLUS::Dist->new( module => $mod,
+{   ok( $Mod->status->mk_flush, "Old status info flushed" );
+    my $dist = CPANPLUS::Dist->new( module => $Mod,
                                     format => INSTALLER_MM );
 
     ok( $dist,                  "New dist object made" );
@@ -213,7 +220,7 @@ SKIP: {
                                 "       Failure logged" );
 
     ### manually set the extract dir,
-    $mod->status->extract($0);
+    $Mod->status->extract($0);
 
     ok(!$dist->create,          "   Dist->create failed" );
     like( CPANPLUS::Error->stack_as_string, qr/not successfully prepared/s,
@@ -229,17 +236,17 @@ SKIP: {
 
 ### writemakefile.pl tests ###
 {   ### remove old status info
-    ok( $mod->status->mk_flush, "Old status info flushed" );
-    ok( $mod->fetch,            "Module fetched again" );
-    ok( $mod->extract,          "Module extracted again" );
+    ok( $Mod->status->mk_flush, "Old status info flushed" );
+    ok( $Mod->fetch,            "Module fetched again" );
+    ok( $Mod->extract,          "Module extracted again" );
 
     ### cheat and add fake prereqs ###
-    $mod->status->prereqs( { strict => '0.001', Carp => '0.002' } );
+    $Mod->status->prereqs( { strict => '0.001', Carp => '0.002' } );
 
-    my $makefile_pl = MAKEFILE_PL->( $mod->status->extract );
-    my $makefile    = MAKEFILE->(    $mod->status->extract );
+    my $makefile_pl = MAKEFILE_PL->( $Mod->status->extract );
+    my $makefile    = MAKEFILE->(    $Mod->status->extract );
 
-    my $dist        = $mod->dist;
+    my $dist        = $Mod->dist;
     ok( $dist,                  "Dist object built" );
 
     ### check for a makefile.pl and 'write' one
@@ -264,11 +271,11 @@ SKIP: {
     my $str = do { local $/; <$fh> };
     like( $str, qr/### Auto-generated .+ by CPANPLUS ###/,
                                 "   Autogeneration noted" );
-    like( $str, '/'. $mod->module .'/',
+    like( $str, '/'. $Mod->module .'/',
                                 "   Contains module name" );
-    like( $str, '/'. quotemeta($mod->version) . '/',
+    like( $str, '/'. quotemeta($Mod->version) . '/',
                                 "   Contains version" );
-    like( $str, '/'. $mod->author->author .'/',
+    like( $str, '/'. $Mod->author->author .'/',
                                 "   Contains author" );
     like( $str, '/PREREQ_PM/',  "   Contains prereqs" );
     like( $str, qr/Carp.+0.002/,"   Contains prereqs" );
