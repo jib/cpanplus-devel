@@ -34,7 +34,7 @@ my $ModClass    = "CPANPLUS::Selfupdate::Module";
 my $CB          = CPANPLUS::Backend->new( $conf );
 my $Acc         = 'selfupdate_object';
 my $Conf        = $Class->_get_config;
-my $Dep         = 'B::Deparse';   # has to be in our package file && core!
+my $Dep         = TEST_CONF_PREREQ;   # has to be in our package file && core!
 my $Feat        = 'some_feature';
 my $Prereq      = { $Dep => 0 };
 

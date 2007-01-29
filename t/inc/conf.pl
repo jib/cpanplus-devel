@@ -31,6 +31,11 @@ use File::Basename  qw[basename];
     $Locale::Maketext::Lexicon::VERSION = 0;
 }
 
+# prereq has to be in our package file && core!
+use constant TEST_CONF_PREREQ       => 'Cwd';   
+use constant TEST_CONF_MODULE       => 'Foo::Bar::EU::NOXS';
+use constant TEST_CONF_INST_MODULE  => 'Foo::Bar';
+
 sub gimme_conf { 
     my $conf = CPANPLUS::Configure->new();
     $conf->set_conf( hosts  => [ { 
