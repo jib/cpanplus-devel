@@ -170,7 +170,11 @@ Or let your package manager take care of it.
     install_script  ($_) for glob('bin/*');
     requires        (%prereq);
     makemaker_args  ( test => { TESTS => $Tests } ) if $Tests;
-    makemaker_args  ( clean => { FILES => 't/.*.output .cpanplus t/dummy-cpanplus/* t/dummy-cpanplus/.cpanplus' } );
+    makemaker_args  ( clean => { FILES => 
+                        't/.*.output t/*.rpt ' . 
+                        't/dummy-cpanplus/* t/dummy-cpanplus/.cpanplus '.
+                        't/dummy-localmirror/*' 
+                    } );
 
     ### write the makefile 
     ### this makes all prereqs rediscovered
