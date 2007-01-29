@@ -361,7 +361,15 @@ L<Module::ThirdParty> for more details.
 =cut
 
 {
-    my $regex = qr/^(.+)-(.+)\.((?:tar\.gz|zip|tgz))/i;
+    my $regex = qr/^(
+                        perl                # perlVERSION or a standard
+                        |                   # package name like 
+                        .+(?!-)             # like 'A-B-VERSION' 
+                    )
+                    (.+?)                   # the version number
+                    \.                      # followed by a .
+                    ((?:tar\.gz|zip|tgz))   # and the suffix for the compression
+                /xi;
 
     ### fetches the test reports for a certain module ###
     sub package_name {

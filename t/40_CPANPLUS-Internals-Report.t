@@ -35,14 +35,15 @@ use constant NOBODY => 'nobody@xs4all.nl';
 
 BEGIN { require 'conf.pl'; }
 
-### XXX SOURCEFILES FIX
-my $conf    = gimme_conf();
-my $cb      = CPANPLUS::Backend->new( $conf );
-my $mod     = $cb->module_tree('Text::Bastardize');
-my $int_ver = $CPANPLUS::Internals::VERSION;
+my $conf        = gimme_conf();
+my $CB          = CPANPLUS::Backend->new( $conf );
+my $ModName     = TEST_CONF_MODULE;
+my $ModPrereq   = TEST_CONF_PREREQ;
+my $Mod         = $CB->module_tree($ModName);
+my $int_ver     = $CPANPLUS::Internals::VERSION;
 
 ### explicitly enable testing if possible ###
-$cb->configure_object->set_conf(cpantest =>1) if $ARGV[0];
+$CB->configure_object->set_conf(cpantest =>1) if $ARGV[0];
 
 my $map = {
     all_ok  => {
@@ -136,11 +137,11 @@ my $map = {
         is( $to, 'foo@cpan.org',        "Got proper mail account" );
     }
 
-    {   ok(RELEVANT_TEST_RESULT->($mod),"Test is relevant" );
+    {   ok(RELEVANT_TEST_RESULT->($Mod),"Test is relevant" );
 
         ### test non-relevant tests ###
-        my $cp = $mod->clone;
-        $cp->module( $mod->module . '::' . ($^O eq 'beos' ? 'MSDOS' : 'Be') );
+        my $cp = $Mod->clone;
+        $cp->module( $Mod->module . '::' . ($^O eq 'beos' ? 'MSDOS' : 'Be') );
         ok(!RELEVANT_TEST_RESULT->($cp),"Test is irrelevant");
     }
 
@@ -252,23 +253,23 @@ my $map = {
         is_deeply( \@libs, \@list,      "   Proper content found" );
     }
     
-    {   my $clone   = $mod->clone;
-        my $prereqs = { 'Cwd' => 1 };
+    {   my $clone   = $Mod->clone;
+        my $prereqs = { $ModPrereq => 0 };
     
         $clone->status->prereqs( $prereqs );
-        
+
         my $str = REPORT_LOADED_PREREQS->( $clone );
         
-        like( $str, qr/PREREQUISITES:/, "Listed loaded prerequisites" );
-        like( $str, qr/Cwd\s+\S+/,      "   Proper content found" );
+        like($str, qr/PREREQUISITES:/,  "Listed loaded prerequisites" );
+        like($str, qr/$ModPrereq\s+\S+/,"   Proper content found" );
     }
 }
 
 ### callback tests
 {   ### as reported in bug 13086, this callback returned the wrong item 
     ### from the list:
-    ### $self->_callbacks->munge_test_report->($mod, $message, $grade);     
-    my $rv = $cb->_callbacks->munge_test_report->( 1..4 );   
+    ### $self->_callbacks->munge_test_report->($Mod, $message, $grade);     
+    my $rv = $CB->_callbacks->munge_test_report->( 1..4 );   
     is( $rv, 2,                 "Default 'munge_test_report' callback OK" );
 }
 
@@ -276,14 +277,18 @@ my $map = {
 ### test creating test reports ###
 SKIP: {
 	skip "You have chosen not to enable test reporting", $total_tests,
-        unless $cb->configure_object->get_conf('cpantest');
+        unless $CB->configure_object->get_conf('cpantest');
 
     skip "No report send & query modules installed", $total_tests
-        unless $cb->_have_query_report_modules(verbose => 0);
+        unless $CB->_have_query_report_modules(verbose => 0);
 
 
     SKIP: {   
-        my @list = $mod->fetch_report;
+        my $mod = $CB->module_tree( TEST_CONF_PREREQ ); # is released to CPAN
+        ok( $mod,                           "Module retrieved" );
+        
+        ### so we're not pinned down to this specific version of perl
+        my @list = $mod->fetch_report( all_versions => 1 );
         skip "Possibly no net connection, or server down", 7 unless @list;
      
         my $href = $list[0];
@@ -291,6 +296,8 @@ SKIP: {
         is( ref $href, ref {},              "   Return value has hashrefs" );
 
         ok( $href->{grade},                 "   Has a grade" );
+
+        ### XXX use constants for grades?
         like( $href->{grade}, qr/pass|fail|unknown|na/i,
                                             "   Grade as expected" );
 
@@ -302,7 +309,7 @@ SKIP: {
     }
 
     skip "No report sending modules installed", $send_tests
-        unless $cb->_have_send_report_modules(verbose => 0);
+        unless $CB->_have_send_report_modules(verbose => 0);
 
     for my $type ( keys %$map ) {
 
@@ -310,29 +317,31 @@ SKIP: {
         ### never enter the editor for test reports
         ### but check if the callback actually gets called;
         my $called_edit; my $called_send;
-        $cb->_register_callback(
+        $CB->_register_callback(
             name => 'edit_test_report',
             code => sub { $called_edit++; 0 }
         );
 
-        $cb->_register_callback(
+        $CB->_register_callback(
             name => 'send_test_report',
             code => sub { $called_send++; 1 }
         );
 
 		### reset from earlier tests
-		$cb->_register_callback(
+		$CB->_register_callback(
             name => 'munge_test_report',
             code => sub { return $_[1] }
         );
 
 
-        my $file = $cb->_send_report(
-                        module        => $mod,
+        my $file = $CB->_send_report(
+                        module        => $Mod,
                         buffer        => $map->{$type}{'buffer'},
                         failed        => $map->{$type}{'failed'},
                         tests_skipped => ($map->{$type}{'skiptests'} ? 1 : 0),
                         save          => 1,
+                        dontcc        => 1, # no need to send, and also skips
+                                            # fetching reports from testers.cpan
                     );
 
         ok( $file,              "Type '$type' written to file" );
@@ -362,7 +371,7 @@ SKIP: {
 #        {   ### use a dummy 'editor' and see if the editor
 #            ### invocation doesn't break things
 #            $conf->set_program( editor => "$^X -le1" );
-#            $cb->_callbacks->edit_test_report( sub { 1 } );
+#            $CB->_callbacks->edit_test_report( sub { 1 } );
 #
 #            ### XXX whitebox test!!! Might change =/
 #            ### this makes test::reporter not ask for what editor to use
@@ -371,8 +380,8 @@ SKIP: {
 #            local $Test::Reporter::MacApp = 1;
 #
 #            ### now try and mail the report to a /dev/null'd mailbox
-#            my $ok = $cb->_send_report(
-#                            module  => $mod,
+#            my $ok = $CB->_send_report(
+#                            module  => $Mod,
 #                            buffer  => $map->{$type}->{'buffer'},
 #                            failed  => $map->{$type}->{'failed'},
 #                            address => NOBODY,
