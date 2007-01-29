@@ -32,7 +32,7 @@ my $conf = gimme_conf();
 my $cb = CPANPLUS::Backend->new( $conf );
 
 ### XXX SOURCEFILES FIX
-my $mod     = $cb->module_tree('Text::Bastardize');
+my $mod     = $cb->module_tree('Foo::Bar::EU::NOXS');
 
 isa_ok( $mod,  'CPANPLUS::Module' );
 

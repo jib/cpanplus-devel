@@ -50,9 +50,9 @@ sub new {
     my %hash  = @_;
 
     my $tmpl = {
-        author  => { default    => 'CPANPLUS Internals' },
-        email   => { default    => 'cpanplus-info@lists.sf.net' },
-        cpanid  => { default    => 'CPANPLUS' },
+        author  => { default => 'CPANPLUS Internals' },
+        email   => { default => 'cpanplus-info@lists.sf.net' },
+        cpanid  => { default => 'CPANPLUS' },
         _id     => { default => CPANPLUS::Internals->_last_id },
     };
 
