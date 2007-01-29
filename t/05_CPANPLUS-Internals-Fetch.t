@@ -38,8 +38,7 @@ local $CPANPLUS::Error::MSG_FH   = output_handle() unless @ARGV;
 my $cb = CPANPLUS::Backend->new( $conf );
 isa_ok($cb, "CPANPLUS::Internals" );
 
-### XXX SOURCEFILES FIX
-my $mod = $cb->module_tree('Text::Bastardize');
+my $mod = $cb->module_tree('Foo::Bar::EU::NOXS');
 isa_ok( $mod,  'CPANPLUS::Module' );
 
 ### fail host tests ###
