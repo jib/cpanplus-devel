@@ -14,6 +14,11 @@ $cksum = {
     'md5' => '2b70961796a2ed7ca21fbf7e0c615643',
     'size' => 119
   },
+  'Bundle-Foo-Bar-0.01.tar.gz' => {
+    'mtime' => '1999-05-13',
+    'md5' => '76f9c0eed0de9f533ed4d3922bac2f11',
+    'size' => 850
+  },
 };
 __END__
 -----BEGIN PGP SIGNATURE-----
