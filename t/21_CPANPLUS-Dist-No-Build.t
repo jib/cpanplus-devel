@@ -37,7 +37,7 @@ my $CB      = CPANPLUS::Backend->new( $Conf );
     $Conf->set_conf( prefer_makefile => 0 );
 }
 
-my $Mod = $CB->module_tree( TEST_CONF_MODULE );
+my $Mod = $CB->module_tree( 'Foo::Bar::MB::NOXS' );
 
 ok( $Mod,                   "Module object retrieved" );        
 ok( not grep { $_ eq INSTALLER_BUILD } CPANPLUS::Dist->dist_types,
