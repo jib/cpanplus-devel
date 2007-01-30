@@ -34,114 +34,148 @@ BEGIN { require 'conf.pl'; }
 ### silence errors, unless you tell us not to ###
 local $CPANPLUS::Error::ERROR_FH = output_handle() unless @ARGV;
 
-my $conf    = gimme_conf();
-my $cb      = CPANPLUS::Backend->new( $conf );
+my $Conf    = gimme_conf();
+my $CB      = CPANPLUS::Backend->new( $Conf );
 
 ### start with fresh sources ###
-ok( $cb->reload_indices( update_source => 0 ),  "Rebuilding trees" );  
+ok( $CB->reload_indices( update_source => 0 ),  "Rebuilding trees" );  
 
-### XXX SOURCEFILES FIX
-my $auth    = $cb->author_tree('AYRNIEU');
-my $mod     = $cb->module_tree('Text::Bastardize');
+my $AuthName    = 'EUNOXS';
+my $Auth        = $CB->author_tree( $AuthName );
+my $ModName     = TEST_CONF_MODULE;
+my $Mod         = $CB->module_tree( $ModName );
+my $CoreName    = TEST_CONF_PREREQ;
+my $CoreMod     = $CB->module_tree( $CoreName );
 
-isa_ok( $auth, 'CPANPLUS::Module::Author' );
-isa_ok( $mod,  'CPANPLUS::Module' );
+isa_ok( $Auth,                  'CPANPLUS::Module::Author' );
+isa_ok( $Mod,                   'CPANPLUS::Module' );
+isa_ok( $CoreMod,               'CPANPLUS::Module' );
 
 ### author accessors ###
-is( $auth->email,     'julian@imaji.net',             "Author email");
-is( $auth->author,    'julian fondren',               "Author name");
-is( $auth->cpanid,    'AYRNIEU',                      "Author CPANID");
-isa_ok( $auth->parent,'CPANPLUS::Internals',          "Author parent");
+is( $Auth->author, 'ExtUtils::MakeMaker No XS Code',
+                                "Author name: "     . $Auth->author );
+is( $Auth->cpanid, $AuthName,   "Author CPANID: "   . $Auth->cpanid );
+is( $Auth->email, DEFAULT_EMAIL,"Author email: "    . $Auth->email );
+isa_ok( $Auth->parent,          'CPANPLUS::Backend' );
 
 ### module accessors ###
-is( $mod->module,     'Text::Bastardize',             "Module name");
-is( $mod->name,       'Text::Bastardize',             "Module name");
-is( $mod->comment,    undef,                          "Module comment");
-is( $mod->package,    'Text-Bastardize-0.06.tar.gz',  "Module package");
-is( $mod->path,       'authors/id/A/AY/AYRNIEU',      "Module path");
-is( $mod->version,    '0.06',                         "Module version");
-is( $mod->dslip,      'cdpO ',                        "Module dslip");
-is( $mod->description,'corrupts text in various ways',"Module description");
+{   my %map = (
+        ### method      ### result
+        module      =>  $ModName,
+        name        =>  $ModName,
+        comment     =>  undef,
+        package     =>  'Foo-Bar-0.01.tar.gz',
+        path        =>  'authors/id/E/EU/EUNOXS',      
+        version     =>  '0.01',
+        dslip       =>  'cdpO ',
+        description =>  'CPANPLUS Test Package', 
+        mtime       =>  '',
+        author      =>  $Auth,
+    );        
 
-### convenience methods ###
-is($mod->package_name,      'Text-Bastardize',        "Package name");
-is($mod->package_version,   '0.06',                   "Package version");
-is($mod->package_extension, 'tar.gz',                 "Package extension");
-ok(!$mod->package_is_perl_core,                       "Package not core");
-ok(!$mod->module_is_supplied_with_perl_core,          "Module not core" );
-ok(!$mod->is_bundle,                                  "Package not bundle");
-
-### check objects ###
-isa_ok( $mod->parent, 'CPANPLUS::Internals',          "Module parent" );
-isa_ok( $mod->author, 'CPANPLUS::Module::Author',     "Module author" );
-is( $mod->author->author(), $auth->author,            "Module eq Author" );
-
-### XXX whitebox test 
-{   ok( !$mod->_status,     "Status object empty on start" );
+    my @acc = $Mod->accessors;
+    ok( scalar(@acc),           "Retrieved module accessors" );
     
-    my $status = $mod->status;
-    ok( $status,            "   Status object defined after query" );
-    is( $status, $mod->_status,
-                            "   Object stored as expected" );
-    isa_ok( $status,        'Object::Accessor' );
+    ### remove private accessors
+    is_deeply( [ sort keys %map ], [ sort grep { $_ !~ /^_/ } @acc ],
+                                "   About to test all accessors" );
+
+    ### check all the accessors
+    while( my($meth,$res) = each %map ) {
+        is( $Mod->$meth, $res,  "   Mod->$meth: " . ($res || '<empty>') );
+    }
+
+    ### check accessor objects ###
+    isa_ok( $Mod->parent,       'CPANPLUS::Backend' );
+    isa_ok( $Mod->author,       'CPANPLUS::Module::Author' );
+    is( $Mod->author->author, $Auth->author,            
+                                "Module eq Author" );
 }
 
+### convenience methods ###
+{   ok( 1,                                          "Convenience functions" );
+    is( $Mod->package_name,     'Foo-Bar',          "   Package name");
+    is( $Mod->package_version,   '0.01',            "   Package version");
+    is( $Mod->package_extension, 'tar.gz',          "   Package extension");
+    ok( !$Mod->package_is_perl_core,                "   Package not core");
+    ok( !$Mod->module_is_supplied_with_perl_core,   "   Module not core" );
+    ok( !$Mod->is_bundle,                           "   Package not bundle");
+}
+
+### clone & status tests
+{   my $clone = $Mod->clone;
+    ok( $clone,                 "Module cloned" );
+    isa_ok( $clone,             'CPANPLUS::Module' );
     
+    for my $acc ( $Mod->accessors ) {
+        is( $clone->$acc, $Mod->$acc,
+                                "   Clone->$acc matches Mod->$acc " );
+    }
+    
+    ### XXX whitebox test 
+    ok( !$clone->_status,      "Status object empty on start" );
+    
+    my $status = $clone->status;
+    ok( $status,                "   Status object defined after query" );
+    is( $status, $clone->_status, 
+                                "   Object stored as expected" );
+    isa_ok( $status,            'Object::Accessor' );
+}
 
 {   ### extract + error test ###
-    ok( !$mod->extract(),   "Cannot extract unfetched file" );
+    ok( !$Mod->extract(),   "Cannot extract unfetched file" );
     like( CPANPLUS::Error->stack_as_string, qr/You have not fetched/,
                             "   Error properly logged" );
 }      
 
 {   ### fetch tests ###
     ### enable signature checks for checksums ###
-    my $old = $conf->get_conf('signature');
-    $conf->set_conf(signature => 1);  
+    my $old = $Conf->get_conf('signature');
+    $Conf->set_conf(signature => 1);  
     
-    my $where = $mod->fetch( force => 1 );
+    my $where = $Mod->fetch( force => 1 );
     ok( $where,             "Module fetched" );
     ok( -f $where,          "   Module is a file" );
     ok( -s $where,          "   Module has size" );
     
-    $conf->set_conf( signature => $old );
+    $Conf->set_conf( signature => $old );
 }
 
 {   ### extract tests ###
-    my $dir = $mod->extract( force => 1 );
+    my $dir = $Mod->extract( force => 1 );
     ok( $dir,               "Module extracted" );
     ok( -d $dir,            "   Dir exsits" );
 }
 
 
 {   ### readme tests ###
-    my $readme = $mod->readme;
+    my $readme = $Mod->readme;
     ok( length $readme,     "Readme found" );
-    is( $readme, $mod->status->readme,
+    is( $readme, $Mod->status->readme,
                             "   Readme stored in module object" );
 }
 
 {   ### checksums tests ###
     SKIP: {
         skip(q[You chose not to enable checksum verification], 5)
-            unless $conf->get_conf('md5');
+            unless $Conf->get_conf('md5');
     
-        my $cksum_file = $mod->checksums( force => 1 );
+        my $cksum_file = $Mod->checksums( force => 1 );
         ok( $cksum_file,    "Checksum file found" );
-        is( $cksum_file, $mod->status->checksums,
+        is( $cksum_file, $Mod->status->checksums,
                             "   File stored in module object" );
         ok( -e $cksum_file, "   File exists" );
         ok( -s $cksum_file, "   File has size" );
     
         ### XXX test checksum_value if there's digest::md5 + config wants it
-        ok( $mod->status->checksum_ok,
+        ok( $Mod->status->checksum_ok,
                             "   Checksum is ok" );
     }
 }
 
 
 {   ### installer type tests ###
-    my $installer  = $mod->get_installer_type;
+    my $installer  = $Mod->get_installer_type;
     ok( $installer,         "Installer found" );
     is( $installer, INSTALLER_MM,
                             "   Proper installer found" );
@@ -150,26 +184,22 @@ is( $mod->author->author(), $auth->author,            "Module eq Author" );
 {   ### check signature tests ###
     SKIP: {
         skip(q[You chose not to enable signature checks], 1)
-            unless $conf->get_conf('signature');
+            unless $Conf->get_conf('signature');
             
-        ok( $mod->check_signature,
+        ok( $Mod->check_signature,
                             "Signature check OK" );
     }
 }
-    
-    ### don't throw things away, it would confuse the stored status ###
-    #unlink $where if $where;
-    #File::Path::rmtree( $dir ) if $dir;
 
 {   ### details() test ###   
     my $href = {
         'Support Level'     => 'Developer',
-        'Package'           => 'Text-Bastardize-0.06.tar.gz',
-        'Description'       => 'corrupts text in various ways',
+        'Package'           => $Mod->package,
+        'Description'       => $Mod->description,
         'Development Stage' => 
                 'under construction but pre-alpha (not yet released)',
-        'Author'            => 'julian fondren (julian@imaji.net)',
-        'Version on CPAN'   => '0.06',
+        'Author'            => sprintf("%s (%s)", $Auth->author, $Auth->email),
+        'Version on CPAN'   => $Mod->version,
         'Language Used'     => 
                 'Perl-only, no compiler needed, should be platform independent',
         'Interface Style'   => 
@@ -179,7 +209,7 @@ is( $mod->author->author(), $auth->author,            "Module eq Author" );
         #'Version Installed' => '0.06',
     };   
 
-    my $res = $mod->details;
+    my $res = $Mod->details;
     
     ### delete they key of which we don't know the value ###
     delete $res->{'Version Installed'};
@@ -188,63 +218,70 @@ is( $mod->author->author(), $auth->author,            "Module eq Author" );
 }
 
 {   ### contians() test ###
-    my @list = $mod->contains;
-    ok( scalar @list,           "Found modules contained in this one" );
-    is_deeply( \@list, [$mod],  "   Found all modules expected" );
+    ### XXX ->contains works based on package name. in our sourcefiles
+    ### we use 4x the same package name for different modules. So use
+    ### the only unique package name here, which is the one for the core mod
+    my @list = $CoreMod->contains;
+    
+    ok( scalar(@list),          "Found modules contained in this one" );
+    is_deeply( \@list, [$CoreMod],  
+                                "   Found all modules expected" );
 }
 
 {   ### testing distributions() ###
-    my @mdists = $mod->distributions;
+    my @mdists = $Mod->distributions;
     is( scalar @mdists, 1, "Distributions found via module" );
 
-    my @adists = $auth->distributions;
-    is( scalar @adists, 2,  "Distributions found via author" );
+    my @adists = $Auth->distributions;
+    is( scalar @adists, 3,  "Distributions found via author" );
 }
 
 {   ### test status->flush ###
-    ok( $mod->status->mk_flush,
+    ok( $Mod->status->mk_flush,
                             "Status flushed" );
-    ok(!$mod->status->fetch,"   Fetch status empty" );
-    ok(!$mod->status->extract,
+    ok(!$Mod->status->fetch,"   Fetch status empty" );
+    ok(!$Mod->status->extract,
                             "   Extract status empty" );
-    ok(!$mod->status->checksums,
+    ok(!$Mod->status->checksums,
                             "   Checksums status empty" );
-    ok(!$mod->status->readme,
+    ok(!$Mod->status->readme,
                             "   Readme status empty" );
 }
 
 {   ### testing bundles ###
-    my $bundle = $cb->module_tree('Bundle::MP3');
-    isa_ok( $bundle,  'CPANPLUS::Module' );
+    my $bundle = $CB->module_tree('Bundle::Foo::Bar');
+    isa_ok( $bundle,            'CPANPLUS::Module' );
 
-    ok( $bundle->is_bundle, "It's a Bundle:: module" );
-    ok( $bundle->fetch,     "   Fetched the bundle" );
-    ok( $bundle->extract,   "   Extracted the bundle" );
+    ok( $bundle->is_bundle,     "   It's a Bundle:: module" );
+    ok( $bundle->fetch,         "   Fetched the bundle" );
+    ok( $bundle->extract,       "   Extracted the bundle" );
 
     my @objs = $bundle->bundle_modules;
-    is( scalar @objs, 4,    "   Found all prerequisites" );
+    is( scalar(@objs), 5,       "   Found all prerequisites" );
     
     for( @objs ) {
         isa_ok( $_, 'CPANPLUS::Module', 
-                            "   Prereq" );
+                                "   Prereq " . $_->module  );
         ok( defined $bundle->status->prereqs->{$_->module},
-                            "   Prereq was registered" );
+                                "       Prereq was registered" );
     }
 }
 
 ### test module from perl core ###
-{   my $core = $cb->module_tree('B::Deparse');
-    isa_ok( $core,                  'CPANPLUS::Module' );
-    ok($core->package_is_perl_core, "Package found in perl core" );
+{   isa_ok( $CoreMod, 'CPANPLUS::Module',
+                                "Core module " . $CoreName );
+    ok( $CoreMod->package_is_perl_core, 
+                                "   Package found in perl core" );
     
+    ### check if it's core with 5.6.1
     {   local $] = '5.006001';
-        ok($core->module_is_supplied_with_perl_core,
-                                    "   Module also found in perl core");
+        ok( $CoreMod->module_is_supplied_with_perl_core,
+                                "   Module also found in perl core");
     }
     
-    ok(! $core->install,            "   Package not installed" );
+    ok( !$CoreMod->install,     "   Package not installed" );
     like( CPANPLUS::Error->stack_as_string, qr/core Perl/,
-                                    "   Error properly logged" );
+                                "   Error properly logged" );
 }    
 
 ### test third-party modules
@@ -252,10 +289,10 @@ SKIP: {
     skip "Module::ThirdParty not installed", 10 
         unless eval { require Module::ThirdParty; 1 };
 
-    ok( !$mod->is_third_party, 
-                                "Not a 3rd party module: ". $mod->name );
+    ok( !$Mod->is_third_party, 
+                                "Not a 3rd party module: ". $Mod->name );
     
-    my $fake = $cb->parse_module( module => 'LOCAL/SVN-Core-1.0' );
+    my $fake = $CB->parse_module( module => 'LOCAL/SVN-Core-1.0' );
     ok( $fake,                  "Created module object for ". $fake->name );
     ok( $fake->is_third_party,
                                 "   It is a 3rd party module" );
@@ -269,32 +306,6 @@ SKIP: {
                                 "   $item field is filled" );
     }        
 }
- 
-### testing that the uptodate/installed tests don't find things in the
-### cpanplus::inc tree
-### XXX CPANPLUS::inc code is now obsolete, so it has been removed.
-# {   my $href    = CPANPLUS::inc->interesting_modules;
-#     my $incpath = quotemeta CPANPLUS::inc->inc_path;
-# 
-#     for my $name ( keys %$href ) {
-# 
-#         ### clone a module, change the name
-#         ### as that's all the installed functions look at
-#         my $clone = $mod->clone;
-#         $clone->module( $name );
-#         
-#         my $file = $clone->installed_file;
-#         unlike( $file, qr/$incpath/,"   File not found in CP::inc ($file)" );
-#     }
-# }
-
-### testing odd version numbers 
-{   my $clone = $mod->clone;
-    $clone->package( 'Foo-1.2_1.tar.gz' );
-    is( $clone->package_version, '1.2_1',   
-                                    "Odd Package version detected ok" );
-}
-
 
 ### testing EU::Installed methods in Dist::MM tests ###
 

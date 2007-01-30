@@ -94,7 +94,8 @@ Returns a list of all accessor methods to the object
 
 =cut
 
-sub accessors { return keys %$tmpl };
+### *name is an alias, include it explicitly
+sub accessors { return ('name', keys %$tmpl) };
 
 =head1 ACCESSORS
 
