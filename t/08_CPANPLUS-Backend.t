@@ -109,6 +109,8 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
                 => [ 'EUNOXS',              'perl',             '5.005_03' ],
         'FROO/Flub-Flob-v1.1.0.tbz'
                 => [ 'FROO',                'Flub-Flob',        'v1.1.0' ],
+        'FROO/Flub-Flob-1.1_2.tbz'
+                => [ 'FROO',                'Flub-Flob',        '1.1_2' ],                        
     );       
 
     while ( my($guess, $attr) = splice @map, 0, 2 ) {
