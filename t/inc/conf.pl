@@ -84,7 +84,8 @@ sub _clean_dot_cpanplus_dir {
         ### directory, rmtree it
         if( -d $path ) {
             print "Deleting directory '$path'\n" if $verbose;
-            rmtree( $path );
+            eval { rmtree( $path ) };
+            warn "Could not delete '$path' while cleaning up '$base'" if $@;
        
         ### regular file
         } else {
