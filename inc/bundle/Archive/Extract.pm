@@ -27,7 +27,7 @@ use constant TBZ            => 'tbz';
 
 use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG];
 
-$VERSION        = '0.16';
+$VERSION        = '0.17_01';
 $PREFER_BIN     = 0;
 $WARN           = 1;
 $DEBUG          = 0;
@@ -448,7 +448,7 @@ sub _untar {
 
     ### bzip2 support in A::T via IO::Uncompress::Bzip2
     my   @methods = qw[_untar_at _untar_bin];
-         @methods = reverse @methods unless $PREFER_BIN;
+         @methods = reverse @methods if $PREFER_BIN;
 
     for my $method (@methods) {
         $self->_extractor($method) && return 1 if $self->$method();
