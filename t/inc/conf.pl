@@ -23,6 +23,7 @@ BEGIN {
 use strict;
 use CPANPLUS::Configure;
 
+use File::Path      qw[rmtree];
 use FileHandle;
 use File::Basename  qw[basename];
 
@@ -47,6 +48,7 @@ sub gimme_conf {
     $conf->set_conf( dist_type  => '' );
     $conf->set_conf( signature  => 0 );
 
+    _clean_dot_cpanplus_dir( $conf );
 
     return $conf;
 };
@@ -65,4 +67,32 @@ sub output_handle {
 
 sub output_file { return $file }
 
+### whenever we start a new script, we want to clean out our
+### old files from the test '.cpanplus' dir..
+sub _clean_dot_cpanplus_dir {
+    my $conf    = shift;
+    my $base    = $conf->get_conf('base');
+    my $verbose = shift || 0;
+
+    my $dh;
+    opendir $dh, $base or die "Could not open basedir '$base': $!";
+    while( my $file = readdir $dh ) { 
+        next if $file =~ /^\./;  # skip dot files
+        
+        my $path = File::Spec->catfile( $base, $file );
+        
+        ### directory, rmtree it
+        if( -d $path ) {
+            print "Deleting directory '$path'\n" if $verbose;
+            rmtree( $path );
+       
+        ### regular file
+        } else {
+            print "Deleting file '$path'\n" if $verbose;
+            1 while unlink $path;
+        }            
+            
+    }
+    close $dh;
+}
 1;
