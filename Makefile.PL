@@ -148,7 +148,7 @@ Or let your package manager take care of it.
 ### toss out the old source files, they might be compiled
 ### in an incompatilbe format (rt #18121)
 {   my $stored = $Backend->__storable_file( $Config->get_conf('base') );      
-    1 while unlink $stored;
+    1 while $stored && unlink $stored;
 }
 
 ### write the makefile.pl
