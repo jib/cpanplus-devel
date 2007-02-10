@@ -9,7 +9,7 @@ my $Target      = $Cwd . '/inc/bundle';    # Target dir to copy to
 my $CB          = CPANPLUS::Backend->new;
 my $MineOnly    = @ARGV ? 1 : 0;
 
-$CB->configure_object->set_conf( verbose => 1 );
+$CB->configure_object->set_conf( verbose => 0 );
 
 ### from p4 
 {   my @Copy    = qw[
@@ -53,10 +53,23 @@ unless( $MineOnly ) {
     
     # IPC::Run no more!
     
-    for my $module ( @Modules ) {
-        print "Updating $module...";
+    UPDATE: for my $module ( @Modules ) {
 
         my $obj = $CB->module_tree( $module );
+
+        ### do an uptodate check
+        {   local @INC = ( $Target );
+
+            print   "Updating $module..." .
+                    "[HAVE: " . $obj->installed_version   .'] ' .
+                    "[CPAN: " . $obj->version             .'] ';
+
+            if( $obj->is_uptodate ) {
+                print "already uptodate\n";
+                      
+                next UPDATE;
+            }
+        }
 
         $obj->fetch( fetchdir => '/tmp' )   or die "Could not fetch";
         my $dir = $obj->extract( extractdir => '/tmp' )  
@@ -76,7 +89,7 @@ unless( $MineOnly ) {
             }
             
             print "done\n";
-            next;
+            next UPDATE;
         } 
 
         ### ok, so no libdir... let's see if they have just the pm in
@@ -90,7 +103,7 @@ unless( $MineOnly ) {
             system("cp $file $to") and die "Could not copy $file to $to: $!\n";
             
             print "done\n";
-            next;
+            next UPDATE;
         }
         
         die "Dont know how to copy $module from $dir\n";
