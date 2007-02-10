@@ -207,7 +207,7 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
     sleep 1;
     ok( $cb->reload_indices( update_source => 1 ),  
                                     "Rebuilding and refetching trees" );
-    cmp_ok( $age, '>', -M $file,    "    Source file updated" );                                      
+    cmp_ok( $age, '>', -M $file,    "    Source file '=$file' updated" );                                      
 }
 
 ### flush tests ###
