@@ -100,9 +100,13 @@ my $Conf = {
         ### and not for module::build
         #'perl'      => '',
         'shell'     => ( $^O eq 'MSWin32' ? $ENV{COMSPEC} : $ENV{SHELL} ),
-        'sudo'      => ( $>    # check for all install dirs!
+        'sudo'      => ( $> # check for all install dirs!
+                            # installsiteman3dir is a 5.8'ism.. don't check
+                            # it on 5.6.x...
                             ? ( -w $Config{'installsitelib'} &&
-                                -w $Config{'installsiteman3dir'} &&
+                                ( defined $Config{'installsiteman3dir'} &&
+                                       -w $Config{'installsiteman3dir'}
+                                ) &&
                                 -w $Config{'installsitebin'} 
                                     ? undef
                                     : can_run('sudo') 
