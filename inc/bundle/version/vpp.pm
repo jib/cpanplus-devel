@@ -1,10 +1,10 @@
-
 package version::vpp;
 use strict;
 
 use locale;
 use vars qw ($VERSION @ISA @REGEXS);
-$VERSION = 0.69;
+$VERSION = "0.69_06";
+$VERSION = eval $VERSION;
 
 push @REGEXS, qr/
 	^v?	# optional leading 'v'
@@ -14,9 +14,12 @@ push @REGEXS, qr/
 	/x;
 
 use overload (
-    '""'   => \&stringify,
-    'cmp'  => \&vcmp,
-    '<=>'  => \&vcmp,
+    '""'       => \&stringify,
+    '0+'       => \&numify,
+    'cmp'      => \&vcmp,
+    '<=>'      => \&vcmp,
+    'bool'     => \&vbool,
+    'nomethod' => \&vnoop,
 );
 
 sub new
@@ -26,8 +29,6 @@ sub new
 	require POSIX;
 	my $currlocale = POSIX::setlocale(&POSIX::LC_ALL);
 	my $radix_comma = ( POSIX::localeconv()->{decimal_point} eq ',' );
-
-	POSIX::setlocale(&POSIX::LC_ALL, 'C') if $radix_comma;
 
 	if ( not defined $value or $value =~ /^undef$/ ) {
 	    # RT #19517 - special case for undef comparison
@@ -43,15 +44,17 @@ sub new
 	$value = _un_vstring($value);
 
 	# exponential notation
-	if ( $value =~ /\d+e-?\d+/ ) {
+	if ( $value =~ /\d+.?\d*e-?\d+/ ) {
 	    $value = sprintf("%.9f",$value);
 	    $value =~ s/(0+)$//;
 	}
 	
 	# if the original locale used commas for decimal points, we
-	# need to force the PV to be regenerated, since just changing
-	# the locale isn't sufficient (use harmless math operation)
-	$value += 0 if $radix_comma;
+	# just replace commas with decimal places, rather than changing
+	# locales
+	if ( $radix_comma ) {
+	    $value =~ tr/,/./;
+	}
 
 	# This is not very efficient, but it is morally equivalent
 	# to the XS code (as that is the reference implementation).
@@ -77,14 +80,20 @@ sub new
 	# pre-scan the input string to check for decimals/underbars
 	while ( substr($value,$pos,1) =~ /[._\d]/ ) {
 	    if ( substr($value,$pos,1) eq '.' ) {
-		die "Invalid version format (underscores before decimal)"
-		  if $alpha;
+		if ($alpha) {
+		    require Carp;
+		    Carp::croak("Invalid version format ".
+		    	"(underscores before decimal)");
+		}
 		$saw_period++;
 		$last = $pos;
 	    }
 	    elsif ( substr($value,$pos,1) eq '_' ) {
-		die "Invalid version format (multiple underscores)"
-		  if $alpha;
+		if ($alpha) {
+		    require Carp;
+		    Carp::croak("Invalid version format ".
+		    	"(multiple underscores)");
+		}
 		$alpha = 1;
 		$width = $pos - $last - 1; # natural width of sub-version
 	    }
@@ -92,7 +101,13 @@ sub new
 	}
 
 	if ( $alpha && !$saw_period ) {
-	    die "Invalid version format (alpha without decimal)";
+	    require Carp;
+	    Carp::croak("Invalid version format (alpha without decimal)");
+	}
+
+	if ( $alpha && $saw_period && $width == 0 ) {
+	    require Carp;
+	    Carp::croak("Invalid version format (misplaced _ in number)");
 	}
 
 	if ( $saw_period > 1 ) {
@@ -139,7 +154,8 @@ sub new
 			    $rev += substr($value,$s,1) * $mult;
 			    $mult /= 10;
 			    if ( abs($orev) > abs($rev) ) {
-				die "Integer overflow in version";
+				require Carp;
+				Carp::croak("Integer overflow in version");
 			    }
 			    $s++;
 			    if ( substr($value,$s,1) eq '_' ) {
@@ -153,7 +169,8 @@ sub new
 			    $rev += substr($value,$end,1) * $mult;
 			    $mult *= 10;
 			    if ( abs($orev) > abs($rev) ) {
-				die "Integer overflow in version";
+				require Carp;
+				Carp::croak("Integer overflow in version");
 			    }
 			}
 		    }
@@ -205,8 +222,6 @@ sub new
 	         "ignoring: '".substr($value,$pos)."'";
 	}
 
-	POSIX::setlocale(&POSIX::LC_ALL, $currlocale) if $radix_comma;
-
 	return ($self);
 }
 
@@ -214,7 +229,8 @@ sub numify
 {
     my ($self) = @_;
     unless (_verify($self)) {
-	die "Invalid version object";
+	require Carp;
+	Carp::croak("Invalid version object");
     }
     my $width = $self->{width} || 3;
     my $alpha = $self->{alpha} || "";
@@ -254,7 +270,8 @@ sub normal
 {
     my ($self) = @_;
     unless (_verify($self)) {
-	die "Invalid version object";
+	require Carp;
+	Carp::croak("Invalid version object");
     }
     my $alpha = $self->{alpha} || "";
     my $len = $#{$self->{version}};
@@ -289,7 +306,8 @@ sub stringify
 {
     my ($self) = @_;
     unless (_verify($self)) {
-	die "Invalid version object";
+	require Carp;
+	Carp::croak("Invalid version object");
     }
     if ( exists $self->{qv} ) {
 	return $self->normal;
@@ -312,10 +330,12 @@ sub vcmp
 	($left, $right) = ($right, $left);
     }
     unless (_verify($left)) {
-	die "Invalid version object";
+	require Carp;
+	Carp::croak("Invalid version object");
     }
     unless (_verify($right)) {
-	die "Invalid version object";
+	require Carp;
+	Carp::croak("Invalid version object");
     }
     my $l = $#{$left->{version}};
     my $r = $#{$right->{version}};
@@ -366,6 +386,16 @@ sub vcmp
     return $retval;  
 }
 
+sub vbool {
+    my ($self) = @_;
+    return vcmp($self,$self->new("0"),1);
+}
+
+sub vnoop { 
+    require Carp; 
+    Carp::croak("operation not supported with version object");
+}
+
 sub is_alpha {
     my ($self) = @_;
     return (exists $self->{alpha});
@@ -414,34 +444,46 @@ sub _un_vstring {
 
 	no strict 'refs';
 	eval "require $class" unless %{"$class\::"}; # already existing
-	die "$class defines neither package nor VERSION--version check failed"
-	    if $@ or not %{"$class\::"};
+	return undef if $@ =~ /Can't locate/ and not defined $req;
+	
+	if ( not %{"$class\::"} and $] >= 5.008) { # file but no package
+	    require Carp;
+	    Carp::croak( "$class defines neither package nor VERSION"
+		."--version check failed");
+	}
 	
 	my $version = eval "\$$class\::VERSION";
 	if ( defined $version ) {
+	    local $^W if $] <= 5.008;
 	    $version = version::vpp->new($version);
 	}
 
 	if ( defined $req ) {
 	    unless ( defined $version ) {
-		my $msg =  "$class does not define ".
-			   "\$$class\::VERSION--version check failed";
+		require Carp;
+		my $msg =  $] < 5.006 
+		? "$class version $req required--this is only version "
+		: "$class does not define \$$class\::VERSION"
+		  ."--version check failed";
+
 		if ( $ENV{VERSION_DEBUG} ) {
-		    require Carp;
 		    Carp::confess($msg);
 		}
 		else {
-		    die($msg);
+		    Carp::croak($msg);
 		}
 	    }
 
 	    $req = version::vpp->new($req);
 
 	    if ( $req > $version ) {
-		die sprintf ("%s version %s (%s) required--".
-		     "this is only version %s (%s)", $class, 
-		     $req->numify, $req->normal,
-		     $version->numify, $version->normal);
+		require Carp;
+		Carp::croak( 
+		    sprintf ("%s version %s (%s) required--".
+		    "this is only version %s (%s)", $class, 
+		    $req->numify, $req->normal,
+		    $version->numify, $version->normal)
+		);
 	    }
 	}
 
