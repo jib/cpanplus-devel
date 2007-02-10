@@ -421,7 +421,7 @@ sub _format_version {
     $version = 0 if $version eq 'undef';
     $version =~ s/_//g; # everything after gets stripped off otherwise
 
-    ### allow 6 digits after the dot, as that's who perl stringifies
+    ### allow 6 digits after the dot, as that's how perl stringifies
     ### x.y.z numbers.
     $version = sprintf('%3.6f', $version);
     $version = '' if $version == '0.00';

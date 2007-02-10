@@ -65,7 +65,7 @@ This information might be useful somehow to spawned processes.
 
 =head1 METHODS
 
-=head2 new( [CONFIGURE_OBJ] )
+=head2 $cb = CPANPLUS::Backend->new( [CONFIGURE_OBJ] )
 
 This method returns a new C<CPANPLUS::Backend> object.
 This also initialises the config corresponding to this object.
@@ -105,7 +105,7 @@ sub new {
 
 =pod
 
-=head2 module_tree( [@modules_names_list] )
+=head2 $href = $cb->module_tree( [@modules_names_list] )
 
 Returns a reference to the CPANPLUS module tree.
 
@@ -135,7 +135,7 @@ sub module_tree {
 
 =pod
 
-=head2 author_tree( [@author_names_list] )
+=head2 $href = $cb->author_tree( [@author_names_list] )
 
 Returns a reference to the CPANPLUS author tree.
 
@@ -165,7 +165,7 @@ sub author_tree {
 
 =pod
 
-=head2 configure_object ()
+=head2 $conf = $cb->configure_object ()
 
 Returns a copy of the C<CPANPLUS::Configure> object.
 
@@ -189,7 +189,7 @@ sub selfupdate_object { return shift->_selfupdate() };
 
 =pod
 
-=head2 search( type => TYPE, allow => AREF, [data => AREF, verbose => BOOL] )
+=head2 @mods = $cb->search( type => TYPE, allow => AREF, [data => AREF, verbose => BOOL] )
 
 C<search> enables you to search for either module or author objects,
 based on their data. The C<type> you can specify is any of the
@@ -249,7 +249,7 @@ sub search {
 
 =pod
 
-=head2 $backend_rv = fetch( modules => \@mods )
+=head2 $backend_rv = $cb->fetch( modules => \@mods )
 
 Fetches a list of modules. C<@mods> can be a list of distribution
 names, module names or module objects--basically anything that
@@ -262,7 +262,7 @@ Since this is a multi-module method call, the return value is
 implemented as a C<CPANPLUS::Backend::RV> object. Please consult
 that module's documentation on how to interpret the return value.
 
-=head2 $backend_rv = extract( modules => \@mods )
+=head2 $backend_rv = $cb->extract( modules => \@mods )
 
 Extracts a list of modules. C<@mods> can be a list of distribution
 names, module names or module objects--basically anything that
@@ -275,7 +275,7 @@ Since this is a multi-module method call, the return value is
 implemented as a C<CPANPLUS::Backend::RV> object. Please consult
 that module's documentation on how to interpret the return value.
 
-=head2 $backend_rv = install( modules => \@mods )
+=head2 $backend_rv = $cb->install( modules => \@mods )
 
 Installs a list of modules. C<@mods> can be a list of distribution
 names, module names or module objects--basically anything that
@@ -288,7 +288,7 @@ Since this is a multi-module method call, the return value is
 implemented as a C<CPANPLUS::Backend::RV> object. Please consult
 that module's documentation on how to interpret the return value.
 
-=head2 $backend_rv = readme( modules => \@mods )
+=head2 $backend_rv = $cb->readme( modules => \@mods )
 
 Fetches the readme for a list of modules. C<@mods> can be a list of
 distribution names, module names or module objects--basically
@@ -301,7 +301,7 @@ Since this is a multi-module method call, the return value is
 implemented as a C<CPANPLUS::Backend::RV> object. Please consult
 that module's documentation on how to interpret the return value.
 
-=head2 $backend_rv = files( modules => \@mods )
+=head2 $backend_rv = $cb->files( modules => \@mods )
 
 Returns a list of files used by these modules if they are installed.
 C<@mods> can be a list of distribution names, module names or module
@@ -314,7 +314,7 @@ Since this is a multi-module method call, the return value is
 implemented as a C<CPANPLUS::Backend::RV> object. Please consult
 that module's documentation on how to interpret the return value.
 
-=head2 $backend_rv = distributions( modules => \@mods )
+=head2 $backend_rv = $cb->distributions( modules => \@mods )
 
 Returns a list of module objects representing all releases for this
 module on success.
@@ -373,7 +373,7 @@ for my $func (qw[fetch extract install readme files distributions]) {
 
 =pod
 
-=head2 parse_module( module => $modname|$distname|$modobj )
+=head2 $mod_obj = $cb->parse_module( module => $modname|$distname|$modobj )
 
 C<parse_module> tries to find a C<CPANPLUS::Module> object that
 matches your query. Here's a list of examples you could give to
@@ -638,7 +638,7 @@ sub parse_module {
 
 =pod
 
-=head2 reload_indices( [update_source => BOOL, verbose => BOOL] );
+=head2 $bool = $cb->reload_indices( [update_source => BOOL, verbose => BOOL] );
 
 This method reloads the source files.
 
@@ -685,7 +685,7 @@ sub reload_indices {
 
 =pod
 
-=head2 flush(CACHE_NAME)
+=head2 $bool = $cb->flush(CACHE_NAME)
 
 This method allows flushing of caches.
 There are several things which can be flushed:
@@ -726,6 +726,8 @@ Flush all of the aforementioned caches.
 
 =back
 
+Returns true on success and false on failure.
+
 =cut
 
 sub flush {
@@ -752,7 +754,7 @@ sub flush {
 
 =pod
 
-=head2 installed()
+=head2 @mods = $cb->installed()
 
 Returns a list of module objects of all your installed modules.
 If an error occurs, it will return false.
@@ -772,7 +774,7 @@ sub installed {
 
 =pod
 
-=head2 local_mirror([path => '/dir/to/save/to', index_files => BOOL, force => BOOL, verbose => BOOL] )
+=head2 $bool = $cb->local_mirror([path => '/dir/to/save/to', index_files => BOOL, force => BOOL, verbose => BOOL] )
 
 Creates a local mirror of CPAN, of only the most recent sources in a
 location you specify. If you set this location equal to a custom host
@@ -808,6 +810,8 @@ Prints more messages about what its doing.
 Defaults to whatever setting you have in your C<CPANPLUS::Config>.
 
 =back
+
+Returns true on success and false on error.
 
 =cut
 
@@ -890,7 +894,7 @@ sub local_mirror {
 
 =pod
 
-=head2 autobundle([path => OUTPUT_PATH, force => BOOL, verbose => BOOL])
+=head2 $file = $cb->autobundle([path => OUTPUT_PATH, force => BOOL, verbose => BOOL])
 
 Writes out a snapshot of your current installation in C<CPAN> bundle
 style. This can then be used to install the same modules for a
