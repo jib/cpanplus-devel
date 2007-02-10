@@ -203,6 +203,8 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
     ok( $cb->reload_indices( update_source => 0 ),  "Rebuilding trees" );                              
     my $age = -M $file;
     
+    ### make sure we are 'newer' on faster machines with a sleep..
+    sleep 1;
     ok( $cb->reload_indices( update_source => 1 ),  
                                     "Rebuilding and refetching trees" );
     cmp_ok( $age, '>', -M $file,    "    Source file updated" );                                      
