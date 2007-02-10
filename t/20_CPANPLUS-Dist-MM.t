@@ -42,9 +42,13 @@ my $cb      = CPANPLUS::Backend->new( $conf );
 my $noperms = ($< and not $conf->get_program('sudo')) &&
               ($conf->get_conf('makemakerflags') or
                 not -w $Config{installsitelib} );
-my $ModName = TEST_CONF_INST_MODULE;
 my $File    = 'Bar.pm';
 
+### Make sure we get the _EUMM_NOXS_ version
+my $ModName = TEST_CONF_MODULE;
+
+### This is the module name that gets /installed/
+my $InstName = TEST_CONF_INST_MODULE;
 
 ### don't start sending test reports now... ###
 $cb->_callbacks->send_test_report( sub { 0 } );
@@ -80,7 +84,10 @@ ok( $cb->reload_indices( update_source => 0 ),
 ok( $conf->set_conf( signature => 1 ),
                                 "Enabling signature checks" );
 
-my $Mod = $cb->module_tree( $ModName );
+my $Mod     = $cb->module_tree( $ModName );
+my $InstMod = $cb->module_tree( $InstName );
+ok( $Mod,                       "Loaded object for: " . $Mod->name );
+ok( $Mod,                       "Loaded object for: " . $InstMod->name );
 
 ### format_available tests ###
 {   ok( CPANPLUS::Dist::MM->format_available,
@@ -102,8 +109,8 @@ my $Mod = $cb->module_tree( $ModName );
     CPANPLUS::Error->flush;
 }
 
-ok( $Mod->fetch,                "Fetching module" );
-ok( $Mod->extract,              "Extracting module" );
+ok( $Mod->fetch,                "Fetching module to ".$Mod->status->fetch );
+ok( $Mod->extract,              "Extracting module to ".$Mod->status->extract );
 
 ok( $Mod->test,                 "Testing module" );
 ok( $Mod->status->dist_cpan->status->test,
@@ -161,14 +168,14 @@ SKIP: {
             if ON_OLD_CYGWIN;
 
         {   ### validate
-            my @missing = $Mod->validate;
+            my @missing = $InstMod->validate;
 
             is_deeply( \@missing, [],
                                     "No missing files" );
         }
 
         {   ### files
-            my @files = $Mod->files;
+            my @files = $InstMod->files;
 
             ### number of files may vary from OS to OS
             ok( scalar(@files),     "All files accounted for" );
@@ -181,12 +188,12 @@ SKIP: {
         }
 
         {   ### packlist
-            my ($obj) = $Mod->packlist;
+            my ($obj) = $InstMod->packlist;
             isa_ok( $obj,           "ExtUtils::Packlist" );
         }
 
         {   ### directory_tree
-            my @dirs = $Mod->directory_tree;
+            my @dirs = $InstMod->directory_tree;
             ok( scalar(@dirs),      "Directory tree obtained" );
 
             my $found;
@@ -204,7 +211,7 @@ SKIP: {
             skip("Probably no permissions to uninstall", 1)
                 if $noperms;
 
-            ok( $Mod->uninstall,    "Uninstalling module" );
+            ok( $InstMod->uninstall,"Uninstalling module" );
         }
     }
 }
@@ -241,7 +248,9 @@ SKIP: {
     ok( $Mod->extract,          "Module extracted again" );
 
     ### cheat and add fake prereqs ###
-    $Mod->status->prereqs( { strict => '0.001', Carp => '0.002' } );
+    my $prereq = TEST_CONF_PREREQ;
+
+    $Mod->status->prereqs( { $prereq => 0 } );
 
     my $makefile_pl = MAKEFILE_PL->( $Mod->status->extract );
     my $makefile    = MAKEFILE->(    $Mod->status->extract );
@@ -278,8 +287,7 @@ SKIP: {
     like( $str, '/'. $Mod->author->author .'/',
                                 "   Contains author" );
     like( $str, '/PREREQ_PM/',  "   Contains prereqs" );
-    like( $str, qr/Carp.+0.002/,"   Contains prereqs" );
-    like( $str, qr/strict.+001/,"   Contains prereqs" );
+    like( $str, qr/$prereq.+0/, "   Contains prereqs" );
 
     close $fh;
 
