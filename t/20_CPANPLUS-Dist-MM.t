@@ -43,6 +43,7 @@ my $noperms = ($< and not $conf->get_program('sudo')) &&
               ($conf->get_conf('makemakerflags') or
                 not -w $Config{installsitelib} );
 my $File    = 'Bar.pm';
+my $Verbose = @ARGV ? 1 : 0;
 
 ### Make sure we get the _EUMM_NOXS_ version
 my $ModName = TEST_CONF_MODULE;
@@ -56,21 +57,26 @@ $conf->set_conf( cpantest => 0 );
 
 
 ### Redirect errors to file ###
-local $CPANPLUS::Error::ERROR_FH = output_handle() unless @ARGV;
-local $CPANPLUS::Error::MSG_FH   = output_handle() unless @ARGV;
-*STDERR                          = output_handle() unless @ARGV;
+local $CPANPLUS::Error::ERROR_FH = output_handle() unless $Verbose;
+local $CPANPLUS::Error::MSG_FH   = output_handle() unless $Verbose;
+*STDERR                          = output_handle() unless $Verbose;
 
 ### dont uncomment this, it screws up where STDOUT goes and makes
 ### test::harness create test counter mismatches
 #*STDOUT                          = output_handle() unless @ARGV;
 ### for the same test-output counter mismatch, we disable verbose
 ### mode
-$conf->set_conf( verbose => 0 );
+$conf->set_conf( verbose => $Verbose );
 $conf->set_conf( allow_build_interactivity => 0 );
 
 ### start with fresh sources ###
 ok( $cb->reload_indices( update_source => 0 ),
                                 "Rebuilding trees" );
+
+### we might need this Some Day when we're going to install into
+### our own sandbox dir.. but for now, no dice due to EU::I bug
+# $conf->set_program( sudo => '' );
+# $conf->set_conf( makemakerflags => TEST_INSTALL_EU_MM_FLAGS );
 
 ### set alternate install dir ###
 ### XXX rather pointless, since we can't uninstall them, due to a bug
@@ -161,11 +167,16 @@ SKIP: {
 
 
     SKIP: {   ### EU::Installed tests ###
-        skip("makemakerflags set -- probably EU::Installed tests will fail", 8)
-            if $conf->get_conf('makemakerflags');
 
-        skip("Old perl on cygwin detected -- tests will fail due to know bugs", 8)
-            if ON_OLD_CYGWIN;
+        skip("makemakerflags set -- probably EU::Installed tests will fail", 8)
+           if $conf->get_conf('makemakerflags');
+    
+        skip( "Old perl on cygwin detected " .
+              "-- tests will fail due to known bugs", 8
+        ) if ON_OLD_CYGWIN;
+
+        ### might need it Later when EU::I is fixed..
+        #local @INC = ( TEST_INSTALL_DIR_LIB, @INC );
 
         {   ### validate
             my @missing = $InstMod->validate;
