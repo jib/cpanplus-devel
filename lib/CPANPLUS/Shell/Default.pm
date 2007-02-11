@@ -82,13 +82,13 @@ CPANPLUS::Shell::Default
     $ perl -MCPANPLUS -eshell   # load the shell from the command line
 
 
-    use CPANPLUS::Shell qw[Default];    # load this shell via the API
-                                        # always done via CPANPLUS::Shell
+    use CPANPLUS::Shell qw[Default];        # load this shell via the API
+                                            # always done via CPANPLUS::Shell
 
     my $ui = CPANPLUS::Shell->new;
-    $ui->shell;                         # run the shell
-    $ui->dispatch_on_input('x');        # update the source using the
-                                        # dispatch method
+    $ui->shell;                             # run the shell
+    $ui->dispatch_on_input( input => 'x');  # update the source using the
+                                            # dispatch method
 
     ### when in the shell:
     ### Note that all commands can also take options.
