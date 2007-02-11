@@ -204,10 +204,13 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
     my $age = -M $file;
     
     ### make sure we are 'newer' on faster machines with a sleep..
-    sleep 1;
+    ### apparently Win32's FAT isn't granual enough on intervals
+    ### < 2 seconds, so it may give the same answer before and after
+    ### the sleep, causing the test to fail. so sleep atleast 2 seconds.
+    sleep 2;
     ok( $cb->reload_indices( update_source => 1 ),  
                                     "Rebuilding and refetching trees" );
-    cmp_ok( $age, '>', -M $file,    "    Source file '=$file' updated" );                                      
+    cmp_ok( $age, '>', -M $file,    "    Source file '$file' updated" );                                      
 }
 
 ### flush tests ###
