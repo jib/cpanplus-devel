@@ -1,3 +1,48 @@
+XXX Changes done until r3799: kane | 2007-02-11 10:59:51 +0100
+
+Changes for 0.77_03
+=====================================================
+* Rework the parse_module code; regex is more complex, but also more correct
+* Allow for more lenient parsing of module names, when the module name
+  and package name do not match
+* Extend parse_module documentation to include URI  
+* Patch Module.pm->package_name regex to also parse 'perl5.6.1' style packages
+* The package_[name, version, extension] subroutines are also reworked
+  and use the same regular expression as parse_module does now
+* Add 'name' to the list of accessors returned by $mod->accessors (it's
+  an alias to ->module)
+* 'installsiteman3dir' is a 5.8'ism which causes warnings under 5.6
+  so only check it if it is defined
+* Add the version number to the install log file name
+* Add "rescan" option to $conf->init to re-check your path for valid 
+  CPANPLUS::Config::* files
+* Warn if you're using the old "PERL5_CPANPLUS_CONFIG" env var to point 
+  to specific config files ( rt #23721 )
+* Make $conf->save return the file name it saved to
+* Apply the suggested patch from Grant Mclean that calls $cb->flush(lib) 
+  just before 'make install' is called, so the blib/ dir is no longer at 
+  the front of the path. XML::SAX was writing a file dynamically based on 
+  @INC.
+* address RT #22962 Funky error messages when command-line args are missed:
+  the default shell now has increased parsing logic
+* Document details() items properly
+* Show installed file in the details section
+* Fix documentation error for $cb->_home_dir (#rt 23196)
+* Log which configs are loaded at startup time; The shell default's banner
+  shows you how to view these logs.
+* Make /showtips a plugin command
+* Extend CPANPLUS::Shell::Default synopsis with --xxx style options
+* Move to dummy modules for our tests, rather than bundled real modules.
+* Clean up the .cpanplus dir in the dummy-cpanplus directory at the
+  start of every test to make sure we're running with a clean cache
+* Test fixes for Win32
+* Disable IPC::Run on Win32 during 'make test'. IPC::Run gets unhappy 
+  about having 'odd' FDs allocated to it under Win32.
+* Update bundled modules
+* update bundled modules, includes version.pm for the first time
+* Add realclean targets for our dummy perl directory
+
+
 Changes for 0.077_02    Fri Oct 20 15:28:22 CEST 2006
 =====================================================
 * Implemented selfupdate functionality. You can use
