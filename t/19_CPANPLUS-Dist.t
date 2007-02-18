@@ -1,22 +1,7 @@
+### make sure we can find our conf.pl file
 BEGIN { 
-    if( $ENV{PERL_CORE} ) {
-        chdir '../lib/CPANPLUS' if -d '../lib/CPANPLUS';
-        unshift @INC, '../../../lib';
-    
-        ### fix perl location too
-        $^X = '../../../t/' . $^X;
-    }
-} 
-
-#!/usr/bin/perl -w
-
-BEGIN { chdir 't' if -d 't' };
-
-### this is to make devel::cover happy ###
-BEGIN {
-    use File::Spec;
-    require lib;
-    for (qw[../lib inc]) { my $l = 'lib'; $l->import(File::Spec->rel2abs($_)) }
+    use FindBin; 
+    require "$FindBin::Bin/inc/conf.pl";
 }
 
 ### dummy class for testing dist api ###
@@ -58,8 +43,6 @@ use Data::Dumper;
 use File::Basename ();
 use File::Spec ();
 use Module::Load::Conditional qw[check_install];
-
-BEGIN { require 'conf.pl'; }
 
 my $conf = gimme_conf();
 my $cb   = CPANPLUS::Backend->new( $conf );

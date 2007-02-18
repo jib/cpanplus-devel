@@ -1,26 +1,8 @@
+### make sure we can find our conf.pl file
 BEGIN { 
-    if( $ENV{PERL_CORE} ) {
-        chdir '../lib/CPANPLUS' if -d '../lib/CPANPLUS';
-        unshift @INC, '../../../lib';
-    
-        ### fix perl location too
-        $^X = '../../../t/' . $^X;
-    }
-} 
-
-#!/usr/bin/perl -w
-
-BEGIN { chdir 't' if -d 't' };
-
-### this is to make devel::cover happy ###
-BEGIN {
-    use File::Spec;
-    require lib;
-    for (qw[../lib inc]) { my $l = 'lib'; $l->import(File::Spec->rel2abs($_)) }
+    use FindBin; 
+    require "$FindBin::Bin/inc/conf.pl";
 }
-
-### leave this BEFORE any use of CPANPLUS::modules, especially ::inc!
-BEGIN { require 'conf.pl'; }
 
 use strict;
 
@@ -86,10 +68,6 @@ ok( $cb->reload_indices( update_source => 0 ),
 #my $rv = $cb->configure_object->set_conf( makemakerflags => "PREFIX=$prefix" );
 #ok( $rv,                        "Alternate install path set" );
 
-### enable signature checks ###
-ok( $conf->set_conf( signature => 1 ),
-                                "Enabling signature checks" );
-
 my $Mod     = $cb->module_tree( $ModName );
 my $InstMod = $cb->module_tree( $InstName );
 ok( $Mod,                       "Loaded object for: " . $Mod->name );
@@ -141,15 +119,6 @@ isa_ok( $Mod->status->dist_cpan,    "CPANPLUS::Dist::MM" );
 ### since the blib is already in @INC
 $cb->_flush( list => [qw|lib|] );
 
-### XXX new EU::I should be forthcoming pending this patch from Steffen
-### Mueller on p5p: http://www.xray.mpe.mpg.de/mailing-lists/ \ 
-###     perl5-porters/2007-01/msg00895.html
-### This should become EU::I 1.42.. if so, we should upgrade this bit
-### of code and remove the diag, since we can then install in our dummy dir..
-diag("\nSorry, installing into your real perl dir, rather than our test area");
-diag('since ExtUtils::Installed does not probe for .packlists in other dirs');
-diag('than those in %Config. See bug #6871 on rt.cpan.org for details');
-
 SKIP: {
 
     skip(q[No install tests under core perl], 10) if $ENV{PERL_CORE};
@@ -157,7 +126,16 @@ SKIP: {
     skip(q[Probably no permissions to install, skipping], 10)
         if $noperms;
 
-    
+    ### XXX new EU::I should be forthcoming pending this patch from Steffen
+    ### Mueller on p5p: http://www.xray.mpe.mpg.de/mailing-lists/ \ 
+    ###     perl5-porters/2007-01/msg00895.html
+    ### This should become EU::I 1.42.. if so, we should upgrade this bit of
+    ### code and remove the diag, since we can then install in our dummy dir..
+    diag("\nSorry, installing into your real perl dir, rather than our test");
+    diag(" area since ExtUtils::Installed does not probe for .packlists in " );
+    diag('other dirs than those in %Config. See bug #6871 on rt.cpan.org ' );
+    diag('for details');
+
     diag(q[Note: 'sudo' might ask for your password to do the install test])
         if $conf->get_program('sudo');
 

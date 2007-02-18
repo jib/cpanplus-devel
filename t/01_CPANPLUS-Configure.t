@@ -1,29 +1,13 @@
+### make sure we can find our conf.pl file
 BEGIN { 
-    if( $ENV{PERL_CORE} ) {
-        chdir '../lib/CPANPLUS' if -d '../lib/CPANPLUS';
-        unshift @INC, '../../../lib';
-    
-        ### fix perl location too
-        $^X = '../../../t/' . $^X;
-    }
-} 
-
-BEGIN { chdir 't' if -d 't' };
-### this is to make devel::cover happy ###
-
-BEGIN { 
-    use File::Spec;
-    require lib;
-    for (qw[../lib inc config]) { 
-        my $l = 'lib'; $l->import(File::Spec->rel2abs($_)) 
-    }
+    use FindBin; 
+    require "$FindBin::Bin/inc/conf.pl";
 }
 
 use Test::More 'no_plan';
 use Data::Dumper;
 use strict;
 use CPANPLUS::Internals::Constants;
-BEGIN { require 'conf.pl'; }
 
 ### purposely avert messages and errors to a file? ###
 my $Trap_Output = @ARGV ? 0 : 1;

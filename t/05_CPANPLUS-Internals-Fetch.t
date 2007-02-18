@@ -1,10 +1,7 @@
-BEGIN { chdir 't' if -d 't' };
-
-### this is to make devel::cover happy ###
+### make sure we can find our conf.pl file
 BEGIN { 
-    use File::Spec;
-    require lib;
-    for (qw[../lib inc]) { my $l = 'lib'; $l->import(File::Spec->rel2abs($_)) }
+    use FindBin; 
+    require "$FindBin::Bin/inc/conf.pl";
 }
 
 use strict;
@@ -18,7 +15,6 @@ use Cwd;
 use File::Basename;
 use CPANPLUS::Internals::Constants;
 
-BEGIN { require 'conf.pl'; }
 my $conf = gimme_conf();
 
 ### Redirect errors to file ###

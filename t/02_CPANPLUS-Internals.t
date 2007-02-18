@@ -1,20 +1,7 @@
+### make sure we can find our conf.pl file
 BEGIN { 
-    if( $ENV{PERL_CORE} ) {
-        chdir '../lib/CPANPLUS' if -d '../lib/CPANPLUS';
-        unshift @INC, '../../../lib';
-    
-        ### fix perl location too
-        $^X = '../../../t/' . $^X;
-    }
-} 
-
-BEGIN { chdir 't' if -d 't' };
-
-### this is to make devel::cover happy ###
-BEGIN { 
-    use File::Spec;
-    require lib;
-    for (qw[../lib inc]) { my $l = 'lib'; $l->import(File::Spec->rel2abs($_)) }
+    use FindBin; 
+    require "$FindBin::Bin/inc/conf.pl";
 }
 
 use strict;
@@ -25,8 +12,6 @@ use CPANPLUS::Backend;
 use CPANPLUS::Internals::Constants;
 use Module::Load::Conditional       qw[can_load];
 use Data::Dumper;
-
-BEGIN { require 'conf.pl'; }
 
 my $cb = CPANPLUS::Backend->new( CPANPLUS::Configure->new() );
 
