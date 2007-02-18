@@ -1,5 +1,3 @@
-XXX Changes done until r3799: kane | 2007-02-11 10:59:51 +0100
-
 Changes for 0.77_03
 =====================================================
 * Rework the parse_module code; regex is more complex, but also more correct
@@ -25,6 +23,12 @@ Changes for 0.77_03
   @INC.
 * address RT #22962 Funky error messages when command-line args are missed:
   the default shell now has increased parsing logic
+* The check to see if the 'storable' feature was enabled was faulty. This
+  has now been fixed.
+* Use the full path to a module's Makefile.PL when installing a module, so 
+  we don't pick up another Makefile.PL that happens to be in your @INC path.
+* No longer use can_run() to find cpanp-run-perl, as it's not an executable.
+  Scan path manually in CPANPLUS::Config.
 * Document details() items properly
 * Show installed file in the details section
 * Fix documentation error for $cb->_home_dir (#rt 23196)
@@ -33,6 +37,9 @@ Changes for 0.77_03
 * Make /showtips a plugin command
 * Extend CPANPLUS::Shell::Default synopsis with --xxx style options
 * Move to dummy modules for our tests, rather than bundled real modules.
+* All .t files now use t/inc/conf.pl exclusively for changes in the
+  PATH/ENV/etc settings. This fix allows CPANPLUS to test cleanly with
+  bleadperl (5.9.5)
 * Clean up the .cpanplus dir in the dummy-cpanplus directory at the
   start of every test to make sure we're running with a clean cache
 * Test fixes for Win32
