@@ -134,7 +134,7 @@ SKIP: {
     ### This should become EU::I 1.42.. if so, we should upgrade this bit of
     ### code and remove the diag, since we can then install in our dummy dir..
     diag("\nSorry, installing into your real perl dir, rather than our test");
-    diag(" area since ExtUtils::Installed does not probe for .packlists in " );
+    diag("area since ExtUtils::Installed does not probe for .packlists in " );
     diag('other dirs than those in %Config. See bug #6871 on rt.cpan.org ' );
     diag('for details');
 
