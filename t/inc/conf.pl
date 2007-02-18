@@ -1,14 +1,40 @@
-BEGIN { chdir 't' if -d 't' };
 BEGIN {
+    use FindBin; 
     use File::Spec;
-    require lib;
-    my @paths = map { File::Spec->rel2abs($_) } qw[../lib inc];
     
+    ### paths to our own 'lib' and 'inc' dirs
     ### include them, relative from t/
-    for ( @paths ) { my $l = 'lib'; $l->import( $_ ) }
+    my @paths   = map { "$FindBin::Bin/$_" } qw[../lib inc];
+
+    ### absolute'ify the paths in @INC;
+    my @rel2abs = map { File::Spec->rel2abs( $_ ) }
+                    grep { not File::Spec->file_name_is_absolute( $_ ) } @INC;
+    
+    ### use require to make devel::cover happy
+    require lib;
+    for ( @paths, @rel2abs ) { 
+        my $l = 'lib'; 
+        $l->import( $_ ) 
+    }
+
+    use Config;
 
     ### and add them to the environment, so shellouts get them
-    $ENV{'PERL5LIB'} = join ':', grep { defined } $ENV{'PERL5LIB'}, @paths;
+    $ENV{'PERL5LIB'} = join ':', 
+                        grep { defined } $ENV{'PERL5LIB'}, @paths, @rel2abs;
+    
+    ### add our own path to the front of $ENV{PATH}, so that cpanp-run-perl
+    ### and friends get picked up
+    $ENV{'PATH'} = join $Config{'path_sep'}, 
+                    grep { defined } "$FindBin::Bin/../bin", $ENV{'PATH'};
+
+    ### Fix up the path to perl, as we're about to chdir
+    $^X = File::Spec->rel2abs( $^X );
+
+    ### chdir to our own test dir, so we know all files are relative 
+    ### to this point, no matter whether run from perlcore tests or
+    ### regular CPAN installs
+    chdir "$FindBin::Bin" if -d "$FindBin::Bin"
 }
 
 BEGIN {
