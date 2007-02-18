@@ -21,14 +21,14 @@ CPANPLUS::Selfupdate
     @feats  = $su->list_features;
     @feats  = $su->list_enabled_features;
     
-    @mods   = $su->modules_for_feature( $_ ) for @feats;
+    @mods   = map { $su->modules_for_feature( $_ ) } @feats;
     @mods   = $su->list_core_dependencies;
     @mods   = $su->list_core_modules;
     
     for ( @mods ) {
         print $_->name " should be version " . $_->version_required;
         print "Installed version is not uptodate!" 
-            unless $_->is_version_sufficient;
+            unless $_->is_installed_version_sufficient;
     }
     
     $ok     = $su->selfupdate( update => 'all', latest => 0 );
@@ -47,9 +47,9 @@ CPANPLUS::Selfupdate
             'Log::Message'              => '0.01',
             'Module::Load'              => '0.10',
             'Module::Load::Conditional' => '0.16', # Better parsing: #23995
-            'version'                   => '0.69', # XXX needed for M::L::C
-                                                   # 0.69 pure-perl fails tests
-                                                   # on 5.6.2 though :(
+            'version'                   => '0.70', # needed for M::L::C
+                                                   # addresses #24630 and 
+                                                   # #24675
             'Params::Check'             => '0.22',
             'Package::Constants'        => '0.01',
             'Term::UI'                  => '0.05',
@@ -66,6 +66,10 @@ CPANPLUS::Selfupdate
         },
     
         features => {
+            # config_key_name => [
+            #     sub { } to list module key/value pairs
+            #     sub { } to check if feature is enabled
+            # ]
             prefer_makefile => [
                 sub {
                     my $cb = shift;
@@ -136,7 +140,7 @@ CPANPLUS::Selfupdate
                 { 'Storable' => '0.0' },         
                 sub { 
                     my $cb = shift;
-                    return $cb->configure_object->get_conf('cpantest');
+                    return $cb->configure_object->get_conf('storable');
                 },
             ],
         },
