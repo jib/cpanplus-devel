@@ -150,10 +150,26 @@ my $Conf = {
                                      );
                                     -e $f ? $f : undef
                                 } ||
+
                                 ### in your path -- take this one last, the
                                 ### previous two assume extracted tarballs
                                 ### or user installs
-                                can_run('cpanp-run-perl') ||
+                                ### note that we don't use 'can_run' as it's
+                                ### not an executable, just a wrapper...
+                                do { my $rv;
+                                     for (split(/\Q$Config::Config{path_sep}\E/, 
+                                                $ENV{PATH}), File::Spec->curdir
+                                     ) {           
+                                        my $path = File::Spec->catfile(
+                                                    $_, 'cpanp-run-perl' );
+                                        if( -e $path ) {
+                                            $rv = $path;
+                                            last;
+                                        }     
+                                    }
+                                    
+                                    $rv || undef;
+                                } ||       
 
                                 ### XXX try to be a no-op instead then.. 
                                 ### cross your fingers...
