@@ -282,7 +282,13 @@ sub prepare {
             ### make sure it's a string, so that mmflags that have more than
             ### one key value pair are passed as is, rather than as:
             ### perl Makefile.PL "key=val key=>val"
-            my $captured; my $makefile_pl = MAKEFILE_PL->();
+            my $captured; 
+            
+            #### XXX this needs to be the absolute path to the Makefile.PL
+            ### since cpanp-run-perl uses 'do' to execute the file, and do()
+            ### checks your @INC.. so, if there's _another_ makefile.pl in
+            ### your @INC, it will execute that one...
+            my $makefile_pl = MAKEFILE_PL->( $dir );
             
             ### setting autoflush to true fixes issue from rt #8047
             ### XXX this means that we need to keep the path to CPANPLUS

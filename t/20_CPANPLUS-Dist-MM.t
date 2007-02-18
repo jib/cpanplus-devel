@@ -27,6 +27,8 @@ my $noperms = ($< and not $conf->get_program('sudo')) &&
 my $File    = 'Bar.pm';
 my $Verbose = @ARGV ? 1 : 0;
 
+#$IPC::Cmd::DEBUG = $Verbose;
+
 ### Make sure we get the _EUMM_NOXS_ version
 my $ModName = TEST_CONF_MODULE;
 
@@ -36,7 +38,6 @@ my $InstName = TEST_CONF_INST_MODULE;
 ### don't start sending test reports now... ###
 $cb->_callbacks->send_test_report( sub { 0 } );
 $conf->set_conf( cpantest => 0 );
-
 
 ### Redirect errors to file ###
 local $CPANPLUS::Error::ERROR_FH = output_handle() unless $Verbose;
@@ -97,6 +98,7 @@ ok( $Mod->fetch,                "Fetching module to ".$Mod->status->fetch );
 ok( $Mod->extract,              "Extracting module to ".$Mod->status->extract );
 
 ok( $Mod->test,                 "Testing module" );
+
 ok( $Mod->status->dist_cpan->status->test,
                                 "   Test success registered as status" );
 ok( $Mod->status->dist_cpan->status->prepared,
