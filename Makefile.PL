@@ -13,14 +13,12 @@ BEGIN {
     chdir $FindBin::Bin;
 
     use File::Spec;
+    use lib qw[lib];        # cpanplus modules
 
     ### add the directory to our bundled modules
     use vars qw[@ORIG_INC];
     @ORIG_INC = @INC;       # store for later use
-
-    require lib;
-    my $l = 'lib'; 
-    $l->import( qw[lib], File::Spec->catdir(qw[inc bundle]) );
+    lib->import( File::Spec->catdir(qw[inc bundle]) );
 }
 
 
