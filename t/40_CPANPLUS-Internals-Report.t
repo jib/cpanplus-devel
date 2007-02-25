@@ -9,10 +9,10 @@ use CPANPLUS::Backend;
 use CPANPLUS::Internals::Constants::Report;
 
 my $send_tests  = 55;
-my $query_tests = 7;
+my $query_tests = 8;
 my $total_tests = $send_tests + $query_tests;
 
-use Test::More                  tests => 125;
+use Test::More                  'no_plan';
 use Module::Load::Conditional   qw[can_load];
 
 use FileHandle;
