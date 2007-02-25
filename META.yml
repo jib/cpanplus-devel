@@ -1,5 +1,5 @@
 name: CPANPLUS
-version: 0.77_03
+version: 0.77_04
 abstract: Ameliorated interface to the CPAN
 author: Jos Boumans <kane@cpan.org>
 license: perl

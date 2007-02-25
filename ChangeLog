@@ -1,4 +1,12 @@
-Changes for 0.77_03
+Changes for 0.77_04     Mon Feb 19 08:05:52 CET 2007
+=====================================================
+* CPAN testers reported test counter mismatches when test reporting
+  was enabled vs disabled. This is purely a test counter issue. No
+  functional code has been replaced.
+  If you have installed 0.77_03, there is no need to upgrade to
+  0.77_04.
+
+Changes for 0.77_03     Sun Feb 18 17:35:12 CET 2007
 =====================================================
 * Rework the parse_module code; regex is more complex, but also more correct
 * Allow for more lenient parsing of module names, when the module name
