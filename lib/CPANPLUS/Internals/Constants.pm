@@ -207,6 +207,8 @@ use constant CHECKSUMS      => 'CHECKSUMS';
 use constant PGP_HEADER     => '-----BEGIN PGP SIGNED MESSAGE-----';
 use constant ENV_CPANPLUS_CONFIG
                             => 'PERL5_CPANPLUS_CONFIG';
+use constant ENV_CPANPLUS_IS_EXECUTING
+                            => 'PERL5_CPANPLUS_IS_EXECUTING';
 use constant DEFAULT_EMAIL  => 'cpanplus@example.com';   
 use constant CPANPLUS_UA    => sub { ### for the version number ###
                                      require CPANPLUS::Internals;

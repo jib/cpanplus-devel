@@ -176,7 +176,24 @@ sub init {
     return 1;
 }    
 
-=pod $bool = $dist->prepare(....)
+=pod $bool = $dist->prepare([perl => '/path/to/perl', makemakerflags => 'EXTRA=FLAGS', force => BOOL, verbose => BOOL])
+
+C<prepare> preps a distribution for installation. This means it will 
+run C<perl Makefile.PL> and determine what prerequisites this distribution
+declared.
+
+If you set C<force> to true, it will go over all the stages of the 
+C<prepare> process again, ignoring any previously cached results. 
+
+When running C<perl Makefile.PL>, the environment variable
+C<PERL5_CPANPLUS_IS_EXECUTING> will be set to the full path of the
+C<Makefile.PL> that is being executed. This enables any code inside
+the C<Makefile.PL> to know that it is being installed via CPANPLUS.
+
+Returns true on success and false on failure.
+
+You may then call C<< $dist->create >> on the object to create the
+installable files.
 
 =cut
 
@@ -282,7 +299,7 @@ sub prepare {
             ### make sure it's a string, so that mmflags that have more than
             ### one key value pair are passed as is, rather than as:
             ### perl Makefile.PL "key=val key=>val"
-            my $captured; 
+            
             
             #### XXX this needs to be the absolute path to the Makefile.PL
             ### since cpanp-run-perl uses 'do' to execute the file, and do()
@@ -310,10 +327,19 @@ sub prepare {
             my $run_perl    = $conf->get_program('perlwrapper');
             my $cmd         = "$perl $run_perl $makefile_pl $mmflags";
 
-            unless( scalar run( command => $cmd,
-                                buffer  => \$captured,
-                                verbose => $run_verbose, # may be interactive   
-            ) ) {
+            ### set ENV var to tell underlying code this is what we're
+            ### executing.
+            my $captured; 
+            my $rv = do {
+                my $env = ENV_CPANPLUS_IS_EXECUTING;
+                local $ENV{$env} = $makefile_pl;
+                scalar run( command => $cmd,
+                            buffer  => \$captured,
+                            verbose => $run_verbose, # may be interactive   
+                        );
+            };
+    
+            unless( $rv ) {
                 error( loc( "Could not run '%1 %2': %3 -- cannot continue",
                             $perl, MAKEFILE_PL->(), $captured ) );
                 
@@ -438,10 +464,9 @@ sub _find_prereqs {
 
 =head2 $bool = $dist->create([perl => '/path/to/perl', make => '/path/to/make', makeflags => 'EXTRA=FLAGS', prereq_target => TARGET, skiptest => BOOL, force => BOOL, verbose => BOOL])
 
-C<create> preps a distribution for installation. This means it will 
-run C<perl Makefile.PL>, C<make> and C<make test>. 
-This will also scan for and attempt to satisfy any prerequisites the
-module may have. 
+C<create> creates the files necessary for installation. This means 
+it will run C<make> and C<make test>.  This will also scan for and 
+attempt to satisfy any prerequisites the module may have. 
 
 If you set C<skiptest> to true, it will skip the C<make test> stage.
 If you set C<force> to true, it will go over all the stages of the 

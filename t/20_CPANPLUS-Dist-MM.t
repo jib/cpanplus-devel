@@ -316,13 +316,8 @@ SKIP: {
 
     ### now let's write a makefile.pl that just does 'die'
     {   local $^W;
-        local *CPANPLUS::Dist::MM::write_makefile_pl = sub {
-                my $dist = shift; my $self = $dist->parent;
-                my $fh = OPEN_FILE->(
-                            MAKEFILE_PL->($self->status->extract), '>' );
-                print $fh "exit 1;";
-                close $fh;
-            };
+        local *CPANPLUS::Dist::MM::write_makefile_pl = 
+            __PACKAGE__->_custom_makefile_pl_sub( "exit 1;" );
 
         ### there's no makefile.pl now, since the previous test failed
         ### to create one
@@ -341,6 +336,52 @@ SKIP: {
     ok( unlink($makefile_pl),   "Deleting Makefile.PL");
     $dist->status->mk_flush;
 
+}
+
+### test ENV setting in Makefile.PL
+{   ### use print() not die() -- we're redirecting STDERR in tests!
+    my $env     = ENV_CPANPLUS_IS_EXECUTING;
+    my $sub     = __PACKAGE__->_custom_makefile_pl_sub(
+                                    "print qq[ENV=\$ENV{$env}\n]; exit 1;" );
+    
+    my $clone   = $Mod->clone;
+    $clone->status->fetch( $Mod->status->fetch );
+    
+    ok( $clone,                 'Testing ENV settings $dist->prepare' );
+    ok( $clone->extract,        '   Files extracted' );
+    ok( $clone->prepare,        '   $mod->prepare worked first time' );
+    
+    my $dist        = $clone->status->dist;
+    my $makefile_pl = MAKEFILE_PL->( $clone->status->extract );
+
+    ok( $sub->($dist),          "   Custom Makefile.PL written" );
+    ok( -e $makefile_pl,        "       File exists" );
+
+    ### clear errors    
+    CPANPLUS::Error->flush;
+
+    my $rv = $dist->prepare( force => 1, verbose => 0 );
+    ok( !$rv,                   '   $dist->prepare failed' );
+
+    my $re = quotemeta( $makefile_pl );
+    like( CPANPLUS::Error->stack_as_string, qr/ENV=$re/,
+                                "   \$ENV $env set correctly during execution");
+}    
+
+sub _custom_makefile_pl_sub {
+    my $pkg = shift;
+    my $txt = shift or return;
+    
+    return sub {
+        my $dist = shift; 
+        my $self = $dist->parent;
+        my $fh   = OPEN_FILE->(
+                    MAKEFILE_PL->($self->status->extract), '>' );
+        print $fh $txt;
+        close $fh;
+    
+        return 1;
+    }
 }
 
 
