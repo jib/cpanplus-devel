@@ -1,3 +1,9 @@
+Changes for 0.77_05     Sun Feb 25 17:17:44 CET 2007
+=====================================================
+* Set $ENV{PERL5_CPANPLUS_IS_EXECUTING} to the full path of the
+  Makefile.PL file when running 'perl Makefile.PL'.
+  Requested by Adam Kennedy <cpan@ali.as>.
+
 Changes for 0.77_04     Mon Feb 19 08:05:52 CET 2007
 =====================================================
 * CPAN testers reported test counter mismatches when test reporting
