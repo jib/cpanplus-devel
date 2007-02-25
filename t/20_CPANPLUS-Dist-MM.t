@@ -366,6 +366,9 @@ SKIP: {
     my $re = quotemeta( $makefile_pl );
     like( CPANPLUS::Error->stack_as_string, qr/ENV=$re/,
                                 "   \$ENV $env set correctly during execution");
+
+    ### and the ENV var should no longer be set now
+    ok( !$ENV{$env},            "   ENV var now unset" );
 }    
 
 sub _custom_makefile_pl_sub {
