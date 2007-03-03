@@ -96,16 +96,19 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
         'FROO/Flub-Flob-v1.1.0.tbz'
                 => [ 'FROO',                'Flub-Flob',        'v1.1.0' ],
         'FROO/Flub-Flob-1.1_2.tbz'
-                => [ 'FROO',                'Flub-Flob',        '1.1_2' ],                        
+                => [ 'FROO',                'Flub-Flob',        '1.1_2' ],   
+        'LDS/CGI.pm-3.27.tar.gz'
+                => [ 'LDS',                 'CGI',              '3.27' ],
     );       
 
     while ( my($guess, $attr) = splice @map, 0, 2 ) {
         my( $author, $pkg, $version ) = @$attr;
-        
+
         ok( $guess,             "Attempting to parse $guess" );
 
         my $obj = $cb->parse_module( module => $guess );
         
+        ok( $obj,               "   Result returned" );
         ok( IS_MODOBJ->( mod => $obj ), 
                                 "   parse_module success by '$guess'" );     
         

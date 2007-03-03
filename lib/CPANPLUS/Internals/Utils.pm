@@ -405,10 +405,12 @@ For example, C<Foo-Bar-1.2.tar.gz> would return the following parts:
 {   my $del_re = qr/[-_]/i;             # delimiter between elements
     my $pkg_re = qr/[a-z]               # any letters followed by 
                     [a-z\d]*            # any letters, numbers
+                    (?i:\.pm)?          # followed by '.pm'--authors do this :(
                     (?:                 # optionally repeating:
                         $del_re         #   followed by a delimiter
                         [a-z]           #   any letters followed by 
                         [a-z\d]*        #   any letters, numbers                        
+                        (?i:\.pm)?      # followed by '.pm'--authors do this :(
                     )*
                 /xi;   
     
@@ -481,8 +483,10 @@ sub _split_package_string {
 
             ### this regex resets the capture markers!
             ### strip the trailing delimiter
-
             $pkg =~ s/$del_re$//;
+            
+            ### strip the .pm package suffix some authors insist on adding
+            $pkg =~ s/\.pm$//i;
 
             return ($pkg, $ver, $ext );
         }
