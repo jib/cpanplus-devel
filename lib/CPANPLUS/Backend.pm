@@ -26,6 +26,7 @@ $VERSION = $CPANPLUS::Internals::VERSION;
 
 ### mark that we're running under CPANPLUS to spawned processes
 $ENV{'PERL5_CPANPLUS_IS_RUNNING'} = $$;
+$ENV{'PERL5_CPANPLUS_IS_VERSION'} = $VERSION;
 
 =pod
 
@@ -60,6 +61,9 @@ libraries.
 When C<CPANPLUS::Backend> is loaded, which is necessary for just
 about every <CPANPLUS> operation, the environment variable
 C<PERL5_CPANPLUS_IS_RUNNING> is set to the current process id.
+
+Additionally, the environment variable C<PERL5_CPANPLUS_IS_VERSION> 
+will be set to the version of C<CPANPLUS::Backend>.
 
 This information might be useful somehow to spawned processes.
 

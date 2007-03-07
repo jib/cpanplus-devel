@@ -246,9 +246,19 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
 }    
 
 ### check ENV variable
-{   my $name = 'PERL5_CPANPLUS_IS_RUNNING';
-    ok( $ENV{$name},                "Env var '$name' set" );
-    is( $ENV{$name}, $$,            "   Set to current process id" );
+{   ### process id
+    {   my $name = 'PERL5_CPANPLUS_IS_RUNNING';
+        ok( $ENV{$name},            "Env var '$name' set" );
+        is( $ENV{$name}, $$,        "   Set to current process id" );
+    }
+
+    ### Version    
+    {   my $name = 'PERL5_CPANPLUS_IS_VERSION';
+        ok( $ENV{$name},            "Env var '$name' set" );
+        is( $ENV{$name}, $Class->VERSION,        
+                                    "   Set to current process version" );
+    }
+    
 }
 
 __END__    
