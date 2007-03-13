@@ -286,13 +286,15 @@ for my $name (@modules) {
                         
                     alarm $timeout || 0;
                     
-                    $obj->install(   
+                    my $rv = $obj->install(   
                             prereq_target   => 'create',
                             target          => 'create',
                             keep_source     => $keep,
                             prereq_build    => $prereqbuild );
     
-                    alarm 0;                            
+                    alarm 0; 
+
+                    $rv;
                 }; 
                 
     ### set here again, in case the install dies
@@ -317,10 +319,10 @@ for my $name (@modules) {
     }        
 
     ### we didn't get a dist object back?
-    ($dist and $obj->status->dist) or (
-        warn loc("Unable to create '%1' dist of '%2'", $format, $obj->module),
+    unless ($dist and $obj->status->dist) {
+        warn loc("Unable to create '%1' dist of '%2'", $format, $obj->module);
         next
-    );
+    }
 
     print "Created '$format' distribution for ", $obj->module,
                 " to:\n\t", $obj->status->dist->status->dist, "\n";
