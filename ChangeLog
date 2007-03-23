@@ -1,3 +1,22 @@
+Changes for 0.77_06     Fri Mar 23 13:29:54 CET 2007
+=====================================================
+* Various test reporting fixes;
+  * Add the leading '!' to missing prereqs, inspired by CPAN::Reporter
+  * Address bug #25327: do not count as FAIL modules where prereqs are
+	not filled. Now, when tests fail and:
+    * version of prereqs installed is too low, send NA
+	* prereq is not available on CPAN, send NA
+* Address: #25410: cpan2dist needs posibility for passing arbitary
+  parameters to $obj->install; cpan2dist now accepts --dist-opts foo=bar
+* Add PERL5_CPANPLUS_IS_VERSION as environment variable. It's set to
+  the version of CPANPLUS running. Requested by Adam Kennedy <cpan@ali.as>.
+* Last statement evaluated in a Makefile.PL may be undef -- so don't die
+  on that case in cpanp-run-perl
+* Some users add '.pm' to their package tarballs. fix the package
+  string parser to recognize this and deal with it.
+* Address #25038 (Wrong platforms for MSDOS) and actually
+  test modules in the MSDOS:: namespace on dos|os2|MSWin32|cygwin
+
 Changes for 0.77_05     Sun Feb 25 17:17:44 CET 2007
 =====================================================
 * Set $ENV{PERL5_CPANPLUS_IS_EXECUTING} to the full path of the
