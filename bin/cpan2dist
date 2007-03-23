@@ -21,7 +21,7 @@ my $conf    = $cb->configure_object;
 
 my %formats = map { $_ => $_ } CPANPLUS::Dist->dist_types;
 
-my $opts = {};
+my $opts    = {};
 GetOptions( $opts,
             'format=s',     'archive',
             'verbose!',     'force!',
@@ -32,9 +32,12 @@ GetOptions( $opts,
             'ignore=s@',    'ignorelist=s@',
             'defaults',     'modulelist=s@',
             'logfile=s',    'timeout=s',
+            'dist-opts=s%',
             'default-banlist!',
             'default-ignorelist!',
         );
+
+die Dumper $opts;
 
 die usage() if exists $opts->{'help'};
 
@@ -60,29 +63,17 @@ my $format;
     die loc("Invalid format: " . ($format || "[NONE]") ) . usage() 
         unless $formats{$format};
 
-    
-    my $verbose     = exists $opts->{'verbose'}    
-                            ? $opts->{'verbose'} 
-                            : $conf->get_conf('verbose');
-    $conf->set_conf( verbose    => $verbose );
-
-                        
-    my $force       = exists $opts->{'force'}      
-                            ? $opts->{'force'}   
-                            : $conf->get_conf('force');
-    $conf->set_conf( force      => $force );                            
-
-                            
-    my $skiptest    = exists $opts->{'skiptest'}   
-                            ? $opts->{'skiptest'} 
-                            : $conf->get_conf('skiptest');
-    $conf->set_conf( skiptest   => $skiptest );                            
-
-
-    my $makefile    = exists $opts->{'makefile'}   
-                            ? $opts->{'makefile'} 
-                            : $conf->get_conf('prefer_makefile');
-    $conf->set_conf( prefer_makefile => $makefile );
+    my %map = ( verbose     => 'verbose',
+                force       => 'force',
+                skiptest    => 'skiptest',
+                makefile    => 'prefer_makefile'
+            );
+            
+    ### set config options from arguments        
+    while (my($key,$val) = each %map) {
+        my $bool = exists $opts->{$key} ? $opts->{$key} : $conf->get_conf($val);
+        $conf->set_conf( $val => $bool );
+    }    
 }
 
 my @modules = @ARGV;
@@ -243,6 +234,9 @@ for my $name (@modules) {
                         module  => basename($name),
                         path    => dirname($name),
                         package => basename($name),
+                        
+                        ### any passed arbitrary options
+                        %{ $opts->{'dist-opts'} || {} },
                     );
 
         ### if it's a traditional CPAN package, we can tidy
