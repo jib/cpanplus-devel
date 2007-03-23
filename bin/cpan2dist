@@ -277,6 +277,8 @@ for my $name (@modules) {
 
                     my $dist_opts = $opts->{'dist-opts'} || {};
                     
+                    my $dist_opts = $opts->{'dist-opts'} || {};
+
                     my $rv = $obj->install(   
                             prereq_target   => 'create',
                             target          => 'create',
