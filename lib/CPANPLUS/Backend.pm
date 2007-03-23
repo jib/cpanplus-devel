@@ -26,7 +26,10 @@ $VERSION = $CPANPLUS::Internals::VERSION;
 
 ### mark that we're running under CPANPLUS to spawned processes
 $ENV{'PERL5_CPANPLUS_IS_RUNNING'} = $$;
-$ENV{'PERL5_CPANPLUS_IS_VERSION'} = $VERSION;
+
+### XXX version.pm MAY format this version, if it's in use... :(
+### so for consistency, just call ->VERSION ourselves as well.
+$ENV{'PERL5_CPANPLUS_IS_VERSION'} = __PACKAGE__->VERSION;
 
 =pod
 

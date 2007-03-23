@@ -255,6 +255,8 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
     ### Version    
     {   my $name = 'PERL5_CPANPLUS_IS_VERSION';
         ok( $ENV{$name},            "Env var '$name' set" );
+
+        ### version.pm formats ->VERSION output... *sigh*
         is( $ENV{$name}, $Class->VERSION,        
                                     "   Set to current process version" );
     }
