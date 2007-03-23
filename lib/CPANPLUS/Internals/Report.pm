@@ -307,6 +307,7 @@ sub _send_report {
     my $email   = $mod->author->email || CPAN_MAIL_ACCOUNT->( $author );
     my $cp_conf = $conf->get_conf('cpantest') || '';
     my $int_ver = $CPANPLUS::Internals::VERSION;
+    my $cb      = $mod->parent;
 
 
     ### determine the grade now ###
@@ -315,7 +316,44 @@ sub _send_report {
     ### check if this is a platform specific module ###
     ### if we failed the test, there may be reasons why 
     ### an 'NA' might have to be insted
-    if ( $failed ) {
+    GRADE: { if ( $failed ) {
+        
+
+        ### XXX duplicated logic between this block
+        ### and REPORTED_LOADED_PREREQS :(
+        
+        ### figure out if the prereqs are on CPAN at all
+        ### -- if not, send NA grade
+        ### Also, if our version of prereqs is too low,
+        ### -- send NA grade.
+        ### This is to address bug: #25327: do not count 
+        ### as FAIL modules where prereqs are not filled
+        {   my $prq = $mod->status->prereqs || {};
+        
+            while( my($prq_name,$prq_ver) = each %$prq ) {
+                my $obj = $cb->module_tree( $prq_name );
+                
+                unless( $obj ) {
+                    msg(loc( "Prerequisite '%1' for '%2' could not be obtained".
+                             " from CPAN -- sending N/A grade", 
+                             $prq_name, $name ), $verbose );
+
+                    $grade = GRADE_NA;
+                    last GRADE;        
+                }
+
+                if( $cb->_vcmp( $prq_ver, $obj->installed_version ) > 0 ) {
+                    msg(loc( "Installed version of '%1' ('%2') is too low for ".
+                             "'%3' (needs '%4') -- sending N/A grade", 
+                             $prq_name, $obj->installed_version, 
+                             $name, $prq_ver ), $verbose );
+                             
+                    $grade = GRADE_NA;
+                    last GRADE;        
+                }                             
+            }
+        }
+        
         unless( RELEVANT_TEST_RESULT->($mod) ) {
             msg(loc(
                 "'%1' is a platform specific module, and the test results on".
@@ -353,7 +391,7 @@ sub _send_report {
     ### is in order
     } else {
         $grade = GRADE_PASS;
-    }
+    } }
 
     ### so an error occurred, let's see what stage it went wrong in ###
     my $message;

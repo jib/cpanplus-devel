@@ -150,6 +150,7 @@ use constant TEST_FAIL_STAGE
                                     'fetch';
                             };
 
+
 use constant MISSING_PREREQS_LIST
                             => sub {
                                 my $buffer = shift;
@@ -305,10 +306,19 @@ managed to load:
                                 
 .
                                 $str .= join '', 
-                                        map { sprintf "\t%-30s %8s\n", $_->name,
-                                              $_->installed_version } 
-                                        grep { $_ } @prq;   # might be empty
-                                                            # entries in there
+                                        map { my $want = $prq->{$_->name};
+                                              
+                                              sprintf "\t%s %-30s %8s %8s\n", 
+                                              do { $_->is_uptodate( 
+                                                    version => $want
+                                                   ) ? ' ' : '!' 
+                                              },
+                                              $_->name,
+                                              $_->installed_version,
+                                              $want
+                                              
+                                        ### might be empty entries in there
+                                        } grep { defined $_ } @prq;   
                                 
                                 return $str;
                             };

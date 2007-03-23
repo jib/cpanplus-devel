@@ -59,9 +59,10 @@ use File::Basename  qw[basename];
 }
 
 # prereq has to be in our package file && core!
-use constant TEST_CONF_PREREQ       => 'Cwd';   
-use constant TEST_CONF_MODULE       => 'Foo::Bar::EU::NOXS';
-use constant TEST_CONF_INST_MODULE  => 'Foo::Bar';
+use constant TEST_CONF_PREREQ           => 'Cwd';   
+use constant TEST_CONF_MODULE           => 'Foo::Bar::EU::NOXS';
+use constant TEST_CONF_INST_MODULE      => 'Foo::Bar';
+use constant TEST_CONF_INVALID_MODULE   => 'fnurk';
 
 ### we might need this Some Day when we're installing into
 ### our own sandbox. see t/20.t for details

@@ -76,7 +76,7 @@ my $map = {
         buffer  => perl_version_too_low_buffer_mm(),
         failed  => 1,
         match   => ['/This distribution has been tested/',
-                    '/http://testers.cpan.org//',
+                    '/http://testers.cpan.org/',
                     '/NA/',
                 ],
         check   => 0,
@@ -85,7 +85,7 @@ my $map = {
         buffer  => perl_version_too_low_buffer_build(1),
         failed  => 1,
         match   => ['/This distribution has been tested/',
-                    '/http://testers.cpan.org//',
+                    '/http://testers.cpan.org/',
                     '/NA/',
                 ],
         check   => 0,
@@ -94,11 +94,45 @@ my $map = {
         buffer  => perl_version_too_low_buffer_build(2),
         failed  => 1,
         match   => ['/This distribution has been tested/',
-                    '/http://testers.cpan.org//',
+                    '/http://testers.cpan.org/',
                     '/NA/',
                 ],
         check   => 0,
     },    
+    prereq_versions_too_low => {
+        ### set the prereq version incredibly high
+        pre_hook    => sub {
+                        my $mod     = shift;
+                        my $clone   = $mod->clone;
+                        $clone->status->prereqs( { $ModPrereq => ~0 } );
+                        return $clone;
+                    },
+        failed      => 1,
+        match       => ['/This distribution has been tested/',
+                        '/http://testers.cpan.org/',
+                        '/NA/',
+                    ],
+        check       => 0,    
+    },
+    prereq_not_on_cpan => {
+        pre_hook    => sub {
+                        my $mod     = shift;
+                        my $clone   = $mod->clone;
+                        $clone->status->prereqs( 
+                            { TEST_CONF_INVALID_MODULE, 0 } 
+                        );
+                        return $clone;
+                    },
+        failed      => 1,
+        match       => ['/This distribution has been tested/',
+                        '/http://testers.cpan.org/',
+                        '/NA/',
+                    ],
+        check       => 0,    
+    },
+    
+    
+    
 };
 
 ### test config settings 
@@ -209,7 +243,7 @@ my $map = {
         like( $prereqs, qr/PREREQ_PM/,  "   Proper content found" );
     }
 
-    {   my $prereqs = REPORT_MISSING_PREREQS->(undef,undef,'Foo::Bar');
+    {   my $prereqs = REPORT_MISSING_PREREQS->(undef,undef,'Foo::Bar');    
         ok( $prereqs,                   "Test output generated" );
         like( $prereqs, qr/Your Name/,  "   Proper content found" );
         like( $prereqs, qr/Foo::Bar/,   "   Proper content found" );
@@ -239,14 +273,15 @@ my $map = {
     }
     
     {   my $clone   = $Mod->clone;
-        my $prereqs = { $ModPrereq => 0 };
+        my $prereqs = { $ModPrereq => ~0 };
     
         $clone->status->prereqs( $prereqs );
 
         my $str = REPORT_LOADED_PREREQS->( $clone );
         
         like($str, qr/PREREQUISITES:/,  "Listed loaded prerequisites" );
-        like($str, qr/$ModPrereq\s+\S+/,"   Proper content found" );
+        like($str, qr/\! $ModPrereq\s+\S+\s+\S+/,
+                                        "   Proper content found" );
     }
 }
 
@@ -318,9 +353,12 @@ SKIP: {
             code => sub { return $_[1] }
         );
 
+        my $mod = $map->{$type}->{'pre_hook'}
+                    ? $map->{$type}->{'pre_hook'}->( $Mod )
+                    : $Mod;
 
         my $file = $CB->_send_report(
-                        module        => $Mod,
+                        module        => $mod,
                         buffer        => $map->{$type}{'buffer'},
                         failed        => $map->{$type}{'failed'},
                         tests_skipped => ($map->{$type}{'skiptests'} ? 1 : 0),

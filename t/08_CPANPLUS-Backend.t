@@ -37,7 +37,7 @@ my $mod  = $cb->module_tree($Name);
 
 ### XXX SOURCEFILES FIX
 {   my @mods = $cb->module_tree($Name,$Name);
-    my $none = $cb->module_tree('fnurk');
+    my $none = $cb->module_tree( TEST_CONF_INVALID_MODULE );
     
     ok( IS_MODOBJ->(mod => $mod),           "Module object found" );
     is( scalar(@mods), 2,                   "   Module list found" );
