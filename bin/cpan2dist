@@ -36,9 +36,7 @@ GetOptions( $opts,
             'default-banlist!',
             'default-ignorelist!',
         );
-
-die Dumper $opts;
-
+        
 die usage() if exists $opts->{'help'};
 
 ### parse options
@@ -234,9 +232,6 @@ for my $name (@modules) {
                         module  => basename($name),
                         path    => dirname($name),
                         package => basename($name),
-                        
-                        ### any passed arbitrary options
-                        %{ $opts->{'dist-opts'} || {} },
                     );
 
         ### if it's a traditional CPAN package, we can tidy
@@ -279,13 +274,19 @@ for my $name (@modules) {
                         if $timeout;
                         
                     alarm $timeout || 0;
+
+                    my $dist_opts = $opts->{'dist-opts'} || {};
                     
                     my $rv = $obj->install(   
                             prereq_target   => 'create',
                             target          => 'create',
                             keep_source     => $keep,
-                            prereq_build    => $prereqbuild );
-    
+                            prereq_build    => $prereqbuild,
+
+                            ### any passed arbitrary options
+                            %$dist_opts,
+                    );
+                    
                     alarm 0; 
 
                     $rv;
@@ -435,6 +436,8 @@ Options:
                   hang or happen to be interactive despite being told not 
                   to be. Defaults to 300 seconds. To turn off, you can 
                   set it to 0.
+    --dist-opts   Arbitrary options passed along to the chosen installer
+                  format's prepare()/create() routine.
 
     ### builtin lists
     --default-banlist    Use our builtin banlist. Works just like --ban
@@ -468,7 +471,9 @@ Examples:
     cpan2dist --ignorelist /tmp/modules.ignore --banlist /tmp/modules.ban 
       --modulelist /tmp/modules.list --buildprereq --flushcache 
       --makefile --defaults
-      
+    
+    ### pass arbitrary options to the format's prepare()/create() routine
+    cpan2dist --dist-opts deb_version=3 --dist-opts prefix=corp
 
 =cut
     
