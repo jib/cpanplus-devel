@@ -389,6 +389,37 @@ sub _home_dir {
     return cwd();
 }
 
+=head2 $path = $cb->_safe_path( path => $path );
+
+Returns a path that's safe to us on Win32. Only cleans up
+the path on Win32 if the path exists.
+
+=cut
+
+sub _safe_path {
+    my $self = shift;
+    
+    my %hash = @_;
+    
+    my $path;
+    my $tmpl = {
+        path  => { required => 1,     store => \$path },
+    };       
+
+    check( $tmpl, \%hash ) or return;
+    
+    ### only need to fix it up if there's spaces in the path   
+    return $path unless $path =~ /\s+/;
+    
+    ### or if we are on win32
+    return $path if $^O ne 'MSWin32';
+
+    ### clean up paths if we are on win32
+    return Win32::GetShortPathName( $path ) || $path;
+
+}
+
+
 =head2 ($pkg, $version, $ext) = $cb->_split_package_string( package => PACKAGE_STRING );
 
 Splits the name of a CPAN package string up in it's package, version 

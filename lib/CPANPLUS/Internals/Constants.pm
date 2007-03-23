@@ -20,35 +20,6 @@ $VERSION    = 0.01;
 
 sub constants { @EXPORT };
 
-sub _fix_path {
-    my $self = shift;
-    my $path = shift or return;
-
-    ### only need to fix it up if there's spaces in the path   
-    return $path unless $path =~ /\s+/;
-    
-    ### or if we are on win32
-    return $path if $^O ne 'MSWin32';
-
-    ### clean up paths if we are on win32
-    return Win32::GetShortPathName( $path );
-
-}
-
-### F::S->catfile with win32 path fixing
-sub _catfile { 
-    my $self = shift;
-    return $self->_fix_path( File::Spec->catfile( @_ ) );
-}
-
-### F::S->catdir with win32 path fixing
-sub _catdir { 
-    my $self = shift;
-    return $self->_fix_path( File::Spec->catdir( @_ ) );
-}
-
-
-
 use constant INSTALLER_BUILD
                             => 'CPANPLUS::Dist::Build';
 use constant INSTALLER_MM   => 'CPANPLUS::Dist::MM';    
@@ -136,50 +107,50 @@ use constant DIR_EXISTS     => sub {
                             };   
 
 use constant MAKEFILE_PL    => sub { return @_
-                                        ? __PACKAGE__->_catfile( @_,
+                                        ? File::Spec->catfile( @_,
                                                             'Makefile.PL' )
                                         : 'Makefile.PL';
                             };                   
 use constant MAKEFILE       => sub { return @_
-                                        ? __PACKAGE__->_catfile( @_,
+                                        ? File::Spec->catfile( @_,
                                                             'Makefile' )
                                         : 'Makefile';
                             }; 
 use constant BUILD_PL       => sub { return @_
-                                        ? __PACKAGE__->_catfile( @_,
+                                        ? File::Spec->catfile( @_,
                                                             'Build.PL' )
                                         : 'Build.PL';
                             };
                             
 use constant BLIB           => sub { return @_
-                                        ? __PACKAGE__->_catfile(@_, 'blib')
+                                        ? File::Spec->catfile(@_, 'blib')
                                         : 'blib';
                             };                  
 
 use constant LIB            => 'lib';
 use constant LIB_DIR        => sub { return @_
-                                        ? __PACKAGE__->_catdir(@_, LIB)
+                                        ? File::Spec->catdir(@_, LIB)
                                         : LIB;
                             }; 
 use constant AUTO           => 'auto';                            
 use constant LIB_AUTO_DIR   => sub { return @_
-                                        ? __PACKAGE__->_catdir(@_, LIB, AUTO)
-                                        : __PACKAGE__->_catdir(LIB, AUTO)
+                                        ? File::Spec->catdir(@_, LIB, AUTO)
+                                        : File::Spec->catdir(LIB, AUTO)
                             }; 
 use constant ARCH           => 'arch';
 use constant ARCH_DIR       => sub { return @_
-                                        ? __PACKAGE__->_catdir(@_, ARCH)
+                                        ? File::Spec->catdir(@_, ARCH)
                                         : ARCH;
                             }; 
 use constant ARCH_AUTO_DIR  => sub { return @_
-                                        ? __PACKAGE__->_catdir(@_,ARCH,AUTO)
-                                        : __PACKAGE__->_catdir(ARCH,AUTO)
+                                        ? File::Spec->catdir(@_,ARCH,AUTO)
+                                        : File::Spec->catdir(ARCH,AUTO)
                             };                            
 
 use constant BLIB_LIBDIR    => sub { return @_
-                                        ? __PACKAGE__->_catdir(
+                                        ? File::Spec->catdir(
                                                 @_, BLIB->(), LIB )
-                                        : __PACKAGE__->_catdir( BLIB->(), LIB );
+                                        : File::Spec->catdir( BLIB->(), LIB );
                             };  
 
 use constant CONFIG_USER_LIB_DIR => sub { 
@@ -190,7 +161,7 @@ use constant CONFIG_USER_LIB_DIR => sub {
                                     );
                                 };        
 use constant CONFIG_USER_FILE    => sub {
-                                    __PACKAGE__->_catfile(
+                                    File::Spec->catfile(
                                         CONFIG_USER_LIB_DIR->(),
                                         split('::', CONFIG_USER),
                                     ) . '.pm';
@@ -203,7 +174,7 @@ use constant CONFIG_SYSTEM_FILE  => sub {
                                     );
                                 
                                     ### XXX use constants
-                                    __PACKAGE__->_catfile( 
+                                    File::Spec->catfile( 
                                         $dir, qw[Config System.pm]
                                     );
                                 };        
