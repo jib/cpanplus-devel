@@ -6,24 +6,15 @@ use CPANPLUS::Error;
 use File::Spec;
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
-BEGIN {
+require Exporter;
+use vars    qw[$VERSION @ISA @EXPORT];
 
-    require Exporter;
-    use vars    qw[$VERSION @ISA @EXPORT];
+use Package::Constants;
 
-    $VERSION    = 0.01;
-    @ISA        = qw[Exporter];
-    @EXPORT     = qw[
-                    CPAN_MAIL_ACCOUNT RELEVANT_TEST_RESULT GRADE_FAIL GRADE_NA
-                    GRADE_PASS GRADE_UNKNOWN NO_TESTS_DEFINED MAX_REPORT_SEND
-                    REPORT_MESSAGE_HEADER REPORT_MESSAGE_FAIL_HEADER
-                    TEST_FAIL_STAGE REPORT_MISSING_TESTS CPAN_TESTERS_EMAIL
-                    REPORT_MISSING_PREREQS MISSING_PREREQS_LIST 
-                    REPORT_MESSAGE_FOOTER MISSING_EXTLIBS_LIST
-                    PERL_VERSION_TOO_LOW REPORT_LOADED_PREREQS UNSUPPORTED_OS
-                    REPORT_TESTS_SKIPPED
-                ];
-}
+
+$VERSION    = 0.01;
+@ISA        = qw[Exporter];
+@EXPORT     = Package::Constants->list( __PACKAGE__ );
 
 ### for the version
 require CPANPLUS::Internals;
