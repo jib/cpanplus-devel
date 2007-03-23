@@ -363,9 +363,14 @@ SKIP: {
     my $rv = $dist->prepare( force => 1, verbose => 0 );
     ok( !$rv,                   '   $dist->prepare failed' );
 
-    my $re = quotemeta( $makefile_pl );
-    like( CPANPLUS::Error->stack_as_string, qr/ENV=$re/,
+    SKIP: {
+        skip( "Can't test ENV{$env} -- no buffers available", 1 )
+            unless IPC::Cmd->can_capture_buffer;
+
+        my $re = quotemeta( $makefile_pl );
+        like( CPANPLUS::Error->stack_as_string, qr/ENV=$re/,
                                 "   \$ENV $env set correctly during execution");
+    }
 
     ### and the ENV var should no longer be set now
     ok( !$ENV{$env},            "   ENV var now unset" );
