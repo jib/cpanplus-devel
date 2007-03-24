@@ -99,6 +99,8 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
                 => [ 'FROO',                'Flub-Flob',        '1.1_2' ],   
         'LDS/CGI.pm-3.27.tar.gz'
                 => [ 'LDS',                 'CGI',              '3.27' ],
+        'FROO/Text-Tabs+Wrap-2006.1117.tar.gz',
+                => [ 'FROO',                'Text-Tabs+Wrap',   '2006.1117' ],   
     );       
 
     while ( my($guess, $attr) = splice @map, 0, 2 ) {

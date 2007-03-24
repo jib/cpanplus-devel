@@ -433,7 +433,7 @@ For example, C<Foo-Bar-1.2.tar.gz> would return the following parts:
 
 =cut
 
-{   my $del_re = qr/[-_]/i;             # delimiter between elements
+{   my $del_re = qr/[-_\+]/i;           # delimiter between elements
     my $pkg_re = qr/[a-z]               # any letters followed by 
                     [a-z\d]*            # any letters, numbers
                     (?i:\.pm)?          # followed by '.pm'--authors do this :(
