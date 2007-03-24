@@ -276,8 +276,6 @@ for my $name (@modules) {
                     alarm $timeout || 0;
 
                     my $dist_opts = $opts->{'dist-opts'} || {};
-                    
-                    my $dist_opts = $opts->{'dist-opts'} || {};
 
                     my $rv = $obj->install(   
                             prereq_target   => 'create',
