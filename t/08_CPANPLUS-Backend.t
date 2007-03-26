@@ -99,8 +99,11 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
                 => [ 'FROO',                'Flub-Flob',        '1.1_2' ],   
         'LDS/CGI.pm-3.27.tar.gz'
                 => [ 'LDS',                 'CGI',              '3.27' ],
-        'FROO/Text-Tabs+Wrap-2006.1117.tar.gz',
+        'FROO/Text-Tabs+Wrap-2006.1117.tar.gz'
                 => [ 'FROO',                'Text-Tabs+Wrap',   '2006.1117' ],   
+        'JETTERO/Crypt-PBC-0.7.20.0-0.4.9',
+                => [ 'JETTERO',             'Crypt-PBC',    '0.7.20.0-0.4.9' ],   
+                
     );       
 
     while ( my($guess, $attr) = splice @map, 0, 2 ) {
