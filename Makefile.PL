@@ -152,8 +152,10 @@ Or let your package manager take care of it.
 ### write the makefile.pl
 {   my $su      = $Backend->selfupdate_object;
     my %prereq  = ( %{ $su->list_core_dependencies( 'AS_HASH' ) },
-                    map { %{ $su->modules_for_feature( $_, 'AS_HASH' ) } }
-                        $su->list_enabled_features
+                    map { ### might not need anything -- make sure we
+                          ### place an empty hash ref there
+                          %{ $su->modules_for_feature( $_, 'AS_HASH' ) || {} } 
+                    } $su->list_enabled_features
                 );
 
     ### restore the original @INC, so proper probing of missing 
@@ -165,7 +167,7 @@ Or let your package manager take care of it.
     version_from    ('lib/CPANPLUS/Internals.pm');
     license         ('perl');
     no_index        ( directory => 'lib/CPANPLUS/inc' );
-    install_script  ($_) for glob('bin/*');
+    install_script  ($_) for grep { $_ !~ /cpanp-boxed/ } glob('bin/*');
     requires        (%prereq);
     makemaker_args  ( test => { TESTS => $Tests } ) if $Tests;
     makemaker_args  ( clean => { FILES => 
