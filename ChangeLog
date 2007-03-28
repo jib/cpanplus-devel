@@ -1,3 +1,14 @@
+Changes for 0.77_07     Fri Mar 23 17:19:07 CET 2007
+=====================================================
+* Smoke test revealed issue that PERL5_CPANPLUS_IS_VERSION
+  may not be formatted identically as $CPANPLUS::VERSION
+  if certain versions of 'version.pm' are loaded. This is
+  now addressed.
+* Tests for CPANPLUS::Dist::MM would fail on Win32 if the
+  path to the Makefile.PL contains spaces. This is now 
+  addressed by calling Win32::GetShortPathName() if run
+  on Win32.
+  
 Changes for 0.77_06     Fri Mar 23 13:29:54 CET 2007
 =====================================================
 * Various test reporting fixes;
