@@ -30,7 +30,7 @@ A sample file might look like this:
     p /home/kane/cpan-autotest/log
     
     # and inform us we're good to go
-    ! print "Autotest comple, log stored; please enter your commands!"
+    ! print "Autotest complete, log stored; please enter your commands!"
 
 Note how empty lines, and lines starting with a '#' are being skipped
 in the execution.
@@ -76,20 +76,21 @@ sub source_help {
 
 =pod
 
+=head1 BUG REPORTS
+
+Please report bugs or other issues to E<lt>bug-cpanplus@rt.cpan.org<gt>.
+
 =head1 AUTHOR
 
-This module by
-Jos Boumans E<lt>kane@cpan.orgE<gt>.
+This module by Jos Boumans E<lt>kane@cpan.orgE<gt>.
 
 =head1 COPYRIGHT
 
-The CPAN++ interface (of which this module is a part of) is
-copyright (c) 2005, Jos Boumans E<lt>kane@cpan.orgE<gt>.
-All rights reserved.
+The CPAN++ interface (of which this module is a part of) is copyright (c) 
+2001 - 2007, Jos Boumans E<lt>kane@cpan.orgE<gt>. All rights reserved.
 
-This library is free software;
-you may redistribute and/or modify it under the same
-terms as Perl itself.
+This library is free software; you may redistribute and/or modify it 
+under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
