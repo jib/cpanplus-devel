@@ -167,6 +167,7 @@ Or let your package manager take care of it.
     version_from    ('lib/CPANPLUS/Internals.pm');
     license         ('perl');
     no_index        ( directory => 'lib/CPANPLUS/inc' );
+    installdirs     ( $] >= 5.009005 ? 'perl' : 'site' ),
     install_script  ($_) for grep { $_ !~ /cpanp-boxed/ } glob('bin/*');
     requires        (%prereq);
     makemaker_args  ( test => { TESTS => $Tests } ) if $Tests;

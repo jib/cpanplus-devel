@@ -1,3 +1,12 @@
+Changes for 0.78        Sat Mar 31 18:26:13 CEST 2007
+=====================================================
+* Promote 0.77_07 to stable
+* Update license & contact information
+* Make sure we don't install 'cpanp-boxed' when running
+  'make install'.
+* Update bundled version of Module::Install
+* Set install target to 'perl' for perl5.9.5 and higher
+
 Changes for 0.77_07     Fri Mar 23 17:19:07 CET 2007
 =====================================================
 * Smoke test revealed issue that PERL5_CPANPLUS_IS_VERSION
