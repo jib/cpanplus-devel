@@ -244,11 +244,6 @@ The CPAN++ interface (of which this module is a part of) is copyright (c)
 This library is free software; you may redistribute and/or modify it 
 under the same terms as Perl itself.
 
-=head1 ACKNOWLEDGEMENTS
-
-Please see the F<AUTHORS> file in the CPANPLUS distribution
-for a list of Credits and Contributors.
-
 =head1 SEE ALSO
 
 L<CPANPLUS::Shell::Default>, L<CPANPLUS::FAQ>, L<CPANPLUS::Backend>, L<CPANPLUS::Module>, L<cpanp>, L<cpan2dist>
@@ -257,13 +252,10 @@ L<CPANPLUS::Shell::Default>, L<CPANPLUS::FAQ>, L<CPANPLUS::Backend>, L<CPANPLUS:
 
 =over 4
 
-=item * General questions & suggestions:
-I<cpanplus-info@lists.sourceforge.net>
-
 =item * Bug reporting:
 I<bug-cpanplus@rt.cpan.org>
 
-=item * Development list:
+=item * Questions & suggestions:
 I<cpanplus-devel@lists.sourceforge.net>
 
 =back
