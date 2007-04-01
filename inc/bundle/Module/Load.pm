@@ -154,20 +154,22 @@ C<Module::Load> cannot do implicit imports, only explicit imports.
 to import from a module, even if the functions are in that modules'
 C<@EXPORT>)
 
+=head1 ACKNOWLEDGEMENTS
+
+Thanks to Jonas B. Nielsen for making explicit imports work.
+
+=head1 BUG REPORTS
+
+Please report bugs or other issues to E<lt>bug-module-load@rt.cpan.org<gt>.
+
 =head1 AUTHOR
 
 This module by Jos Boumans E<lt>kane@cpan.orgE<gt>.
 
-Thanks to Jonas B. Nielsen for making explicit imports work.
-
 =head1 COPYRIGHT
 
-This module is
-copyright (c) 2002 Jos Boumans E<lt>kane@cpan.orgE<gt>.
-All rights reserved.
+This library is free software; you may redistribute and/or modify it 
+under the same terms as Perl itself.
 
-This library is free software;
-you may redistribute and/or modify it under the same
-terms as Perl itself.
 
 =cut                               

@@ -730,20 +730,18 @@ You can track the bug here:
 
     http://rt.cpan.org/Ticket/Display.html?id=1827
 
+=head1 BUG REPORTS
+
+Please report bugs or other issues to E<lt>bug-object-accessor@rt.cpan.orgE<gt>.
+
 =head1 AUTHOR
 
-This module by
-Jos Boumans E<lt>kane@cpan.orgE<gt>.
+This module by Jos Boumans E<lt>kane@cpan.orgE<gt>.
 
 =head1 COPYRIGHT
 
-This module is
-copyright (c) 2004-2005 Jos Boumans E<lt>kane@cpan.orgE<gt>.
-All rights reserved.
-
-This library is free software;
-you may redistribute and/or modify it under the same
-terms as Perl itself.
+This library is free software; you may redistribute and/or modify it 
+under the same terms as Perl itself.
 
 =cut
 
