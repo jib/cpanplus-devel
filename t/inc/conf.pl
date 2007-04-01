@@ -29,7 +29,10 @@ BEGIN {
                     grep { defined } "$FindBin::Bin/../bin", $ENV{'PATH'};
 
     ### Fix up the path to perl, as we're about to chdir
-    $^X = File::Spec->rel2abs( $^X );
+    ### but only under perlcore, or if the path contains delimiters,
+    ### meaning it's relative, but not looked up in your $PATH
+    $^X = File::Spec->rel2abs( $^X ) 
+        if $ENV{PERL_CORE} or ( $^X =~ m|[/\\]| );
 
     ### chdir to our own test dir, so we know all files are relative 
     ### to this point, no matter whether run from perlcore tests or
