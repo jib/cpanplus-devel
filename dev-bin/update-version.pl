@@ -6,7 +6,7 @@ my %Files = (
                 lib/CPANPLUS/Internals.pm
                 lib/CPANPLUS/Shell/Default.pm
             ]],
-    qq[s/version:.*\$/version: $Ver/]                  
+    qq[s/^version:.*\$/version: $Ver/]                  
         => [qw[ META.yml]],
 );        
 
