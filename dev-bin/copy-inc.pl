@@ -1,5 +1,6 @@
 use strict;
 use Cwd;
+use File::Path qw[mkpath];
 use CPANPLUS::Backend;
 
 my $Prefix      = '../';           # updir from cpanplus/devel 
@@ -99,7 +100,10 @@ unless( $MineOnly ) {
         my @parts = split '::', $module;
         my $file = pop(@parts) . '.pm';
         if ( -e $file ) {
-            my $to = $Target . '/' . join '/', @parts, $file;
+            my $tdir = $Target . '/' . join '/', @parts;
+            mkpath($tdir) unless -d $tdir;
+        
+            my $to =  join '/', $tdir, $file;
             system("cp $file $to") and die "Could not copy $file to $to: $!\n";
             
             print "done\n";
