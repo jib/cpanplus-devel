@@ -19,16 +19,6 @@ my $conf = gimme_conf();
 
 ### Redirect errors to file ###
 local $CPANPLUS::Error::ERROR_FH = output_handle() unless @ARGV;
-BEGIN { 
-    if( $ENV{PERL_CORE} ) {
-        chdir '../lib/CPANPLUS' if -d '../lib/CPANPLUS';
-        unshift @INC, '../../../lib';
-    
-        ### fix perl location too
-        $^X = '../../../t/' . $^X;
-    }
-} 
-
 local $CPANPLUS::Error::MSG_FH   = output_handle() unless @ARGV;
 
 my $cb = CPANPLUS::Backend->new( $conf );
