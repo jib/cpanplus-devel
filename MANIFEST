@@ -105,6 +105,7 @@ t/07_CPANPLUS-Internals-Extract.t
 t/08_CPANPLUS-Backend.t
 t/09_CPANPLUS-Internals-Search.t
 t/10_CPANPLUS-Error.t
+t/15_CPANPLUS-Shell.t
 t/19_CPANPLUS-Dist.t
 t/20_CPANPLUS-Dist-MM.t
 t/21_CPANPLUS-Dist-No-Build.t
