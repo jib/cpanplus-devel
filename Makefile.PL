@@ -174,7 +174,7 @@ Or let your package manager take care of it.
     makemaker_args  ( clean => { FILES => 
                         't/.*.output t/*.rpt ' . 
                         't/dummy-cpanplus/* t/dummy-cpanplus/.cpanplus '.
-                        't/dummy-localmirror/* ' .
+                        't/dummy-localmirror/* ' . 't/dummy-perl/arch ' .
                         't/dummy-perl/bin/* ' . 't/dummy-perl/lib/* ' .
                         't/dummy-perl/man/man1/* ' . 't/dummy-perl/man/man3/*'
                     } );
