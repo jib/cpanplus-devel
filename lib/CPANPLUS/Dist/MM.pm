@@ -376,7 +376,7 @@ sub prepare {
         
         ### start resolving prereqs ###
         my $prereqs = $self->status->prereqs;
-        
+       
         ### a hashref of prereqs on success, undef on failure ###
         $prereqs    ||= $dist->_find_prereqs( 
                                     verbose => $verbose,
