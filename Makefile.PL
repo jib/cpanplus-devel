@@ -172,7 +172,7 @@ Or let your package manager take care of it.
     requires        (%prereq);
     makemaker_args  ( test => { TESTS => $Tests } ) if $Tests;
     makemaker_args  ( clean => { FILES => 
-                        't/.*.output t/*.rpt ' . 
+                        '.cpanplus t/.*.output t/*.rpt ' . 
                         't/dummy-cpanplus/* t/dummy-cpanplus/.cpanplus '.
                         't/dummy-localmirror/* ' . 't/dummy-perl/arch ' .
                         't/dummy-perl/bin/* ' . 't/dummy-perl/lib/* ' .
