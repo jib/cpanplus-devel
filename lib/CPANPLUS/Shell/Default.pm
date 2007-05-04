@@ -1152,7 +1152,10 @@ sub _set_conf {
         unless( $valid{$key} ) {
             print loc( "To update your current CPANPLUS installation, ".
                         "choose one of the these options:\n%1",
-                        (join $/, map {"\ts selfupdate $_"} sort keys %valid) );          
+                        ( join $/, map { 
+                             sprintf "\ts selfupdate %-17s [--latest=0]", $_ 
+                          } sort keys %valid ) 
+                    );          
         } else {
             print loc( "Updating your CPANPLUS installation\n" );
             $cb->selfupdate_object->selfupdate( 
