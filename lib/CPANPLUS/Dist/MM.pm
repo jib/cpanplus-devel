@@ -142,7 +142,7 @@ sub format_available {
         return;
     }
     
-    for my $pgm ( qw[make perlwrapper] ) {
+    for my $pgm ( qw[make] ) {
         unless( $conf->get_program( $pgm ) ) { 
             error(loc(
                 "You do not have '%1' in your path -- '%2' not available\n" .
