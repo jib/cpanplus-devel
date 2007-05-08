@@ -1070,7 +1070,15 @@ sub _set_conf {
 
     ### possible options
     ### XXX hard coded, not optimal :(
-    my @types   = qw[reconfigure save edit program conf mirrors selfupdate];
+    my %types   = (
+        reconfigure => '', 
+        save        => q([user | system | boxed]),
+        edit        => '',
+        program     => q([key => val]),
+        conf        => q([key => val]),
+        mirrors     => '',
+        selfupdate  => '',  # XXX add all opts here?
+    );
 
 
     my $args; my $opts; my $input;
@@ -1099,13 +1107,28 @@ sub _set_conf {
         my $where = {
             user    => CONFIG_USER,
             system  => CONFIG_SYSTEM,
-            #boxed   => CONFIG_BOXED,
+            boxed   => CONFIG_BOXED,
         }->{ $key } || CONFIG_USER;      
         
-        my $rv = $cb->configure_object->save( $where );
+        ### boxed is special, so let's get it's value from %INC
+        ### so we can tell it where to save
+        ### XXX perhaps this logic should be generic for all
+        ### types, and put in the ->save() routine
+        my $dir;
+        if( $where eq CONFIG_BOXED ) {
+            my $file    = join( '/', split( '::', CONFIG_BOXED ) ) . '.pm';
+            my $file_re = quotemeta($file);
+            
+            my $path    = $INC{$file} || '';
+            $path       =~ s/$file_re$//;        
+            $dir        = $path;
+        }     
+        
+        my $rv = $cb->configure_object->save( $where => $dir );
 
         print $rv
-                ? loc("Configuration successfully saved to %1\n", $where)
+                ? loc("Configuration successfully saved to %1\n    (%2)\n",
+                       $where, $rv)
                 : loc("Failed to save configuration\n" );
         return $rv;
 
@@ -1205,7 +1228,9 @@ sub _set_conf {
             print loc("Unknown type '%1'",$type || 'EMPTY' );
             print $/;
             print loc("Try one of the following:");
-            print $/, join $/, map { "\t'$_'" } sort @types;
+            print $/, join $/, 
+                      map { sprintf "\t%-11s %s", $_, $types{$_} } 
+                      sort keys %types;
         }
     }
     print "\n";

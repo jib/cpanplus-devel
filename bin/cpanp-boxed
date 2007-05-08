@@ -131,6 +131,9 @@ Your boxed CPANPLUS install is setup to use:
   Basedir:  $BASE
   Config:   $ConfigFile
 
+If you wish to save your boxed configuration, please type:
+  s save boxed
+
 You can bootstrap your CPANPLUS by running:
   s selfupdate dependencies
   s selfupdate enabled_features
