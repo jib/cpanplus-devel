@@ -1,3 +1,43 @@
+Changes for 0.79_02     Tue May  8 13:14:12 2007
+================================================
+* address #26914 : CPANPLUS depending on Crypt::OpenPGP even when gpg
+  is available. Change heuristics so we always use gpg when it's there 
+  and don't suggest to install Crypt::OpenPGP, as it's quite broken on 
+  a lot of platforms. This may cause a warning or 2, but all will 
+  continue to work
+* Logic bug in 'selfupdate --latest=0' is now fixed, with --latest=0
+  selfupdate should no longer be picking the newest version from CPAN 
+  if the current version is good enough
+* let perlwrapper be '' as well -- '-P' actually changes the format
+  of some generated Makefiles
+* perlwrapper is no longer required to have Dist::MM to be available
+* apply Change 31121 by steveh@mugwump on 2007/05/03 07:51:17
+  this gets around the 'read only' issue of some files in perl-core
+  when rsynced/extracted from uupacktool under win32
+* cleanup t/.cpanplus dir when doing 'make clean' as well.
+* make sure we pass 'prereq_format' along, so prereqs get packaged
+  properly as well. This addresses a mail from Hans Dieter Pearcey (hdp@icgroup.com) raising the issue.
+
+Changes for 0.79_01     Sun Apr 22 09:57:45 2007
+================================================
+* Updates to integrate perl-core integration. Regular users
+  do not need to upgrade.
+* Add clean up calls at the end of the tests as well if 
+  we're run from perl core. this is because perl core 
+  doesn't invoke our 'make clean', and files will be
+  left that aren't in the manifest.
+* Make the scan for 'cpanp-run-perl' also consider cpanp-run-
+  perl5.X.Y as it may be installed with the perl version as 
+  suffix explicitly
+* address: 26077: dependency on itself; CPANPLUS had a 
+  depenendency on the shell class you set as a default, even
+  if that was a shell provided with CPANPLUS itself.
+  This caused CPAN.pm to throw a fatal error, as it did not 
+  know how to resolve this dependency. CPANPLUS users were 
+  unaffected. Now, no dependency is added if the selected 
+  shell is bundled with CPANPLUS itself.
+* Add simple loadtest for CPANPLUS::Shell
+
 Changes for 0.78        Sat Mar 31 18:26:13 CEST 2007
 =====================================================
 * Promote 0.77_07 to stable
