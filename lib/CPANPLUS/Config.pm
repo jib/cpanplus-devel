@@ -262,7 +262,7 @@ sub _clean_up_paths {
         for my $pgm ( $self->program->ls_accessors ) {
             $self->program->$pgm(
                 Win32::GetShortPathName( $self->program->$pgm )
-            ) if $self->program->$pgm =~ /\s+/;      
+            ) if $self->program->$pgm and $self->program->$pgm =~ /\s+/;      
         }
     }
 

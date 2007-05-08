@@ -104,7 +104,7 @@ use CPANPLUS::Internals::Utils;
 
 ### setup the configuration
 my $ConfObj     = CPANPLUS::Configure->new;
-my $Config      = 'CPANPLUS::Config::Boxed';
+my $Config      = CONFIG_BOXED;
 my $Util        = 'CPANPLUS::Internals::Utils';
 my $ConfigFile  = $ConfObj->_config_pm_to_file( $Config => $PRIV_LIB );
 

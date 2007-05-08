@@ -1099,6 +1099,7 @@ sub _set_conf {
         my $where = {
             user    => CONFIG_USER,
             system  => CONFIG_SYSTEM,
+            #boxed   => CONFIG_BOXED,
         }->{ $key } || CONFIG_USER;      
         
         my $rv = $cb->configure_object->save( $where );
@@ -1641,7 +1642,7 @@ sub _read_configuration_from_rc {
         loc( "You can turn off these tips using '%1'", 
              's conf show_startup_tip 0' ),
         loc( "You can use wildcards like '%1' and '%2' on search results",
-             '*', '..' ),
+             '*', '2..5' ) ,
         loc( "You can use plugins. Type '%1' to list available plugins",
              '/plugins' ),
         loc( "You can show all your out of date modules using '%1'", 'o' ),  
@@ -1650,6 +1651,7 @@ sub _read_configuration_from_rc {
         loc( "The documentation in %1 and %2 is very useful",
              "CPANPLUS::Module", "CPANPLUS::Backend" ),
         loc( "You can type '%1' for help and '%2' to exit", 'h', 'q' ),
+        loc( "You can run an interactive setup using '%1'", 's reconfigure' ),          
     );
     
     sub _show_random_tip {
