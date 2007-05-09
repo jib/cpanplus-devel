@@ -202,6 +202,11 @@ sub new {
             code    => \&__ask_about_send_test_report,
     );
 
+    $cb->_register_callback(
+            name    => 'proceed_on_test_failure',
+            code    => \&__ask_about_test_failure,
+    );
+
 
     return $self;
 }
@@ -971,6 +976,23 @@ sub __ask_about_edit_test_report {
     return $bool;
 }
 
+sub __ask_about_test_failure {
+    my $mod         = shift;
+    my $captured    = shift || '';
+    my $term        = $Shell->term;
+
+    print "\n";
+    print loc(  "The tests for '%1' failed. Would you like me to proceed ".
+                "anyway or should we abort?", $mod->module );
+    print "\n\n";
+    
+    my $bool =  $term->ask_yn(
+                    prompt  => loc("Proceed anyway?"),
+                    default => 'n',
+                );
+
+    return $bool;
+}
 
 
 sub _details {
