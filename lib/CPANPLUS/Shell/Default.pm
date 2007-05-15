@@ -849,7 +849,7 @@ sub _install {
     my $status = {};
     ### first loop over the mods to install them ###
     for my $mod (@$mods) {
-        print $prompt, $mod->module, "\n";
+        print $prompt, $mod->module, " (".$mod->version.")", "\n";
 
         my $log_length = length CPANPLUS::Error->stack_as_string;
     
