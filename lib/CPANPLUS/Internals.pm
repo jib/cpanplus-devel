@@ -99,6 +99,8 @@ for my $key ( qw[_conf _id _lib _perl5lib _modules _hosts _methods _status
 
 =pod
 
+=back
+
 =head1 METHODS
 
 =head2 $internals = CPANPLUS::Internals->_init( _conf => CONFIG_OBJ )
