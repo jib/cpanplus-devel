@@ -148,7 +148,7 @@ $cb->reload_indices() if $opts->{'flushcache'};
         my $mod = shift;
         
         for my $pat ( @ban ) {
-            return $pat if $mod->module =~ /$pat/;
+            return $pat if $mod->module =~ /$pat/i;
         }
         return;
     }
@@ -202,8 +202,8 @@ $cb->reload_indices() if $opts->{'flushcache'};
         my $mod = shift;
         
         for my $pat ( @ignore ) {
-            return $pat if $mod->module =~ /$pat/;
-            return $pat if $mod->package_name =~ /$pat/;
+            return $pat if $mod->module =~ /$pat/i;
+            return $pat if $mod->package_name =~ /$pat/i;
         }
         return;
     }   
@@ -413,8 +413,9 @@ Options:
 
     ### take argument:
     --format      Installer format to use (defaults to config setting)
-    --ban         Patterns of module names to skip during installation 
-                  (affects prerequisites too) May be given multiple times
+    --ban         Patterns of module names to skip during installation,
+                  case-insensitive (affects prerequisites too)
+                  May be given multiple times
     --banlist     File containing patterns that could be given to --ban
                   Are appended to the ban list built up by --ban
                   May be given multiple times.
@@ -422,9 +423,9 @@ Options:
                   for when a prereq listed by a CPAN module is resolved 
                   in another way than from its corresponding CPAN package
                   (Match is done on both module name, and package name of
-                  the package the module is in)
+                  the package the module is in, case-insensitive)
     --ignorelist  File containing patterns that may be given to --ignore.
-                  Are appended to the ban list build up by --ignore.
+                  Are appended to the ban list built up by --ignore.
                   May be given multiple times.
     --modulelist  File containing a list of modules that should be built.
                   Are appended to the list of command line modules.
