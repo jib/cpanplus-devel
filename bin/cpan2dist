@@ -136,10 +136,10 @@ $cb->reload_indices() if $opts->{'flushcache'};
         ### the die came from this location, and that it's an
         ### 'acceptable' death
         my $pat = ban_me( $prereq );
-        die bless \(loc("Module '%1' requires '%2' to be installed " .
-                    "but found in your ban list (%3) -- skipping",
-                    $mod->module, $prereq->module, $pat )),
-                    PREREQ_SKIP_CLASS if $pat;
+        die bless sub { loc("Module '%1' requires '%2' to be installed " .
+                        "but found in your ban list (%3) -- skipping",
+                        $mod->module, $prereq->module, $pat ) 
+                  }, PREREQ_SKIP_CLASS if $pat;
         return 1;
     }    
     
@@ -298,7 +298,7 @@ for my $name (@modules) {
     ### install failed due to a 'die' in our prereq skipper?
     if( $@ and ref $@ and $@->isa( PREREQ_SKIP_CLASS ) ) {
         warn loc("Dist creation of '%1' skipped: '%2'", 
-                    $obj->module, ${$@} );
+                    $obj->module, $@->() );
         next;
 
     } elsif ( $@ and ref $@ and $@->isa( ALARM_CLASS ) ) {
