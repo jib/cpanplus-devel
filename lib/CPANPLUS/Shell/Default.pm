@@ -1193,22 +1193,51 @@ sub _set_conf {
 
     } elsif ( $type eq 'selfupdate' ) {
         my %valid = map { $_ => $_ } 
-                        qw|core dependencies enabled_features features all|;
+                        $cb->selfupdate_object->list_categories;    
 
         unless( $valid{$key} ) {
             print loc( "To update your current CPANPLUS installation, ".
                         "choose one of the these options:\n%1",
                         ( join $/, map { 
-                             sprintf "\ts selfupdate %-17s [--latest=0]", $_ 
+                             sprintf "\ts selfupdate %-17s " .
+                                     "[--latest=0] [--dryrun]", $_ 
                           } sort keys %valid ) 
                     );          
         } else {
-            print loc( "Updating your CPANPLUS installation\n" );
-            $cb->selfupdate_object->selfupdate( 
-                                    update  => $key, 
-                                    latest  => 1,
-                                    %$opts 
-                                );
+            my %update_args = (
+                update  => $key,
+                latest  => 1,
+                %$opts
+            );
+
+
+            my %list = $cb->selfupdate_object
+                            ->list_modules_to_update( %update_args );
+
+            print loc( "The following updates will take place:" ), $/.$/;
+            
+            for my $feature ( sort keys %list ) {
+                my $aref = $list{$feature};
+                
+                ### is it a 'feature' or a built in?
+                print $valid{$feature} 
+                    ? "  " . ucfirst($feature) . ":\n"
+                    : "  Modules for '$feature' support:\n";
+                    
+                ### show what modules would be installed    
+                print scalar @$aref
+                    ? map { sprintf "    %-42s %-6s -> %-6s \n", 
+                            $_->name, $_->installed_version, $_->version
+                      } @$aref      
+                    : "    No upgrades required\n";                                                  
+                print $/;
+            }
+            
+        
+            unless( $opts->{'dryrun'} ) { 
+                print loc( "Updating your CPANPLUS installation\n" );
+                $cb->selfupdate_object->selfupdate( %update_args );
+            }
         }
         
     } else {
