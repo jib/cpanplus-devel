@@ -1,23 +1,3 @@
-Changes for 0.79_02     Tue May  8 13:14:12 2007
-================================================
-* address #26914 : CPANPLUS depending on Crypt::OpenPGP even when gpg
-  is available. Change heuristics so we always use gpg when it's there 
-  and don't suggest to install Crypt::OpenPGP, as it's quite broken on 
-  a lot of platforms. This may cause a warning or 2, but all will 
-  continue to work
-* Logic bug in 'selfupdate --latest=0' is now fixed, with --latest=0
-  selfupdate should no longer be picking the newest version from CPAN 
-  if the current version is good enough
-* let perlwrapper be '' as well -- '-P' actually changes the format
-  of some generated Makefiles
-* perlwrapper is no longer required to have Dist::MM to be available
-* apply Change 31121 by steveh@mugwump on 2007/05/03 07:51:17
-  this gets around the 'read only' issue of some files in perl-core
-  when rsynced/extracted from uupacktool under win32
-* cleanup t/.cpanplus dir when doing 'make clean' as well.
-* make sure we pass 'prereq_format' along, so prereqs get packaged
-  properly as well. This addresses a mail from Hans Dieter Pearcey (hdp@icgroup.com) raising the issue.
-
 Changes for 0.79_01     Sun Apr 22 09:57:45 2007
 ================================================
 * Updates to integrate perl-core integration. Regular users
