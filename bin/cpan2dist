@@ -9,6 +9,8 @@ use File::Spec;
 use File::Basename;
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
+local $Data::Dumper::Indent = 1;
+
 use constant PREREQ_SKIP_CLASS  => 'CPANPLUS::To::Dist::PREREQ_SKIP';
 use constant ALARM_CLASS        => 'CPANPLUS::To::Dist::ALARM';
 
@@ -23,17 +25,17 @@ my %formats = map { $_ => $_ } CPANPLUS::Dist->dist_types;
 
 my $opts    = {};
 GetOptions( $opts,
-            'format=s',     'archive',
-            'verbose!',     'force!',
-            'skiptest!',    'keepsource!',
-            'makefile!',    'buildprereq!',
-            'help',         'flushcache',
-            'ban=s@',       'banlist=s@',
-            'ignore=s@',    'ignorelist=s@',
-            'defaults',     'modulelist=s@',
-            'logfile=s',    'timeout=s',
-            'dist-opts=s%',
-            'default-banlist!',
+            'format=s',             'archive',
+            'verbose!',             'force!',
+            'skiptest!',            'keepsource!',
+            'makefile!',            'buildprereq!',
+            'help',                 'flushcache',
+            'ban=s@',               'banlist=s@',
+            'ignore=s@',            'ignorelist=s@',
+            'defaults',             'modulelist=s@',
+            'logfile=s',            'timeout=s',
+            'dist-opts=s%',         'set-config=s%',
+            'default-banlist!',     'set-program=s%',
             'default-ignorelist!',
         );
         
@@ -61,18 +63,38 @@ my $format;
     die loc("Invalid format: " . ($format || "[NONE]") ) . usage() 
         unless $formats{$format};
 
-    my %map = ( verbose     => 'verbose',
-                force       => 'force',
-                skiptest    => 'skiptest',
-                makefile    => 'prefer_makefile'
-            );
-            
-    ### set config options from arguments        
-    while (my($key,$val) = each %map) {
-        my $bool = exists $opts->{$key} ? $opts->{$key} : $conf->get_conf($val);
-        $conf->set_conf( $val => $bool );
-    }    
+    ### any options to fix config entries
+    {   my $set_conf = $opts->{'set-config'} || {};
+        while( my($key,$val) = each %$set_conf ) {
+            $conf->set_conf( $key => $val );
+        }
+    }        
+
+    ### any options to fix program entries
+    {   my $set_prog = $opts->{'set-program'} || {};
+        while( my($key,$val) = each %$set_prog ) {
+            $conf->set_program( $key => $val );
+        }
+    }        
+
+    ### any other options passed
+    {   my %map = ( verbose     => 'verbose',
+                    force       => 'force',
+                    skiptest    => 'skiptest',
+                    makefile    => 'prefer_makefile'
+                );
+                
+        ### set config options from arguments        
+        while (my($key,$val) = each %map) {
+            my $bool = exists $opts->{$key} 
+                            ? $opts->{$key} 
+                            : $conf->get_conf($val);
+            $conf->set_conf( $val => $bool );
+        }    
+    }        
 }
+
+die Dumper $conf;
 
 my @modules = @ARGV;
 if( exists $opts->{'modulelist'} ) {
@@ -437,8 +459,16 @@ Options:
                   hang or happen to be interactive despite being told not 
                   to be. Defaults to 300 seconds. To turn off, you can 
                   set it to 0.
+    --set-config  Change any options as specified in your config for this
+                  invocation only. See CPANPLUS::Config for a list of 
+                  supported options.
+    --set-program Change any programs as specified in your config for this
+                  invocation only. See CPANPLUS::Config for a list of 
+                  supported programs.
     --dist-opts   Arbitrary options passed along to the chosen installer
-                  format's prepare()/create() routine.
+                  format's prepare()/create() routine. Please see the
+                  documentation of the installer of your choice for 
+                  options it accepts.
 
     ### builtin lists
     --default-banlist    Use our builtin banlist. Works just like --ban
@@ -454,7 +484,7 @@ Examples:
     ### don't bother running tests
     cpan2dist --format CPANPLUS::Dist::Deb --buildprereq --skiptest DBI
     
-    ### Build a package, whose format is determined by your config of 
+    ### Build a package, whose format is determined by your config, of 
     ### the local tarball, reloading cpanplus' indices first and using
     ### the tarballs Makefile.PL if it has one.
     cpan2dist --makefile --flushcache --archive /path/to/Cwd-1.0.tgz
