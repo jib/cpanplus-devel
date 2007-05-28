@@ -1,3 +1,52 @@
+Changes for 0.79_03     Fri May 18 19:44:35 2007
+================================================
+* address: #27057: Dry runs and dep tree. Make it possible to view 
+  which modules will be updated for what reasons when running
+  'selfupdate'. 's selfupdate' in the shell now prints this 
+  dependency tree out and also offers a --dryrun option
+* address: #27174: No way to pass case-insensitive patterns to
+  ignorelist; All --ignore/--ban options for cpan2dist are now case 
+  insensitive
+* address: #26583: display of installed/required in report is
+  confusing; Add a header to the columns generated for clarity
+* tweak test conf to play nicer with perl core
+* show version number when testing/installing
+* add callback to allow to continue after a failed 'make test' 
+  or 'build test'
+* reapply core patch #31028 -- it got lost somehow
+  this fixes test setups under perl_core
+* add --set-config and --set-program to cpan2dist to overwrite
+  random config entries for this invocation only
+* document all the options in CPANPLUS::Config
+* make saving cpanp-boxed config Just Work and add a banner to 
+  cpanp-boxed to tell you how to
+* expand the help text for 's' with options where applicable
+* clarify * and .. hint in default shell
+* silence warning in config.pm when a path to an .exe is not defined
+* The test suite now adds the '/nologo' option when the user
+  has 'nmake.exe' configured as their 'make' program, to limit
+  the amount of noise on the terminal.
+
+Changes for 0.79_02     Tue May  8 13:14:12 2007
+================================================
+* address #26914 : CPANPLUS depending on Crypt::OpenPGP even when gpg
+  is available. Change heuristics so we always use gpg when it's there 
+  and don't suggest to install Crypt::OpenPGP, as it's quite broken on 
+  a lot of platforms. This may cause a warning or 2, but all will 
+  continue to work
+* Logic bug in 'selfupdate --latest=0' is now fixed, with --latest=0
+  selfupdate should no longer be picking the newest version from CPAN 
+  if the current version is good enough
+* let perlwrapper be '' as well -- '-P' actually changes the format
+  of some generated Makefiles
+* perlwrapper is no longer required to have Dist::MM to be available
+* apply Change 31121 by steveh@mugwump on 2007/05/03 07:51:17
+  this gets around the 'read only' issue of some files in perl-core
+  when rsynced/extracted from uupacktool under win32
+* cleanup t/.cpanplus dir when doing 'make clean' as well.
+* make sure we pass 'prereq_format' along, so prereqs get packaged
+  properly as well. This addresses a mail from Hans Dieter Pearcey (hdp@icgroup.com) raising the issue.
+
 Changes for 0.79_01     Sun Apr 22 09:57:45 2007
 ================================================
 * Updates to integrate perl-core integration. Regular users
