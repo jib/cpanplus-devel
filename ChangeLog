@@ -1,3 +1,9 @@
+Changes for 0.79_04     Tue May 29 08:50:07 2007
+================================================
+* Removed a fatal debug statement from cpan2dist. Users of
+  cpan2dist should upgrade to this release. No other users
+  should be affected.
+
 Changes for 0.79_03     Fri May 18 19:44:35 2007
 ================================================
 * address: #27057: Dry runs and dep tree. Make it possible to view 
