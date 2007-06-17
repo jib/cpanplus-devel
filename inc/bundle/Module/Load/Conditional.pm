@@ -474,6 +474,8 @@ sub can_load {
     }
 }
 
+=back
+
 =head2 @list = requires( MODULE );
 
 C<requires> can tell you what other modules a particular module

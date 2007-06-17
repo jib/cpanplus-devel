@@ -3,7 +3,7 @@ use strict;
 
 use locale;
 use vars qw ($VERSION @ISA @REGEXS);
-$VERSION = 0.71;
+$VERSION = 0.7203;
 
 push @REGEXS, qr/
 	^v?	# optional leading 'v'
@@ -25,6 +25,16 @@ sub new
 {
 	my ($class, $value) = @_;
 	my $self = bless ({}, ref ($class) || $class);
+	
+	if ( ref($value) && eval("$value->isa('version')") ) {
+	    # Can copy the elements directly
+	    $self->{version} = [ @{$value->{version} } ];
+	    $self->{qv} = 1 if $value->{qv};
+	    $self->{alpha} = 1 if $value->{alpha};
+	    $self->{original} = ''.$value->{original};
+	    return $self;
+	}
+
 	require POSIX;
 	my $currlocale = POSIX::setlocale(&POSIX::LC_ALL);
 	my $radix_comma = ( POSIX::localeconv()->{decimal_point} eq ',' );
@@ -33,6 +43,7 @@ sub new
 	    # RT #19517 - special case for undef comparison
 	    # or someone forgot to pass a value
 	    push @{$self->{version}}, 0;
+	    $self->{original} = "0";
 	    return ($self);
 	}
 
@@ -221,6 +232,9 @@ sub new
 	         "ignoring: '".substr($value,$pos)."'";
 	}
 
+	# cache the original value for use when stringification
+	$self->{original} = substr($value,0,$pos);
+
 	return ($self);
 }
 
@@ -308,12 +322,7 @@ sub stringify
 	require Carp;
 	Carp::croak("Invalid version object");
     }
-    if ( exists $self->{qv} ) {
-	return $self->normal;
-    }
-    else {
-	return $self->numify;
-    }
+    return $self->{original};
 }
 
 sub vcmp
@@ -404,8 +413,9 @@ sub qv {
     my ($value) = @_;
 
     $value = _un_vstring($value);
-    $value = 'v'.$value unless $value =~ /^v/;
-    return version->new($value); # always use base class
+    $value = 'v'.$value unless $value =~ /(^v|\d+\.\d+\.\d)/;
+    my $version = version->new($value); # always use base class
+    return $version;
 }
 
 sub is_qv {
@@ -431,8 +441,8 @@ sub _un_vstring {
     my $value = shift;
     # may be a v-string
     if ( $] >= 5.006_000 && length($value) >= 3 && $value !~ /[._]/ ) {
-	my $tvalue = sprintf("%vd",$value);
-	if ( $tvalue =~ /^\d+\.\d+\.\d+$/ ) {
+	my $tvalue = sprintf("v%vd",$value);
+	if ( $tvalue =~ /^v\d+\.\d+\.\d+$/ ) {
 	    # must be a v-string
 	    $value = $tvalue;
 	}
@@ -444,7 +454,6 @@ sub _un_vstring {
 {
     local $^W;
     *UNIVERSAL::VERSION = sub {
-	$DB::single = 1;
 	my ($obj, $req) = @_;
 	my $class = ref($obj) || $obj;
 
@@ -495,13 +504,13 @@ sub _un_vstring {
 		    Carp::croak( 
 			sprintf ("%s version %s required--".
 			    "this is only version %s", $class,
-			    $req->numify, $version->numify)
+			    $req->stringify, $version->stringify)
 		    );
 		}
 	    }
 	}
 
-	return defined $version ? $version->numify : undef;
+	return defined $version ? $version->stringify : undef;
     };
 }
 

@@ -1053,6 +1053,8 @@ and URI encoding here:
 
 To indicate to rather use commandline tools than modules
 
+=back
+
 =head1 BUG REPORTS
 
 Please report bugs or other issues to E<lt>bug-file-fetch@rt.cpan.org<gt>.

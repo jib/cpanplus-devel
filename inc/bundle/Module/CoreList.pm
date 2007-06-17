@@ -1,7 +1,7 @@
 package Module::CoreList;
 use strict;
 use vars qw/$VERSION %released %patchlevel %version %families/;
-$VERSION = '2.09';
+$VERSION = '2.11';
 
 =head1 NAME
 
@@ -13,8 +13,9 @@ Module::CoreList - what modules shipped with versions of perl
 
  print $Module::CoreList::version{5.00503}{CPAN}; # prints 1.48
 
- print Module::CoreList->first_release('File::Spec');       # prints 5.00503
- print Module::CoreList->first_release('File::Spec', 0.82); # prints 5.006001
+ print Module::CoreList->first_release('File::Spec');         # prints 5.00405
+ print Module::CoreList->first_release_by_date('File::Spec'); # prints 5.005
+ print Module::CoreList->first_release('File::Spec', 0.82);   # prints 5.006001
 
  print join ', ', Module::CoreList->find_modules(qr/Data/);
     # prints 'Data::Dumper'
@@ -30,7 +31,7 @@ Module::CoreList - what modules shipped with versions of perl
 =head1 DESCRIPTION
 
 Module::CoreList contains the hash of hashes
-%Module::CoreList::version, this is keyed on perl version as indicated
+%Module::CoreList::version, that is keyed on perl version as indicated
 in $].  The second level hash is module => version pairs.
 
 Note, it is possible for the version of a module to be unspecified,
@@ -46,6 +47,13 @@ clusters known perl releases by their major versions.
 In 2.01 %Module::CoreList::patchlevel contains the branch and patchlevel
 corresponding to the specified perl version in the Perforce repository where
 the perl sources are kept.
+
+Starting with 2.10, the special module name C<Unicode> refers to the version of
+the Unicode Character Database bundled with Perl.
+
+Since 2.11, Module::CoreList::first_release() returns the first release
+in the order of perl version numbers. If you want to get the earliest
+perl release instead, use Module::CoreList::first_release_by_date().
 
 =head1 CAVEATS
 
@@ -66,14 +74,14 @@ Currently maintained by the perl 5 porters E<lt>perl5-porters@perl.orgE<gt>.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2002-2006 Richard Clamp.  All Rights Reserved.
+Copyright (C) 2002-2007 Richard Clamp.  All Rights Reserved.
 
 This module is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Module::Info>, L<perl>
+L<corelist>, L<Module::Info>, L<perl>
 
 =cut
 
@@ -92,16 +100,27 @@ END {
 }
 
 
-sub first_release {
+sub first_release_raw {
     my ($discard, $module, $version) = @_;
 
     my @perls = $version
         ? grep { exists $version{$_}{ $module } &&
-                        $version{$_}{ $module } >= $version } keys %version
+                        $version{$_}{ $module } ge $version } keys %version
         : grep { exists $version{$_}{ $module }             } keys %version;
 
+    return @perls;
+}
+
+sub first_release_by_date {
+    my @perls = &first_release_raw;
     return unless @perls;
     return (sort { $released{$a} cmp $released{$b} } @perls)[0];
+}
+
+sub first_release {
+    my @perls = &first_release_raw;
+    return unless @perls;
+    return (sort { $a cmp $b } @perls)[0];
 }
 
 sub find_modules {
@@ -132,12 +151,12 @@ sub find_modules {
     5.00405  => '1999-04-29',
     5.006    => '2000-03-22',
     5.006001 => '2001-04-08',
-    5.006002 => '2003-11-15',
     5.007003 => '2002-03-05',
     5.008    => '2002-07-19',
     5.008001 => '2003-09-25',
-    5.008002 => '2003-11-05',
     5.009    => '2003-10-27',
+    5.008002 => '2003-11-05',
+    5.006002 => '2003-11-15',
     5.008003 => '2004-01-14',
     5.00504  => '2004-02-23',
     5.009001 => '2004-03-16',
@@ -236,6 +255,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'strict'                => undef,  # lib/strict.pm
         'subs'                  => undef,  # lib/subs.pm
     },
+
     5.001 => {
         'AnyDBM_File'           => undef,  # lib/AnyDBM_File.pm
         'AutoLoader'            => undef,  # lib/AutoLoader.pm
@@ -294,6 +314,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'strict'                => undef,  # lib/strict.pm
         'subs'                  => undef,  # lib/subs.pm
     },
+
     5.002 => {
         'AnyDBM_File'           => undef,  # lib/AnyDBM_File.pm
         'AutoLoader'            => undef,  # lib/AutoLoader.pm
@@ -373,6 +394,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'subs'                  => undef,  # lib/subs.pm
         'vars'                  => undef,  # lib/vars.pm
     },
+
     5.00307 => {
         'AnyDBM_File'           => undef, #./lib/AnyDBM_File.pm
         'AutoLoader'            => undef, #./lib/AutoLoader.pm
@@ -473,6 +495,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'VMS::Filespec'         => undef, #./vms/ext/Filespec.pm
         'VMS::Stdio'            => '2.0', #./vms/ext/Stdio/Stdio.pm
     },
+
     5.004   => {
         'AnyDBM_File'           => undef, #./lib/AnyDBM_File.pm
         'AutoLoader'            => undef, #./lib/AutoLoader.pm
@@ -606,6 +629,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'VMS::Stdio'            => '2.02', #./vms/ext/Stdio/Stdio.pm
         'vmsish'                => undef, #./vms/ext/vmsish.pm
     },
+
     5.005   => {
         'AnyDBM_File'           => undef, #./lib/AnyDBM_File.pm
         'attrs'                 => '1.0', #./ext/attrs/attrs.pm
@@ -781,6 +805,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'VMS::Stdio'            => '2.1', #./vms/ext/Stdio/Stdio.pm
         'vmsish'                => undef, #./vms/ext/vmsish.pm
     },
+
     5.00503   => {
         'AnyDBM_File'           => undef,
         'attrs'                 => '1.0',
@@ -957,6 +982,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'VMS::Stdio'            => 2.1,
         'vmsish'                => undef,
     },
+
     5.00405   => {
         'AnyDBM_File'           => undef, #./lib/AnyDBM_File.pm
         'attrs'                 => '0.1', #./lib/attrs.pm
@@ -1104,7 +1130,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'vmsish'                => undef, #./vms/ext/vmsish.pm
     },
 
-        5.00504 => {
+    5.00504 => {
         'AnyDBM_File'           => undef,  #lib/AnyDBM_File.pm
         'attrs'                 => '1.0',  #lib/attrs.pm
         'AutoLoader'            => undef,  #lib/AutoLoader.pm
@@ -1282,7 +1308,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'VMS::Filespec'         => undef,  #vms/ext/Filespec.pm
         'VMS::Stdio'            => '2.1',  #vms/ext/Stdio/Stdio.pm
         'vmsish'                => undef,  #vms/ext/vmsish.pm
-        },
+    },
 
     5.006   => {
         'AnyDBM_File'           => undef, #./lib/AnyDBM_File.pm
@@ -1501,6 +1527,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'warnings'              => undef, #./lib/warnings.pm
         'warnings::register'    => undef, #./lib/warnings/register.pm
     },
+
     5.006001   => {
         'AnyDBM_File'           => undef,
         'attributes'            => 0.03,
@@ -1724,6 +1751,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'warnings::register'    => undef,
         'XSLoader'              => '0.01',
     },
+
     5.006002 => {
         'AnyDBM_File'           => undef,  #lib/AnyDBM_File.pm
         'attributes'            => '0.03',  #lib/attributes.pm
@@ -1957,6 +1985,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::Local'           => undef, #lib/Time/Local.pm
         'Time::localtime'       => '1.01', #lib/Time/localtime.pm
         'Time::tm'              => undef, #lib/Time/tm.pm
+        'Unicode'               => '3.0.1', # lib/unicore/version
         'UNIVERSAL'             => undef, #lib/UNIVERSAL.pm
         'User::grent'           => undef, #lib/User/grent.pm
         'User::pwent'           => undef, #lib/User/pwent.pm
@@ -2607,6 +2636,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::Local'           => '1.04', #./lib/Time/Local.pm
         'Time::localtime'       => '1.02', #./lib/Time/localtime.pm
         'Time::tm'              => '1.00', #./lib/Time/tm.pm
+        'Unicode'               => '3.2.0', # lib/unicore/version
         'Unicode::Collate'      => '0.12', #./lib/Unicode/Collate.pm
         'Unicode::Normalize'    => '0.17', #./ext/Unicode/Normalize/Normalize.pm
         'Unicode::UCD'          => '0.2', #./lib/Unicode/UCD.pm
@@ -2963,6 +2993,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::Local'           => '1.07', #./lib/Time/Local.pm
         'Time::localtime'       => '1.02', #./lib/Time/localtime.pm
         'Time::tm'              => '1.00', #./lib/Time/tm.pm
+        'Unicode'               => '4.0.0', # lib/unicore/version
         'Unicode::Collate'      => '0.28', #./lib/Unicode/Collate.pm
         'Unicode::Normalize'    => '0.23', #./lib/Unicode/Normalize.pm
         'Unicode::UCD'          => '0.21', #./lib/Unicode/UCD.pm
@@ -3318,6 +3349,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::Local' => 1.07,  #Time\Local.pm
         'Time::localtime' => 1.02, #Time\localtime.pm
         'Time::tm' => '1.00',     #Time\tm.pm
+        'Unicode' => '4.0.0', # lib/unicore/version
         'Unicode::Collate' => '0.30', #Unicode\Collate.pm
         'Unicode::Normalize' => 0.25, #Unicode\Normalize.pm
         'Unicode::UCD' => 0.21, #Unicode\UCD.pm
@@ -3337,7 +3369,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'XSLoader' => 0.02,     #XSLoader.pm
     },
 
-        5.008003 => {
+    5.008003 => {
         'AnyDBM_File'           => '1.00',  #lib/AnyDBM_File.pm
         'Attribute::Handlers'   => '0.78',  #lib/Attribute/Handlers.pm
         'attributes'            => '0.06',  #lib/attributes.pm
@@ -3675,6 +3707,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::Local'           => '1.07',  #lib/Time/Local.pm
         'Time::localtime'       => '1.02',  #lib/Time/localtime.pm
         'Time::tm'              => '1.00',  #lib/Time/tm.pm
+        'Unicode'               => '4.0.0', # lib/unicore/version
         'Unicode::Collate'      => '0.33',  #lib/Unicode/Collate.pm
         'Unicode::Normalize'    => '0.28',  #lib/Unicode/Normalize.pm
         'Unicode::UCD'          => '0.21',  #lib/Unicode/UCD.pm
@@ -3692,7 +3725,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'XS::APItest'           => '0.03',  #lib/XS/APItest.pm
         'XSLoader'              => '0.02',  #lib/XSLoader.pm
         'XS::Typemap'           => '0.01',  #lib/XS/Typemap.pm
-        },
+    },
 
     5.009 => {
         'AnyDBM_File'           => '1.00',  #lib/AnyDBM_File.pm
@@ -4033,6 +4066,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::Local'           => '1.07',  #lib/Time/Local.pm
         'Time::localtime'       => '1.02',  #lib/Time/localtime.pm
         'Time::tm'              => '1.00',  #lib/Time/tm.pm
+        'Unicode'               => '4.0.0', #lib/unicore/version
         'Unicode::Collate'      => '0.28',  #lib/Unicode/Collate.pm
         'Unicode::Normalize'    => '0.23',  #lib/Unicode/Normalize.pm
         'Unicode::UCD'          => '0.21',  #lib/Unicode/UCD.pm
@@ -4051,7 +4085,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'XS::APItest'           => '0.02',  #lib/XS/APItest.pm
         'XS::Typemap'           => '0.01',  #lib/XS/Typemap.pm
         'XSLoader'              => '0.03',  #lib/XSLoader.pm
-       },
+    },
 
     5.009001 => {
         'AnyDBM_File'           => '1.00',  #lib/AnyDBM_File.pm
@@ -4399,6 +4433,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::Local'           => '1.07_94',  #lib/Time/Local.pm
         'Time::localtime'       => '1.02',  #lib/Time/localtime.pm
         'Time::tm'              => '1.00',  #lib/Time/tm.pm
+        'Unicode'               => '4.0.0', #lib/unicore/version
         'Unicode::Collate'      => '0.33',  #lib/Unicode/Collate.pm
         'Unicode::Normalize'    => '0.28',  #lib/Unicode/Normalize.pm
         'Unicode::UCD'          => '0.21',  #lib/Unicode/UCD.pm
@@ -4472,6 +4507,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Symbol'                => '1.05',  #lib/Symbol.pm
         'Test'                  => '1.24',  #lib/Test.pm
         'Thread'                => '2.00',  #lib/Thread.pm
+        'Unicode'               => '4.0.1', # lib/unicore/version
         'UNIVERSAL'             => '1.01',  #lib/UNIVERSAL.pm
         'utf8'                  => '1.03',  #lib/utf8.pm
         'vars'                  => '1.01',  #lib/vars.pm
@@ -4780,8 +4816,8 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'VMS::Filespec'         => '1.11',  #vms/ext/Filespec.pm
         'VMS::Stdio'            => '2.3',  #vms/ext/Stdio/Stdio.pm
     },
-    5.008005 => {
 
+    5.008005 => {
         'AnyDBM_File'           => '1.00',  #lib/AnyDBM_File.pm
         'attributes'            => '0.06',  #lib/attributes.pm
         'AutoLoader'            => '5.60',  #lib/AutoLoader.pm
@@ -5065,6 +5101,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Time::localtime'       => '1.02',  #lib/Time/localtime.pm
         'Time::tm'              => '1.00',  #lib/Time/tm.pm
         'Time::HiRes'           => '1.59',  #lib/Time/HiRes.pm
+        'Unicode'               => '4.0.1', # lib/unicore/version
         'Unicode::Collate'      => '0.40',  #lib/Unicode/Collate.pm
         'Unicode::UCD'          => '0.22',  #lib/Unicode/UCD.pm
         'Unicode::Normalize'    => '0.30',  #lib/Unicode/Normalize.pm
@@ -5144,6 +5181,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'VMS::Filespec'         => '1.11',  #vms/ext/Filespec.pm
         'VMS::Stdio'            => '2.3',  #vms/ext/Stdio/Stdio.pm
     },
+
     5.008006 => {
         'AnyDBM_File'           => '1.00',  #lib/AnyDBM_File.pm
         'Attribute::Handlers'   => '0.78_01',  #lib/Attribute/Handlers.pm
@@ -5493,6 +5531,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'Unicode::Normalize'    => '0.30',  #lib/Unicode/Normalize.pm
         'Unicode::UCD'          => '0.22',  #lib/Unicode/UCD.pm
         'UNIVERSAL'             => '1.01',  #lib/UNIVERSAL.pm
+        'Unicode'               => '4.0.1', # lib/unicore/version
         'User::grent'           => '1.00',  #lib/User/grent.pm
         'User::pwent'           => '1.00',  #lib/User/pwent.pm
         'utf8'                  => '1.04',  #lib/utf8.pm
@@ -5820,6 +5859,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Time::localtime'       => '1.02',
 	'Time::tm'              => '1.00',
 	'UNIVERSAL'             => '1.02',
+        'Unicode'               => '4.0.1',
 	'Unicode::Collate'      => '0.40',
 	'Unicode::Normalize'    => '0.30',
 	'Unicode::UCD'          => '0.22',
@@ -6182,6 +6222,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Time::localtime'       => '1.02',
 	'Time::tm'              => '1.00',
 	'UNIVERSAL'             => '1.01',
+        'Unicode'               => '4.1.0', # lib/unicore/version
 	'Unicode::Collate'      => '0.40',
 	'Unicode::Normalize'    => '0.32',
 	'Unicode::UCD'          => '0.23',
@@ -6624,6 +6665,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Time::localtime'       => '1.02',
 	'Time::tm'              => '1.00',
 	'UNIVERSAL'             => '1.03',
+        'Unicode'               => '4.1.0',
 	'Unicode::Collate'      => '0.52',
 	'Unicode::Normalize'    => '0.32',
 	'Unicode::UCD'          => '0.24',
@@ -6996,6 +7038,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Time::localtime'       => '1.02',
 	'Time::tm'              => '1.00',
 	'UNIVERSAL'             => '1.01',
+        'Unicode'               => '4.1.0',
 	'Unicode::Collate'      => '0.52',
 	'Unicode::Normalize'    => '0.32',
 	'Unicode::UCD'          => '0.24',
@@ -7469,6 +7512,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Time::localtime'       => '1.02',
 	'Time::tm'              => '1.00',
 	'UNIVERSAL'             => '1.04',
+        'Unicode'               => '4.1.0',
 	'Unicode::Collate'      => '0.52',
 	'Unicode::Normalize'    => '1.01',
 	'Unicode::UCD'          => '0.24',

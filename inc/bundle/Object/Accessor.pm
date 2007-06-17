@@ -697,6 +697,8 @@ See C<perldoc perlsub> for details.
     }              
 }
 
+=back
+
 =head1 GLOBAL VARIABLES
 
 =head2 $Object::Accessor::FATAL
