@@ -216,7 +216,7 @@ sub _clean_test_dir {
            
             ### regular file
             } else {
-                print "Deleting file '$path'\n" if $verbose;
+                print "# Deleting file '$path'\n" if $verbose;
                 1 while unlink $path;
             }            
         }       
