@@ -517,7 +517,12 @@ with CPANPLUS, which is used to enable autoflushing in spawned processes.
                         ? ($name.$ver, $name)
                         : ($name, $name.$ver);
             };
-                                
+
+            ### patch from Steve Hay Fri 29 Jun 2007 14:26:02 GMT+02:00
+            ### Msg-Id: <4684FA5A.7030506@uk.radan.com>
+            ### look for files with a ".bat" extension as well on Win32
+            @bins = map { $_, "$_.bat" } @bins if $^O eq 'MSWin32';
+
             my $path;
             BIN: for my $bin (@bins) {
                 
