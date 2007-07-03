@@ -581,11 +581,16 @@ with CPANPLUS, which is used to enable autoflushing in spawned processes.
             ### pass '-P' to perl: "run program through C 
             ### preprocessor before compilation"
             error(loc(
-                "Could not find the '%1' in your path".
+                "Could not find the '%1' binary in your path".
                 "--this may be a problem.\n".
                 "Please locate this program and set ".
-                "your '%2' config entry to its path.\n",                
-                $name, 'perlwrapper'
+                "your '%2' config entry to its path.\n".
+                "From the default shell, you can do this by typing:\n\n".
+                "  %3\n".
+                "  %4\n",
+                $name, 'perlwrapper', 
+                's program perlwrapper FULL_PATH_TO_CPANP_RUN_PERL',
+                's save'
              ));                                        
              return '';
         }->();
