@@ -1,3 +1,12 @@
+Changes for 0.80        Sun Jun 17 13:50:01 2007
+================================================
+* Promote 0.79_04 to stable
+* apply patch to fix win32 short path fixing when arguments are
+  given (thanks to steve hay for tracking it down)
+* Print header diagnostic during tests to show how to run
+  tests in verbose mode for added debug output
+* Update bundled modules
+
 Changes for 0.79_04     Tue May 29 08:50:07 2007
 ================================================
 * Removed a fatal debug statement from cpan2dist. Users of
