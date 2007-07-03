@@ -93,8 +93,7 @@ If you wish to configure CPANPLUS to your environment, you can
 either do that from the interactive shell after installation:
 
     \$ cpanp
-    CPAN Terminal> s conf user      # per user config
-    CPAN Terminal> s conf system    # system wide config
+    CPAN Terminal> s reconfigure
     
 Or you can invoke this program as follows, to do it now:
 
