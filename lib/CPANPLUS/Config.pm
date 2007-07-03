@@ -358,7 +358,11 @@ installed, 'false' otherwise.
 =cut
 
         $Conf->{'conf'}->{'signature'} = do {
-          (can_run('gpg') || check_install(module => 'Crypt::OpenPGP')) ?1:0 };
+            check_install( module => 'Module::Signature', version => '0.06' )
+            and ( can_run('gpg') || 
+                  check_install(module => 'Crypt::OpenPGP')
+            );
+        } ? 1 : 0;
 
 =item skiptest
 
