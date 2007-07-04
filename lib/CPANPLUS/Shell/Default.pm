@@ -238,7 +238,7 @@ sub _input_loop {
             $SIG{$sig} = $entry->{handler} if exists($entry->{handler});
         }
 
-	print "\n";
+        print "\n";
         last if $self->dispatch_on_input( input => $input );
 
         ### flush the lib cache ###
