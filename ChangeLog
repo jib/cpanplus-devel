@@ -1,3 +1,23 @@
+Changes for 0.81_01     Sat Jul  7 10:45:37 2007
+================================================
+* Add a callback to the CPANPLUS core for munging metafiles
+* Address #27562 (A way to specify external dependencies would be
+  grand) by adding a --edit-metafile option to cpan2dist to allow 
+  you to edit generated metafiles, if your ::Dist::* plugin supports it
+* Make common shell options clearer in both hints and help message
+* Address #27914: Make the instructions in the Makefile.PL clearer
+  as to how to install prerequisites. Patch submitted by Andy
+  Dougherty 
+* Address #27910: we didnt check for Module::Signature being
+  present, just it's prereqs when heuristically configuring CPANPLUS 
+  for signature checking. Now, we also check for Module::Signature
+* Address #27913 documentation error in Makefile.PL that incorrectly
+  showed how to invoke interactive configuration after installation
+* Clearer diagnostic when cpanp-run-perl can't be found
+* Apply steveh's patch to scan for .bat files as well on win32 when
+  looking for installed programs
+* Whitespace patch from audreyt
+
 Changes for 0.80        Sun Jun 17 13:50:01 2007
 ================================================
 * Promote 0.79_04 to stable
