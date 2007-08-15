@@ -112,7 +112,7 @@ sub connect {
         ### save the original prompt
         $Saved_Prompt = $shell->prompt;
 
-        $shell->prompt( $shell->brand .'@'. $host .'> ' );
+        $shell->prompt( $shell->brand .'@'. $host .':'. $port .'> ' );
 
     } else {
         print "\n$buffer\n\n";
