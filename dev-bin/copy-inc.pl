@@ -3,6 +3,8 @@ use Cwd;
 use File::Path qw[mkpath];
 use CPANPLUS::Backend;
 
+$|++;
+
 my $Prefix      = '../';           # updir from cpanplus/devel 
 my $Libdir      = 'lib/';
 my $Cwd         = cwd();
