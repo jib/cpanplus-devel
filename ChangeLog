@@ -1,3 +1,16 @@
+Changes for 0.82        Wed Aug 15 15:36:57 2007
+================================================
+* Address [perl #43629] Perl 5.9.5. cpanp-run-perl not present
+  as reported by Michael Cartmell. When running the tests, don't
+  scan your include dirs/home dir for other CPANPLUS::Config::*
+  entries, as they might contain data not correct for this test
+  run.
+* Search the path paralel to your $^X explicitly for cpanp-run-perl
+  (suggested by david cantrell)
+* Various clean ups in the CPANPLUS::Shell::Default::Plugin::Remote
+  plugin.
+* Small documentation fixes.
+
 Changes for 0.81_01     Sat Jul  7 10:45:37 2007
 ================================================
 * Add a callback to the CPANPLUS core for munging metafiles
