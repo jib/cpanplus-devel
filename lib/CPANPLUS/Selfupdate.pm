@@ -85,7 +85,7 @@ CPANPLUS::Selfupdate
                     'LWP::UserAgent' => '0.0',
                     'HTTP::Request'  => '0.0',
                     URI              => '0.0',
-                    YAML             => '0.0',
+                    'YAML::Tiny'     => '0.0',
                     'Test::Reporter' => 1.27,
                 },
                 sub { 

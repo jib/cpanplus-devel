@@ -273,7 +273,10 @@ my $map = {
     }
     
     {   my $clone   = $Mod->clone;
-        my $prereqs = { $ModPrereq => ~0 };
+
+        ### divide by two -- possibly ~0 is unsigned, and we cause an overflow,
+        ### as happens to version.pm 0.7203 among others.
+        my $prereqs = { $ModPrereq => ~0/2 };
     
         $clone->status->prereqs( $prereqs );
 

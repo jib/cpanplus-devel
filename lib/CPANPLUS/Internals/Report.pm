@@ -57,7 +57,7 @@ otherwise.
         'LWP::UserAgent' => '0.0',
         'HTTP::Request'  => '0.0',
         URI              => '0.0',
-        YAML             => '0.0',
+        'YAML::Tiny'     => '0.0',
     };
 
     my $send_list = {
@@ -178,7 +178,7 @@ sub _query_report {
         return;
     }
 
-    my $aref = YAML::Load( $res->content );
+    my ($aref) = YAML::Tiny::Load( $res->content );
 
     my $dist = $mod->package_name .'-'. $mod->package_version;
 
@@ -479,12 +479,15 @@ sub _send_report {
             }
         }
     }
+    
+    msg( loc("Sending test report for '%1'", $dist), $verbose);
 
     ### reporter object ###
     my $reporter = Test::Reporter->new(
                         grade           => $grade,
                         distribution    => $dist,
                         via             => "CPANPLUS $int_ver",
+                        timeout         => $conf->get_conf('timeout') || 60,
                         debug           => $conf->get_conf('debug'),
                     );
                     
