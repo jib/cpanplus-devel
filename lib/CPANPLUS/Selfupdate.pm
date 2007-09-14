@@ -86,7 +86,7 @@ CPANPLUS::Selfupdate
                     'HTTP::Request'  => '0.0',
                     URI              => '0.0',
                     'YAML::Tiny'     => '0.0',
-                    'Test::Reporter' => 1.27,
+                    'Test::Reporter' => '1.34',
                 },
                 sub { 
                     my $cb = shift;

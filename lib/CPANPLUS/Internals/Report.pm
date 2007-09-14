@@ -62,7 +62,7 @@ otherwise.
 
     my $send_list = {
         %$query_list,
-        'Test::Reporter' => 1.27,
+        'Test::Reporter' => '1.34',
     };
 
     sub _have_query_report_modules {
