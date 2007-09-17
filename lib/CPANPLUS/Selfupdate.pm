@@ -81,11 +81,8 @@ CPANPLUS::Selfupdate
             ],            
             cpantest        => [
                 {
-                    LWP              => '0.0',
-                    'LWP::UserAgent' => '0.0',
-                    'HTTP::Request'  => '0.0',
-                    URI              => '0.0',
                     'YAML::Tiny'     => '0.0',
+                    'File::Fetch'    => '0.08',
                     'Test::Reporter' => '1.34',
                 },
                 sub { 

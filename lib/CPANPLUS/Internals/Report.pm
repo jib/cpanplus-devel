@@ -9,8 +9,8 @@ use CPANPLUS::Internals::Constants::Report;
 use Data::Dumper;
 
 use Params::Check               qw[check];
-use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 use Module::Load::Conditional   qw[can_load];
+use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
 $Params::Check::VERBOSE = 1;
 
@@ -53,11 +53,9 @@ otherwise.
 
 =cut
 {   my $query_list = {
-        LWP              => '0.0',
-        'LWP::UserAgent' => '0.0',
-        'HTTP::Request'  => '0.0',
-        URI              => '0.0',
-        'YAML::Tiny'     => '0.0',
+        'File::Fetch'   => '0.08',
+        'YAML::Tiny'    => '0.0',
+        'File::Temp'    => '0.0',
     };
 
     my $send_list = {
@@ -158,27 +156,41 @@ sub _query_report {
     ### check if we have the modules we need for querying
     return unless $self->_have_query_report_modules( verbose => 1 );
 
-    ### new user agent ###
-    my $ua = LWP::UserAgent->new;
-    $ua->agent( CPANPLUS_UA->() );
 
+    ### XXX no longer use LWP here. However, that means we don't
+    ### automagically set proxies anymore!!!
+    # my $ua = LWP::UserAgent->new;
+    # $ua->agent( CPANPLUS_UA->() );
+    #
     ### set proxies if we have them ###
-    $ua->env_proxy();
+    # $ua->env_proxy();
 
     my $url = TESTERS_URL->($mod->package_name);
-    my $req = HTTP::Request->new( GET => $url);
+    my $ff  = File::Fetch->new( uri => $url );
 
     msg( loc("Fetching: '%1'", $url), $verbose );
 
-    my $res = $ua->request( $req );
+    my $res = do {
+        my $tempdir = File::Temp::tempdir();
+        my $where   = $ff->fetch( to => $tempdir );
+        
+        unless( $where ) {
+            error( loc( "Fetching report for '%1' failed: %2",
+                        $url, $ff->error ) );
+            return;
+        }
 
-    unless( $res->is_success ) {
-        error( loc( "Fetching report for '%1' failed: %2",
-                    $url, $res->message ) );
+        my $fh = OPEN_FILE->( $where );
+        
+        do { local $/; <$fh> };
+    };
+
+    my ($aref) = eval { YAML::Tiny::Load( $res ) };
+
+    if( $@ ) {
+        error(loc("Error reading result: %1", $@));
         return;
-    }
-
-    my ($aref) = YAML::Tiny::Load( $res->content );
+    };
 
     my $dist = $mod->package_name .'-'. $mod->package_version;
 
@@ -439,7 +451,7 @@ sub _send_report {
         $message .= REPORT_LOADED_PREREQS->($mod);
 
         ### the footer
-        $message .=  REPORT_MESSAGE_FOOTER->();
+        $message .= REPORT_MESSAGE_FOOTER->();
 
     ### it may be another grade than fail/unknown.. may be worth noting
     ### that tests got skipped, since the buffer is not added in
