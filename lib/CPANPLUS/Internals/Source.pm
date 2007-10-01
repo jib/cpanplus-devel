@@ -1391,9 +1391,15 @@ Returns true on success, false on failure.
                 );
                 
                 ### mark this object with a custom author
-                $auth_obj ||= CPANPLUS::Module::Author::Fake->new(
-                                    cpanid => CUSTOM_AUTHOR_ID
-                                );          
+                $auth_obj ||= do {
+                    my $id = CUSTOM_AUTHOR_ID;
+                    
+                    ### if the object is being created for the first time,
+                    ### make sure there's an entry in the author tree as
+                    ### well, so we can search on the CPAN ID
+                    $self->author_tree->{ $id } = 
+                        CPANPLUS::Module::Author::Fake->new( cpanid => $id );          
+                };
                 
                 $mod->author( $auth_obj );
                 
@@ -1404,6 +1410,10 @@ Returns true on success, false on failure.
                             $mod->module), $verbose);
                 }
                 
+                ### mark where it came from
+                $mod->description( loc("Custom source from '%1'",$name) );
+                
+                ### store it in the module tree
                 $self->module_tree->{ $mod->module } = $mod;
             }
         }
