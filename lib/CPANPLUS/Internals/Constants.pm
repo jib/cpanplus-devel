@@ -199,7 +199,29 @@ use constant OPEN_FILE      => sub {
                                     return $fh if $fh;
                                     return;
                             };      
-                            
+         
+use constant OPEN_DIR       => sub { 
+                                    my $dir = shift;
+                                    my $dh;
+                                    opendir $dh, $dir or error(loc(
+                                        "Could not open dir '%1': %2", $dir, $!
+                                    ));
+                                    
+                                    return $dh if $dh;
+                                    return;
+                            };
+
+use constant READ_DIR       => sub { 
+                                    my $dir = shift;
+                                    my $dh  = OPEN_DIR->( $dir ) or return;
+                                    
+                                    ### exclude . and ..
+                                    my @files =  grep { $_ !~ /^\.{1,2}/ }         
+                                                    readdir($dh);
+                                    
+                                    return @files;
+                            };  
+
 use constant STRIP_GZ_SUFFIX 
                             => sub {
                                     my $file = $_[0] or return;
@@ -235,6 +257,9 @@ use constant CREATE_FILE_URI
                                         ? 'file:/'  . $dir
                                         : 'file://' . $dir;   
                             };        
+
+use constant CUSTOM_AUTHOR_ID
+                            => 'CUSTOM';
 
 use constant DOT_SHELL_DEFAULT_RC
                             => '.shell-default.rc';
