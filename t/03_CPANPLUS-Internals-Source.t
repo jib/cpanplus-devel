@@ -84,6 +84,16 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
         print $fh $mod->package . $/;
         close $fh;
     }              
+    
+    ### let's see if we can find our custom files
+    {   my $meth = '__list_custom_module_sources';
+        can_ok( $cb,    $meth );
+        
+        my %files = $cb->$meth;
+        ok( scalar(keys(%files)),
+                                "   Got list of sources" );
+        ok( $files{ $src_file },"   Found proper entry" );
+    }        
 
     ### now we can have it be loaded in
     {   my $meth = '__create_custom_module_entries';

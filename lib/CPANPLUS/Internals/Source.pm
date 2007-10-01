@@ -287,8 +287,6 @@ sub _update_source {
 
 
     my $path = $args->{path};
-    my $now = time;
-
     {   ### this could use a clean up - Kane
         ### no worries about the / -> we get it from the _ftp configuration, so
         ### it's not platform dependant. -kane
@@ -317,14 +315,7 @@ sub _update_source {
             return;
         }
 
-        ### `touch` the file, so windoze knows it's new -jmb
-        ### works on *nix too, good fix -Kane
-        ### make sure it is writable first, otherwise the `touch` will fail
-        unless (chmod ( 0644, File::Spec->catfile($path, $file) ) &&
-                utime ( $now, $now, File::Spec->catfile($path, $file) )) {
-            error( loc("Couldn't touch %1", $file) );
-        }
-
+        $self->_update_timestamp( file => File::Spec->catfile($path, $file) );
     }
     return 1;
 }
@@ -1009,10 +1000,48 @@ sub _dslip_defs {
     return $aref;
 }
 
-=head2 $bool = $cb->__create_custom_module_entries( [verbose => BOOL] ) 
+
+=head2 %files = $cb->__list_custom_module_sources
 
 This method scans the 'custom-sources' directory in your base directory
 for additional sources to include in your module tree.
+
+Returns a list of key value pairs as follows:
+
+  /full/path/to/source/file => http://decoded/mirror/path
+
+=cut
+
+sub __list_custom_module_sources {
+    my $self = shift;
+    my $conf = $self->configure_object;
+
+    my $dir = File::Spec->catdir(
+                    $conf->get_conf('base'),
+                    $conf->_get_build('custom_sources'),
+                );
+
+    unless( IS_DIR->( $dir ) ) {
+        msg(loc("No '%1' dir, skipping custom sources", $dir));
+        return;
+    }
+    
+    ### unencode the files
+    ### skip ones starting with # though
+    my %files = map {            
+        my $org = $_;            
+        my $dec = $self->_uri_decode( uri => $_ );            
+        File::Spec->catfile( $dir, $org ) => $dec
+    } grep { $_ !~ /^#/ } READ_DIR->( $dir );        
+
+    return %files;    
+}
+
+
+=head2 $bool = $cb->__create_custom_module_entries( [verbose => BOOL] ) 
+
+Creates entries in the module tree based upon the files as returned
+by C<__list_custom_module_sources>.
 
 Returns true on success, false on failure.
 
@@ -1034,29 +1063,13 @@ Returns true on success, false on failure.
     
         check( $tmpl, \%hash ) or return undef;
         
-        my $dir = File::Spec->catdir(
-                                $conf->get_conf('base'),
-                                $conf->_get_build('custom_sources'),
-                            );
-        unless( IS_DIR->( $dir ) ) {
-            msg(loc("No '%1' dir, skipping custom sources", $dir));
-            return 1;
-        }
-        
-        ### unencode the files
-        ### skip ones starting with # though
-        my %files = map {            
-            my $org = $_;            
-            my $dec = $self->_uri_decode( uri => $_ );            
-            $org => $dec
-        } grep { $_ !~ /^#/ } READ_DIR->( $dir );        
+        my %files = $self->__list_custom_module_sources;     
     
         while( my($file,$name) = each %files ) {
-            my $path = File::Spec->catfile( $dir, $file );
             
             msg(loc("Adding packages from custom source '%1'", $name), $verbose);
     
-            my $fh = OPEN_FILE->( $path ) or next;
+            my $fh = OPEN_FILE->( $file ) or next;
     
             while( <$fh> ) {
                 chomp;
