@@ -1072,8 +1072,13 @@ sub _add_custom_module_source {
                 remote  => $uri,
                 local   => $index,
                 verbose => $verbose,
-            ) or return;                
-    
+            ) or do {
+                ### we faild to update it, we probably have an empty
+                ### possibly silly filename on disk now -- remove it
+                1 while unlink $index;
+                return;                
+            };
+            
     return $index;
 }
 
@@ -1406,8 +1411,8 @@ Returns true on success, false on failure.
                 ### and now add it to the modlue tree -- this MAY
                 ### override things of course
                 if( $self->module_tree( $mod->module ) ) {
-                    msg(loc("About to overwrite module tree entry for '%1'",
-                            $mod->module), $verbose);
+                    msg(loc("About to overwrite module tree entry for '%1' with '%2'",
+                            $mod->module, $mod->package), $verbose);
                 }
                 
                 ### mark where it came from
