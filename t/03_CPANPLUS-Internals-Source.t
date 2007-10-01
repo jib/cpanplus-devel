@@ -16,6 +16,9 @@ use File::Basename qw[dirname];
 my $conf = gimme_conf();
 my $cb   = CPANPLUS::Backend->new( $conf );
 
+### XXX temp
+$conf->set_conf( verbose => 1 );
+
 isa_ok($cb, "CPANPLUS::Internals" );
 
 my $mt      = $cb->_module_tree;
@@ -57,27 +60,14 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
        
     ok( $package,               "Found file for custom source" );
     ok( -e $package,            "   File '$package' exists" );
-    
-    ### next, set up the sources file
-    my $src_dir = File::Spec->catdir( 
-                        $conf->get_conf('base'),
-                        $conf->_get_build('custom_sources'),
-                    );          
-    
-    ok( $src_dir,               "Setting up source dir" );
-    ok( $cb->_mkdir( dir => $src_dir ),
-                                "   Dir '$src_dir' created" );
-    
-    ### the file we have to write the package names *into*
-    my $src_file = File::Spec->catdir(
-                        $src_dir,    
-                        $cb->_uri_encode(
-                            uri =>'file://'.File::Spec->catfile(
-                                                dirname($package) 
-                                            )
-                        )
-                    );            
-    ok( $src_file,              "Sources will be written to '$src_file'" );                     
+
+    ### remote uri    
+    my $uri      = 'file://' . File::Spec->catfile( dirname($package) );
+
+    ### local file
+    my $src_file = $cb->_add_custom_module_source( uri => $uri );
+    ok( $src_file,              "Sources written to '$src_file'" );                     
+    ok( -e $src_file,           "   File exists" );                     
                      
     ### and write the file   
     {   my $meth = '__write_custom_module_index';
@@ -90,6 +80,7 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
 
         ok( $rv,                "   Sources written" );
         ok( -e $src_file,       "       Source file exists" );
+        ok( -s $src_file,       "       File has non-zero size" );
     }              
     
     ### let's see if we can find our custom files
@@ -158,7 +149,15 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
         like( CPANPLUS::Error->stack_as_string, qr/Updating sources from/,
                                     "   Update recorded in the log" );
     }
-
+    
+    ### now remove the index file;
+    {   my $meth = '_remove_custom_module_source';
+        can_ok( $cb,    $meth );
+        
+        my $file = $cb->$meth( uri => $uri );
+        ok( $file,                  "Index file removed" );
+        ok( ! -e $file,             "   File '$file' no longer on disk" );
+    }
 }
 
 # Local variables:

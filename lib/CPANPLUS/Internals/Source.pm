@@ -48,7 +48,8 @@ The flow looks like this:
         $cb->_check_trees
             $cb->__check_uptodate
                 $cb->_update_source
-            $cb->__update_custom_module_sources        
+            $cb->__update_custom_module_sources 
+                $cb->__update_custom_module_source
         $cb->_build_trees
             $cb->__create_author_tree
                 $cb->__retrieve_source
@@ -1017,6 +1018,99 @@ sub _dslip_defs {
     return $aref;
 }
 
+=head2 $file = $cb->_add_custom_module_source( uri => URI, [verbose => BOOL] ); 
+
+=cut
+
+sub _add_custom_module_source {
+    my $self = shift;
+    my $conf = $self->configure_object;
+    my %hash = @_;
+    
+    my($verbose,$uri);
+    my $tmpl = {   
+        verbose => { default => $conf->get_conf('verbose'),
+                     store   => \$verbose },
+        uri     => { required => 1, store => \$uri }
+    };
+    
+    check( $tmpl, \%hash ) or return;
+    
+    my $index = File::Spec->catfile(
+                    $conf->get_conf('base'),
+                    $conf->_get_build('custom_sources'),        
+                    $self->_uri_encode( uri => $uri ),
+                );     
+
+    ### already have it.
+    if( IS_FILE->( $index ) ) {
+        msg(loc("Source '%1' already added", $uri));
+        return 1;
+    }        
+        
+    ### do we need to create the targe dir?        
+    {   my $dir = dirname( $index );
+        unless( IS_DIR->( $dir ) ) {
+            $self->_mkdir( dir => $dir ) or return
+        }
+    }  
+    
+    ### write the file
+    my $fh = OPEN_FILE->( $index => '>' ) or do {
+        error(loc("Could not write index file for '%1'", $uri));
+        return;
+    };
+    
+    ### basically we 'touched' it.
+    close $fh;
+        
+    $self->__update_custom_module_source(
+                remote  => $uri,
+                local   => $index,
+                verbose => $verbose,
+            ) or return;                
+    
+    return $index;
+}
+
+=head2 $file = $cb->_remove_custom_module_source( uri => URI, [verbose => BOOL] ); 
+
+=cut
+
+sub _remove_custom_module_source {
+    my $self = shift;
+    my $conf = $self->configure_object;
+    my %hash = @_;
+    
+    my($verbose,$uri);
+    my $tmpl = {   
+        verbose => { default => $conf->get_conf('verbose'),
+                     store   => \$verbose },
+        uri     => { required => 1, store => \$uri }
+    };
+    
+    check( $tmpl, \%hash ) or return;
+
+    ### use uri => local, instead of the other way around
+    my %files = reverse $self->__list_custom_module_sources;
+    
+    my $file = $files{ $uri } or do {
+                    error(loc("No such custom source '%1'", $uri));
+                    return;
+                };
+                
+    1 while unlink $file;
+ 
+    if( IS_FILE->( $file ) ) {
+        error(loc("Could not remove index file '%1' for custom source '%2'",
+                    $file, $uri));
+        return;
+    }    
+            
+    msg(loc("Successfully removed index file for '%1'", $uri), $verbose);
+
+    return $file;
+}
 
 =head2 %files = $cb->__list_custom_module_sources
 
@@ -1025,7 +1119,7 @@ for additional sources to include in your module tree.
 
 Returns a list of key value pairs as follows:
 
-  /full/path/to/source/file => http://decoded/mirror/path
+  /full/path/to/source/file%3Fencoded => http://decoded/mirror/path
 
 =cut
 
@@ -1080,82 +1174,93 @@ sub __update_custom_module_sources {
     
     my %files = $self->__list_custom_module_sources;
     
-    ### uptodate check has been done a few levels up.
-    
+    ### uptodate check has been done a few levels up.   
     my $fail;
     while( my($local,$remote) = each %files ) {
-        msg( loc("Updating sources from '%1'", $remote), $verbose);
         
-        my $uri = join '/', $remote, $conf->_get_source('custom_index');
-        my $ff  = File::Fetch->new( uri => $uri );           
-        my $dir = tempdir();
-        my $res = do {  local $File::Fetch::WARN = 0;
-                        local $File::Fetch::WARN = 0;
-                        $ff->fetch( to => $dir );
-                    };
-
-        ### couldn't get the file
-        unless( $res ) {
-            
-            ### it's not a local scheme, so can't auto index
-            unless( $ff->scheme eq 'file' ) {
-                error(loc("Could not update sources from '%1': %2",
-                          $remote, $ff->error ));
-                
-                ### mark that we failed at least one
-                $fail++;
-                
-                next;
-            
-            ### it's a local uri, we can index it ourselves
-            } else {
-                msg(loc("No index file found for '%1', generating one",
-                        $ff->uri), $verbose );
-                
-                ### make sure the uri is without the filename, as we only
-                ### want the *PATH* encoded, without the filename
-                my $uri = do {  my $file_re = quotemeta( $ff->file );
-                                my $uri     = $ff->uri;
-                                
-                                ### strip off the /file part;
-                                $uri =~ s|/?$file_re$||;
-                                
-                                $uri;
-                            };
-                        
-                my $to  = File::Spec->catfile(
-                                    $conf->get_conf('base'),
-                                    $conf->_get_build('custom_sources'),        
-                                    $self->_uri_encode( uri => $uri ),
-                                );        
-                        
-                $self->__write_custom_module_index(
-                    path    => File::Spec->catdir(
-                                    File::Spec::Unix->splitdir( $ff->path )
-                                ),
-                    to      => $to,
+        $self->__update_custom_module_source(
+                    remote  => $remote,
+                    local   => $local,
                     verbose => $verbose,
                 ) or ( $fail++, next );         
-                
-                ### XXX don't write that here, __write_custom_module_index
-                ### already prints this out
-                #msg(loc("Index file written to '%1'", $to), $verbose);
-            }
-        
-        ### copy it to the real spot and update it's timestamp
-        } else {            
-            $self->_move( file => $res, to => $local ) 
-                or ( $fail++, next );
-            $self->_update_timestamp( file => $local );
-            
-            msg(loc("Index file saved to '%1'", $local), $verbose);
-        }
     }
     
     error(loc("Failed updating one or more remote sources files")) if $fail;
     
     return if $fail;
     return 1;
+}
+
+=head2 $ok = $cb->__update_custom_module_source 
+
+Attempts to update all the index files to your custom module sources.
+
+If the index is missing, and it's a C<file://> uri, it will generate
+a new local index for you.
+
+Return true on success, false on failure.
+
+=cut
+
+sub __update_custom_module_source {
+    my $self = shift;
+    my $conf = $self->configure_object;
+    my %hash = @_;
+    
+    my($verbose,$local,$remote);
+    my $tmpl = {   
+        verbose => { default => $conf->get_conf('verbose'),
+                     store   => \$verbose },
+        local   => { required => 1, store => \$local, allow => FILE_EXISTS },
+        remote  => { required => 1, store => \$remote },
+    };
+
+    check( $tmpl, \%hash ) or return;
+
+    msg( loc("Updating sources from '%1'", $remote), $verbose);
+    
+    my $uri = join '/', $remote, $conf->_get_source('custom_index');
+    my $ff  = File::Fetch->new( uri => $uri );           
+    my $dir = tempdir();
+    my $res = do {  local $File::Fetch::WARN = 0;
+                    local $File::Fetch::WARN = 0;
+                    $ff->fetch( to => $dir );
+                };
+
+    ### couldn't get the file
+    unless( $res ) {
+        
+        ### it's not a local scheme, so can't auto index
+        unless( $ff->scheme eq 'file' ) {
+            error(loc("Could not update sources from '%1': %2",
+                      $remote, $ff->error ));
+            return;   
+                        
+        ### it's a local uri, we can index it ourselves
+        } else {
+            msg(loc("No index file found at '%1', generating one",
+                    $ff->uri), $verbose );
+
+            $self->__write_custom_module_index(
+                path    => File::Spec->catdir(
+                                File::Spec::Unix->splitdir( $ff->path )
+                            ),
+                to      => $local,
+                verbose => $verbose,
+            ) or return;
+            
+            ### XXX don't write that here, __write_custom_module_index
+            ### already prints this out
+            #msg(loc("Index file written to '%1'", $to), $verbose);
+        }
+    
+    ### copy it to the real spot and update it's timestamp
+    } else {            
+        $self->_move( file => $res, to => $local ) or return;
+        $self->_update_timestamp( file => $local );
+        
+        msg(loc("Index file saved to '%1'", $local), $verbose);
+    }
 }
 
 =head2 $bool = $cb->__write_custom_module_index( path => /path/to/packages, [to => /path/to/index/file, verbose => BOOL] )
@@ -1213,19 +1318,13 @@ sub __write_custom_module_index {
 
     ### does the dir exist? if not, create it.
     {   my $dir = dirname( $to );
-        unless( DIR_EXISTS->( $dir ) ) {
-            $self->_mkdir( dir => $dir ) or do {
-                error(loc("Could not create directory '%1'", $dir));
-                return;
-            }
+        unless( IS_DIR->( $dir ) ) {
+            $self->_mkdir( dir => $dir ) or return
         }
     }        
 
     ### create the index file
-    my $fh = OPEN_FILE->( $to => '>' ) or do {
-        error(loc("Could not open '%1' for writing: %2", $to, $!));
-        return;
-    };
+    my $fh = OPEN_FILE->( $to => '>' ) or return;
     
     print $fh "$_\n" for @files;
     close $fh;
