@@ -475,6 +475,19 @@ sub parse_module {
         ### usual mirrors
         $modobj->status->_fetch_from( $mod );
         
+        ### better guess for the version
+        $modobj->version( $modobj->package_version ) 
+            if defined $modobj->package_version;
+        
+        ### better guess at module name, if possible
+        if ( my $pkgname = $modobj->package_name ) {
+            $pkgname =~ s/-/::/g;
+        
+            ### no sense replacing it unless we changed something
+            $modobj->module( $pkgname ) 
+                unless $pkgname eq $modobj->package_name;
+        }                
+        
         return $modobj;      
     }
     
