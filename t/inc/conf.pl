@@ -165,7 +165,7 @@ sub gimme_conf {
         print "# To run tests in verbose mode, set ".
               "\$ENV{PERL5_CPANPLUS_TEST_VERBOSE} = 1\n" unless $ENV{PERL_CORE};
     
-        unlink $file;   # just in case
+        1 while unlink $file;   # just in case
     
         $CPANPLUS::Error::ERROR_FH  =
         $CPANPLUS::Error::ERROR_FH  = output_handle();
