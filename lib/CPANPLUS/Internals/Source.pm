@@ -52,6 +52,7 @@ The flow looks like this:
                 $cb->__retrieve_source
                 $cb->__create_dslip_tree
                     $cb->__retrieve_source
+            $cb->__create_custom_module_entries                    
             $cb->_save_source
 
     $cb->_dslip_defs
@@ -400,6 +401,10 @@ sub _build_trees {
     ### return if we weren't able to build the trees ###
     return unless $self->{_modtree} && $self->{_authortree};
 
+    ### add custom sources here
+    $self->__create_custom_module_entries( verbose => $args->{verbose} )
+        or error(loc("Could not create custom module entries"));
+
     ### write the stored files to disk, so we can keep using them
     ### from now on, till they become invalid
     ### write them if the original sources weren't uptodate, or
@@ -619,7 +624,7 @@ Returns a tree on success, false on failure.
 
 =cut
 
-sub __create_author_tree() {
+sub __create_author_tree {
     my $self = shift;
     my %hash = @_;
     my $conf = $self->configure_object;
@@ -1003,6 +1008,88 @@ sub _dslip_defs {
 
     return $aref;
 }
+
+=head2 $bool = $cb->__create_custom_module_entries( [verbose => BOOL] ) 
+
+This method scans the 'custom-sources' directory in your base directory
+for additional sources to include in your module tree.
+
+Returns true on success, false on failure.
+
+=cut 
+
+### use $auth_obj as a persistant version, so we don't have to recreate
+### modules all the time
+{   my $auth_obj; 
+
+    sub __create_custom_module_entries {
+        my $self    = shift;
+        my $conf    = $self->configure_object;
+        my %hash    = @_;
+        
+        my $verbose;
+        my $tmpl = {
+            verbose     => { default => $conf->get_conf('verbose'), store => \$verbose },
+        };
+    
+        check( $tmpl, \%hash ) or return undef;
+        
+        my $dir = File::Spec->catdir(
+                                $conf->get_conf('base'),
+                                $conf->_get_build('custom_sources'),
+                            );
+        unless( IS_DIR->( $dir ) ) {
+            msg(loc("No '%1' dir, skipping custom sources", $dir));
+            return 1;
+        }
+        
+        ### unencode the files
+        ### skip ones starting with # though
+        my %files = map {            
+            my $org = $_;            
+            my $dec = $self->_uri_decode( uri => $_ );            
+            $org => $dec
+        } grep { $_ !~ /^#/ } READ_DIR->( $dir );        
+    
+        while( my($file,$name) = each %files ) {
+            my $path = File::Spec->catfile( $dir, $file );
+            
+            msg(loc("Adding packages from custom source '%1'", $name), $verbose);
+    
+            my $fh = OPEN_FILE->( $path ) or next;
+    
+            while( <$fh> ) {
+                chomp;
+                next if /^#/;
+                next unless /\S+/;
+                
+                ### join on / -- it's a URI after all!
+                my $parse = join '/', $name, $_;
+    
+                ### try to make a module object out of it
+                my $mod = $self->parse_module( module => $parse ) or (
+                    error(loc("Could not parse '%1'", $_)),
+                    next
+                );
+                
+                ### mark this object with a custom author
+                $auth_obj ||= CPANPLUS::Module::Author::Fake->new(
+                                    cpanid => CUSTOM_AUTHOR_ID
+                                );          
+                
+                $mod->author( $auth_obj );
+                
+                ### and now add it to the modlue tree -- this MAY
+                ### override things of course
+                ### XXX warn for this?
+                $self->module_tree->{ $mod->module } = $mod;
+            }
+        }
+        
+        return 1;
+    }
+}
+
 
 # Local variables:
 # c-indentation-style: bsd

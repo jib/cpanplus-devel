@@ -65,6 +65,7 @@ my $Conf = {
         'autobundle_prefix' => 'Snapshot',
         'autdir'            => 'authors',
         'install_log_dir'   => 'install-logs',
+        'custom_sources'    => 'custom-sources',
         'sanity_check'      => 1,
     },
     '_mirror' => {
