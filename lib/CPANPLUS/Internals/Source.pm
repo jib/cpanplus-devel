@@ -1292,6 +1292,8 @@ sub __update_custom_module_source {
         
         msg(loc("Index file saved to '%1'", $local), $verbose);
     }
+    
+    return $local;
 }
 
 =head2 $bool = $cb->__write_custom_module_index( path => /path/to/packages, [to => /path/to/index/file, verbose => BOOL] )
