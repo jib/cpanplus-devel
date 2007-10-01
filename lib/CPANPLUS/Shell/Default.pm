@@ -1807,16 +1807,6 @@ sub _read_configuration_from_rc {
     }
 }    
 
-sub __print {
-    my $self = shift;
-    return print @_;
-}
-
-sub __printf {
-    my $self = shift;
-    return $self->__print( sprintf( @_ ) );
-}
-
 1;
 
 __END__
