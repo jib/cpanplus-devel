@@ -7,13 +7,58 @@ use CPANPLUS::Internals::Constants;
 use Data::Dumper;
 use Locale::Maketext::Simple        Class => 'CPANPLUS', Style => 'gettext';
 
+=head1 NAME
+
+CPANPLUS::Shell::Default::Plugins::CustomSource 
+
+=head1 SYNOPSIS
+    
+    ### elaborate help text
+    CPAN Terminal> /? cs
+
+    ### add a new custom source
+    CPAN Terminal> /cs --add file:///path/to/releases
+    
+    ### list all your custom sources by 
+    CPAN Terminal> /cs --list
+    
+    ### display the contents of a custom source by URI or ID
+    CPAN Terminal> /cs --contents file:///path/to/releases
+    CPAN Terminal> /cs --contents 1
+
+    ### Update a custom source by URI or ID
+    CPAN Terminal> /cs --update file:///path/to/releases
+    CPAN Terminal> /cs --update 1
+    
+    ### Remove a custom source by URI or ID
+    CPAN Terminal> /cs --remove file:///path/to/releases
+    CPAN Terminal> /cs --remove 1
+    
+    ### Write an index file for a custom source, to share
+    ### with 3rd parties or remote users
+    CPAN Terminal> /cs --write file:///path/to/releases
+
+    ### Make sure to save your sources when adding/removing
+    ### sources, so your changes are reflected in the cache:
+    CPAN Terminal> x
+
+=head1 DESCRIPTION
+
+This is a C<CPANPLUS::Shell::Default> plugin that can add 
+custom sources to your CPANPLUS installation. This is a 
+wrapper around the C<custom module sources> code as outlined
+in L<CPANPLUS::Backend/CUSTOM MODULE SOURCES>.
+
+This allows you to extend your index of available modules
+beyond what's available on C<CPAN> with your own local 
+distributions, or ones offered by third parties.
+
+=cut
+
 
 sub plugins {
     return ( cs => 'custom_source' )
 }
-
-### XXX Refactor
-### XXX note saving tree to make changes permanent
 
 my $Cb;
 my $Shell;
