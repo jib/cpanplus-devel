@@ -44,7 +44,6 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
     isa_ok( $mod,               'CPANPLUS::Module' );
 }
 
-
 ### check custom sources
 ### XXX whitebox test
 {   ### first, find a file to serve as a source
