@@ -41,7 +41,22 @@ ok( $Shell,                     "   New object created" );
 isa_ok( $Shell, $Default,       "   Object" );
 
 ### method tests
-{   ### XXX have to keep the list ordered, as some methods only work as 
+{   
+    ### uri to use for /cs tests
+    my $cs_path = File::Spec->rel2abs(
+                        File::Spec->catfile( 
+                            $FindBin::Bin,
+                            TEST_CONF_CPAN_DIR,
+                        )
+                    );
+    my $cs_uri = $Shell->backend->_host_to_uri(
+                        scheme  => 'file',
+                        host    => '',
+                        path    => $cs_path,
+                    );
+     
+
+    ### XXX have to keep the list ordered, as some methods only work as 
     ### expected *after* others have run
     my @map = (
         'v'                     => qr/CPANPLUS/,
@@ -68,6 +83,15 @@ isa_ok( $Shell, $Default,       "   Object" );
         '! die $$; p'           => qr/$$/,
         '/plugins'              => qr/Available plugins:/i,
         '/? ?'                  => qr/usage/i,
+        
+        ### custom source plugin tests
+        "/? cs"                  => qr|/cs|,
+        "/cs --add $cs_uri"      => qr/Added remote source/,
+        "/cs --list"             => do { my $re = quotemeta($cs_uri); qr/$re/ },
+        "/cs --contents $cs_uri" => qr/$TestAuth/,
+        "/cs --update"           => qr/Updated remote sources/,
+        "/cs --write $cs_path"   => qr/Wrote remote source index/,
+        "/cs --remove $cs_uri"   => qr/Removed remote source/,
     );
 
     my $meth = 'dispatch_on_input';
@@ -97,7 +121,7 @@ __END__
 #### test seperately, they have side effects     
 'q'                     => qr/^$/,          # no output!
 's save boxed'          => do { my $re = CONFIG_BOXED;       qr/$re/ },        
-### this doens't write messages about update sources!
+### this doens't write any output 
 'x --update_source'     => qr/module tree/i,
 s edit
 s reconfigure
@@ -107,4 +131,5 @@ s reconfigure
 'z'     => '_shell',
 ### might not have any out of date modules...
 'o'     => '_uptodate',
+
     
