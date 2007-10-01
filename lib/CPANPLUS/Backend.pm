@@ -1100,10 +1100,12 @@ sub remove_custom_source {
     return shift->_remove_custom_module_source( @_ );
 }
 
-=head2 $bool = $cb->update_custom_source
+=head2 $bool = $cb->update_custom_source( [remote => URI] );
 
 Updates the indexes for all your custom sources. It does this by fetching
 a file called C<packages.txt> in the root of the custom sources's C<URI>.
+If you provide the C<remote> argument, it will only update the index for
+that specific C<URI>.
 
 Here's an example of how custom sources would resolve into index files:
 
@@ -1127,7 +1129,13 @@ added packages.
 =cut
 
 sub update_custom_source {
-    return shift->__update_custom_module_sources( @_ );
+    my $self = shift;
+    
+    ### if it mentions /remote/, the request is to update a single uri,
+    ### not all the ones we have, so dispatch appropriately
+    return grep /remote/i, @_
+        ? $self->__update_custom_module_source( @_ )
+        : $self->__update_custom_module_sources( @_ );
 }    
 
 =head2 $file = $cb->write_custom_source_index( path => /path/to/package/root, [to => /path/to/index/file, verbose => BOOL] );
