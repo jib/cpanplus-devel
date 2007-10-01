@@ -568,6 +568,31 @@ sub _split_package_string {
     }
 }
 
+sub _update_timestamp {
+    my $self = shift;
+    my %hash = @_;
+    
+    my $file;
+    my $tmpl = {
+        file => { required => 1, store => \$file, allow => FILE_EXISTS }
+    };
+    
+    check( $tmpl, \%hash ) or return;
+   
+    ### `touch` the file, so windoze knows it's new -jmb
+    ### works on *nix too, good fix -Kane
+    ### make sure it is writable first, otherwise the `touch` will fail
+
+    my $now = time;
+    unless( chmod( 0644, $file) && utime ($now, $now, $file) ) {
+        error( loc("Couldn't touch %1", $file) );
+        return;
+    }
+    
+    return 1;
+}
+
+
 1;
 
 # Local variables:
