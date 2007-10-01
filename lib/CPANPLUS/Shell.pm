@@ -281,15 +281,17 @@ sub _pager_close {
     }
 }
 
-
-sub __print {
-    my $self = shift;
-    return print @_;
-}
-
-sub __printf {
-    my $self = shift;
-    return $self->__print( sprintf( @_ ) );
+### Custom print routines, mainly to be able to catch output
+### in test cases, or redirect it if need be
+{   sub __print {
+        my $self = shift;
+        return print @_;
+    }
+    
+    sub __printf {
+        my $self = shift;
+        return $self->__print( sprintf( @_ ) );
+    }
 }
 
 1;
