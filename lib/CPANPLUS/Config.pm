@@ -54,7 +54,8 @@ my $Conf = {
         'stored'            => 'sourcefiles',
         'dslip'             => '03modlist.data.gz',
         'update'            => '86400',
-        'mod'               => '02packages.details.txt.gz'
+        'mod'               => '02packages.details.txt.gz',
+        'custom_index'      => 'packages.txt',
     },
     '_build' => {
         'plugins'           => 'plugins',

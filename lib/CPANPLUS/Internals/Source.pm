@@ -8,12 +8,15 @@ use CPANPLUS::Module::Fake;
 use CPANPLUS::Module::Author;
 use CPANPLUS::Internals::Constants;
 
+use File::Fetch;
 use Archive::Extract;
 
-use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
-use Params::Check               qw[check];
 use IPC::Cmd                    qw[can_run];
+use File::Temp                  qw[tempdir];
+use File::Basename              qw[dirname];
+use Params::Check               qw[check];
 use Module::Load::Conditional   qw[can_load];
+use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
 $Params::Check::VERBOSE = 1;
 
@@ -42,9 +45,10 @@ well as update them, and then parse them.
 The flow looks like this:
 
     $cb->_author_tree || $cb->_module_tree
-        $cb->__check_trees
+        $cb->_check_trees
             $cb->__check_uptodate
                 $cb->_update_source
+            $cb->__update_custom_module_sources        
         $cb->_build_trees
             $cb->__create_author_tree
                 $cb->__retrieve_source
@@ -163,6 +167,12 @@ sub _check_trees {
         }
     }
 
+    ### if we're explicitly asked to update the sources, or if the
+    ### standard source files are out of date, update the custom sources
+    ### as well
+    $self->__update_custom_module_sources( verbose => $verbose ) 
+        if $update_source or !$uptodate;
+
     return $uptodate;
 }
 
@@ -229,8 +239,8 @@ sub __check_uptodate {
     if ( $flag or $args->{'update_source'} ) {
 
          if ( $self->_update_source( name => $args->{'name'} ) ) {
-              return 0;       # return 0 so 'uptodate' will be set to 0, meaning no use
-                              # of previously stored hashrefs!
+              return 0;       # return 0 so 'uptodate' will be set to 0, meaning no 
+                              # use of previously stored hashrefs!
          } else {
               msg( loc("Unable to update source, attempting to get away with using old source file!"), $args->{verbose} );
               return 1;
@@ -276,11 +286,11 @@ sub _update_source {
     my %hash = @_;
     my $conf = $self->configure_object;
 
-
+    my $verbose;
     my $tmpl = {
         name    => { required => 1 },
         path    => { default => $conf->get_conf('base') },
-        verbose => { default => $conf->get_conf('verbose') },
+        verbose => { default => $conf->get_conf('verbose'), store => \$verbose },
     };
 
     my $args = check( $tmpl, \%hash ) or return;
@@ -292,7 +302,7 @@ sub _update_source {
         ### it's not platform dependant. -kane
         my ($dir, $file) = $conf->_get_mirror( $args->{'name'} ) =~ m|(.+/)(.+)$|sg;
 
-        msg( loc("Updating source file '%1'", $file), $args->{'verbose'} );
+        msg( loc("Updating source file '%1'", $file), $verbose );
 
         my $fake = CPANPLUS::Module::Fake->new(
                         module  => $args->{'name'},
@@ -317,6 +327,7 @@ sub _update_source {
 
         $self->_update_timestamp( file => File::Spec->catfile($path, $file) );
     }
+
     return 1;
 }
 
@@ -391,6 +402,12 @@ sub _build_trees {
 
     ### return if we weren't able to build the trees ###
     return unless $self->{_modtree} && $self->{_authortree};
+
+    ### update them if the other sources are also deemed out of date
+    unless( $uptodate ) {
+        $self->__update_custom_module_sources( verbose => $args->{verbose} ) 
+            or error(loc("Could not update custom module sources"));
+    }      
 
     ### add custom sources here
     $self->__create_custom_module_entries( verbose => $args->{verbose} )
@@ -1037,6 +1054,187 @@ sub __list_custom_module_sources {
     return %files;    
 }
 
+=head2 $bool = $cb->__update_custom_module_sources( [verbose => BOOL] );
+
+Attempts to update all the index files to your custom module sources.
+
+If the index is missing, and it's a C<file://> uri, it will generate
+a new local index for you.
+
+Return true on success, false on failure.
+
+=cut
+
+sub __update_custom_module_sources {
+    my $self = shift;
+    my $conf = $self->configure_object;
+    my %hash = @_;
+    
+    my $verbose;
+    my $tmpl = {   
+        verbose => { default => $conf->get_conf('verbose'),
+                     store   => \$verbose }
+    };
+    
+    check( $tmpl, \%hash ) or return;
+    
+    my %files = $self->__list_custom_module_sources;
+    
+    ### uptodate check has been done a few levels up.
+    
+    my $fail;
+    while( my($local,$remote) = each %files ) {
+        msg( loc("Updating sources from '%1'", $remote), $verbose);
+        
+        my $uri = join '/', $remote, $conf->_get_source('custom_index');
+        my $ff  = File::Fetch->new( uri => $uri );           
+        my $dir = tempdir();
+        my $res = do {  local $File::Fetch::WARN = 0;
+                        local $File::Fetch::WARN = 0;
+                        $ff->fetch( to => $dir );
+                    };
+
+        ### couldn't get the file
+        unless( $res ) {
+            
+            ### it's not a local scheme, so can't auto index
+            unless( $ff->scheme eq 'file' ) {
+                error(loc("Could not update sources from '%1': %2",
+                          $remote, $ff->error ));
+                
+                ### mark that we failed at least one
+                $fail++;
+                
+                next;
+            
+            ### it's a local uri, we can index it ourselves
+            } else {
+                msg(loc("No index file found for '%1', generating one",
+                        $ff->uri), $verbose );
+                
+                ### make sure the uri is without the filename, as we only
+                ### want the *PATH* encoded, without the filename
+                my $uri = do {  my $file_re = quotemeta( $ff->file );
+                                my $uri     = $ff->uri;
+                                
+                                ### strip off the /file part;
+                                $uri =~ s|/?$file_re$||;
+                                
+                                $uri;
+                            };
+                        
+                my $to  = File::Spec->catfile(
+                                    $conf->get_conf('base'),
+                                    $conf->_get_build('custom_sources'),        
+                                    $self->_uri_encode( uri => $uri ),
+                                );        
+                        
+                $self->__write_custom_module_index(
+                    path    => File::Spec->catdir(
+                                    File::Spec::Unix->splitdir( $ff->path )
+                                ),
+                    to      => $to,
+                    verbose => $verbose,
+                ) or ( $fail++, next );         
+                
+                ### XXX don't write that here, __write_custom_module_index
+                ### already prints this out
+                #msg(loc("Index file written to '%1'", $to), $verbose);
+            }
+        
+        ### copy it to the real spot and update it's timestamp
+        } else {            
+            $self->_move( file => $res, to => $local ) 
+                or ( $fail++, next );
+            $self->_update_timestamp( file => $local );
+            
+            msg(loc("Index file saved to '%1'", $local), $verbose);
+        }
+    }
+    
+    error(loc("Failed updating one or more remote sources files")) if $fail;
+    
+    return if $fail;
+    return 1;
+}
+
+=head2 $bool = $cb->__write_custom_module_index( path => /path/to/packages, [to => /path/to/index/file, verbose => BOOL] )
+
+Scans the C<path> you provided for packages and writes an index with all 
+the available packages to C<$path/packages.txt>. If you'd like the index
+to be written to a different file, provide the C<to> argument.
+
+Returns true on success and false on failure.
+
+=cut
+
+sub __write_custom_module_index {
+    my $self = shift;
+    my $conf = $self->configure_object;
+    my %hash = @_;
+    
+    my ($verbose, $path, $to);
+    my $tmpl = {   
+        verbose => { default => $conf->get_conf('verbose'),
+                     store   => \$verbose },
+        path    => { required => 1, allow => DIR_EXISTS, store => \$path },
+        to      => { store => \$to },
+    };
+    
+    check( $tmpl, \%hash ) or return;    
+
+    ### no explicit to? then we'll use our default
+    $to ||= File::Spec->catfile( $path, $conf->_get_source('custom_index') );
+
+    my @files;
+    require File::Find;
+    File::Find::find( sub { 
+        ### let's see if A::E can even parse it
+        my $ae = do {
+            local $Archive::Extract::WARN = 0;
+            local $Archive::Extract::WARN = 0;
+            Archive::Extract->new( archive => $File::Find::name ) 
+        } or return; 
+
+        ### it's a type A::E recognize, so we can add it
+        $ae->type or return;
+
+        ### neither $_ nor $File::Find::name have the chunk of the path in
+        ### it starting $path -- it's either only the filename, or the full
+        ### path, so we have to strip it ourselves
+        ### make sure to remove the leading slash as well.
+        my $copy = $File::Find::name;
+        my $re   = quotemeta($path);        
+        $copy    =~ s|^$path[\\/]?||i;
+        
+        push @files, $copy;
+        
+    }, $path );
+
+    ### does the dir exist? if not, create it.
+    {   my $dir = dirname( $to );
+        unless( DIR_EXISTS->( $dir ) ) {
+            $self->_mkdir( dir => $dir ) or do {
+                error(loc("Could not create directory '%1'", $dir));
+                return;
+            }
+        }
+    }        
+
+    ### create the index file
+    my $fh = OPEN_FILE->( $to => '>' ) or do {
+        error(loc("Could not open '%1' for writing: %2", $to, $!));
+        return;
+    };
+    
+    print $fh "$_\n" for @files;
+    close $fh;
+    
+    msg(loc("Successfully written index file to '%1'", $to), $verbose);
+    
+    return 1;
+}
+
 
 =head2 $bool = $cb->__create_custom_module_entries( [verbose => BOOL] ) 
 
@@ -1094,7 +1292,11 @@ Returns true on success, false on failure.
                 
                 ### and now add it to the modlue tree -- this MAY
                 ### override things of course
-                ### XXX warn for this?
+                if( $self->module_tree( $mod->module ) ) {
+                    msg(loc("About to overwrite module tree entry for '%1'",
+                            $mod->module), $verbose);
+                }
+                
                 $self->module_tree->{ $mod->module } = $mod;
             }
         }

@@ -14,8 +14,8 @@ use Data::Dumper;
 use File::Basename qw[dirname];
 
 my $conf = gimme_conf();
+my $cb   = CPANPLUS::Backend->new( $conf );
 
-my $cb = CPANPLUS::Backend->new( $conf );
 isa_ok($cb, "CPANPLUS::Internals" );
 
 my $mt      = $cb->_module_tree;
@@ -43,6 +43,7 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
 
 
 ### check custom sources
+### XXX whitebox test
 {   ### first, find a file to serve as a source
     my $mod     = $mt->{$modname};
     my $package = File::Spec->rel2abs(
@@ -78,11 +79,17 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
                     );            
     ok( $src_file,              "Sources will be written to '$src_file'" );                     
                      
-    ### and write the file                     
-    {   my $fh = OPEN_FILE->( $src_file, '>' );
-        ok( $fh,                "   File opened" );
-        print $fh $mod->package . $/;
-        close $fh;
+    ### and write the file   
+    {   my $meth = '__write_custom_module_index';
+        can_ok( $cb,    $meth );
+
+        my $rv = $cb->$meth( 
+                        path => dirname( $package ),
+                        to   => $src_file
+                    );
+
+        ok( $rv,                "   Sources written" );
+        ok( -e $src_file,       "       Source file exists" );
     }              
     
     ### let's see if we can find our custom files
@@ -107,12 +114,52 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
         ok( $add,               "   Found added module" );
 
         ok( $add->status->_fetch_from,  
-                                "   Full download path set" );
+                                "       Full download path set" );
         is( $add->author->cpanid, CUSTOM_AUTHOR_ID,
-                                "   Attributed to custom author" );
-    }
-}
+                                "       Attributed to custom author" );
 
+        ### since we replaced an existing module, there should be
+        ### a message on the stack
+        like( CPANPLUS::Error->stack_as_string, qr/overwrite module tree/i,
+                                "   Addition message recorded" );
+    }
+
+    ### test updating custom sources
+    {   my $meth    = '__update_custom_module_sources';
+        can_ok( $cb,    $meth );
+        
+        ### mark what time it is now, sleep 1 second for better measuring
+        my $now     = time;        
+        sleep 1;
+        
+        my $ok      = $cb->$meth;
+
+        ok( $ok,                    "Custom sources updated" );
+        cmp_ok( [stat $src_file]->[9], '>=', $now,
+                                    "   Timestamp on sourcefile updated" );    
+    }
+
+    ### now update using the higher level API, see if it's part of the update
+    {   CPANPLUS::Error->flush;
+
+        ### mark what time it is now, sleep 1 second for better measuring
+        my $now = time;        
+        sleep 1;
+        
+        my $ok  = $cb->_build_trees(
+                        uptodate    => 0,
+                        use_stored  => 0,
+                    );
+    
+        ok( $ok,                    "All sources updated" );
+        cmp_ok( [stat $src_file]->[9], '>=', $now,
+                                    "   Timestamp on sourcefile updated" );    
+
+        like( CPANPLUS::Error->stack_as_string, qr/Updating sources from/,
+                                    "   Update recorded in the log" );
+    }
+
+}
 
 # Local variables:
 # c-indentation-style: bsd
