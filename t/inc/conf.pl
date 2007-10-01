@@ -62,6 +62,8 @@ use File::Basename  qw[basename];
     $Locale::Maketext::Lexicon::VERSION = 0;
 }
 
+my $Env = 'PERL5_CPANPLUS_TEST_VERBOSE';
+
 # prereq has to be in our package file && core!
 use constant TEST_CONF_PREREQ           => 'Cwd';   
 use constant TEST_CONF_MODULE           => 'Foo::Bar::EU::NOXS';
@@ -119,6 +121,7 @@ sub gimme_conf {
     $conf->set_conf( base       => 'dummy-cpanplus' );
     $conf->set_conf( dist_type  => '' );
     $conf->set_conf( signature  => 0 );
+    $conf->set_conf( verbose    => 1 ) if $ENV{ $Env };
     
     ### never use a pager in the test suite
     $conf->set_program( pager   => '' );
@@ -162,12 +165,12 @@ sub gimme_conf {
     sub output_file { return $file }
     
     
-    my $env = 'PERL5_CPANPLUS_TEST_VERBOSE';
+    
     ### redirect output from msg() and error() output to file
-    unless( $ENV{$env} ) {
+    unless( $ENV{$Env} ) {
     
         print "# To run tests in verbose mode, set ".
-              "\$ENV{PERL5_CPANPLUS_TEST_VERBOSE} = 1\n" unless $ENV{PERL_CORE};
+              "\$ENV{$Env} = 1\n" unless $ENV{PERL_CORE};
     
         1 while unlink $file;   # just in case
     
