@@ -62,7 +62,11 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
     ok( -e $package,            "   File '$package' exists" );
 
     ### remote uri    
-    my $uri      = 'file://' . File::Spec->catfile( dirname($package) );
+    my $uri      =  $cb->_host_to_uri(
+                        scheme  => 'file',
+                        host    => '',
+                        path    => File::Spec->catfile( dirname($package) )
+                    );
 
     ### local file
     my $src_file = $cb->_add_custom_module_source( uri => $uri );

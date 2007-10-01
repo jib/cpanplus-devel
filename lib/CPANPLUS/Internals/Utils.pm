@@ -344,14 +344,15 @@ sub _host_to_uri {
     
     my($scheme, $host, $path);
     my $tmpl = {
-        scheme  => { required => 1,     store => \$scheme },
-        host    => { default  => '',    store => \$host },
-        path    => { default  => '',    store => \$path },
+        scheme  => { required => 1,             store => \$scheme },
+        host    => { default  => 'localhost',   store => \$host },
+        path    => { default  => '',            store => \$path },
     };       
 
     check( $tmpl, \%hash ) or return;
 
-    $host ||= 'localhost';
+    ### it's an URI, so unixify the path
+    $path = File::Spec::Unix->catdir( File::Spec->splitdir( $path ) );
 
     return "$scheme://" . File::Spec::Unix->catdir( $host, $path ); 
 }
