@@ -92,7 +92,7 @@ sub custom_source {
 
     ### XXX add the call
     } elsif ( $opts->{'write'} ) {
-    
+        $cb->write_custom_source_index( path => $input );
     
     } else {
         error(loc("Unrecognized command, see '%1' for help", '/? cs'));
@@ -103,12 +103,12 @@ sub custom_source {
 
 sub custom_source_help {
     return loc(
-        '   /cs --list'                             . $/ .
-        '   /cs --add       URI'                    . $/ .
-        '   /cs --remove    URI'                    . $/ .
-        '   /cs --contents  URI'                    . $/ .
-        '   /cs --update   [URI]'                   . $/ .
-        '   /cs --write /path/to/repository/root'   . $/ 
+        '    /cs --list             # list available sources'       . $/ .
+        '    /cs --add       URI    # add source'                   . $/ .
+        '    /cs --remove    URI    # remove source'                . $/ .
+        '    /cs --contents  URI    # show packages from source'    . $/ .
+        '    /cs --update   [URI]   # update source index'          . $/ .
+        '    /cs --write     PATH   # write source index'           . $/ 
     );        
 
 }
