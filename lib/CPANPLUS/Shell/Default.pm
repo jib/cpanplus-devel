@@ -159,7 +159,7 @@ can start it via the C<cpanp> binary, or as detailed in the L<SYNOPSIS>.
 sub new {
     my $class   = shift;
 
-    my $cb      = new CPANPLUS::Backend;
+    my $cb      = CPANPLUS::Backend->new( @_ );
     my $self    = $class->SUPER::_init(
                             brand       => $Brand,
                             term        => Term::ReadLine->new( $Brand ),
@@ -207,6 +207,8 @@ sub new {
             code    => \&__ask_about_test_failure,
     );
 
+    ### load all the plugins
+    $self->_plugins_init;
 
     return $self;
 }
@@ -1257,7 +1259,7 @@ sub _set_conf {
             my %list = $cb->selfupdate_object
                             ->list_modules_to_update( %update_args );
 
-            $self->__print( loc( "The following updates will take place:" ) ), $/.$/;
+            $self->__print(loc("The following updates will take place:"),$/.$/);
             
             for my $feature ( sort keys %list ) {
                 my $aref = $list{$feature};
@@ -1308,6 +1310,7 @@ sub _set_conf {
                     ($val)  = ref($val)
                                 ? (Data::Dumper::Dumper($val) =~ /= (.*);$/)
                                 : "'$val'";
+
                     $self->__printf( "    $format\n", $name, $val );
                 }
 
@@ -1577,46 +1580,48 @@ sub _reports {
     sub plugin_modules  { return @PluginModules }
     sub plugin_table    { return %Dispatch }
     
-    ### find all plugins first
-    if( check_install(  module  => 'Module::Pluggable', version => '2.4') ) {
-        require Module::Pluggable;
-
-        my $only_re = __PACKAGE__ . '::Plugins::\w+$';
-
-        Module::Pluggable->import(
-                        sub_name    => '_plugins',
-                        search_path => __PACKAGE__,
-                        only        => qr/$only_re/,
-                        #except      => [ INSTALLER_MM, INSTALLER_SAMPLE ]
-                    );
-                    
-        push @PluginModules, __PACKAGE__->_plugins;
-    }
-
-    ### now try to load them
-    for my $p ( __PACKAGE__->plugin_modules ) {
-        my %map = eval { load $p; $p->import; $p->plugins };
-        error(loc("Could not load plugin '$p': $@")), next if $@;
+    sub _plugins_init {
+        ### find all plugins first
+        if( check_install( module  => 'Module::Pluggable', version => '2.4') ) {
+            require Module::Pluggable;
     
-        ### register each plugin
-        while( my($name, $func) = each %map ) {
-            
-            if( not length $name or not length $func ) {
-                error(loc("Empty plugin name or dispatch function detected"));
-                next;
-            }                
-            
-            if( exists( $Dispatch{$name} ) ) {
-                error(loc("'%1' is already registered by '%2'", 
-                    $name, $Dispatch{$name}->[0]));
-                next;                    
+            my $only_re = __PACKAGE__ . '::Plugins::\w+$';
+    
+            Module::Pluggable->import(
+                            sub_name    => '_plugins',
+                            search_path => __PACKAGE__,
+                            only        => qr/$only_re/,
+                            #except      => [ INSTALLER_MM, INSTALLER_SAMPLE ]
+                        );
+                        
+            push @PluginModules, __PACKAGE__->_plugins;
+        }
+    
+        ### now try to load them
+        for my $p ( __PACKAGE__->plugin_modules ) {
+            my %map = eval { load $p; $p->import; $p->plugins };
+            error(loc("Could not load plugin '$p': $@")), next if $@;
+        
+            ### register each plugin
+            while( my($name, $func) = each %map ) {
+                
+                if( not length $name or not length $func ) {
+                    error(loc("Empty plugin name or dispatch function detected"));
+                    next;
+                }                
+                
+                if( exists( $Dispatch{$name} ) ) {
+                    error(loc("'%1' is already registered by '%2'", 
+                        $name, $Dispatch{$name}->[0]));
+                    next;                    
+                }
+        
+                ### register name, package and function
+                $Dispatch{$name} = [ $p, $func ];
             }
-    
-            ### register name, package and function
-            $Dispatch{$name} = [ $p, $func ];
         }
     }
-
+    
     ### dispatch a plugin command to it's function
     sub _meta {
         my $self = shift;
