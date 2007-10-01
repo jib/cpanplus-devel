@@ -1599,7 +1599,7 @@ sub _reports {
 }
 
 ### plugin commands 
-{   my $help_format = "    /%-20s # %s\n"; 
+{   my $help_format = "    /%-21s # %s\n"; 
     
     sub _list_plugins   {
         print loc("Available plugins:\n");
