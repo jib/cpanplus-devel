@@ -90,6 +90,7 @@ isa_ok( $Shell, $Default,       "   Object" );
         "/cs --list"             => do { my $re = quotemeta($cs_uri); qr/$re/ },
         "/cs --contents $cs_uri" => qr/$TestAuth/,
         "/cs --update"           => qr/Updated remote sources/,
+        "/cs --update $cs_uri"   => qr/Updated remote sources/,
         "/cs --write $cs_path"   => qr/Wrote remote source index/,
         "/cs --remove $cs_uri"   => qr/Removed remote source/,
     );

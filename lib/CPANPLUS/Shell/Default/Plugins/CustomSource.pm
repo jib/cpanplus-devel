@@ -21,7 +21,7 @@ my @Index   = ();
 
 sub _uri_from_cache {
     my $self    = shift;
-    my $input   = shift;
+    my $input   = shift or return;
 
     ### you gave us a search number    
     my $uri = $input =~ /^\d+$/    
@@ -114,14 +114,16 @@ sub custom_source {
     
         $shell->__print( loc("Removed remote source '%1'", $uri), $/ );
 
-    ### XXX support single uri too
     } elsif ( $opts->{'update'} ) {
-        $cb->update_custom_source 
-            and $shell->__print(loc("Updated remote sources"), $/);      
+        ### did we get input? if so, it's a remote part
+        my $uri = $class->_uri_from_cache( $input );
+
+        $cb->update_custom_source( $uri ? ( remote => $uri ) : () ) 
+            and do { $shell->__print( loc("Updated remote sources"), $/ ) };      
 
     } elsif ( $opts->{'write'} ) {
         $cb->write_custom_source_index( path => $input ) and
-            $shell->__print(loc("Wrote remote source index for '%1'", $input), $/);              
+            $shell->__print( loc("Wrote remote source index for '%1'", $input), $/);              
             
     } else {
         error(loc("Unrecognized command, see '%1' for help", '/? cs'));
