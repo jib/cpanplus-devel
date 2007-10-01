@@ -526,6 +526,47 @@ sub _split_package_string {
     }
 }
 
+{   my %escapes = map {
+        chr($_) => sprintf("%%%02X", $_)
+    } 0 .. 255;  
+    
+    sub _uri_encode {
+        my $self = shift;
+        my %hash = @_;
+        
+        my $str;
+        my $tmpl = {
+            uri => { store => \$str, required => 1 }
+        };
+        
+        check( $tmpl, \%hash ) or return;
+
+        ### XXX taken straight from URI::Encode
+        ### Default unsafe characters.  RFC 2732 ^(uric - reserved)
+        $str =~ s|([^A-Za-z0-9\-_.!~*'()])|$escapes{$1}|g;
+    
+        return $str;          
+    }
+    
+    
+    sub _uri_decode {
+        my $self = shift;
+        my %hash = @_;
+        
+        my $str;
+        my $tmpl = {
+            uri => { store => \$str, required => 1 }
+        };
+        
+        check( $tmpl, \%hash ) or return;
+    
+        ### XXX use unencode routine in utils?
+        $str =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg; 
+    
+        return $str;    
+    }
+}
+
 1;
 
 # Local variables:
