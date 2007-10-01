@@ -1095,7 +1095,7 @@ sub remove_custom_source {
     return shift->_remove_custom_module_source( @_ );
 }
 
-=head2 $cb->update_custom_source
+=head2 $bool = $cb->update_custom_source
 
 Updates the indexes for all your custom sources. It does this by fetching
 a file called C<packages.txt> in the root of the custom sources's C<URI>.
@@ -1114,6 +1114,10 @@ C<< $cb->write_custom_source_index >> on the repository to allow remote
 users to index it.
 
 For details, see the C<< $cb->write_custom_source_index >> method below.
+
+All packages that are added via this mechanism will be attributed to the
+author with C<CPANID> C<LOCAL>. You can use this id to search for all 
+added packages.
 
 =cut
 
