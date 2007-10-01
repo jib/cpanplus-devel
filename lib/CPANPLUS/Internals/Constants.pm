@@ -259,7 +259,7 @@ use constant CREATE_FILE_URI
                             };        
 
 use constant CUSTOM_AUTHOR_ID
-                            => 'CUSTOM';
+                            => 'LOCAL';
 
 use constant DOT_SHELL_DEFAULT_RC
                             => '.shell-default.rc';
