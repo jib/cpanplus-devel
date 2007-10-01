@@ -1133,9 +1133,11 @@ sub update_custom_source {
     
     ### if it mentions /remote/, the request is to update a single uri,
     ### not all the ones we have, so dispatch appropriately
-    return grep /remote/i, @_
+    my $rv = grep( /remote/i, @_)
         ? $self->__update_custom_module_source( @_ )
         : $self->__update_custom_module_sources( @_ );
+
+    return $rv;
 }    
 
 =head2 $file = $cb->write_custom_source_index( path => /path/to/package/root, [to => /path/to/index/file, verbose => BOOL] );
