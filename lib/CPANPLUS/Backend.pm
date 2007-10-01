@@ -978,6 +978,10 @@ sub autobundle {
         error( loc( "Could not open '%1' for writing: %2", $file, $! ) );
         return;
     }
+    
+    ### make sure we load the module tree *before* doing this, as it
+    ### starts to chdir all over the place
+    $self->module_tree;
 
     my $string = join "\n\n",
                     map {
