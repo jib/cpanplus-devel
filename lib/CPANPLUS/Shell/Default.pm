@@ -1580,7 +1580,11 @@ sub _reports {
     sub plugin_modules  { return @PluginModules }
     sub plugin_table    { return %Dispatch }
     
+    my $init_done;
     sub _plugins_init {
+        ### only initialize once
+        return if $init_done++;
+        
         ### find all plugins first
         if( check_install( module  => 'Module::Pluggable', version => '2.4') ) {
             require Module::Pluggable;
