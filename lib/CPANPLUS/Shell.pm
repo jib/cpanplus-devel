@@ -49,19 +49,24 @@ choice.
 
 =cut
 
-
 sub import {
     my $class   = shift;
     my $option  = shift;
-    ### XXX this should offer to reconfigure CPANPLUS, somehow.  --rs
-    my $conf    = CPANPLUS::Configure->new() 
-                    or die loc("No configuration available -- aborting") . $/;
 
     ### find out what shell we're supposed to load ###
     $SHELL      = $option
                     ? $class . '::' . $option
-                    : $conf->get_conf('shell') || $DEFAULT;
-
+                    : do {  ### XXX this should offer to reconfigure 
+                            ### CPANPLUS, somehow.  --rs
+                            ### XXX load Configure only if we really have to
+                            ### as that means any $Conf passed later on will
+                            ### be ignored in favour of the one that was 
+                            ### retrieved via ->new --kane
+                        my $conf = CPANPLUS::Configure->new() or 
+                        die loc("No configuration available -- aborting") . $/;
+                        $conf->get_conf('shell') || $DEFAULT;
+                    };
+                    
     ### load the shell, fall back to the default if required
     ### and die if even that doesn't work
     EVAL: {
@@ -285,12 +290,17 @@ sub _pager_close {
 ### in test cases, or redirect it if need be
 {   sub __print {
         my $self = shift;
-        return print @_;
+        print @_;
     }
     
     sub __printf {
         my $self = shift;
-        return $self->__print( sprintf( @_ ) );
+        my $fmt  = shift;
+        
+        ### MUST specify $fmt as a seperate param, and not as part
+        ### of @_, as it will then miss the $fmt and return the 
+        ### number of elements in the list... =/ --kane
+        $self->__print( sprintf( $fmt, @_ ) );
     }
 }
 
