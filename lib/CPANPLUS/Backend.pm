@@ -1091,6 +1091,7 @@ on failure.
 
 =cut
 
+### XXX do clever dispatching based on arg number?
 sub remove_custom_source {
     return shift->_remove_custom_module_source( @_ );
 }
