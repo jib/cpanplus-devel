@@ -68,6 +68,7 @@ use constant TEST_CONF_MODULE           => 'Foo::Bar::EU::NOXS';
 use constant TEST_CONF_INST_MODULE      => 'Foo::Bar';
 use constant TEST_CONF_INVALID_MODULE   => 'fnurk';
 use constant TEST_CONF_MIRROR_DIR       => 'dummy-localmirror';
+use constant TEST_CONF_CPAN_DIR         => 'dummy-CPAN';
 
 ### we might need this Some Day when we're installing into
 ### our own sandbox. see t/20.t for details
@@ -110,7 +111,7 @@ sub gimme_conf {
     ### for our test suite. Bug [perl #43629] showed this.
     my $conf = CPANPLUS::Configure->new( load_configs => 0 );
     $conf->set_conf( hosts  => [ { 
-                        path        => 'dummy-CPAN',
+                        path        => TEST_CONF_CPAN_DIR,
                         scheme      => 'file',
                     } ],      
     );
