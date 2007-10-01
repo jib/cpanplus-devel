@@ -4,6 +4,7 @@ use strict;
 use CPANPLUS::Error                 qw[error msg];
 use CPANPLUS::Internals::Constants;
 
+use Data::Dumper;
 use Locale::Maketext::Simple        Class => 'CPANPLUS', Style => 'gettext';
 
 
@@ -26,14 +27,14 @@ sub custom_source {
     if( $opts->{'list'} ) {
         my %files = $cb->list_custom_sources;
         
-        print loc("Your remote sources:"), $/ if keys %files;
+        $shell->__print( loc("Your remote sources:"), $/ ) if keys %files;
         
         my $i = 0;
         while(my($local,$remote) = each %files) {
-            printf( "   [%2d] %s\n", ++$i, $remote );
+            $shell->__printf( "   [%2d] %s\n", ++$i, $remote );
         }
         
-        print $/;
+        $shell->__print( $/ );
 
     ### XXX make me work on search numbers        
     } elsif ( $opts->{'contents'} ) {
@@ -52,8 +53,8 @@ sub custom_source {
         
         my $fh = OPEN_FILE->( $local ) or return;
 
-        printf( "   %s", $_ ) for sort <$fh>;
-        print $/;
+        $shell->__printf( "   %s", $_ ) for sort <$fh>;
+        $shell->__print( $/ );
 
     
     } elsif ( $opts->{'add'} ) {        
@@ -62,7 +63,8 @@ sub custom_source {
             return;
         }
         
-        $cb->add_custom_source( uri => $input );
+        $cb->add_custom_source( uri => $input ) 
+            and $shell->__print(loc("Added remote source '%1'", $input));
         
         ### XXX list the contents
         
@@ -83,17 +85,17 @@ sub custom_source {
         1 while unlink $local;
     
     
-        msg(loc("Removed remote source '%1'", $input));
+        $shell->__print( loc("Removed remote source '%1'", $input) );
 
     ### XXX support single uri too
     } elsif ( $opts->{'update'} ) {
-        $cb->update_custom_source;      
+        $cb->update_custom_source 
+            and $shell->__print(loc("Updated remote sources"));      
 
-
-    ### XXX add the call
     } elsif ( $opts->{'write'} ) {
-        $cb->write_custom_source_index( path => $input );
-    
+        $cb->write_custom_source_index( path => $input )
+            and $shell->__print(loc("Wrote remote source index for '%1'", $input));              
+            
     } else {
         error(loc("Unrecognized command, see '%1' for help", '/? cs'));
     }
@@ -103,12 +105,16 @@ sub custom_source {
 
 sub custom_source_help {
     return loc(
-        '    /cs --list             # list available sources'       . $/ .
-        '    /cs --add       URI    # add source'                   . $/ .
-        '    /cs --remove    URI    # remove source'                . $/ .
-        '    /cs --contents  URI    # show packages from source'    . $/ .
-        '    /cs --update   [URI]   # update source index'          . $/ .
-        '    /cs --write     PATH   # write source index'           . $/ 
+                                                                          $/ .
+        '    # Plugin to manage custom sources from the default shell'  . $/ .
+        "    # See the 'CUSTOM MODULE SOURCES' section in the "         . $/ .
+        '    # CPANPLUS::Backend documentation for details.'            . $/ .
+        '    /cs --list             # list available sources'           . $/ .
+        '    /cs --add       URI    # add source'                       . $/ .
+        '    /cs --remove    URI    # remove source'                    . $/ .
+        '    /cs --contents  URI    # show packages from source'        . $/ .
+        '    /cs --update   [URI]   # update source index'              . $/ .
+        '    /cs --write     PATH   # write source index'               . $/ 
     );        
 
 }
