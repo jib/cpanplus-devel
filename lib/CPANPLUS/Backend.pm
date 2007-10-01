@@ -485,7 +485,7 @@ sub parse_module {
         
             ### no sense replacing it unless we changed something
             $modobj->module( $pkgname ) 
-                unless $pkgname eq $modobj->package_name;
+                if ($pkgname ne $modobj->package_name) || $pkgname !~ /-/;
         }                
         
         return $modobj;      
