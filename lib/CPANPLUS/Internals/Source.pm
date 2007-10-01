@@ -1020,6 +1020,10 @@ sub _dslip_defs {
 
 =head2 $file = $cb->_add_custom_module_source( uri => URI, [verbose => BOOL] ); 
 
+Adds a custom source index and updates it based on the provided URI.
+
+Returns the full path to the index file on success or false on failure.
+
 =cut
 
 sub _add_custom_module_source {
@@ -1074,6 +1078,10 @@ sub _add_custom_module_source {
 }
 
 =head2 $file = $cb->_remove_custom_module_source( uri => URI, [verbose => BOOL] ); 
+
+Removes a custom index file based on the URI provided.
+
+Returns the full path to the index file on success or false on failure.
 
 =cut
 
