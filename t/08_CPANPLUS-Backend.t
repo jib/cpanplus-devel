@@ -163,9 +163,10 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
                         flub://floo ]
     ) {
         my $obj = $cb->parse_module( module => $guess );
-        ok( IS_FAKE_MODOBJ->(mod => $obj), "parse_module success by '$guess'" );
+        ok( IS_FAKE_MODOBJ->(mod => $obj), 
+                                "parse_module success by '$guess'" );
         is( $obj->status->_fetch_from, $guess,
-                                            "   Fetch from set ok" );
+                                "   Fetch from set ok" );
     }                                       
 }         
 
