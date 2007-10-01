@@ -133,6 +133,21 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
         cmp_ok( [stat $src_file]->[9], '>=', $now,
                                     "   Timestamp on sourcefile updated" );    
     }
+    
+    ### now update it individually
+    {   my $meth    = '__update_custom_module_source';
+        can_ok( $cb,    $meth );
+        
+        ### mark what time it is now, sleep 1 second for better measuring
+        my $now     = time;        
+        sleep 1;
+        
+        my $ok      = $cb->$meth( remote => $uri );
+
+        ok( $ok,                    "Custom source for '$uri' updated" );
+        cmp_ok( [stat $src_file]->[9], '>=', $now,
+                                    "   Timestamp on sourcefile updated" );    
+    }
 
     ### now update using the higher level API, see if it's part of the update
     {   CPANPLUS::Error->flush;

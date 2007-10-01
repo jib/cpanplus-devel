@@ -1222,9 +1222,9 @@ sub __update_custom_module_source {
     
     my($verbose,$local,$remote);
     my $tmpl = {   
-        verbose => { default => $conf->get_conf('verbose'),
-                     store   => \$verbose },
-        local   => { required => 1, store => \$local, allow => FILE_EXISTS },
+        verbose => { default  => $conf->get_conf('verbose'),
+                     store    => \$verbose },
+        local   => { store    => \$local, allow => FILE_EXISTS },
         remote  => { required => 1, store => \$remote },
     };
 
@@ -1232,10 +1232,28 @@ sub __update_custom_module_source {
 
     msg( loc("Updating sources from '%1'", $remote), $verbose);
     
-    my $uri = join '/', $remote, $conf->_get_source('custom_index');
-    my $ff  = File::Fetch->new( uri => $uri );           
-    my $dir = tempdir();
-    my $res = do {  local $File::Fetch::WARN = 0;
+    ### if you didn't provide a local file, we'll look in your custom
+    ### dir to find the local encoded version for you
+    $local ||= do {
+        ### find all files we know of
+        my %files = reverse $self->__list_custom_module_sources or do {
+            error(loc("No custom modules sources defined -- need '%1' argument",
+                      'local'));
+            return;                      
+        };
+
+        ### return the local file we're supposed to use
+        $files{ $remote } or do {
+            error(loc("Remote source '%1' unknown -- needs '%2' argument",
+                      $remote, 'local'));
+            return;
+        };         
+    };
+    
+    my $uri =  join '/', $remote, $conf->_get_source('custom_index');
+    my $ff  =  File::Fetch->new( uri => $uri );           
+    my $dir =  tempdir();
+    my $res =  do {  local $File::Fetch::WARN = 0;
                     local $File::Fetch::WARN = 0;
                     $ff->fetch( to => $dir );
                 };
