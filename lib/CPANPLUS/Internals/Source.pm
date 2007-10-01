@@ -1339,7 +1339,7 @@ sub __write_custom_module_index {
     
     msg(loc("Successfully written index file to '%1'", $to), $verbose);
     
-    return 1;
+    return $to;
 }
 
 

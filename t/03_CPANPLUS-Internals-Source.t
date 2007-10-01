@@ -17,7 +17,7 @@ my $conf = gimme_conf();
 my $cb   = CPANPLUS::Backend->new( $conf );
 
 ### XXX temp
-$conf->set_conf( verbose => 1 );
+# $conf->set_conf( verbose => 1 );
 
 isa_ok($cb, "CPANPLUS::Internals" );
 
@@ -79,6 +79,7 @@ ok( scalar keys %$mt,           "Moduletree loaded successfully" );
                     );
 
         ok( $rv,                "   Sources written" );
+        is( $rv, $src_file,     "       Written to expected file" );
         ok( -e $src_file,       "       Source file exists" );
         ok( -s $src_file,       "       File has non-zero size" );
     }              
