@@ -20,3 +20,8 @@ use_ok( $Class );
 is( $Class->which,  SHELL_DEFAULT,
                                 "Default shell loaded" );
 
+### create an object
+my $Shell = $Class->new;
+ok( $Shell,                     "   New object created" );
+isa_ok( $Shell, SHELL_DEFAULT,  "   Object" );
+
