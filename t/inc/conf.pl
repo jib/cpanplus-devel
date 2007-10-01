@@ -65,6 +65,7 @@ use File::Basename  qw[basename];
 # prereq has to be in our package file && core!
 use constant TEST_CONF_PREREQ           => 'Cwd';   
 use constant TEST_CONF_MODULE           => 'Foo::Bar::EU::NOXS';
+use constant TEST_CONF_AUTHOR           => 'EUNOXS';
 use constant TEST_CONF_INST_MODULE      => 'Foo::Bar';
 use constant TEST_CONF_INVALID_MODULE   => 'fnurk';
 use constant TEST_CONF_MIRROR_DIR       => 'dummy-localmirror';
@@ -111,13 +112,16 @@ sub gimme_conf {
     ### for our test suite. Bug [perl #43629] showed this.
     my $conf = CPANPLUS::Configure->new( load_configs => 0 );
     $conf->set_conf( hosts  => [ { 
-                        path        => TEST_CONF_CPAN_DIR,
+                        path        => File::Spec->rel2abs(TEST_CONF_CPAN_DIR),
                         scheme      => 'file',
                     } ],      
     );
     $conf->set_conf( base       => 'dummy-cpanplus' );
     $conf->set_conf( dist_type  => '' );
     $conf->set_conf( signature  => 0 );
+    
+    ### never use a pager in the test suite
+    $conf->set_program( pager   => '' );
 
     ### dmq tells us that we should run with /nologo
     ### if using nmake, as it's very noise otherwise.
