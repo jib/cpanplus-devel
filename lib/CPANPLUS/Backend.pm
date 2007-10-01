@@ -811,9 +811,9 @@ The location where to create the local mirror.
 
 =item index_files
 
-Enable/disable fetching of index files. This is ok if you don't plan
-to use the local mirror as your primary sites, or if you'd like
-up-to-date index files be fetched from elsewhere.
+Enable/disable fetching of index files. You can disable fetching of the
+index files if you don't plan to use the local mirror as your primary 
+site, or if you'd like up-to-date index files be fetched from elsewhere.
 
 Defaults to true.
 
