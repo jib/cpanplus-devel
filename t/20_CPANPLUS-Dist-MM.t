@@ -255,9 +255,14 @@ SKIP: {
                                 "   Prior existance noted" );
 
     ### ok, unlink the makefile.pl, now really write one
-    unlink $makefile;
+    1 while unlink $makefile;
 
-    ok( unlink($makefile_pl),   "Deleting Makefile.PL");
+    ### must do '1 while' for VMS
+    {   my $unlink_sts = unlink($makefile_pl);
+        1 while unlink $makefile_pl;
+        ok( $unlink_sts,        "Deleting Makefile.PL");
+    }
+
     ok( !-s $makefile_pl,       "   Makefile.PL deleted" );
     ok( !-s $makefile,          "   Makefile deleted" );
     ok($dist->write_makefile_pl,"   Makefile.PL written" );
@@ -283,7 +288,11 @@ SKIP: {
     ### seems ok, now delete it again and go via install()
     ### to see if it picks up on the missing makefile.pl and
     ### does the right thing
-    ok( unlink($makefile_pl),   "Deleting Makefile.PL");
+    ### must do '1 while' for VMS
+    {   my $unlink_sts = unlink($makefile_pl);
+        1 while unlink $makefile_pl;
+        ok( $unlink_sts,        "Deleting Makefile.PL");
+    }    
     ok( !-s $makefile_pl,       "   Makefile.PL deleted" );
     ok( $dist->status->mk_flush,"Dist status flushed" );
     ok( $dist->prepare,         "   Dist->prepare run again" );
@@ -298,8 +307,8 @@ SKIP: {
     {   local $^W;
         local *CPANPLUS::Dist::MM::write_makefile_pl = sub { 1 };
 
-        unlink $makefile_pl;
-        unlink $makefile;
+        1 while unlink $makefile_pl;
+        1 while unlink $makefile;
 
         ok(!-s $makefile_pl,        "Makefile.PL deleted" );
         ok(!-s $makefile,           "Makefile deleted" );
@@ -331,9 +340,13 @@ SKIP: {
     }
 
     ### clean up afterwards ###
-    ok( unlink($makefile_pl),   "Deleting Makefile.PL");
+    ### must do '1 while' for VMS
+    {   my $unlink_sts = unlink($makefile_pl);
+        1 while unlink $makefile_pl;
+        ok( $unlink_sts,        "Deleting Makefile.PL");
+    }   
+    
     $dist->status->mk_flush;
-
 }
 
 ### test ENV setting in Makefile.PL
