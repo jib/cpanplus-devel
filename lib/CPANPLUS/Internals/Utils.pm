@@ -392,8 +392,11 @@ sub _home_dir {
 
 =head2 $path = $cb->_safe_path( path => $path );
 
-Returns a path that's safe to us on Win32. Only cleans up
-the path on Win32 if the path exists.
+Returns a path that's safe to us on Win32 and VMS. 
+
+Only cleans up the path on Win32 if the path exists.
+
+On VMS, it encodes dots to _ using C<VMS::Filespec::vmsify>
 
 =cut
 
@@ -409,15 +412,42 @@ sub _safe_path {
 
     check( $tmpl, \%hash ) or return;
     
-    ### only need to fix it up if there's spaces in the path   
-    return $path unless $path =~ /\s+/;
+    if( ON_WIN32 ) {
+        ### only need to fix it up if there's spaces in the path   
+        return $path unless $path =~ /\s+/;
+        
+        ### or if we are on win32
+        return $path if $^O ne 'MSWin32';
     
-    ### or if we are on win32
-    return $path if $^O ne 'MSWin32';
+        ### clean up paths if we are on win32
+        return Win32::GetShortPathName( $path ) || $path;
 
-    ### clean up paths if we are on win32
-    return Win32::GetShortPathName( $path ) || $path;
+    } elsif ( ON_VMS ) {
+        ### XXX According to John Malmberg, there's an VMS issue:
+        ### catdir on VMS can not currently deal with directory components
+        ### with dots in them.  
+        ### Fixing this is a a three step procedure, which will work for 
+        ### VMS in its traditional ODS-2 mode, and it will also work if 
+        ### VMS is in the ODS-5 mode that is being implemented.
 
+        ### 1. Make sure that the value to be converted, $path is 
+        ### in UNIX directory syntax by appending a '/' to it.
+        $path .= '/' unless $path =~ m|/$|;
+
+        ### 2. Use VMS::Filespec::vmsify($path . '/') to convert the dots to
+        ### underscores if needed.  The trailing '/' is needed as so that
+        ### C<vmsify> knows that it should use directory translation instead of
+        ### filename translation, as filename translation leaves one dot.
+        $path = VMS::Filespec::vmsify( $path );
+
+        ### 3. Use $path = File::Spec->splitdir( VMS::Filespec::vmsify( 
+        ### $path . '/') to remove the directory delimiters.
+
+        ### XXX waiting on john M's answer!
+        $path = File::Spec->splitdir( $path )
+    }
+    
+    return $path;
 }
 
 
