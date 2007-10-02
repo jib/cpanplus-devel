@@ -1,12 +1,6 @@
 ### On VMS, the ENV is not reset after the program terminates.
 ### So reset it here explicitly
-### Use a $^O comparison, as depending on module at this time
-### may cause weird errors/warnings
-{   my %old_env;
-    BEGIN { %old_env = %ENV }
-    END   { %ENV     = %old_env if $^O eq 'VMS' }
-}    
-
+my ($old_env_path, $old_env_perl5lib);
 BEGIN {
     use FindBin; 
     use File::Spec;
@@ -29,12 +23,14 @@ BEGIN {
     use Config;
 
     ### and add them to the environment, so shellouts get them
-    $ENV{'PERL5LIB'} = join ':', 
+    $old_env_perl5lib = $ENV{'PERL5LIB'};
+    $ENV{'PERL5LIB'}  = join ':', 
                         grep { defined } $ENV{'PERL5LIB'}, @paths, @rel2abs;
     
     ### add our own path to the front of $ENV{PATH}, so that cpanp-run-perl
     ### and friends get picked up
-    $ENV{'PATH'} = join $Config{'path_sep'}, 
+    $old_env_path = $ENV{PATH};
+    $ENV{'PATH'}  = join $Config{'path_sep'}, 
                     grep { defined } "$FindBin::Bin/../bin", $ENV{'PATH'};
 
     ### Fix up the path to perl, as we're about to chdir
@@ -56,6 +52,24 @@ BEGIN {
     ### Can't redirect fd #4 on Win32 at IPC/Run.pm line 2801
     $IPC::Cmd::USE_IPC_RUN = 0 if $^O eq 'MSWin32';
     $IPC::Cmd::USE_IPC_RUN = 0 if $^O eq 'MSWin32';
+}
+
+### Use a $^O comparison, as depending on module at this time
+### may cause weird errors/warnings
+END {
+    if ($^O eq 'VMS') {
+        ### VMS environment variables modified by this test need to be put back
+        ### path is "magic" on VMS, we can not tell if it really existed before
+        ### this was run, because VMS will magically pretend that a PATH
+        ### environment variable exists set to the current working directory
+        $ENV{PATH} = $old_path;
+
+        if (defined $old_perl5lib) {
+            $ENV{PERL5LIB} = $old_perl5lib;
+        } else {
+            delete $ENV{PERL5LIB};
+        }
+    }
 }
 
 use strict;
