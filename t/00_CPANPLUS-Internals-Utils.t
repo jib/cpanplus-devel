@@ -37,7 +37,8 @@ rmdir $Dir  if -d $Dir;
     is( File::Spec->rel2abs(cwd()), File::Spec->rel2abs(File::Spec->catdir($Cwd,$Dir)),
                                         "   Cwd() is '$Dir'");  
     ok( $Class->_chdir( dir => $Cwd),   "Chdir back to '$Cwd'" );
-    is( File::Spec->rel2abs(cwd()),$Cwd,"   Cwd() is '$Cwd'" );
+    like( File::Spec->rel2abs(cwd()), qr/$Cwd/i,
+                                        "   Cwd() is '$Cwd'" );
 }
 
 ### test _move ###
