@@ -1,3 +1,12 @@
+### On VMS, the ENV is not reset after the program terminates.
+### So reset it here explicitly
+### Use a $^O comparison, as depending on module at this time
+### may cause weird errors/warnings
+{   my %old_env;
+    BEGIN { %old_env = %ENV }
+    END   { %ENV     = %old_env if $^O eq 'VMS' }
+}    
+
 BEGIN {
     use FindBin; 
     use File::Spec;
