@@ -199,24 +199,16 @@ sub _extract {
     ### well, then we really don't know.
 
     my $dir;
-    {   
-        ### XXX According to John Malmberg, there's an VMS issue:
-        ### catdir on VMS can not currently deal with directory components
-        ### with dots in them.  In the default mode, VMS.C internally
-        ### converts these to '_'.  This will need to be fixed again here
-        ### when EFS character support is enabled, and that may require
-        ### testing for that.    
-        my $pkg_name_ver = $mod->package_name .'-'. $mod->package_version;  
-    
-        ### apparently, only the *first* dot needs to be translated
-        $pkg_name_ver =~ tr/\./_/ if ON_VMS;
-    
-        for my $try (
-            File::Spec->rel2abs( File::Spec->catdir( $to, $pkg_name_ver ) ),
-            File::Spec->rel2abs( $ae->extract_path ),
-        ) {
-            ($dir = $try) && last if -d $try;
-        }
+    for my $try (
+        File::Spec->rel2abs( 
+            $self->_safe_path( path =>
+                File::Spec->catdir( $to,  
+                                    $mod->package_name .'-'. 
+                                    $mod->package_version 
+        ) ) ),
+        File::Spec->rel2abs( $ae->extract_path ),
+    ) {
+        ($dir = $try) && last if -d $try;
     }
                                             
     ### test if the dir exists ###
