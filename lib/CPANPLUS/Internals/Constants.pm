@@ -39,7 +39,13 @@ use constant TARGET_CREATE  => 'create';
 use constant TARGET_PREPARE => 'prepare';
 use constant TARGET_INSTALL => 'install';
 use constant TARGET_IGNORE  => 'ignore';
-use constant DOT_CPANPLUS   => $^O eq 'VMS' ? '_cpanplus' : '.cpanplus';         
+
+use constant ON_WIN32       => $^O eq 'MSWin32';
+use constant ON_NETWARE     => $^O eq 'NetWare';
+use constant ON_CYGWIN      => $^O eq 'cygwin';
+use constant ON_VMS         => $^O eq 'VMS';
+
+use constant DOT_CPANPLUS   => ON_VMS ? '_cpanplus' : '.cpanplus'; 
 
 use constant OPT_AUTOFLUSH  => '-MCPANPLUS::Internals::Utils::Autoflush';
 
@@ -293,11 +299,6 @@ use constant INSTALL_LOG_FILE
                                      $name .= '-'. scalar(time) . '.log';
                                      return $name;
                                 };                                        
-
-use constant ON_WIN32       => $^O eq 'MSWin32';
-use constant ON_NETWARE     => $^O eq 'NetWare';
-use constant ON_CYGWIN      => $^O eq 'cygwin';
-use constant ON_VMS         => $^O eq 'VMS';
 
 use constant ON_OLD_CYGWIN  => do { ON_CYGWIN and $] < 5.008 
                                     ? loc(
