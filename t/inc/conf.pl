@@ -223,8 +223,6 @@ END {
     }
 }
 
-
-
 ### whenever we start a new script, we want to clean out our
 ### old files from the test '.cpanplus' dir..
 sub _clean_test_dir {

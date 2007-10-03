@@ -51,7 +51,7 @@ ok( DIR_EXISTS->( dir => cwd() ),               "DIR_EXISTS finds dir" );
         MAKEFILE    => do {
             ### On vms, it's a different name. See constants
             ### file for details
-            ON_VMS and $Config::Config{make} =~ /MM[S|K]/i
+            (ON_VMS and $Config::Config{make} =~ /MM[S|K]/i)
                 ? 'DESCRIP.MMS'
                 : 'Makefile'
         },

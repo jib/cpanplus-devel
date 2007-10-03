@@ -120,8 +120,8 @@ use constant DIR_EXISTS     => sub {
                             ### On VMS, if the $Config{make} is either MMK 
                             ### or MMS, then the makefile is 'DESCRIP.MMS'.
 use constant MAKEFILE       => sub { my $file =
-                                        ON_VMS and 
-                                        $Config::Config{make} =~ /MM[S|K]/i
+                                        (ON_VMS and 
+                                         $Config::Config{make} =~ /MM[S|K]/i)
                                             ? 'DESCRIP.MMS'
                                             : 'Makefile';
 
