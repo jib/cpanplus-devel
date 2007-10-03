@@ -243,6 +243,23 @@ sub _clean_test_dir {
             
             my $path = File::Spec->catfile( $dir, $file );
             
+            ### John Malmberg reports yet another VMS issue:
+            ### A directory name on VMS in VMS format ends with .dir 
+            ### when it is referenced as a file.
+            ### In UNIX format traditionally PERL on VMS does not remove the
+            ### '.dir', however the VMS C library conversion routines do remove
+            ### the '.dir' and the VMS C library routines can not handle the
+            ### '.dir' being present on UNIX format filenames.
+            ### So code doing the fixup has on VMS has to be able to handle both
+            ### UNIX format names and VMS format names. 
+            ### XXX See http://www.xray.mpe.mpg.de/
+            ### mailing-lists/perl5-porters/2007-10/msg00064.html
+            ### for details -- the below regex could use some touchups
+            ### according to John. M.            
+            $file =~ s/\.dir//i if $^O eq 'VMS';
+            
+            my $dirpath = File::Spec->catdir( $dir, $file );
+            
             ### directory, rmtree it
             if( -d $path ) {
                 print "# Deleting directory '$path'\n" if $verbose;
