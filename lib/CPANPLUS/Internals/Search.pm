@@ -295,7 +295,29 @@ sub _all_installed {
                     $mod = join '::', File::Spec->splitdir($mod);
 
                     return if $seen{$mod}++;
-                    my $modobj = $self->module_tree($mod) or return;
+
+                    ### From John Malmberg: This is failing on VMS 
+                    ### because ODS-2 does not retain the case of 
+                    ### filenames that are created.
+                    ### The problem is the filename is being converted 
+                    ### to a module name and then looked up in the 
+                    ### %$modtree hash.
+                    ### 
+                    ### As a fix, we do a search on VMS instead --
+                    ### more cpu cycles, but it gets around the case
+                    ### problem --kane
+                    my ($modobj) = do {
+                        ON_VMS
+                            ? $self->search( 
+                                    type    => 'module',
+                                    allow   => [qr/^$mod$/i],
+                                )      
+                            : $self->module_tree($mod) 
+                    };
+                    
+                    ### seperate return, a list context return with one ''
+                    ### in it, is also true!
+                    return unless $modobj;
 
                     push @rv, $modobj;
                 },

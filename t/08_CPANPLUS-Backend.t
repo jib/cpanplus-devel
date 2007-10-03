@@ -210,8 +210,7 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
 }
 
 ### installed tests ###
-{   
-    ok( scalar $cb->installed,    "Found list of installed modules" );
+{   ok( scalar($cb->installed), "Found list of installed modules" );
 }    
                 
 ### autobudle tests ###
