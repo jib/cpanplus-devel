@@ -128,7 +128,7 @@ my @Index   = ();
 
 sub _uri_from_cache {
     my $self    = shift;
-    my $input   = shift;
+    my $input   = shift or return;
 
     ### you gave us a search number    
     my $uri = $input =~ /^\d+$/    
