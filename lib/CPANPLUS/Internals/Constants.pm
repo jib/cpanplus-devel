@@ -4,6 +4,7 @@ use strict;
 
 use CPANPLUS::Error;
 
+use Config;
 use File::Spec;
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
@@ -115,16 +116,23 @@ use constant DIR_EXISTS     => sub {
                                             $dir));
                                     return;
                             };   
+                    
+                            ### On VMS, if the $Config{make} is either MMK 
+                            ### or MMS, then the makefile is 'DESCRIP.MMS'.
+use constant MAKEFILE       => sub { my $file =
+                                        ON_VMS and 
+                                        $Config::Config{make} =~ /MM[S|K]/i
+                                            ? 'DESCRIP.MMS'
+                                            : 'Makefile';
 
+                                    return @_
+                                        ? File::Spec->catfile( @_, $file )
+                                        : $file;
+                            };                   
 use constant MAKEFILE_PL    => sub { return @_
                                         ? File::Spec->catfile( @_,
                                                             'Makefile.PL' )
                                         : 'Makefile.PL';
-                            };                   
-use constant MAKEFILE       => sub { return @_
-                                        ? File::Spec->catfile( @_,
-                                                            'Makefile' )
-                                        : 'Makefile';
                             }; 
 use constant BUILD_PL       => sub { return @_
                                         ? File::Spec->catfile( @_,
