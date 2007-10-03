@@ -121,6 +121,68 @@ sub _list_contents {
     $Shell->__print( $/ );
 }
 
+
+my $Cb;
+my $Shell;
+my @Index   = ();
+
+sub _uri_from_cache {
+    my $self    = shift;
+    my $input   = shift;
+
+    ### you gave us a search number    
+    my $uri = $input =~ /^\d+$/    
+                ? $Index[ $input - 1 ] # remember, off by 1!
+                : $input;
+
+    my %files = reverse $Cb->list_custom_sources;
+
+    ### it's an URI we know
+    if( my $local = $files{ $uri } ) {
+        return wantarray 
+            ? ($uri, $local)
+            : $uri;
+    }
+    
+    ### couldn't resolve the input
+    error(loc("Unknown URI/index: '%1'", $input));
+    return;
+}
+
+sub _list_custom_sources {
+    my $class = shift;
+    
+    my %files = $Cb->list_custom_sources;
+    
+    $Shell->__print( loc("Your remote sources:"), $/ ) if keys %files;
+    
+    my $i = 0;
+    while(my($local,$remote) = each %files) {
+        $Shell->__printf( "   [%2d] %s\n", ++$i, $remote );
+
+        ### remember, off by 1!
+        push @Index, $remote;
+    }
+    
+    $Shell->__print( $/ );
+}
+
+sub _list_contents {
+    my $class = shift;
+    my $input = shift;
+
+    my ($uri,$local) = $class->_uri_from_cache( $input );
+    unless( $uri ) {
+        error(loc("--contents needs URI parameter"));
+        return;
+    }        
+
+    my $fh = OPEN_FILE->( $local ) or return;
+
+    $Shell->__printf( "   %s", $_ ) for sort <$fh>;
+    $Shell->__print( $/ );
+}
+
 sub custom_source {
     my $class   = shift;
     my $shell   = shift;    $Shell  = $shell;   # available to all methods now
