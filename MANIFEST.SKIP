@@ -30,3 +30,4 @@ dev-bin/
 ^.cpanplus/
 ^sandbox
 ~$
+^patches
