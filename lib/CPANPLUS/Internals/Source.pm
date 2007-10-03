@@ -775,8 +775,8 @@ sub _create_mod_tree {
         ### authors can apparently have digits in their names,
         ### and dirs can have dots... blah!
         my ($author, $package) = $data[2] =~
-                m|  [A-Z\d-]/
-                    [A-Z\d-]{2}/
+                m|  (?:[A-Z\d-]/)?
+                    (?:[A-Z\d-]{2}/)?
                     ([A-Z\d-]+) (?:/[\S]+)?/
                     ([^/]+)$
                 |xsg;
