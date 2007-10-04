@@ -139,8 +139,18 @@ SKIP: {
     diag(q[Note: 'sudo' might ask for your password to do the install test])
         if $conf->get_program('sudo');
 
-    ok( $Mod->install( force =>1 ),
+    ### make sure no options are set in PERL5_MM_OPT, as they might
+    ### change the installation target and therefor will 1. mess up
+    ### the tests and 2. leave an installed copy of our test module
+    ### lying around. This addresses bug #29716: 20_CPANPLUS-Dist-MM.t 
+    ### fails (and leaves test files installed) when EUMM options 
+    ### include INSTALL_BASE
+    {   local $ENV{'PERL5_MM_OPT'};
+    
+        ok( $Mod->install( force =>1 ),
                                 "Installing module" );
+    }                                
+                                
     ok( $Mod->status->installed,"   Module installed according to status" );
 
 
