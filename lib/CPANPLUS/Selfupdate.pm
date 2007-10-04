@@ -46,7 +46,8 @@ CPANPLUS::Selfupdate
             'Locale::Maketext::Simple'  => '0.01',
             'Log::Message'              => '0.01',
             'Module::Load'              => '0.10',
-            'Module::Load::Conditional' => '0.16', # Better parsing: #23995
+            'Module::Load::Conditional' => '0.18', # Better parsing: #23995,
+                                                   # uses version.pm for <=>
             'version'                   => '0.70', # needed for M::L::C
                                                    # addresses #24630 and 
                                                    # #24675
