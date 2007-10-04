@@ -443,8 +443,23 @@ sub _safe_path {
         ### 3. Use $path = File::Spec->splitdir( VMS::Filespec::vmsify( 
         ### $path . '/') to remove the directory delimiters.
 
-        ### XXX waiting on john M's answer!
-        $path = File::Spec->splitdir( $path )
+        ### From John Malmberg:
+        ### File::Spec->catdir will put the path back together.
+        ### The '/' trick only works if the string is a directory name 
+        ### with UNIX style directory delimiters or no directory delimiters.  
+        ### It is to force vmsify to treat the input specification as UNIX.
+        ###
+        ### There is a VMS::Filespec::unixpath() to do the appending of the '/'
+        ### to the specification, which will do a VMS::Filespec::vmsify() 
+        ### if needed.
+        ### However it is not a good idea to call vmsify() on a pathname
+        ### returned by unixify(), and it is not a good idea to call unixify()
+        ### on a pathname returned by vmsify().  Because of the nature of the
+        ### conversion, not all file specifications can make the round trip.
+        ###
+        ### I think that directory specifications can safely make the round
+        ### trip, but not ones containing filenames.
+        $path = File::Spec->catdir( File::Spec->splitdir( $path ) )
     }
     
     return $path;
