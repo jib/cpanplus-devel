@@ -1805,7 +1805,9 @@ sub _read_configuration_from_rc {
         loc( "The documentation in %1 and %2 is very useful",
              "CPANPLUS::Module", "CPANPLUS::Backend" ),
         loc( "You can type '%1' for help and '%2' to exit", 'h', 'q' ),
-        loc( "You can run an interactive setup using '%1'", 's reconfigure' ),          
+        loc( "You can run an interactive setup using '%1'", 's reconfigure' ),    
+        loc( "You can add custom sources to your index. See '%1' for details",
+             '/cs --help' ),
     );
     
     sub _show_random_tip {
