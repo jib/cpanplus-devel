@@ -55,6 +55,7 @@ isa_ok( $Shell, $Default,       "   Object" );
                         path    => $cs_path,
                     );
      
+    my $base = $Conf->get_conf('base');   
 
     ### XXX have to keep the list ordered, as some methods only work as 
     ### expected *after* others have run
@@ -91,7 +92,10 @@ isa_ok( $Shell, $Default,       "   Object" );
         "/cs --contents $cs_uri" => qr/$TestAuth/,
         "/cs --update"           => qr/Updated remote sources/,
         "/cs --update $cs_uri"   => qr/Updated remote sources/,
-        "/cs --write $cs_path"   => qr/Wrote remote source index/,
+
+        ### --write leaves a file that we should clean up, so make
+        ### sure it's in the path that we clean up already anyway
+        "/cs --write $base"      => qr/Wrote remote source index/,
         "/cs --remove $cs_uri"   => qr/Removed remote source/,
     );
 
