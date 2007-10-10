@@ -1,6 +1,6 @@
 package Module::Load;
 
-$VERSION = '0.10';
+$VERSION = '0.12';
 
 use strict;
 use File::Spec ();
@@ -56,6 +56,13 @@ sub _to_file{
                     : File::Spec->catfile( @parts );
 
     $file   .= '.pm' if $pm;
+    
+    ### on perl's before 5.10 (5.9.5@31746) if you require
+    ### a file in VMS format, it's stored in %INC in VMS
+    ### format. Therefor, better unixify it first
+    ### Patch in reply to John Malmbergs patch (as mentioned
+    ### above) on p5p Tue 21 Aug 2007 04:55:07
+    $file = VMS::Filespec::unixify($file) if $^O eq 'VMS';
 
     return $file;
 }
