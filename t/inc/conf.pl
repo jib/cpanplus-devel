@@ -141,7 +141,7 @@ sub gimme_conf {
                         scheme      => 'file',
                     } ],      
     );
-    $conf->set_conf( base       => 'dummy-cpanplus' );
+    $conf->set_conf( base       => File::Spec->rel2abs('dummy-cpanplus') );
     $conf->set_conf( dist_type  => '' );
     $conf->set_conf( signature  => 0 );
     $conf->set_conf( verbose    => 1 ) if $ENV{ $Env };
