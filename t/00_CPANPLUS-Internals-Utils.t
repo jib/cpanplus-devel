@@ -34,8 +34,11 @@ rmdir $Dir  if -d $Dir;
 
 ### test _chdir ###
 {   ok( $Class->_chdir( dir => $Dir),   "Chdir to '$Dir'" );    
-    is( File::Spec->rel2abs(cwd()), File::Spec->rel2abs(File::Spec->catdir($Cwd,$Dir)),
+
+    my $abs = File::Spec->rel2abs(File::Spec->catdir($Cwd,$Dir));
+    like( File::Spec->rel2abs(cwd()), qr/$abs/i,
                                         "   Cwd() is '$Dir'");  
+
     ok( $Class->_chdir( dir => $Cwd),   "Chdir back to '$Cwd'" );
     like( File::Spec->rel2abs(cwd()), qr/$Cwd/i,
                                         "   Cwd() is '$Cwd'" );
