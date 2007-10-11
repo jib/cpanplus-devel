@@ -64,7 +64,7 @@ Changes for 0.83_02     Tue Oct  9 13:46:48 2007
 * Be case tolerant -- especially VMS seems to suffer from this. In 
   the end, almost all FS, except some UNIX ones are case tolerant,
   so just use a qr//i
-* ApplyChange 31776 by craigb@craigb-brianor on 2007/08/31 22:42:43
+* Apply Change 31776 by craigb@craigb-brianor on 2007/08/31 22:42:43
   catdir was used where catfile was meant in C::I::Extract
 
 Changes for 0.82        Wed Aug 15 15:36:57 2007
