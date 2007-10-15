@@ -351,8 +351,11 @@ sub _host_to_uri {
 
     check( $tmpl, \%hash ) or return;
 
-    ### it's an URI, so unixify the path
-    $path = File::Spec::Unix->catdir( File::Spec->splitdir( $path ) );
+    ### it's an URI, so unixify the path.
+    ### VMS has a special method for just that
+    $path = ON_VMS
+                ? VMS::Filespec::unixify($path) 
+                : File::Spec::Unix->catdir( File::Spec->splitdir( $path ) );
 
     return "$scheme://" . File::Spec::Unix->catdir( $host, $path ); 
 }
