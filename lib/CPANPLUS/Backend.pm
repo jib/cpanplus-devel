@@ -230,16 +230,19 @@ sub search {
     my $conf = $self->configure_object;
     my %hash = @_;
 
-    local $Params::Check::ALLOW_UNKNOWN = 1;
+    my ($type);
+    my $args = do {
+        local $Params::Check::NO_DUPLICATES = 0;
+        local $Params::Check::ALLOW_UNKNOWN = 1;
 
-    my ($data,$type);
-    my $tmpl = {
-        type    => { required => 1, allow => [CPANPLUS::Module->accessors(),
-                        CPANPLUS::Module::Author->accessors()], store => \$type },
-        allow   => { required => 1, default => [ ], strict_type => 1 },
-    };
+        my $tmpl = {
+            type    => { required => 1, allow => [CPANPLUS::Module->accessors(),
+                            CPANPLUS::Module::Author->accessors()], store => \$type },
+            allow   => { required => 1, default => [ ], strict_type => 1 },
+        };
 
-    my $args = check( $tmpl, \%hash ) or return;
+        check( $tmpl, \%hash )
+    } or return;
 
     ### figure out whether it was an author or a module search
     ### when ambiguous, it'll be an author search.
