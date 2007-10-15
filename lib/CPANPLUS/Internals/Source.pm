@@ -820,7 +820,7 @@ sub _create_mod_tree {
                                             # 'foo-bar-baz-1.03.tar.gz'
                 description => $dslip_tree->{ $data[0] }->{'description'},
                 dslip       => $dslip,
-                _id         => $self->_id,  #id of this internals object
+                _id         => $self->_id,  # id of this internals object
         );
 
     } #for
