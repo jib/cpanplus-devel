@@ -1,3 +1,10 @@
+Changes for 0.83_03     Mon Oct 15 11:38:39 2007
+================================================
+* Make $mod->dslip() query other modules in the same package if there's no
+  dslip entry for this particular module. 
+* Add an --install option to cpan2dist
+* More VMS fixes from John Malmberg
+
 Changes for 0.83_02     Tue Oct  9 13:46:48 2007
 ================================================
 * Add a /cs plugin to CPANPLUS::Shell::Default allowing you to add custom
