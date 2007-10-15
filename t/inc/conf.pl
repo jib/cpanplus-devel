@@ -143,8 +143,15 @@ sub gimme_conf {
                     ? File::Spec->catdir(TEST_CONF_CPAN_DIR)
                     : TEST_CONF_CPAN_DIR;
 
+    ### Convert to an absolute file specification
+    my $abs_test_dir = File::Spec->rel2abs($test_dir);
+    
+    ### According to John M: the hosts path needs to be in UNIX format.  
+    ### File::Spec::Unix->rel2abs does not work at all on VMS
+    $abs_test_dir    = VMS::Filespec::unixify( $abs_test_dir ) if $^O eq 'VMS';
+    
     $conf->set_conf( hosts  => [ { 
-                        path        => File::Spec->rel2abs($test_dir),
+                        path        => $abs_test_dir,
                         scheme      => 'file',
                     } ],      
     );
