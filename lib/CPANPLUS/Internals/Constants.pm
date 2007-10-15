@@ -272,6 +272,8 @@ use constant CREATE_FILE_URI
                                         : 'file://' . $dir;   
                             };        
 
+use constant EMPTY_DSLIP    => '     ';
+
 use constant CUSTOM_AUTHOR_ID
                             => 'LOCAL';
 

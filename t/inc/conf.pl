@@ -90,6 +90,7 @@ my $Env = 'PERL5_CPANPLUS_TEST_VERBOSE';
 # prereq has to be in our package file && core!
 use constant TEST_CONF_PREREQ           => 'Cwd';   
 use constant TEST_CONF_MODULE           => 'Foo::Bar::EU::NOXS';
+use constant TEST_CONF_MODULE_SUB       => 'Foo::Bar::EU::NOXS::Sub';
 use constant TEST_CONF_AUTHOR           => 'EUNOXS';
 use constant TEST_CONF_INST_MODULE      => 'Foo::Bar';
 use constant TEST_CONF_INVALID_MODULE   => 'fnurk';
