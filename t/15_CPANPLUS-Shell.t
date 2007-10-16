@@ -23,6 +23,14 @@ use strict;
 use Test::More      'no_plan';
 use CPANPLUS::Internals::Constants;
 
+### in some subprocesses, the Term::ReadKey code will go
+### balistic and die because it can't figure out terminal
+### dimensions. If we add these env vars, it'll use them
+### as a default and not die. Thanks to Slaven Rezic for
+### reporting this.
+local $ENV{'COLUMNS'} = 80 unless $ENV{'COLUMNS'};
+local $ENV{'LINES'}   = 40 unless $ENV{'LINES'};
+
 my $Conf    = gimme_conf();
 my $Class   = 'CPANPLUS::Shell';
 my $Default = SHELL_DEFAULT;
