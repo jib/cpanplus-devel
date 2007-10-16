@@ -1,3 +1,9 @@
+Changes for 0.83_04     Mon Oct 15 14:18:40 2007
+================================================
+* Set ENV COLUMNS & LINES to make sure Term::ReadKey can figure 
+  out dimensions and stop it from dying in the test suite.
+* More VMS fixes from John Malmberg
+
 Changes for 0.83_03     Mon Oct 15 11:38:39 2007
 ================================================
 * Make $mod->dslip() query other modules in the same package if there's no
