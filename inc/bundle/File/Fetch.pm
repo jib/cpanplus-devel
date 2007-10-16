@@ -50,8 +50,7 @@ local $Module::Load::Conditional::VERBOSE   = 0;
 
 ### see what OS we are on, important for file:// uris ###
 use constant ON_UNIX        => ($^O ne 'MSWin32' and
-                                $^O ne 'MacOS'   and
-                                $^O ne 'VMS');
+                                $^O ne 'MacOS');
 
 =pod
 
@@ -333,6 +332,7 @@ sub fetch {
     local $ENV{FTP_PASSIVE} = $FTP_PASSIVE;
 
     ###
+    my $out_to = File::Spec->catfile( $to, $self->output_file );
     for my $method ( @{ $METHODS->{$self->scheme} } ) {
         my $sub =  '_'.$method.'_fetch';
 
@@ -357,7 +357,7 @@ sub fetch {
         local $IPC::Cmd::USE_IPC_RUN = 0;
         
         if( my $file = $self->$sub( 
-                        to => File::Spec->catfile( $to, $self->output_file )
+                        to => $out_to
         )){
 
             unless( -e $file && -s _ ) {
