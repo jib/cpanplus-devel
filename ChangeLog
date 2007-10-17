@@ -1,3 +1,18 @@
+Changes for 0.83_05     Wed Oct 17 15:21:01 2007
+================================================
+* Address #29904: make test should not use sudo. Don't try to install if
+  the configuration thinks sudo is needed -- that's no guarantee it will work
+* More VMS fixes from John M:
+  * Make sure file look ups are done case insensitively for custom sources
+  * Make ->module_tree work case insensitive on VMS by calling ->search 
+    under the hood
+  * Revert back to old behaviour in ->_all_installed now that ->module_tree 
+    is fixed for vms
+* Depend on version 0.73, for ~0 bugfixes
+* Don't depend on File::Fetch for test reporting -- it's already part of 
+  the core cpanplus chain
+* Update bundled modules
+
 Changes for 0.83_04     Mon Oct 15 14:18:40 2007
 ================================================
 * Set ENV COLUMNS & LINES to make sure Term::ReadKey can figure 
