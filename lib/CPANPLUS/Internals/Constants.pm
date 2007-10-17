@@ -230,8 +230,14 @@ use constant READ_DIR       => sub {
                                     my $dh  = OPEN_DIR->( $dir ) or return;
                                     
                                     ### exclude . and ..
-                                    my @files =  grep { $_ !~ /^\.{1,2}/ }         
+                                    my @files =  grep { $_ !~ /^\.{1,2}/ }
                                                     readdir($dh);
+
+                                    ### Remove trailing dot on VMS when
+                                    ### using VMS syntax.
+                                    if( ON_VMS ) {
+                                        s/(?<!\^)\.$// for @files;
+                                    }
                                     
                                     return @files;
                             };  

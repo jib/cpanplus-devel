@@ -1271,11 +1271,17 @@ sub __update_custom_module_source {
         } else {
             msg(loc("No index file found at '%1', generating one",
                     $ff->uri), $verbose );
+            
+            ### ON VMS, if you are working with a UNIX file specification,
+            ### you need currently use the UNIX variants of the File::Spec.
+            my $ff_path = do {
+                my $file_class = 'File::Spec';
+                $file_class .= '::Unix' if ON_VMS;
+                $file_class->catdir( File::Spec::Unix->splitdir( $ff->path ) );
+            };      
 
             $self->__write_custom_module_index(
-                path    => File::Spec->catdir(
-                                File::Spec::Unix->splitdir( $ff->path )
-                            ),
+                path    => $ff_path,
                 to      => $local,
                 verbose => $verbose,
             ) or return;
@@ -1343,7 +1349,7 @@ sub __write_custom_module_index {
         ### make sure to remove the leading slash as well.
         my $copy = $File::Find::name;
         my $re   = quotemeta($path);        
-        $copy    =~ s|^$path[\\/]?||i;
+        $copy    =~ s|^$re[\\/]?||i;
         
         push @files, $copy;
         
