@@ -1107,10 +1107,15 @@ sub _remove_custom_module_source {
     ### use uri => local, instead of the other way around
     my %files = reverse $self->__list_custom_module_sources;
     
-    my $file = $files{ $uri } or do {
-                    error(loc("No such custom source '%1'", $uri));
-                    return;
-                };
+    ### On VMS the case of key to %files can be either exact or lower case
+    ### XXX abstract this lookup out? --kane
+    my $file = $files{ $uri };
+    $file    = $files{ lc $uri } if !defined($file) && ON_VMS;
+
+    unless (defined $file) {
+        error(loc("No such custom source '%1'", $uri));
+        return;
+    };
                 
     1 while unlink $file;
  
@@ -1242,8 +1247,13 @@ sub __update_custom_module_source {
             return;                      
         };
 
+        ### On VMS the case of key to %files can be either exact or lower case
+        ### XXX abstract this lookup out? --kane
+        my $file = $files{ $remote };
+        $file    = $files{ lc $remote } if !defined ($file) && ON_VMS;
+
         ### return the local file we're supposed to use
-        $files{ $remote } or do {
+        $file or do {
             error(loc("Remote source '%1' unknown -- needs '%2' argument",
                       $remote, 'local'));
             return;
@@ -1436,7 +1446,11 @@ Returns true on success, false on failure.
                 
                 ### and now add it to the modlue tree -- this MAY
                 ### override things of course
-                if( $self->module_tree( $mod->module ) ) {
+                if( my $old_mod = $self->module_tree( $mod->module ) ) {
+
+                    ### On VMS use the old module name to get the real case
+                    $mod->module( $old_mod->module ) if ON_VMS;
+
                     msg(loc("About to overwrite module tree entry for '%1' with '%2'",
                             $mod->module, $mod->package), $verbose);
                 }
