@@ -432,6 +432,10 @@ sub _safe_path {
         ### Fixing this is a a three step procedure, which will work for 
         ### VMS in its traditional ODS-2 mode, and it will also work if 
         ### VMS is in the ODS-5 mode that is being implemented.
+        ### If the path is already in VMS syntax, assume that we are done.
+ 
+        ### VMS format is a path with a trailing ']' or ':'
+        return $path if $path =~ /\:|\]$/;
 
         ### 1. Make sure that the value to be converted, $path is 
         ### in UNIX directory syntax by appending a '/' to it.
