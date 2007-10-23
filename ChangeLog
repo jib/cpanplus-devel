@@ -1,3 +1,16 @@
+Changes for 0.83_06     Tue Oct 23 11:31:10 2007
+================================================
+More VMS fixes from John M:
+  * C::I::Utils->_safe_path should do nothing if it is given a path 
+    in VMS format already.
+  * In 15_CPANPLUS-Shell.t, two regex's needed to be case insensitive.
+  * In C::Dist::MM, do the _safe_path on the $dir path, not the path with
+    a file. The _safe_path must be done before the catfile() builds the path.
+  * In C::Shell::Default::Plugins::CustomSource, try the hash lookup with a
+    lower case key on VMS if the exact case key failed.  This may be faster than
+    doing a grep on the hash.  While it is possible to have an uppercase only filename on an ODS-2 volume, none of the rest of this looks like it is going
+    to work on an ODS-2 volume anytime soon.
+
 Changes for 0.83_05     Wed Oct 17 15:21:01 2007
 ================================================
 * Address #29904: make test should not use sudo. Don't try to install if
