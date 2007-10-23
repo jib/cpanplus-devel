@@ -8,7 +8,8 @@ More VMS fixes from John M:
     a file. The _safe_path must be done before the catfile() builds the path.
   * In C::Shell::Default::Plugins::CustomSource, try the hash lookup with a
     lower case key on VMS if the exact case key failed.  This may be faster than
-    doing a grep on the hash.  While it is possible to have an uppercase only filename on an ODS-2 volume, none of the rest of this looks like it is going
+    doing a grep on the hash.  While it is possible to have an uppercase only 
+    filename on an ODS-2 volume, none of the rest of this looks like it is going
     to work on an ODS-2 volume anytime soon.
 
 Changes for 0.83_05     Wed Oct 17 15:21:01 2007
