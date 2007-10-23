@@ -94,10 +94,11 @@ isa_ok( $Shell, $Default,       "   Object" );
         '/? ?'                  => qr/usage/i,
         
         ### custom source plugin tests
+        ### lower case path matching, as on VMS we can't predict case
         "/? cs"                  => qr|/cs|,
         "/cs --add $cs_uri"      => qr/Added remote source/,
-        "/cs --list"             => do { my $re = quotemeta($cs_uri); qr/$re/ },
-        "/cs --contents $cs_uri" => qr/$TestAuth/,
+        "/cs --list"             => do { my $re = quotemeta($cs_uri); qr/$re/i },
+        "/cs --contents $cs_uri" => qr/$TestAuth/i,
         "/cs --update"           => qr/Updated remote sources/,
         "/cs --update $cs_uri"   => qr/Updated remote sources/,
 
