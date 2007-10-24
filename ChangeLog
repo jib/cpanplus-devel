@@ -1,3 +1,10 @@
+Changes for 0.83_07     Wed Oct 24 17:42:43 2007
+================================================
+* VMS patch from John M:
+  _safe_path must be called before catdir because catdir on 
+  VMS currently will not handle the extra dots in the directories.
+* Make sure we clean up tempdirs when writing custom index files.
+
 Changes for 0.83_06     Tue Oct 23 11:31:10 2007
 ================================================
 More VMS fixes from John M:
