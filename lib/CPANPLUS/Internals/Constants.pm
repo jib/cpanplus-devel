@@ -274,8 +274,8 @@ use constant CREATE_FILE_URI
                             => sub { 
                                     my $dir = $_[0] or return;
                                     return $dir =~ m|^/| 
-                                        ? 'file:/'  . $dir
-                                        : 'file://' . $dir;   
+                                        ? 'file://'  . $dir
+                                        : 'file:///' . $dir;   
                             };        
 
 use constant EMPTY_DSLIP    => '     ';
