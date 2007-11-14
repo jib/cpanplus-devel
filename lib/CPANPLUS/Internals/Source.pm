@@ -1061,12 +1061,17 @@ sub _add_custom_module_source {
     
     ### write the file
     my $fh = OPEN_FILE->( $index => '>' ) or do {
-        error(loc("Could not write index file for '%1'", $uri));
+        error(loc("Could not open index file for '%1'", $uri));
         return;
     };
     
-    ### basically we 'touched' it.
-    close $fh;
+    ### basically we 'touched' it. Check the return value, may be 
+    ### important on win32 and similar OS, where there's file length
+    ### limits
+    close $fh or do {
+        error(loc("Could not write index file to disk for '%1'", $uri));
+        return;
+    };        
         
     $self->__update_custom_module_source(
                 remote  => $uri,
