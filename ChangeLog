@@ -1,3 +1,12 @@
+Changes for 0.83_10     Wed Nov 14 12:57:45 2007
+================================================
+* Various VMS patches from John M.
+* Skip tests for custom sources on Win32 if the full file
+  path is longer than 260 chars (longest file size supported
+  on Win32).
+* Depend on File::Fetch 0.13_04 for Win32 & VMS file:// support
+* Depend on Term::UI 0.18 for default shell option parsing
+
 Changes for 0.83_09     Fri Nov  9 14:17:14 2007
 ================================================
 * Make sure to use $Config{path_sep} to create
