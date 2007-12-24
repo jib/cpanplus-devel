@@ -12,6 +12,11 @@ Changes for 0.83_09     Fri Nov  9 14:17:14 2007
 * Make sure to use $Config{path_sep} to create
   environment variables portably. This addresses
   a test failure on VMS.
+* Update 'use sudo' heuristics; if you have $ENV{PERL_MM_OPT}
+  set with an INSTALL, LIB or PREFIX option, we assume you
+  have write permissions to your install location, and you
+  do not need sudo. This can of course be overriden using
+  your config.
 
 Changes for 0.83_08     Sat Nov  3 18:35:54 2007
 ================================================
