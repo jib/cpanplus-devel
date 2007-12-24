@@ -9,7 +9,7 @@ use Locale::Maketext::Simple Style  => 'gettext';
 use Carp        ();
 use File::Spec  ();
 use FileHandle  ();
-use version     qw[qv];
+use version;
 
 use constant ON_VMS  => $^O eq 'VMS';
 
@@ -18,7 +18,7 @@ BEGIN {
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.22';
+    $VERSION        = '0.23_01';
     $VERBOSE        = 0;
     $FIND_VERSION   = 1;
     $CHECK_INC_HASH = 0;
@@ -280,8 +280,14 @@ sub check_install {
         ### use qv(), as it will deal with developer release number
         ### ie ones containing _ as well. This addresses bug report
         ### #29348: Version compare logic doesn't handle alphas?
+        ###
+        ### Update from JPeacock: apparently qv() and version->new
+        ### are different things, and we *must* use version->new
+        ### here, or things like #30056 might start happening
         $href->{uptodate} = 
-            qv( $args->{version} ) <= qv( $href->{version} ) ? 1 : 0;
+            version->new( $args->{version} ) <= version->new( $href->{version} )
+                ? 1 
+                : 0;
     }
 
     return $href;
@@ -426,9 +432,14 @@ sub can_load {
             ### use qv(), as it will deal with developer release number
             ### ie ones containing _ as well. This addresses bug report
             ### #29348: Version compare logic doesn't handle alphas?
+            ###
+            ### Update from JPeacock: apparently qv() and version->new
+            ### are different things, and we *must* use version->new
+            ### here, or things like #30056 might start happening            
             if (    !$args->{nocache}
                     && defined $CACHE->{$mod}->{usable}
-                    && (qv($CACHE->{$mod}->{version}||0) >= qv($href->{$mod}))
+                    && (version->new( $CACHE->{$mod}->{version}||0 ) 
+                        >= version->new( $href->{$mod} ) )
             ) {
                 $error = loc( q[Already tried to use '%1', which was unsuccessful], $mod);
                 last BLOCK;

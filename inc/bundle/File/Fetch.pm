@@ -23,8 +23,9 @@ use vars    qw[ $VERBOSE $PREFER_BIN $FROM_EMAIL $USER_AGENT
 use constant QUOTE  => do { $^O eq 'MSWin32' ? q["] : q['] };            
             
 
-$VERSION        = '0.12';
-$PREFER_BIN     = 0;        # XXX TODO implement
+$VERSION        = '0.13_04';
+$VERSION        = eval $VERSION;    # avoid warnings with development releases
+$PREFER_BIN     = 0;                # XXX TODO implement
 $FROM_EMAIL     = 'File-Fetch@example.com';
 $USER_AGENT     = 'File::Fetch/$VERSION';
 $BLACKLIST      = [qw|ftp|];
@@ -49,9 +50,11 @@ local $Module::Load::Conditional::VERBOSE   = 0;
 local $Module::Load::Conditional::VERBOSE   = 0;
 
 ### see what OS we are on, important for file:// uris ###
-use constant ON_UNIX        => ($^O ne 'MSWin32' and
-                                $^O ne 'MacOS');
-
+use constant ON_WIN         => ($^O eq 'MSWin32');
+use constant ON_VMS         => ($^O eq 'VMS');                                
+use constant ON_UNIX        => (!ON_WIN);
+use constant HAS_VOL        => (ON_WIN);
+use constant HAS_SHARE      => (ON_WIN);
 =pod
 
 =head1 NAME
@@ -103,7 +106,28 @@ The scheme from the uri (like 'file', 'http', etc)
 
 =item $ff->host
 
-The hostname in the uri, will be empty for a 'file' scheme.
+The hostname in the uri.  Will be empty if host was originally 
+'localhost' for a 'file://' url.
+
+=item $ff->vol
+
+On operating systems with the concept of a volume the second element
+of a file:// is considered to the be volume specification for the file.
+Thus on Win32 this routine returns the volume, on other operating
+systems this returns nothing.
+
+On Windows this value may be empty if the uri is to a network share, in 
+which case the 'share' property will be defined. Additionally, volume 
+specifications that use '|' as ':' will be converted on read to use ':'.
+
+On VMS, which has a volume concept, this field will be empty because VMS
+file specifications are converted to absolute UNIX format and the volume
+information is transparently included.
+
+=item $ff->share
+
+On systems with the concept of a network share (currently only Windows) returns 
+the sharename from a file://// url.  On other operating systems returns empty.
 
 =item $ff->path
 
@@ -129,6 +153,8 @@ result of $ff->output_file will be used.
         path            => { default => '/' },
         file            => { required => 1 },
         uri             => { required => 1 },
+        vol             => { default => '' }, # windows for file:// uris
+        share           => { default => '' }, # windows for file:// uris
         _error_msg      => { no_override => 1 },
         _error_msg_long => { no_override => 1 },
     };
@@ -156,7 +182,7 @@ result of $ff->output_file will be used.
         }
         
         for (qw[path file]) {
-            unless( $args->$_ ) {
+            unless( $args->$_() ) { # 5.5.x needs the ()
                 return File::Fetch->_error(loc("No '%1' specified",$_));
             }
         }
@@ -271,6 +297,34 @@ sub new {
 ###     file    => 'index.html'
 ### };
 ###
+### In the case of file:// urls there maybe be additional fields
+###
+### For systems with volume specifications such as Win32 there will be 
+### a volume specifier provided in the 'vol' field.
+###
+###   'vol' => 'volumename'
+###
+### For windows file shares there may be a 'share' key specified
+###
+###   'share' => 'sharename' 
+###
+### Note that the rules of what a file:// url means vary by the operating system 
+### of the host being addressed. Thus file:///d|/foo/bar.txt means the obvious
+### 'D:\foo\bar.txt' on windows, but on unix it means '/d|/foo/bar.txt' and 
+### not '/foo/bar.txt'
+###
+### Similarly if the host interpreting the url is VMS then 
+### file:///disk$user/my/notes/note12345.txt' means 
+### 'DISK$USER:[MY.NOTES]NOTE123456.TXT' but will be returned the same as
+### if it is unix where it means /disk$user/my/notes/note12345.txt'.
+### Except for some cases in the File::Spec methods, Perl on VMS will generally
+### handle UNIX format file specifications.
+###
+### This means it is impossible to serve certain file:// urls on certain systems.
+###
+### Thus are the problems with a protocol-less specification. :-(
+###
+
 sub _parse_uri {
     my $self = shift;
     my $uri  = shift or return;
@@ -281,13 +335,52 @@ sub _parse_uri {
     $uri            =~ s|^(\w+)://||;
     $href->{scheme} = $1;
 
-    ### file:// paths have no host ###
+    ### See rfc 1738 section 3.10
+    ### http://www.faqs.org/rfcs/rfc1738.html
+    ### And wikipedia for more on windows file:// urls
+    ### http://en.wikipedia.org/wiki/File://
     if( $href->{scheme} eq 'file' ) {
-        $href->{path} = $uri;
-        $href->{host} = '';
+        
+        my @parts = split '/',$uri;
+
+        ### file://hostname/...
+        ### file://hostname/...
+        ### normalize file://localhost with file:///
+        $href->{host} = $parts[0] || '';
+
+        ### index in @parts where the path components begin;
+        my $index = 1;  
+
+        ### file:////hostname/sharename/blah.txt        
+        if ( HAS_SHARE and not length $parts[0] and not length $parts[1] ) {
+            
+            $href->{host}   = $parts[2] || '';  # avoid warnings
+            $href->{share}  = $parts[3] || '';  # avoid warnings        
+
+            $index          = 4         # index after the share
+
+        ### file:///D|/blah.txt
+        ### file:///D:/blah.txt
+        } elsif (HAS_VOL) {
+        
+            ### this code comes from dmq's patch, but:
+            ### XXX if volume is empty, wouldn't that be an error? --kane
+            ### if so, our file://localhost test needs to be fixed as wel            
+            $href->{vol}    = $parts[1] || '';
+
+            ### correct D| style colume descriptors
+            $href->{vol}    =~ s/\A([A-Z])\|\z/$1:/i if ON_WIN;
+
+            $index          = 2;        # index after the volume
+        } 
+
+        ### rebuild the path from the leftover parts;
+        $href->{path} = join '/', '', splice( @parts, $index, $#parts );
 
     } else {
-        @{$href}{qw|host path|} = $uri =~ m|([^/]*)(/.*)$|s;
+        ### using anything but qw() in hash slices may produce warnings 
+        ### in older perls :-(
+        @{$href}{ qw(host path) } = $uri =~ m|([^/]*)(/.*)$|s;
     }
 
     ### split the path into file + dir ###
@@ -296,6 +389,10 @@ sub _parse_uri {
         $href->{file} = $parts[2];
     }
 
+    ### host will be empty if the target was 'localhost' and the 
+    ### scheme was 'file'
+    $href->{host} = '' if   ($href->{host}      eq 'localhost') and
+                            ($href->{scheme}    eq 'file');
 
     return $href;
 }
@@ -321,6 +418,9 @@ sub fetch {
 
     check( $tmpl, \%hash ) or return;
 
+    ### On VMS force to VMS format so File::Spec will work.
+    $to = VMS::Filespec::vmspath($to) if ON_VMS;
+
     ### create the path if it doesn't exist yet ###
     unless( -d $to ) {
         eval { mkpath( $to ) };
@@ -331,8 +431,11 @@ sub fetch {
     ### set passive ftp if required ###
     local $ENV{FTP_PASSIVE} = $FTP_PASSIVE;
 
-    ###
-    my $out_to = File::Spec->catfile( $to, $self->output_file );
+    ### we dont use catfile on win32 because if we are using a cygwin tool
+    ### under cmd.exe they wont understand windows style separators.
+    my $out_to = ON_WIN ? $to.'/'.$self->output_file 
+                        : File::Spec->catfile( $to, $self->output_file );
+    
     for my $method ( @{ $METHODS->{$self->scheme} } ) {
         my $sub =  '_'.$method.'_fetch';
 
@@ -764,8 +867,11 @@ sub _curl_fetch {
 
 
 ### use File::Copy for fetching file:// urls ###
-### XXX file:// uri to local path conversion is just too weird...
-### depend on LWP to do it for us
+###
+### See section 3.10 of RFC 1738 (http://www.faqs.org/rfcs/rfc1738.html)
+### Also see wikipedia on file:// (http://en.wikipedia.org/wiki/File://)
+###
+    
 sub _file_fetch {
     my $self = shift;
     my %hash = @_;
@@ -776,14 +882,50 @@ sub _file_fetch {
     };
     check( $tmpl, \%hash ) or return;
 
+    
+    
     ### prefix a / on unix systems with a file uri, since it would
     ### look somewhat like this:
-    ###     file://home/kane/file
-    ### wheras windows file uris might look like:
-    ###     file://C:/home/kane/file
-    my $path    = ON_UNIX ? '/'. $self->path : $self->path;
+    ###     file:///home/kane/file
+    ### wheras windows file uris for 'c:\some\dir\file' might look like:
+    ###     file:///C:/some/dir/file
+    ###     file:///C|/some/dir/file
+    ### or for a network share '\\host\share\some\dir\file':
+    ###     file:////host/share/some/dir/file
+    ###    
+    ### VMS file uri's for 'DISK$USER:[MY.NOTES]NOTE123456.TXT' might look like:
+    ###     file://vms.host.edu/disk$user/my/notes/note12345.txt
+    ###
+    
+    my $path    = $self->path;
+    my $vol     = $self->vol;
+    my $share   = $self->share;
 
-    my $remote  = File::Spec->catfile( $path, $self->file );
+    my $remote;
+    if (!$share and $self->host) {
+        return $self->_error(loc( 
+            "Currently %1 cannot handle hosts in %2 urls",
+            'File::Fetch', 'file://'
+        ));            
+    }
+    
+    if( $vol ) {
+        $path   = File::Spec->catdir( split /\//, $path );
+        $remote = File::Spec->catpath( $vol, $path, $self->file);
+
+    } elsif( $share ) {
+        ### win32 specific, and a share name, so we wont bother with File::Spec
+        $path   =~ s|/+|\\|g;
+        $remote = "\\\\".$self->host."\\$share\\$path";
+
+    } else {
+        ### File::Spec on VMS can not currently handle UNIX syntax.
+        my $file_class = ON_VMS
+            ? 'File::Spec::Unix'
+            : 'File::Spec';
+
+        $remote  = $file_class->catfile( $path, $self->file );
+    }
 
     ### File::Copy is littered with 'die' statements :( ###
     my $rv = eval { File::Copy::copy( $remote, $to ) };
@@ -828,7 +970,8 @@ sub _rsync_fetch {
                     verbose => $DEBUG )
         ) {
 
-            return $self->_error(loc("Command failed: %1", $captured || ''));
+            return $self->_error(loc("Command %1 failed: %2", 
+                "@$cmd" || '', $captured || ''));
         }
 
         return $to;
