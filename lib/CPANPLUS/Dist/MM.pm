@@ -248,6 +248,8 @@ sub prepare {
         return;
     }
     
+    ### XXX resolve 'configure requires' here
+    
     my $fail; 
     RUN: {
         ### don't run 'perl makefile.pl' again if there's a makefile already 

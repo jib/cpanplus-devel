@@ -139,7 +139,12 @@ use constant BUILD_PL       => sub { return @_
                                                             'Build.PL' )
                                         : 'Build.PL';
                             };
-                            
+                      
+use constant META_YML       => sub { return @_
+                                        ? File::Spec->catfile( @_, 'META.yml' )
+                                        : 'META.yml';
+                            }; 
+
 use constant BLIB           => sub { return @_
                                         ? File::Spec->catfile(@_, 'blib')
                                         : 'blib';

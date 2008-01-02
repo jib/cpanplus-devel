@@ -2,14 +2,15 @@ package CPANPLUS::Dist;
 
 use strict;
 
-
 use CPANPLUS::Error;
 use CPANPLUS::Internals::Constants;
+
+use YAML::Tiny;
+use Object::Accessor;
 
 use Params::Check               qw[check];
 use Module::Load::Conditional   qw[can_load check_install];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
-use Object::Accessor;
 
 local $Params::Check::VERBOSE = 1;
 
@@ -253,6 +254,34 @@ sub prereq_satisfied {
     }
 
     return;
+}
+
+=head2 $configure_requires = $dist->find_configure_requires;
+
+Reads the configure_requires for this distribution from the META.yml
+file in the root directory and returns a hashref with module names
+and versions required.
+
+=cut
+
+sub find_configure_requires {
+    my $self = shift;
+    my $mod  = $self->parent;
+    my $meta = META_YML->( $mod->status->extract );
+    
+    return 1 unless -e $meta;
+    
+    my $yaml = YAML::Tiny->read( $meta );
+    unless( $yaml and $yaml->[0] ) {
+        error( loc( "Could not read %1: '%2'", $meta, YAML::Tiny->errstr ) );
+        return;
+    }
+    
+    my $configure_requires = $yaml->[0]{configure_requires} || {};
+    $mod->status->configure_requires($configure_requires);
+    
+    # return a copy
+    return \%{$configure_requires};
 }
 
 =head2 _resolve_prereqs
