@@ -1681,7 +1681,10 @@ sub _reports {
             
             my $who = $pkg eq $this
                 ? "Standard Plugin"
-                : do { $pkg =~ s/^$this/../; "Provided by: $pkg" };
+                : do {  my $v = $self->_format_version($pkg->VERSION) || '';
+                        $pkg =~ s/^$this/../;
+                        sprintf "Provided by: %-30s %-10s", $pkg, $v; 
+                    };
             
             $self->__printf( $help_format, $name, $who );
         }          
