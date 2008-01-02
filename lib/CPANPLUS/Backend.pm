@@ -1022,7 +1022,7 @@ sub autobundle {
     my $perl_v  = join '', `$^X -V`;
 
     print $fh <<EOF;
-package $name
+package $name;
 
 \$VERSION = '0.01';
 
