@@ -425,7 +425,7 @@ sub _select_modules {
 
 sub _format_version {
     my $self    = shift;
-    my $version = shift;
+    my $version = shift || 0;
 
     ### fudge $version into the 'optimal' format
     $version = 0 if $version eq 'undef';
