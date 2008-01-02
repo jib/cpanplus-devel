@@ -455,7 +455,19 @@ L<Module::ThirdParty> for more details.
 
     ### make sure Bundle-Foo also gets flagged as bundle
     sub is_bundle {
-        return shift->module =~ /^bundle(?:-|::)/i ? 1 : 0;
+        my $self = shift;
+        
+        ### cpan'd bundle
+        return 1 if $self->module =~ /^bundle(?:-|::)/i;
+    
+        ### autobundle
+        my $conf    = $self->parent->configure_object;
+        my $prefix  = $conf->_get_build('autobundle_prefix');
+
+        return 1 if $self->module eq $prefix;
+        
+        ### neither
+        return;
     }
 
     sub is_third_party {
