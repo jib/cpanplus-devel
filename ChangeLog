@@ -1,3 +1,7 @@
+Changes for 0.84        Fri Dec 14 13:31:39 2007
+================================================
+* Promote 0.83_10 to stable.
+
 Changes for 0.83_10     Wed Nov 14 12:57:45 2007
 ================================================
 * Various VMS patches from John M.
