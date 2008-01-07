@@ -131,13 +131,7 @@ use constant TEST_CONF_CPAN_DIR         => 'dummy-CPAN';
 #     ' INSTALLSITEMAN3DIR=' . TEST_INSTALL_DIR_MAN3;
 
 
-sub gimme_conf { 
-
-    ### don't load any other configs than the heuristic one
-    ### during tests. They might hold broken/incorrect data
-    ### for our test suite. Bug [perl #43629] showed this.
-    my $conf = CPANPLUS::Configure->new( load_configs => 0 );
-
+sub dummy_cpan_dir {
     ### VMS needs this in directory format for rel2abs
     my $test_dir = $^O eq 'VMS'
                     ? File::Spec->catdir(TEST_CONF_CPAN_DIR)
@@ -149,9 +143,21 @@ sub gimme_conf {
     ### According to John M: the hosts path needs to be in UNIX format.  
     ### File::Spec::Unix->rel2abs does not work at all on VMS
     $abs_test_dir    = VMS::Filespec::unixify( $abs_test_dir ) if $^O eq 'VMS';
+
+    return $abs_test_dir;
+}
+
+sub gimme_conf { 
+
+    ### don't load any other configs than the heuristic one
+    ### during tests. They might hold broken/incorrect data
+    ### for our test suite. Bug [perl #43629] showed this.
+    my $conf = CPANPLUS::Configure->new( load_configs => 0 );
+
+    my $dummy_cpan = dummy_cpan_dir();
     
     $conf->set_conf( hosts  => [ { 
-                        path        => $abs_test_dir,
+                        path        => $dummy_cpan,
                         scheme      => 'file',
                     } ],      
     );

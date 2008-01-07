@@ -14,6 +14,7 @@ use CPANPLUS::Internals::Constants;
 
 use Test::More 'no_plan';
 use Data::Dumper;
+use File::Spec;
 use File::Path ();
 
 my $Conf    = gimme_conf();
@@ -260,6 +261,44 @@ isa_ok( $Auth->parent,          'CPANPLUS::Backend' );
         ok( defined $bundle->status->prereqs->{$_->module},
                                 "       Prereq was registered" );
     }
+}
+
+{   ### testing autobundles
+    my $file    = File::Spec->catfile( 
+                        dummy_cpan_dir(), 
+                        $Conf->_get_build('autobundle'),
+                        'Snapshot.pm' 
+                    );
+    my $uri     = $CB->_host_to_uri( scheme => 'file', path => $file );
+    my $bundle  = $CB->parse_module( module => $uri );
+    
+    ok( -e $file,               "Creating bundle from '$file'" );
+    ok( $bundle,                "   Object created" );
+    isa_ok( $bundle, 'CPANPLUS::Module',
+                                "   Object" );
+    ok( $bundle->is_bundle,     "   Recognized as bundle" );
+    ok( $bundle->is_autobundle, "   Recognized as autobundle" );
+    
+    my $type = $bundle->get_installer_type;
+    ok( $type,                  "   Found installer type" );
+    is( $type, INSTALLER_AUTOBUNDLE,
+                                "       Installer type is $type" );
+
+    my $where = $bundle->fetch;
+    ok( $where,                 "   Autobundle fetched" );
+    ok( -e $where,              "       File exists" );
+
+
+    my @list = $bundle->bundle_modules;
+    ok( scalar(@list),          "   Prereqs found" );
+    is( scalar(@list), 1,       "       Right number of prereqs" );
+    isa_ok( $list[0], 'CPANPLUS::Module',
+                                "       Object" );
+                                
+    ### skiptests to make sure we don't get any test header mismatches
+    my $rv = $bundle->create( preeq_target => 'create', skiptest => 1 );
+    ok( $rv,                    "   Tested prereqs" );
+
 }
 
 ### test module from perl core ###

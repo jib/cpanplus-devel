@@ -482,7 +482,6 @@ sub _resolve_prereqs {
         $pending->{ $modobj->module } = $modobj;
         $cb->_status->pending_prereqs( $pending );
 
-
         ### call $modobj->install rather than doing
         ### CPANPLUS::Dist->new and the like ourselves,
         ### since ->install will take care of fetch &&

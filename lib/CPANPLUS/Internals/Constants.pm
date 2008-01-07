@@ -26,7 +26,9 @@ use constant INSTALLER_BUILD
 use constant INSTALLER_MM   => 'CPANPLUS::Dist::MM';    
 use constant INSTALLER_SAMPLE   
                             => 'CPANPLUS::Dist::Sample';
-use constant INSTALLER_BASE => 'CPANPLUS::Dist::Base';                            
+use constant INSTALLER_BASE => 'CPANPLUS::Dist::Base';  
+use constant INSTALLER_AUTOBUNDLE
+                            => 'CPANPLUS::Dist::Autobundle';
 
 use constant SHELL_DEFAULT  => 'CPANPLUS::Shell::Default';
 use constant SHELL_CLASSIC  => 'CPANPLUS::Shell::Classic';
