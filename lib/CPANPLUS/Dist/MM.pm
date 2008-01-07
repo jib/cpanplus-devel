@@ -28,7 +28,7 @@ CPANPLUS::Dist::MM
 =head1 SYNOPSIS
 
     my $mm = CPANPLUS::Dist->new( 
-                                format  => 'makemaker',
+                                format  => 'CPANPLUS::Dist::MM',
                                 module  => $modobj, 
                             );
     $mm->create;        # runs make && make test
