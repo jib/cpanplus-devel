@@ -83,10 +83,7 @@ CPANPLUS::Selfupdate
                 sub { return 1 },   # always enabled
             ],            
             cpantest        => [
-                {
-                    'YAML::Tiny'     => '0.0',
-                    'Test::Reporter' => '1.34',
-                },
+                { 'Test::Reporter' => '1.34' },
                 sub { 
                     my $cb = shift;
                     return $cb->configure_object->get_conf('cpantest');
