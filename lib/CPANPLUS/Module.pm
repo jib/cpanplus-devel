@@ -452,9 +452,15 @@ L<Module::ThirdParty> for more details.
         my $self = shift;
         my $ver  = shift || $];
 
+        ### allow it to be called as a package function as well like:
+        ###   CPANPLUS::Module::module_is_supplied_with_perl_core('Config')
+        ### so that we can check the status of modules that aren't released
+        ### to CPAN, but are part of the core.
+        my $name = ref $self ? $self->module : $self;
+
         ### check Module::CoreList to see if it's a core package
         require Module::CoreList;
-        my $core = $Module::CoreList::version{ $ver }->{ $self->module };
+        my $core = $Module::CoreList::version{ $ver }->{ $name };
 
         return $core;
     }

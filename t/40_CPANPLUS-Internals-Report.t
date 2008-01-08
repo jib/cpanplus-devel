@@ -134,9 +134,22 @@ my $map = {
                     ],
         check       => 0,    
     },
-    
-    
-    
+    prereq_not_on_cpan_but_core => {
+        pre_hook    => sub {
+                        my $mod     = shift;
+                        my $clone   = $mod->clone;
+                        $clone->status->prereqs( 
+                            { TEST_CONF_PREREQ, 0 } 
+                        );
+                        return $clone;
+                    },
+        failed      => 1,
+        match       => ['/This distribution has been tested/',
+                        '/http://testers.cpan.org/',
+                        '/FAIL/',
+                    ],
+        check       => 0,    
+    },
 };
 
 ### test config settings 

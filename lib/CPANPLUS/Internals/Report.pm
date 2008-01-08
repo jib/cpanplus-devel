@@ -347,8 +347,17 @@ sub _send_report {
         
             while( my($prq_name,$prq_ver) = each %$prq ) {
                 my $obj = $cb->module_tree( $prq_name );
+                my $sub = CPANPLUS::Module->can(         
+                            'module_is_supplied_with_perl_core' );
                 
-                unless( $obj ) {
+                ### if we can't find the module and it's not supplied with core.
+                ### this addresses: #32064: NA reports generated for failing
+                ### tests where core prereqs are specified
+                ### Note that due to a bug in Module::CoreList, in some released
+                ### version of perl (5.8.6+ and 5.9.2-4 at the time of writing)
+                ### 'Config' is not recognized as a core module. See this bug:
+                ###    http://rt.cpan.org/Ticket/Display.html?id=32155
+                if( not $obj and not $sub->( $prq_name ) ) {
                     msg(loc( "Prerequisite '%1' for '%2' could not be obtained".
                              " from CPAN -- sending N/A grade", 
                              $prq_name, $name ), $verbose );
