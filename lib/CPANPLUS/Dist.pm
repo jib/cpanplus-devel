@@ -5,6 +5,7 @@ use strict;
 use CPANPLUS::Error;
 use CPANPLUS::Internals::Constants;
 
+use Cwd ();
 use YAML::Tiny;
 use Object::Accessor;
 
@@ -277,10 +278,13 @@ sub find_configure_requires {
         return;
     }
     
-    my $configure_requires = $yaml->[0]{configure_requires} || {};
-    $mod->status->configure_requires($configure_requires);
+    ### read the configure_requires key
+    my $configure_requires = $yaml->[0]->{'configure_requires'} || {};
+
+    ### and store it in the module
+    $mod->status->configure_requires( $configure_requires );
     
-    # return a copy
+    ### and return a copy
     return \%{$configure_requires};
 }
 
@@ -288,7 +292,22 @@ sub find_configure_requires {
 
 Makes sure prerequisites are resolved
 
-XXX Need docs, internal use only
+    format          The dist class to use to make the prereqs
+                    (ie. CPANPLUS::Dist::MM)
+
+    prereqs         Hash of the prerequisite modules and their versions
+
+    target          What to do with the prereqs.
+                        create  => Just build them
+                        install => Install them
+                        ignore  => Ignore them
+
+    prereq_build    If true, always build the prereqs even if already
+                    resolved
+
+    verbose         Be verbose
+
+    force           Force the prereq to be built, even if already resolved
 
 =cut
 
@@ -325,6 +344,9 @@ sub _resolve_prereqs {
 
     ### so there are no prereqs? then don't even bother
     return 1 unless keys %$prereqs;
+
+    ### Make sure we wound up where we started.
+    my $original_wd = Cwd::cwd;
 
     ### so you didn't provide an explicit target.
     ### maybe your config can tell us what to do.
@@ -521,6 +543,9 @@ sub _resolve_prereqs {
 
     ### reset the $prereqs iterator, in case we bailed out early ###
     keys %$prereqs;
+
+    ### chdir back to where we started
+    chdir $original_wd;
 
     return 1 unless $flag;
     return;

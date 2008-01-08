@@ -232,7 +232,7 @@ C<CPANPLUS::Dist::Ports> object.
 
 Undefined if you didn't specify a separate format to install through.
 
-=item prereqs
+=item prereqs | requires
 
 A hashref of prereqs this distribution was found to have. Will look
 something like this:
@@ -240,6 +240,11 @@ something like this:
     { Carp  => 0.01, strict => 0 }
 
 Might be undefined if the distribution didn't have any prerequisites.
+
+=item configure_requires
+
+Like prereqs, but these are necessary to be installed before the
+build process can even begin.
 
 =item signature
 
@@ -334,7 +339,13 @@ sub status {
     $acc->mk_accessors( qw[ installer_type dist_cpan dist prereqs
                             signature extract fetch readme uninstall
                             created installed prepared checksums files
-                            checksum_ok checksum_value _fetch_from] );
+                            checksum_ok checksum_value _fetch_from
+                            configure_requires
+                        ] );
+
+    ### create an alias from 'requires' to 'prereqs', so it's more in
+    ### line with 'configure_requires';
+    $acc->mk_aliases( requires => 'prereqs' );
 
     $self->_status( $acc );
 

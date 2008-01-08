@@ -219,7 +219,8 @@ sub prepare {
     }
     
     my $args;
-    my( $force, $verbose, $perl, $mmflags );
+    my( $force, $verbose, $perl, $mmflags, $prereq_target, $prereq_format,
+        $prereq_build );
     {   local $Params::Check::ALLOW_UNKNOWN = 1;
         my $tmpl = {
             perl            => {    default => $^X, store => \$perl },
@@ -230,10 +231,15 @@ sub prepare {
                                     store   => \$force },
             verbose         => {    default => $conf->get_conf('verbose'), 
                                     store   => \$verbose },
+            prereq_target   => {    default => '', store => \$prereq_target }, 
+            prereq_format   => {    default => '',
+                                    store   => \$prereq_format },   
+            prereq_build    => {    default => 0, store => \$prereq_build },     
         };                                            
 
         $args = check( $tmpl, \%hash ) or return;
     }
+    
     
     ### maybe we already ran a create on this object? ###
     return 1 if $dist->status->prepared && !$force;
@@ -248,10 +254,36 @@ sub prepare {
         return;
     }
     
-    ### XXX resolve 'configure requires' here
-    
     my $fail; 
     RUN: {
+
+        ### we resolve 'configure requires' here, so we can run the 'perl
+        ### Makefile.PL' command
+        {   my $configure_requires = $dist->find_configure_requires;     
+            my $ok = $dist->_resolve_prereqs(
+                            format          => $prereq_format,
+                            verbose         => $verbose,
+                            prereqs         => $configure_requires,
+                            target          => $prereq_target,
+                            force           => $force,
+                            prereq_build    => $prereq_build,
+                    );    
+    
+            unless( $ok ) {
+           
+                #### use $dist->flush to reset the cache ###
+                error( loc( "Unable to satisfy '%1' for '%2' " .
+                            "-- aborting install", 
+                            'configure_requires', $self->module ) );    
+                $dist->status->prepared(0);
+                $fail++; 
+                last RUN;
+            } 
+            ### end of prereq resolving ###
+        }
+        
+
+
         ### don't run 'perl makefile.pl' again if there's a makefile already 
         if( -e MAKEFILE->() && (-M MAKEFILE->() < -M $dir) && !$force ) {
             msg(loc("'%1' already exists, not running '%2 %3' again ".
