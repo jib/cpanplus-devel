@@ -6,7 +6,7 @@ use CPANPLUS::Error;
 use CPANPLUS::Internals::Constants;
 
 use Cwd ();
-use YAML::Tiny;
+#use YAML::Tiny;
 use Object::Accessor;
 
 use Params::Check               qw[check];
