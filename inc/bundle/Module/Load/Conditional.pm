@@ -18,7 +18,7 @@ BEGIN {
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.23_01';
+    $VERSION        = '0.24';
     $VERBOSE        = 0;
     $FIND_VERSION   = 1;
     $CHECK_INC_HASH = 0;
@@ -307,7 +307,8 @@ sub _parse_version {
     ### regex breaks under -T, we must modifiy it so
     ### it captures the entire expression, and eval /that/
     ### rather than $_, which is insecure.
-
+    my $taint_safe_str = do { $str =~ /(^.*$)/sm; $1 };
+        
     if( $str =~ /(?<!\\)([\$*])(([\w\:\']*)\bVERSION)\b.*\=/ ) {
         
         print "Evaluating: $str\n" if $verbose;
@@ -327,7 +328,7 @@ sub _parse_version {
 
             local $1$2;
             \$$2=undef; do {
-                $str
+                $taint_safe_str
             }; \$$2
         };
         
