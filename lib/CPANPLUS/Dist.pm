@@ -257,7 +257,7 @@ sub prereq_satisfied {
     return;
 }
 
-=head2 $configure_requires = $dist->find_configure_requires;
+=head2 $configure_requires = $dist->find_configure_requires( [file => /path/to/META.yml] )
 
 Reads the configure_requires for this distribution from the META.yml
 file in the root directory and returns a hashref with module names
@@ -268,8 +268,14 @@ and versions required.
 sub find_configure_requires {
     my $self = shift;
     my $mod  = $self->parent;
-
-    my $meta = META_YML->( $mod->status->extract );
+    my %hash = @_;
+    
+    my $meta;
+    my $tmpl = {
+        file    => { default => META_YML->( $mod->status->extract ),
+                     store   => \$meta,
+                },
+    };                
     
     ### default is an empty hashref
     my $configure_requires = {};
