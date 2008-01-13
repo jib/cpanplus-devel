@@ -277,6 +277,8 @@ sub find_configure_requires {
                 },
     };                
     
+    check( $tmpl, \%hash ) or return;
+    
     ### default is an empty hashref
     my $configure_requires = {};
     

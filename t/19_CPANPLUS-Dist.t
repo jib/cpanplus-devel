@@ -140,6 +140,38 @@ ok( $Mod,                       "Got module object" );
                                 "   Error recorded as expected" );
 }
 
+### configure_requires tests
+{   my $meta    = META->( $Mod );
+    ok( $meta,                  "Reading 'configure_requires' from '$meta'" );
+    
+    my $clone   = $Mod->clone;
+    ok( $clone,                 "   Package cloned" );
+
+    ### set the new location to fetch from
+    $clone->package( $meta );
+    
+    my $file = $clone->fetch;
+    ok( $file,                  "   Meta file fetched" );
+    ok( -e $file,               "       File '$file' exits" );
+    
+    my $dist = CPANPLUS::Dist->new(
+                        format => $Module,
+                        module => $Mod
+                    );
+    ok( $dist,                  "   Dist object created" );
+        
+    my $meth = 'find_configure_requires';    
+    can_ok( $dist,              $meth );
+    
+    my $href = $dist->$meth( file => $file );
+    ok( $href,                  "   '$meth' returned hashref" );
+    
+    ok( scalar(keys(%$href)),   "       Contains entries" );
+    ok( $href->{ +TEST_CONF_PREREQ },
+                                "       Contains the right prereq" );
+}    
+
+
 ### test _resolve prereqs, in a somewhat simulated set of circumstances
 {   my $old_prereq = $conf->get_conf('prereqs');
     

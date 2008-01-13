@@ -210,6 +210,13 @@ use constant README         => sub { my $obj = $_[0];
                                              '.readme';
                                      return $pkg;
                             };
+use constant META           => sub { my $obj = $_[0];
+                                     my $pkg = $obj->package_name;
+                                     $pkg .= '-' . $obj->package_version .
+                                             '.meta';
+                                     return $pkg;
+                            };                          
+                            
 use constant OPEN_FILE      => sub {
                                     my($file, $mode) = (@_, '');
                                     my $fh;
