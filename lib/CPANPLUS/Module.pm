@@ -1147,8 +1147,7 @@ sub readme {
         return;
     }
 
-    my $in;
-    { local $/; $in = <$fh> };
+    my $in = do{ local $/; <$fh> };
     $fh->close;
 
     return $self->status->readme( $in );
