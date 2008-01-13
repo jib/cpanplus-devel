@@ -52,6 +52,7 @@ unless( $MineOnly ) {
         Module::CoreList
         Module::Pluggable
         version
+        Parse::CPAN::Meta
     ];
     
     # IPC::Run no more!
