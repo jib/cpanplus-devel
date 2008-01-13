@@ -65,7 +65,7 @@ CPANPLUS::Selfupdate
             'Module::CoreList'          => '2.09',
             'Module::Pluggable'         => '2.4',
             'Module::Loaded'            => '0.01',
-            'YAML::Tiny'                => '1.21', # config_requires support
+            'Parse::CPAN::Meta'         => '0.02', # config_requires support
         },
     
         features => {

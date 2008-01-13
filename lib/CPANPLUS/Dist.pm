@@ -6,8 +6,8 @@ use CPANPLUS::Error;
 use CPANPLUS::Internals::Constants;
 
 use Cwd ();
-#use YAML::Tiny;
 use Object::Accessor;
+use Parse::CPAN::Meta;
 
 use Params::Check               qw[check];
 use Module::Load::Conditional   qw[can_load check_install];
@@ -268,19 +268,29 @@ and versions required.
 sub find_configure_requires {
     my $self = shift;
     my $mod  = $self->parent;
+
     my $meta = META_YML->( $mod->status->extract );
     
-    return 1 unless -e $meta;
+    ### default is an empty hashref
+    my $configure_requires = {};
     
-    my $yaml = YAML::Tiny->read( $meta );
-    unless( $yaml and $yaml->[0] ) {
-        error( loc( "Could not read %1: '%2'", $meta, YAML::Tiny->errstr ) );
-        return;
+    ### if there's a meta file, we read it;
+    if( -e $meta ) {
+
+        ### Parse::CPAN::Meta uses exceptions for errors
+        ### hash returned in list context!!!
+        my ($doc) = eval { Parse::CPAN::Meta::LoadFile( $meta ) };
+  
+        unless( $doc ) {
+            error(loc( "Could not read %1: '%2'", $meta, $@ ));
+            return;
+        }
+
+        ### read the configure_requires key
+        $configure_requires = $doc->{'configure_requires'}
+            if $doc->{'configure_requires'};
     }
     
-    ### read the configure_requires key
-    my $configure_requires = $yaml->[0]->{'configure_requires'} || {};
-
     ### and store it in the module
     $mod->status->configure_requires( $configure_requires );
     
@@ -288,7 +298,7 @@ sub find_configure_requires {
     return \%{$configure_requires};
 }
 
-=head2 _resolve_prereqs
+=head2 $bool = $dist->_resolve_prereqs( ... )
 
 Makes sure prerequisites are resolved
 
