@@ -197,6 +197,20 @@ when sending emails. Defaults to an C<example.com> address.
 =cut
 
         $Conf->{'conf'}->{'email'} = DEFAULT_EMAIL;
+        
+=item enable_custom_sources
+
+Boolean flag indicating whether custom sources should be enabled or
+not. See the C<CUSTOM MODULE SOURCES> in C<CPANPLUS::Backend> for
+details on how to use them.
+
+Defaults to C<true>
+
+=cut
+
+        ### this addresses #32248 which requests a possibillity to
+        ### turn off custom sources
+        $Conf->{'conf'}->{'enable_custom_sources'} = 1;
 
 =item extractdir
 

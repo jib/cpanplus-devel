@@ -405,14 +405,16 @@ sub _build_trees {
     return unless $self->{_modtree} && $self->{_authortree};
 
     ### update them if the other sources are also deemed out of date
-    unless( $uptodate ) {
+    if( not $uptodate and $conf->get_conf('enable_custom_sources') ) {
         $self->__update_custom_module_sources( verbose => $args->{verbose} ) 
             or error(loc("Could not update custom module sources"));
     }      
 
-    ### add custom sources here
-    $self->__create_custom_module_entries( verbose => $args->{verbose} )
-        or error(loc("Could not create custom module entries"));
+    ### add custom sources here if enabled
+    if( $conf->get_conf('enable_custom_sources') ) {
+        $self->__create_custom_module_entries( verbose => $args->{verbose} )
+            or error(loc("Could not create custom module entries"));
+    }
 
     ### write the stored files to disk, so we can keep using them
     ### from now on, till they become invalid
@@ -1174,6 +1176,12 @@ Returns a list of key value pairs as follows:
 sub __list_custom_module_sources {
     my $self = shift;
     my $conf = $self->configure_object;
+    
+    my($verbose);
+    my $tmpl = {   
+        verbose => { default => $conf->get_conf('verbose'),
+                     store   => \$verbose },
+    };    
 
     my $dir = File::Spec->catdir(
                     $conf->get_conf('base'),
@@ -1181,7 +1189,7 @@ sub __list_custom_module_sources {
                 );
 
     unless( IS_DIR->( $dir ) ) {
-        msg(loc("No '%1' dir, skipping custom sources", $dir));
+        msg(loc("No '%1' dir, skipping custom sources", $dir), $verbose);
         return;
     }
     
