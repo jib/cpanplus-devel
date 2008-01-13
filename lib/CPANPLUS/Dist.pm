@@ -280,7 +280,7 @@ sub find_configure_requires {
     check( $tmpl, \%hash ) or return;
     
     ### default is an empty hashref
-    my $configure_requires = {};
+    my $configure_requires = $self->status->configure_requires || {};
     
     ### if there's a meta file, we read it;
     if( -e $meta ) {
@@ -294,9 +294,12 @@ sub find_configure_requires {
             return;
         }
 
-        ### read the configure_requires key
-        $configure_requires = $doc->{'configure_requires'}
-            if $doc->{'configure_requires'};
+        ### read the configure_requires key, make sure not to throw
+        ### away anything that was already added
+        $configure_requires = {
+            %$configure_requires,
+            %{ $doc->{'configure_requires'} },
+        } if $doc->{'configure_requires'};
     }
     
     ### and store it in the module

@@ -629,10 +629,12 @@ sub get_installer_type {
     my $conf = $cb->configure_object;
     my %hash = @_;
 
-    my $prefer_makefile;
+    my ($prefer_makefile,$verbose);
     my $tmpl = {
         prefer_makefile => { default => $conf->get_conf('prefer_makefile'),
-                             store => \$prefer_makefile, allow => BOOLEANS },
+                             store   => \$prefer_makefile, allow => BOOLEANS },
+        verbose         => { default => $conf->get_conf('verbose'),
+                             store   => \$verbose },                             
     };
 
     check( $tmpl, \%hash ) or return;
@@ -667,11 +669,16 @@ sub get_installer_type {
     if( $type eq INSTALLER_BUILD and ( 
             not grep { $_ eq INSTALLER_BUILD } CPANPLUS::Dist->dist_types )
     ) {
-        error( loc( "This module requires '%1' and '%2' to be installed, ".
-                    "but you don't have it! Will fall back to ".
-                    "'%3', but might not be able to install!",
-                     'Module::Build', INSTALLER_BUILD, INSTALLER_MM ) );
-        $type = INSTALLER_MM;
+        my $href = $self->status->configure_requires || {};
+        my $deps = { 'CPANPLUS::Dist::Build' => 0, %$href };
+        
+        $self->status->configure_requires( $deps );
+        
+        msg(loc("This module requires '%1' and '%2' to be installed first. ".
+                "Adding these modules to your prerequisites list",
+                 'Module::Build', INSTALLER_BUILD
+        ), $verbose );                 
+
 
     ### ok, actually we found neither ###
     } elsif ( !$type ) {

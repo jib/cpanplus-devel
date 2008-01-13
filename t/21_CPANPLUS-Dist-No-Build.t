@@ -24,31 +24,35 @@ my $CB      = CPANPLUS::Backend->new( $Conf );
 
 my $Mod = $CB->module_tree( 'Foo::Bar::MB::NOXS' );
 
-ok( $Mod,                   "Module object retrieved" );        
+ok( $Mod,                       "Module object retrieved" );        
 ok( not grep { $_ eq INSTALLER_BUILD } CPANPLUS::Dist->dist_types,
-                            "   Build installer not returned" );
+                                "   Build installer not returned" );
             
 ### fetch the file first            
 {   my $where = $Mod->fetch;
-    ok( -e $where,          "   Tarball '$where' exists" );
+    ok( -e $where,              "   Tarball '$where' exists" );
 }
     
 ### extract it, silence warnings/messages    
 {   my $where = $Mod->extract;
-    ok( -e $where,          "   Tarball extracted to '$where'" );
+    ok( -e $where,              "   Tarball extracted to '$where'" );
 }
 
 ### check the installer type 
-{   is( $Mod->status->installer_type, INSTALLER_MM, 
-                            "Proper installer type found" );
+{   is( $Mod->status->installer_type, INSTALLER_BUILD, 
+                                "Proper installer type found" );
+
+    my $href = $Mod->status->configure_requires;
+    ok( scalar(keys(%$href)),   "   Dependencies recorded" );
+    
+    ok( defined $href->{ +INSTALLER_BUILD },
+                                "       Dependency on " . INSTALLER_BUILD );
 
     my $err = CPANPLUS::Error->stack_as_string;
-    like( $err, '/'.INSTALLER_MM.'/',
-                            "   Error mentions " . INSTALLER_MM );
     like( $err, '/'.INSTALLER_BUILD.'/',
-                            "   Error mentions " . INSTALLER_BUILD );
-    like( $err, qr/but might not be able to install/,
-                            "   Error mentions install warning" );
+                            "   Message mentions " . INSTALLER_BUILD );
+    like( $err, qr/prerequisites list/,
+                            "   Message mentions adding prerequisites" );                            
 }
 
 END { 1 while unlink output_file()  }
