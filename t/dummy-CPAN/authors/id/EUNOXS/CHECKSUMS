@@ -6,8 +6,8 @@ Hash: SHA1
 $cksum = {
   'Foo-Bar-0.01.tar.gz' => {
     'mtime' => '1999-05-13',
-    'md5' => '2917421f5a41419f7bb2d2cf87f04b8d',
-    'size' => 1066
+    'md5' => '5cfed19e324ef8379d092807f10e5903',
+    'size' => 1118
   },
   'perl5.005_03.tar.gz' => {
     'mtime' => '1999-05-13',
