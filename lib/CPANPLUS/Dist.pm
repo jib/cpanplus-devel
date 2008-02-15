@@ -280,7 +280,7 @@ sub find_configure_requires {
     check( $tmpl, \%hash ) or return;
     
     ### default is an empty hashref
-    my $configure_requires = $self->status->configure_requires || {};
+    my $configure_requires = $mod->status->configure_requires || {};
     
     ### if there's a meta file, we read it;
     if( -e $meta ) {
