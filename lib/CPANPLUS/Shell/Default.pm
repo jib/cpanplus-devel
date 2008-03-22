@@ -966,6 +966,8 @@ sub __ask_about_install {
                 's conf prereqs 1; s save' ) );
     $Shell->__print("\n\n");
 
+    ### XXX add an 'all' option here, add it to the $Shell object,
+    ### flush the setting when we re-dispatch another command
     my $bool =  $term->ask_yn(
                     prompt  => loc("Should I install this module?"),
                     default => 'y'

@@ -36,6 +36,7 @@ inc/bundle/Module/Pluggable/Object.pm
 inc/bundle/Object/Accessor.pm
 inc/bundle/Package/Constants.pm
 inc/bundle/Params/Check.pm
+inc/bundle/Parse/CPAN/Meta.pm
 inc/bundle/Term/UI.pm
 inc/bundle/Term/UI/History.pm
 inc/bundle/version.pm
@@ -58,6 +59,7 @@ lib/CPANPLUS/Config.pm
 lib/CPANPLUS/Configure.pm
 lib/CPANPLUS/Configure/Setup.pm
 lib/CPANPLUS/Dist.pm
+lib/CPANPLUS/Dist/Autobundle.pm
 lib/CPANPLUS/Dist/Base.pm
 lib/CPANPLUS/Dist/MM.pm
 lib/CPANPLUS/Dist/Sample.pm
@@ -115,6 +117,7 @@ t/40_CPANPLUS-Internals-Report.t
 t/dummy-CPAN/authors/01mailrc.txt.gz
 t/dummy-CPAN/authors/id/EUNOXS/Bundle-Foo-Bar-0.01.tar.gz
 t/dummy-CPAN/authors/id/EUNOXS/CHECKSUMS
+t/dummy-CPAN/authors/id/EUNOXS/Foo-Bar-0.01.meta
 t/dummy-CPAN/authors/id/EUNOXS/Foo-Bar-0.01.readme
 t/dummy-CPAN/authors/id/EUNOXS/Foo-Bar-0.01.tar.gz
 t/dummy-CPAN/authors/id/EUNOXS/perl5.005_03.tar.gz
@@ -127,6 +130,7 @@ t/dummy-CPAN/authors/id/MBNOXS/Foo-Bar-0.01.tar.gz
 t/dummy-CPAN/authors/id/MBXS/CHECKSUMS
 t/dummy-CPAN/authors/id/MBXS/Foo-Bar-0.01.readme
 t/dummy-CPAN/authors/id/MBXS/Foo-Bar-0.01.tar.gz
+t/dummy-CPAN/autobundle/Snapshot.pm
 t/dummy-CPAN/modules/02packages.details.txt.gz
 t/dummy-CPAN/modules/03modlist.data.gz
 t/dummy-cpanplus/.hidden
