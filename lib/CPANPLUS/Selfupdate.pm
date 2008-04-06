@@ -66,6 +66,7 @@ CPANPLUS::Selfupdate
             'Module::Pluggable'         => '2.4',
             'Module::Loaded'            => '0.01',
             'Parse::CPAN::Meta'         => '0.02', # config_requires support
+            'ExtUtils::Install'         => '1.42', # uninstall outside @INC
         },
     
         features => {

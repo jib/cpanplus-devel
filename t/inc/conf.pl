@@ -96,6 +96,13 @@ use constant TEST_CONF_INST_MODULE      => 'Foo::Bar';
 use constant TEST_CONF_INVALID_MODULE   => 'fnurk';
 use constant TEST_CONF_MIRROR_DIR       => 'dummy-localmirror';
 use constant TEST_CONF_CPAN_DIR         => 'dummy-CPAN';
+use constant TEST_CONF_CPANPLUS_DIR     => 'dummy-cpanplus';
+use constant TEST_CONF_INSTALL_DIR      => File::Spec->rel2abs(
+                                                File::Spec->catdir(      
+                                                    TEST_CONF_CPANPLUS_DIR,
+                                                    'install'
+                                                )
+                                            );       
 
 ### we might need this Some Day when we're installing into
 ### our own sandbox. see t/20.t for details
@@ -161,7 +168,7 @@ sub gimme_conf {
                         scheme      => 'file',
                     } ],      
     );
-    $conf->set_conf( base       => File::Spec->rel2abs('dummy-cpanplus') );
+    $conf->set_conf( base       => File::Spec->rel2abs(TEST_CONF_CPANPLUS_DIR));
     $conf->set_conf( dist_type  => '' );
     $conf->set_conf( signature  => 0 );
     $conf->set_conf( verbose    => 1 ) if $ENV{ $Env };

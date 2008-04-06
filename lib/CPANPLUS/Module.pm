@@ -1533,8 +1533,42 @@ sub _extutils_installed {
                         verbose     => $verbose,
                     );
 
-    my $inst;
-    unless( $inst = ExtUtils::Installed->new() ) {
+    ### search in your regular @INC, and anything you added to your config.
+    ### this lets EU::Installed find .packlists that are *not* in the standard
+    ### compiled in @INC path. Requires EU::I 1.42 or up. this addresses #33438
+    ### make sure the archname path is also added, as that's where the .packlist
+    ### files are written
+    my @libs;
+    for my $lib ( @{ $conf->get_conf('lib') } ) {
+        require Config;
+        
+        ### figure out what an MM prefix expands to. Basically, it's the
+        ### site install target from %Config, ie: /opt/lib/perl5/site_perl/5.8.8 
+        ### minus the site wide prefix, ie: /opt
+        ### this lets users add the dir they have set as their EU::MM PREFIX
+        ### to our 'lib' config and it Just Works
+        ### XXX is this the right thing to do?
+        push @libs, do {   
+            my $site    = $Config::Config{sitelib};
+            my $prefix  = quotemeta $Config::Config{prefix};
+        
+            ### strip the prefix from the site dir
+            $site =~ s/^$prefix//;
+            
+            File::Spec->catdir( $lib, $site ), 
+            File::Spec->catdir( $lib, $site, $Config::Config{'archname'} );
+        };
+
+        ### the arch specific dir, ie:
+        ### /opt/lib/perl5/site_perl/5.8.8/darwin-2level        
+        push @libs, File::Spec->catdir( $lib, $Config::Config{'archname'} );
+    
+        ### and just the standard dir
+        push @libs, $lib;
+    }        
+
+    my $inst;    
+    unless( $inst = ExtUtils::Installed->new( extra_libs => \@libs ) ) {
         error( loc("Could not create an '%1' object", 'ExtUtils::Installed' ) );
 
         ### in case it's being used directly... ###
