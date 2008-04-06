@@ -13,7 +13,7 @@ BEGIN {
                         $USE_IPC_RUN $USE_IPC_OPEN3 $WARN
                     ];
 
-    $VERSION        = '0.40';
+    $VERSION        = '0.41_01';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -27,6 +27,7 @@ BEGIN {
 require Carp;
 use File::Spec;
 use Params::Check               qw[check];
+use Text::ParseWords            qw[shellwords];
 use Module::Load::Conditional   qw[can_load];
 use Locale::Maketext::Simple    Style => 'gettext';
 
@@ -302,11 +303,14 @@ sub run {
                      allow    => sub { !ref($_[0]) or ref($_[0]) eq 'ARRAY' } 
         },
     };
-
+    
     unless( check( $tmpl, \%hash, $VERBOSE ) ) {
         Carp::carp(loc("Could not validate input: %1", Params::Check->last_error));
         return;
     };        
+
+    ### strip any empty elements from $cmd if present
+    $cmd = [ grep { length && defined } @$cmd ] if ref $cmd;
 
     print loc("Running [%1]...\n", (ref $cmd ? "@$cmd" : $cmd)) if $verbose;
 
@@ -365,8 +369,7 @@ sub run {
         ### in case there are pipes in there;
         ### IPC::Open3 will call exec and exec will do the right thing 
         $ok = __PACKAGE__->_open3_run( 
-                                ( ref $cmd ? "@$cmd" : $cmd ),
-                                $_out_handler, $_err_handler, $verbose 
+                                $cmd, $_out_handler, $_err_handler, $verbose 
                             );
         
     ### if we are allowed to run verbose, just dispatch the system command
@@ -420,12 +423,13 @@ sub _open3_run {
                         );
     __PACKAGE__->__dup_fds( @fds_to_dup );
     
-
+    ### dont stringify @$cmd, so spaces in filenames/paths are
+    ### treated properly
     my $pid = IPC::Open3::open3(
                     '<&STDIN',
                     (IS_WIN32 ? '>&STDOUT' : $kidout),
                     (IS_WIN32 ? '>&STDERR' : $kiderror),
-                    $cmd
+                    ( ref $cmd ? @$cmd : $cmd ),
                 );
 
     ### use OUR stdin, not $kidin. Somehow,
@@ -528,7 +532,8 @@ sub _ipc_run {
         @command = map { if( /([<>|&])/ ) {
                             $special_chars .= $1; $_;
                          } else {
-                            [ split / +/ ]
+#                            [ split / +/ ]
+                             [ map { m/\ / ? qq{'$_'} : $_ } shellwords($cmd) ]
                          }
                     } split( /\s*([<>|&])\s*/, $cmd );
     }

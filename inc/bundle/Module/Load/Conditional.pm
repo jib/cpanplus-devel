@@ -18,7 +18,7 @@ BEGIN {
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.24';
+    $VERSION        = '0.26';
     $VERBOSE        = 0;
     $FIND_VERSION   = 1;
     $CHECK_INC_HASH = 0;
@@ -236,18 +236,20 @@ sub check_install {
             if( $FIND_VERSION ) {
                 
                 my $in_pod = 0;
-                while (local $_ = <$fh> ) {
+                while ( my $line = <$fh> ) {
     
                     ### stolen from EU::MM_Unix->parse_version to address
                     ### #24062: "Problem with CPANPLUS 0.076 misidentifying
                     ### versions after installing Text::NSP 1.03" where a 
                     ### VERSION mentioned in the POD was found before
                     ### the real $VERSION declaration.
-                    $in_pod = /^=(?!cut)/ ? 1 : /^=cut/ ? 0 : $in_pod;
+                    $in_pod = $line =~ /^=(?!cut)/  ? 1 : 
+                              $line =~ /^=cut/      ? 0 : 
+                              $in_pod;
                     next if $in_pod;
                     
                     ### try to find a version declaration in this string.
-                    my $ver = __PACKAGE__->_parse_version( $_ );
+                    my $ver = __PACKAGE__->_parse_version( $line );
 
                     if( defined $ver ) {
                         $href->{version} = $ver;

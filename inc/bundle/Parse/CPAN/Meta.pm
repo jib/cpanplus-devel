@@ -5,7 +5,7 @@ use Carp 'croak';
 BEGIN {
 	require 5.004;
 	require Exporter;
-	$Parse::CPAN::Meta::VERSION   = '0.02';
+	$Parse::CPAN::Meta::VERSION   = '0.03';
 	@Parse::CPAN::Meta::ISA       = qw{ Exporter      };
 	@Parse::CPAN::Meta::EXPORT_OK = qw{ Load LoadFile };
 }
@@ -99,7 +99,11 @@ sub Load ($) {
 		}
 	}
 
-	return @documents;
+	if ( wantarray ) {
+		return @documents;
+	} else {
+		return $documents[-1];
+	}
 }
 
 # Deparse a scalar string to the actual scalar

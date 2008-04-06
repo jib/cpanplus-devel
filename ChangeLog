@@ -1,3 +1,36 @@
+Changes for 0.85_01     Sun Apr  6 15:22:43 2008
+================================================
+* Address #34519 Getting Wrong File with SENGER/NET-IPFilterSimple_V1.1.tar.gz
+  The delimiter (_) wsa being replaced by - after parsing. This is now fixed.
+* Depend on a newer EU::Installed (1.42), so we can now install into a non-site
+  wide dir and actually do uninstalls properly. Requires a few clever dir
+  manipulations from our side, but it works.
+* Change tests in 20.t accordingly so test suite no longer needs to install
+  site wide for testing purposes.
+* When changing the 'lib' param in your config using 's edit' from the default
+  shell, it wouldn't propagate to the current process. The same applied to
+  changing the @INC or $ENV{PERL5LIB}. This is now fixed.
+* Address: #12355: Add an 'all' option when asking about dependencies.
+  Users can now select 'yes to all' or 'no to all' when asked about
+  installing prerequisites.
+* Implement the META.yml directive 'configure_requires:', which states a
+  package needs to be installed before running Makefile.PL. This uses the
+  new module Parse::CPAN::Meta, which is now bundled and part of the core
+  prerequisites.
+* Address: #31279: CPANPLUS should automatically install Module::Build and
+  necessary tools. We now automatically add CPANPLUS::Dist::Build to 
+  'configure_requires' when it's needed to install a module and not present
+* Address #32248 to make it possible to turn off custom sources by doing:
+  's conf enables_custom_sources 0' from the default shell or config file.
+* Address: #32064: NA reports generated for failing tests where core
+  prereqs are specified. Use CPANPLUS::Module::module_is_supplied_with_perl_core
+  to detect if a module is part of perl core or not.   
+* Add proper support for installing autobundles. $mod->is_bundle recognizes
+  autobundle snapshots too now.
+* Quell 'non numeric' warnings when loading modules that have a non-float as
+  version numbers.
+* In the default shell, show version numbers in loaded plugin overview.
+
 Changes for 0.84        Fri Dec 14 13:31:39 2007
 ================================================
 * Promote 0.83_10 to stable.

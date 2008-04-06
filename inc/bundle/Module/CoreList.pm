@@ -1,7 +1,7 @@
 package Module::CoreList;
 use strict;
 use vars qw/$VERSION %released %patchlevel %version %families/;
-$VERSION = '2.13';
+$VERSION = '2.15';
 
 =head1 NAME
 
@@ -138,6 +138,11 @@ sub find_modules {
     return sort keys %mods
 }
 
+sub find_version {
+    my ($class, $v) = @_;
+    return $version{$v} if defined $version{$v};
+    return undef;
+}
 
 # when things escaped
 %released = (
@@ -176,7 +181,7 @@ sub find_modules {
 %patchlevel = (
     5.005    => [perl => 1647],
     5.00503  => ['maint-5.005' => 3198],
-    5.00405  => ['maint-5.004' => 999],
+    5.00405  => ['maint-5.004' => 3296],
     5.006    => [perl => 5899],
     5.006001 => ['maint-5.6' => 9654],
     5.006002 => ['maint-5.6' => 21727],
@@ -2002,7 +2007,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'warnings'              => undef, #lib/warnings.pm
         'warnings::register'    => undef, #lib/warnings/register.pm
         'XSLoader'              => '0.01', #lib/XSLoader.pm
-   },
+    },
 
     5.007003   => {
         'AnyDBM_File'           => '1.00',
@@ -4457,6 +4462,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'XSLoader'              => '0.03',  #lib/XSLoader.pm
         'XS::Typemap'           => '0.01',  #lib/XS/Typemap.pm
     },
+
     5.008004 => {
         'AnyDBM_File'           => '1.00',  #lib/AnyDBM_File.pm
         'attributes'            => '0.06',  #lib/attributes.pm
@@ -5550,6 +5556,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
         'XSLoader'              => '0.02',  #lib/XSLoader.pm
         'XS::Typemap'           => '0.01',  #lib/XS/Typemap.pm
     },
+
     5.009002 => {
 	'AnyDBM_File'           => '1.00',
 	'Attribute::Handlers'   => '0.78_01',
@@ -5590,6 +5597,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Carp::Heavy'           => '1.04',
 	'Class::ISA'            => '0.33',
 	'Class::Struct'         => '0.63',
+        'Config'                => undef,
 	'Config::Extensions'    => '0.01',
 	'Cwd'                   => '3.05',
 	'DB'                    => '1.0',
@@ -5914,6 +5922,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'warnings'              => '1.04',
 	'warnings::register'    => '1.00',
     },
+
     5.008007 => {
 	'AnyDBM_File'           => '1.00',
 	'Attribute::Handlers'   => '0.78_01',
@@ -5954,6 +5963,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Carp::Heavy'           => '1.04',
 	'Class::ISA'            => '0.33',
 	'Class::Struct'         => '0.63',
+        'Config'                => undef,
 	'Cwd'                   => '3.05',
 	'DB'                    => '1.0',
 	'DBM_Filter'            => '0.01',
@@ -6273,6 +6283,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'warnings'              => '1.03',
 	'warnings::register'    => '1.00',
     },
+
     5.009003 => {
 	'AnyDBM_File'           => '1.00',
 	'Archive::Tar'          => '1.26_01',
@@ -6343,6 +6354,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Compress::Zlib::ParseParameters'=> '2.000_07',
 	'Compress::Zlib::UncompressPlugin::Identity'=> '2.000_05',
 	'Compress::Zlib::UncompressPlugin::Inflate'=> '2.000_05',
+        'Config'                => undef,
 	'Config::Extensions'    => '0.01',
 	'Cwd'                   => '3.15',
 	'DB'                    => '1.01',
@@ -6722,6 +6734,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'warnings'              => '1.05',
 	'warnings::register'    => '1.01',
     },
+
     5.008008 => {
 	'AnyDBM_File'           => '1.00',
 	'Attribute::Handlers'   => '0.78_02',
@@ -6762,6 +6775,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Carp::Heavy'           => '1.04',
 	'Class::ISA'            => '0.33',
 	'Class::Struct'         => '0.63',
+        'Config'                => undef,
 	'Cwd'                   => '3.12',
 	'DB'                    => '1.01',
 	'DBM_Filter'            => '0.01',
@@ -7089,6 +7103,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'warnings'              => '1.05',
 	'warnings::register'    => '1.01',
     },
+
     5.009004 => {
 	'AnyDBM_File'           => '1.00',
 	'Archive::Tar'          => '1.30_01',
@@ -7138,6 +7153,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'Class::Struct'         => '0.63',
 	'Compress::Raw::Zlib'   => '2.000_13',
 	'Compress::Zlib'        => '2.000_13',
+        'Config'                => undef,
 	'Config::Extensions'    => '0.01',
 	'Cwd'                   => '3.19',
 	'DB'                    => '1.01',
@@ -7571,6 +7587,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'warnings'              => '1.05',
 	'warnings::register'    => '1.01',
     },
+
     5.009005 => {
 	'AnyDBM_File'           => '1.00',
 	'Archive::Extract'      => '0.22_01',
@@ -8105,6 +8122,7 @@ for my $version ( sort { $a <=> $b } keys %released ) {
 	'warnings'              => '1.06',
 	'warnings::register'    => '1.01',
     },
+
     5.010000 => {
 	'AnyDBM_File'           => '1.00',
 	'Archive::Extract'      => '0.24',
