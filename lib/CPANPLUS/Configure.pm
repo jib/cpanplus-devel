@@ -24,7 +24,7 @@ $VERSION = $CPANPLUS::Internals::VERSION = $CPANPLUS::Internals::VERSION;
 
 ### can't use O::A as we're using our own AUTOLOAD to get to
 ### the config options.
-for my $meth ( qw[conf]) {
+for my $meth ( qw[conf _lib _perl5lib]) {
     no strict 'refs';
     
     *$meth = sub {
@@ -70,8 +70,20 @@ This method returns a new object. Normal users will never need to
 invoke the C<new> method, but instead retrieve the desired object via
 a method call on a C<CPANPLUS::Backend> object.
 
-The C<load_configs> parameter controls wether or not additional
-user configurations are to be loaded or not. Defaults to C<true>.
+=item load_configs
+
+Controls wether or not additional user configurations are to be loaded 
+or not. Defaults to C<true>.
+
+=item _lib
+
+Get/set the current @INC path -- @INC is reset to this after each
+install.
+
+=item _perl5lib
+
+Get/set the current PERL5LIB environment variable -- $ENV{PERL5LIB}
+is reset to this after each install.
 
 =cut
 
@@ -85,11 +97,15 @@ user configurations are to be loaded or not. Defaults to C<true>.
         my %hash    = @_;
         
         ### XXX pass on options to ->init() like rescan?
-        my ($load);
+        my ($load, $lib, $p5lib);
         my $tmpl    = {
             load_configs    => { default => 1, store => \$load },
+            _lib            => { default => [ @INC ], store => \$lib,
+                                 no_override => 1 },
+            _perl5lib       => { default => $ENV{'PERL5LIB'}, store => \$p5lib,
+                                 no_override => 1 },
         };
-        
+$DB::single = 1;        
         check( $tmpl, \%hash ) or (
             warn Params::Check->last_error, return
         );
@@ -97,10 +113,15 @@ user configurations are to be loaded or not. Defaults to C<true>.
         $Config     ||= CPANPLUS::Config->new;
         my $self    = bless {}, $class;
         $self->conf( $Config );
-    
+
         ### you want us to load other configs?
         ### these can override things in the default config
         $self->init if $load;
+
+        ### after processing the config files, check what 
+        ### @INC and PERL5LIB are set to.
+        $self->_lib( $lib );
+        $self->_perl5lib( $p5lib );
     
         return $self;
     }
@@ -209,6 +230,16 @@ Returns true on success, false on failure.
         
         ### clean up the paths once more, just in case
         $obj->_clean_up_paths;
+    
+        ### XXX in case the 'lib' param got changed, we need to
+        ### add that now, or it's not propagating ;(
+        {   my $lib = $self->get_conf('lib');
+            my %inc = map { $_ => $_ } @INC;
+            for my $l ( @$lib ) {
+                push @INC, $l unless $inc{$l};
+            }                
+            $self->_lib( \@INC );
+        }
     
         return 1;
     }

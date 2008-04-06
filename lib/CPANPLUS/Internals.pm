@@ -74,20 +74,10 @@ Get/set the configure object
 
 Get/set the id
 
-=item _lib
-
-Get/set the current @INC path -- @INC is reset to this after each
-install.
-
-=item _perl5lib
-
-Get/set the current PERL5LIB environment variable -- $ENV{PERL5LIB}
-is reset to this after each install.
-
 =cut
 
 ### autogenerate accessors ###
-for my $key ( qw[_conf _id _lib _perl5lib _modules _hosts _methods _status
+for my $key ( qw[_conf _id _modules _hosts _methods _status
                  _callbacks _selfupdate]
 ) {
     no strict 'refs';
@@ -140,8 +130,6 @@ Returns the object on success, or dies on failure.
         _conf       => { required => 1, store => \$conf,
                             allow => IS_CONFOBJ },
         _id         => { default => '',                 no_override => 1 },
-        _lib        => { default => [ @INC ],           no_override => 1 },
-        _perl5lib   => { default => $ENV{'PERL5LIB'},   no_override => 1 },
         _authortree => { default => '',                 no_override => 1 },
         _modtree    => { default => '',                 no_override => 1 },
         _hosts      => { default => {},                 no_override => 1 },
@@ -195,13 +183,6 @@ Returns the object on success, or dies on failure.
         ### initalize it as an empty hashref ###
         $args->_status->pending_prereqs( {} );
 
-        ### allow for dirs to be added to @INC at runtime,
-        ### rather then compile time
-        push @INC, @{$conf->get_conf('lib')};
-
-        ### add any possible new dirs ###
-        $args->_lib( [@INC] );
-
         $conf->_set_build( startdir => cwd() ),
             or error( loc("couldn't locate current dir!") );
 
@@ -230,6 +211,7 @@ be flushed.
 
     sub _flush {
         my $self = shift;
+        my $conf = $self->configure_object;
         my %hash = @_;
 
         my $aref;
@@ -246,8 +228,8 @@ be flushed.
 
             ### set the include paths back to their original ###
             if( $what eq 'lib' ) {
-                $ENV{PERL5LIB}  = $self->_perl5lib || '';
-                @INC            = @{$self->_lib};
+                $ENV{PERL5LIB}  = $conf->_perl5lib || '';
+                @INC            = @{$conf->_lib};
 
             ### give all modules a new status object -- this is slightly
             ### costly, but the best way to make sure all statusses are

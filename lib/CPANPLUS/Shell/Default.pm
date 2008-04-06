@@ -1232,18 +1232,18 @@ sub _set_conf {
             user    => CONFIG_USER,
             system  => CONFIG_SYSTEM,
         }->{ $key } || CONFIG_USER;      
-        
+
         my $file = $conf->_config_pm_to_file( $where );
         system("$editor $file");
 
         ### now reload it
         ### disable warnings for this
         {   require Module::Loaded;
-            Module::Loaded::mark_as_unloaded( $_ ) for $conf->configs;
+            Module::Loaded::mark_as_unloaded( $where );
 
             ### reinitialize the config
             local $^W;
-            $conf->init;
+            $conf->init( rescan => 1 );
         }
 
         return 1;
@@ -1341,11 +1341,11 @@ sub _set_conf {
                     $self->__printf( "    $format\n", $name, $val );
                 }
 
-            } elsif ( $key eq 'hosts' ) {
+            } elsif ( $key eq 'hosts' or $key eq 'lib' ) {
                 $self->__print( 
-                    loc(  "Setting hosts is not trivial.\n" .
-                          "It is suggested you use '%1' and edit the " .
-                          "configuration file manually", 's edit')
+                    loc(  "Setting %1 is not trivial.\n" .
+                          "It is suggested you use '%2' and edit the " .
+                          "configuration file manually", $key, 's edit')
                 );
             } else {
                 my $method = 'set_' . $type;
