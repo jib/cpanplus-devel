@@ -521,11 +521,13 @@ For example, C<Foo-Bar-1.2.tar.gz> would return the following parts:
     ### composed regex for CPAN packages
     my $full_re = qr/
                     ^
-                    ($pkg_re+)          # package
-                    (?: 
-                        $del_re         # delimiter
-                        $ver_ext_re     # version + extension
-                    )?
+                    (                       # the whole thing
+                        ($pkg_re+)          # package
+                        (?: 
+                            $del_re         # delimiter
+                            $ver_ext_re     # version + extension
+                        )?
+                    )
                     $                    
                 /xi;
                 
@@ -533,10 +535,12 @@ For example, C<Foo-Bar-1.2.tar.gz> would return the following parts:
     my $perl    = PERL_CORE;
     my $perl_re = qr/
                     ^
-                    ($perl)             # package name for 'perl'
-                    (?:
-                        $ver_ext_re     # version + extension
-                    )?
+                    (                       # the whole thing
+                        ($perl)             # package name for 'perl'
+                        (?:
+                            $ver_ext_re     # version + extension
+                        )?
+                    )
                     $
                 /xi;       
 
@@ -558,9 +562,10 @@ sub _split_package_string {
             ### try the next if the match fails
             $str =~ $re or next;
 
-            my $pkg = $1 || ''; 
-            my $ver = $2 || '';
-            my $ext = $3 || '';
+            my $full    = $1 || '';
+            my $pkg     = $2 || ''; 
+            my $ver     = $3 || '';
+            my $ext     = $4 || '';
 
             ### this regex resets the capture markers!
             ### strip the trailing delimiter
@@ -569,7 +574,7 @@ sub _split_package_string {
             ### strip the .pm package suffix some authors insist on adding
             $pkg =~ s/\.pm$//i;
 
-            return ($pkg, $ver, $ext );
+            return ($pkg, $ver, $ext, $full );
         }
         
         return;

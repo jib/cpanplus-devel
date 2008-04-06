@@ -557,7 +557,7 @@ sub parse_module {
         $author = shift @parts || '';
     }
     
-    my($pkg, $version, $ext) = 
+    my($pkg, $version, $ext, $full) = 
         $self->_split_package_string( package => $dist );
     
     ### translate a distribution into a module name ###
@@ -599,8 +599,7 @@ sub parse_module {
                 my $modobj = CPANPLUS::Module::Fake->new(
                     module  => $maybe->module,
                     version => $version,
-                    package => $pkg . '-' . $version . '.' .
-                                    $maybe->package_extension,
+                    package => $full,
                     path    => $path,
                     author  => $auth_obj,
                     _id     => $maybe->_id
