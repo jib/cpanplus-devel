@@ -75,16 +75,6 @@ a method call on a C<CPANPLUS::Backend> object.
 Controls wether or not additional user configurations are to be loaded 
 or not. Defaults to C<true>.
 
-=item _lib
-
-Get/set the current @INC path -- @INC is reset to this after each
-install.
-
-=item _perl5lib
-
-Get/set the current PERL5LIB environment variable -- $ENV{PERL5LIB}
-is reset to this after each install.
-
 =cut
 
 ### store teh CPANPLUS::Config object in a closure, so we only
@@ -97,15 +87,11 @@ is reset to this after each install.
         my %hash    = @_;
         
         ### XXX pass on options to ->init() like rescan?
-        my ($load, $lib, $p5lib);
+        my ($load);
         my $tmpl    = {
             load_configs    => { default => 1, store => \$load },
-            _lib            => { default => [ @INC ], store => \$lib,
-                                 no_override => 1 },
-            _perl5lib       => { default => $ENV{'PERL5LIB'}, store => \$p5lib,
-                                 no_override => 1 },
         };
-$DB::single = 1;        
+
         check( $tmpl, \%hash ) or (
             warn Params::Check->last_error, return
         );
@@ -120,8 +106,8 @@ $DB::single = 1;
 
         ### after processing the config files, check what 
         ### @INC and PERL5LIB are set to.
-        $self->_lib( $lib );
-        $self->_perl5lib( $p5lib );
+        $self->_lib( \@INC );
+        $self->_perl5lib( $ENV{'PERL5LIB'} );
     
         return $self;
     }
@@ -176,61 +162,63 @@ Returns true on success, false on failure.
             }
         }            
         
-        ### make sure that the homedir is included now
-        local @INC = ( CONFIG_USER_LIB_DIR->(), @INC );
+        {   ### make sure that the homedir is included now
+            local @INC = ( CONFIG_USER_LIB_DIR->(), @INC );
         
-        ### only set it up once
-        if( !$loaded++ or $rescan ) {   
-            ### find plugins & extra configs
-            ### check $home/.cpanplus/lib as well
-            require Module::Pluggable;
+            ### only set it up once
+            if( !$loaded++ or $rescan ) {   
+                ### find plugins & extra configs
+                ### check $home/.cpanplus/lib as well
+                require Module::Pluggable;
+                
+                Module::Pluggable->import(
+                    search_path => ['CPANPLUS::Config'],
+                    search_dirs => [ CONFIG_USER_LIB_DIR ],
+                    except      => qr/::SUPER$/,
+                    sub_name    => 'configs'
+                );
+            }
             
-            Module::Pluggable->import(
-                search_path => ['CPANPLUS::Config'],
-                search_dirs => [ CONFIG_USER_LIB_DIR ],
-                except      => qr/::SUPER$/,
-                sub_name    => 'configs'
-            );
+            
+            ### do system config, user config, rest.. in that order
+            ### apparently, on a 2nd invocation of -->configs, a
+            ### ::ISA::CACHE package can appear.. that's bad...
+            my %confs = map  { $_ => $_ } 
+                        grep { $_ !~ /::ISA::/ } __PACKAGE__->configs;
+            my @confs = grep { defined } 
+                        map  { delete $confs{$_} } CONFIG_SYSTEM, CONFIG_USER;
+            push @confs, sort keys %confs;                    
+        
+            for my $plugin ( @confs ) {
+                msg(loc("Found config '%1'", $plugin),0);
+                
+                ### if we already did this the /last/ time around dont 
+                ### run the setup agian.
+                if( my $loc = Module::Loaded::is_loaded( $plugin ) ) {
+                    msg(loc("  Already loaded '%1' (%2)", $plugin, $loc), 0);
+                    next;
+                } else {
+                    msg(loc("  Loading config '%1'", $plugin),0);
+                
+                    eval { load $plugin };
+                    msg(loc("  Loaded '%1' (%2)", 
+                            $plugin, Module::Loaded::is_loaded( $plugin ) ), 0);
+                }                   
+                
+                if( $@ ) {
+                    error(loc("Could not load '%1': %2", $plugin, $@));
+                    next;
+                }     
+                
+                my $sub = $plugin->can('setup');
+                $sub->( $self ) if $sub;
+            }
         }
         
-        
-        ### do system config, user config, rest.. in that order
-        ### apparently, on a 2nd invocation of -->configs, a
-        ### ::ISA::CACHE package can appear.. that's bad...
-        my %confs = map  { $_ => $_ } 
-                    grep { $_ !~ /::ISA::/ } __PACKAGE__->configs;
-        my @confs = grep { defined } 
-                    map  { delete $confs{$_} } CONFIG_SYSTEM, CONFIG_USER;
-        push @confs, sort keys %confs;                    
-    
-        for my $plugin ( @confs ) {
-            msg(loc("Found config '%1'", $plugin),0);
-            
-            ### if we already did this the /last/ time around dont 
-            ### run the setup agian.
-            if( my $loc = Module::Loaded::is_loaded( $plugin ) ) {
-                msg(loc("  Already loaded '%1' (%2)", $plugin, $loc), 0);
-                next;
-            } else {
-                msg(loc("  Loading config '%1'", $plugin),0);
-            
-                eval { load $plugin };
-                msg(loc("  Loaded '%1' (%2)", 
-                        $plugin, Module::Loaded::is_loaded( $plugin ) ), 0);
-            }                   
-            
-            if( $@ ) {
-                error(loc("Could not load '%1': %2", $plugin, $@));
-                next;
-            }     
-            
-            my $sub = $plugin->can('setup');
-            $sub->( $self ) if $sub;
-        }
         
         ### clean up the paths once more, just in case
         $obj->_clean_up_paths;
-    
+
         ### XXX in case the 'lib' param got changed, we need to
         ### add that now, or it's not propagating ;(
         {   my $lib = $self->get_conf('lib');

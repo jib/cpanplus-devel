@@ -1243,7 +1243,7 @@ sub _set_conf {
 
             ### reinitialize the config
             local $^W;
-            $conf->init( rescan => 1 );
+            $conf->init;
         }
 
         return 1;

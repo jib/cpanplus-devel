@@ -618,7 +618,7 @@ sub create {
         ### end of prereq resolving ###    
         
         my $captured;
-$DB::single = 1;        
+
         ### 'make' section ###    
         if( -d BLIB->($dir) && (-M BLIB->($dir) < -M $dir) && !$force ) {
             msg(loc("Already ran '%1' for this module [%2] -- " .
