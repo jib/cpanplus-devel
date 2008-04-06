@@ -247,8 +247,13 @@ sub _input_loop {
         $cb->_flush( list => [qw|lib load|] );
 
     } continue {
+        ### clear the sigint count
         $self->_signals->{INT}{count}--
-            if $self->_signals->{INT}{count}; # clear the sigint count
+            if $self->_signals->{INT}{count};  
+            
+        ### reset the 'install prereq?' cached answer
+        $self->settings->{'install_all_prereqs'} = undef;                                
+                            
     }
 
     return 1;
@@ -959,6 +964,12 @@ sub __ask_about_install {
     $Shell->__print( loc("Module '%1' requires '%2' to be installed",
                          $mod->module, $prereq->module ) );
     $Shell->__print( "\n\n" );
+    
+    ### previously cached answer?
+    return $Shell->settings->{'install_all_prereqs'}
+        if defined $Shell->settings->{'install_all_prereqs'};
+    
+    
     $Shell->__print( 
         loc(    "If you don't wish to see this question anymore\n".
                 "you can disable it by entering the following ".
@@ -966,14 +977,28 @@ sub __ask_about_install {
                 's conf prereqs 1; s save' ) );
     $Shell->__print("\n\n");
 
-    ### XXX add an 'all' option here, add it to the $Shell object,
-    ### flush the setting when we re-dispatch another command
-    my $bool =  $term->ask_yn(
+    my $yes     = loc("Yes");
+    my $no      = loc("No");
+    my $all     = loc("Yes to all (for this module)");
+    my $none    = loc("No to all  (for this module)");
+
+    my $reply   = $term->get_reply(
                     prompt  => loc("Should I install this module?"),
-                    default => 'y'
+                    choices => [ $yes, $no, $all, $none ],
+                    default => $yes,
                 );
 
-    return $bool;
+    ### if 'all' or 'none', save this, so we can apply it to 
+    ### other prereqs in this chain.
+    $Shell->settings->{'install_all_prereqs'} = 
+        $reply eq $all  ? 1 :
+        $reply eq $none ? 0 :
+        undef;
+
+    ### if 'yes' or 'all', the user wants it installed
+    return  $reply eq $all ? 1 :
+            $reply eq $yes ? 1 :
+            0;
 }
 
 sub __ask_about_send_test_report {
