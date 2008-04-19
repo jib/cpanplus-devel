@@ -3,6 +3,7 @@ package CPANPLUS::Module::Author;
 use strict;
 
 use CPANPLUS::Error;
+use CPANPLUS::Internals::Constants;
 use Params::Check               qw[check];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
@@ -184,7 +185,7 @@ sub distributions {
         ### .meta files are now also in the checksums file,
         ### which means we have to filter out things that dont
         ### match our regex
-        push @rv, $clone if $clone->package_extension;
+        push @rv, $clone if $clone->package_extension ne META_EXT;
     }
 
     return @rv;

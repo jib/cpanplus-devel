@@ -210,10 +210,12 @@ use constant README         => sub { my $obj = $_[0];
                                              '.readme';
                                      return $pkg;
                             };
+use constant META_EXT       => 'meta';
+
 use constant META           => sub { my $obj = $_[0];
                                      my $pkg = $obj->package_name;
                                      $pkg .= '-' . $obj->package_version .
-                                             '.meta';
+                                             '.' . META_EXT;
                                      return $pkg;
                             };                          
                             
