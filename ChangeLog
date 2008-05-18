@@ -1,3 +1,13 @@
+Changes for 0.85_02     Sun May 18 17:40:56 2008
+================================================
+* Speed up search slightly be not checking the template
+* Speed up $author->distributions call a *lot* by not using clone (which 
+  in the end scans through the entire module tree for dslip info)
+* Make the package_* functions take an argument for parsing
+* Speed up clone() a bit
+* Meta files were showing up in the $author->distributions call. These
+  are now filtered out.
+
 Changes for 0.85_01     Sun Apr  6 15:22:43 2008 
 ================================================
 * Address #34519 Getting Wrong File with SENGER/NET-IPFilterSimple_V1.1.tar.gz
