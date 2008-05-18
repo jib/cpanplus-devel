@@ -23,7 +23,7 @@ use vars    qw[ $VERBOSE $PREFER_BIN $FROM_EMAIL $USER_AGENT
 use constant QUOTE  => do { $^O eq 'MSWin32' ? q["] : q['] };            
             
 
-$VERSION        = '0.15_01';
+$VERSION        = '0.15_02';
 $VERSION        = eval $VERSION;    # avoid warnings with development releases
 $PREFER_BIN     = 0;                # XXX TODO implement
 $FROM_EMAIL     = 'File-Fetch@example.com';
@@ -719,6 +719,33 @@ sub _lynx_fetch {
                 "Can not capture buffers. Can not use '%1' to fetch files",
                 'lynx' ));
         }            
+
+        ### check if the HTTP resource exists ###
+        if ($self->uri =~ /^https?:\/\//i) {
+            my $cmd = [
+                $lynx,
+                '-head',
+                '-source',
+                "-auth=anonymous:$FROM_EMAIL",
+            ];
+
+            push @$cmd, "-connect_timeout=$TIMEOUT" if $TIMEOUT;
+
+            push @$cmd, $self->uri;
+
+            ### shell out ###
+            my $head;
+            unless(run( command => $cmd,
+                        buffer  => \$head,
+                        verbose => $DEBUG )
+            ) {
+                return $self->_error(loc("Command failed: %1", $head || ''));
+            }
+
+            unless($head =~ /^HTTP\/\d+\.\d+ 200\b/) {
+                return $self->_error(loc("Command failed: %1", $head || ''));
+            }
+        }
 
         ### write to the output file ourselves, since lynx ass_u_mes to much
         my $local = FileHandle->new(">$to")
