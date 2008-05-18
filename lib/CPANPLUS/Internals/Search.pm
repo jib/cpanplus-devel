@@ -137,6 +137,7 @@ specified in C<data> if provided, rather than the moduletree itself.
 #
 
 sub _search_module_tree {
+
     my $self = shift;
     my $conf = $self->configure_object;
     my %hash = @_;
@@ -153,7 +154,13 @@ sub _search_module_tree {
                      store      => \$type },
     };
 
-    my $args = check( $tmpl, \%hash ) or return;
+    my $args = do {
+        ### don't check the template for sanity
+        ### -- we know it's good and saves a lot of performance
+        local $Params::Check::SANITY_CHECK_TEMPLATE = 0;
+
+        check( $tmpl, \%hash );
+    } or return;
 
     {   local $Params::Check::VERBOSE = 0;
 
