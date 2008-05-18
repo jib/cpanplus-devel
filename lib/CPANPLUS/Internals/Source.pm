@@ -743,6 +743,8 @@ sub _create_mod_tree {
 
     my $dslip_tree = $self->__create_dslip_tree( %$args );
 
+$DB::single = 1;
+
     ### extract the file ###
     my $ae      = Archive::Extract->new( archive => $file ) or return;
     my $out     = STRIP_GZ_SUFFIX->($file);
