@@ -360,17 +360,17 @@ sub _flush {
     return 1;
 }
 
-=head2 $mod->package_name
+=head2 $mod->package_name( [$package_string] )
 
 Returns the name of the package a module is in. For C<Acme::Bleach>
 that might be C<Acme-Bleach>.
 
-=head2 $mod->package_version
+=head2 $mod->package_version( [$package_string] )
 
 Returns the version of the package a module is in. For a module
 in the package C<Acme-Bleach-1.1.tar.gz> this would be C<1.1>.
 
-=head2 $mod->package_extension
+=head2 $mod->package_extension( [$package_string] )
 
 Returns the suffix added by the compression method of a package a
 certain module is in. For a module in C<Acme-Bleach-1.1.tar.gz>, this
@@ -425,9 +425,8 @@ L<Module::ThirdParty> for more details.
         no strict 'refs';
         *$name = sub {
             my $self = shift;
-            my @res  = $self->parent->_split_package_string(     
-                            package => $self->package 
-                       );
+            my $val  = shift || $self->package;
+            my @res  = $self->parent->_split_package_string( package => $val );
      
             ### return the corresponding index from the result
             return $res[$index] if @res;
@@ -527,18 +526,19 @@ a fake C<CPANPLUS::Module::Author> object.
 
 =cut
 
-sub clone {
-    my $self = shift;
-
-    ### clone the object ###
-    my %data;
-    for my $acc ( grep !/status/, __PACKAGE__->accessors() ) {
-        $data{$acc} = $self->$acc();
+{   ### accessors dont change during run time, so only compute once
+    my @acc = grep !/status/, __PACKAGE__->accessors();
+    
+    sub clone {
+        my $self = shift;
+    
+        ### clone the object ###
+        my %data = map { $_ => $self->$_ } @acc;
+    
+        my $obj = CPANPLUS::Module::Fake->new( %data );
+    
+        return $obj;
     }
-
-    my $obj = CPANPLUS::Module::Fake->new( %data );
-
-    return $obj;
 }
 
 =pod
