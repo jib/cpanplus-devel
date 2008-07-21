@@ -213,9 +213,8 @@ SKIP: {
 
 ### test exceptions in Dist::MM->create ###
 {   ok( $Mod->status->mk_flush, "Old status info flushed" );
-    my $dist = CPANPLUS::Dist->new( module => $Mod,
-                                    format => INSTALLER_MM );
-
+    my $dist = INSTALLER_MM->new( module => $Mod );
+    
     ok( $dist,                  "New dist object made" );
     ok(!$dist->prepare,         "   Dist->prepare failed" );
     like( CPANPLUS::Error->stack_as_string, qr/No dir found to operate on/,

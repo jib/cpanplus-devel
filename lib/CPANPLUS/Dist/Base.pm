@@ -2,9 +2,10 @@ package CPANPLUS::Dist::Base;
 
 use strict;
 
-use vars    qw[@ISA $VERSION];
-@ISA =      qw[CPANPLUS::Dist];
+use base    qw[CPANPLUS::Dist];
+use vars    qw[$VERSION];
 $VERSION =  '0.01';
+
 
 =head1 NAME
 

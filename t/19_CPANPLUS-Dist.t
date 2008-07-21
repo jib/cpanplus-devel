@@ -71,10 +71,7 @@ ok( $Mod,                       "Got module object" );
 
 
 ### straight forward dist build - prepare, create, install
-{   my $dist = CPANPLUS::Dist->new(
-                            format  => $Module,
-                            module  => $Mod
-                        );
+{   my $dist = $Module->new( module => $Mod );
 
     ok( $dist,                  "New dist object created" );
     isa_ok( $dist,              'CPANPLUS::Dist' );
@@ -103,10 +100,7 @@ ok( $Mod,                       "Got module object" );
 
     {   $conf->_set_build('sanity_check' => 0);
 
-        my $dist = CPANPLUS::Dist->new(
-                                format => $Module,
-                                module => $Mod
-                            );
+        my $dist = $Module->new( module => $Mod );
 
         ok( $dist,              "Dist created with sanity check off" );
         isa_ok( $dist,          $Module );
@@ -114,11 +108,9 @@ ok( $Mod,                       "Got module object" );
     }
 
     {   $conf->_set_build('sanity_check' => 1);
-        my $dist = CPANPLUS::Dist->new(
-                                format => $Module,
-                                module => $Mod
-                            );
-
+        
+        my $dist = $Module->new( module => $Mod );
+        
         ok( !$dist,             "Dist not created with sanity check on" );
         like( CPANPLUS::Error->stack_as_string,
                 qr/Format '$Module' is not available/,
@@ -129,11 +121,8 @@ ok( $Mod,                       "Got module object" );
 ### undef the status hash, make sure it complains ###
 {   local $CPANPLUS::Dist::_Test::Init = 0;
 
-    my $dist = CPANPLUS::Dist->new(
-                        format => $Module,
-                        module => $Mod
-                    );
-
+    my $dist = $Module->new( module => $Mod );
+    
     ok( !$dist,                 "No dist created by failed init" );
     like( CPANPLUS::Error->stack_as_string,
             qr/Dist initialization of '$Module' failed for/s,
@@ -154,10 +143,8 @@ ok( $Mod,                       "Got module object" );
     ok( $file,                  "   Meta file fetched" );
     ok( -e $file,               "       File '$file' exits" );
     
-    my $dist = CPANPLUS::Dist->new(
-                        format => $Module,
-                        module => $Mod
-                    );
+    my $dist = $Module->new( module => $Mod );
+
     ok( $dist,                  "   Dist object created" );
         
     my $meth = 'find_configure_requires';    
@@ -342,10 +329,7 @@ ok( $Mod,                       "Got module object" );
             $cb->_status->mk_flush;
 
             ### get a new dist from Text::Bastardize ###
-            my $dist = CPANPLUS::Dist->new(
-                        format => $Module,
-                        module => $cb->module_tree( $ModName ),
-                    );
+            my $dist = $Module->new( module => $cb->module_tree( $ModName ) );
 
             ### first sub returns target ###
             my $sub    = shift @$aref;
@@ -384,10 +368,7 @@ ok( $Mod,                       "Got module object" );
     ok( $mod,                   "Fake module created" );
     is( $mod->version, 1,       "   Version set correctly" );
     
-     my $dist = CPANPLUS::Dist->new(
-                            format  => $Module,
-                            module  => $Mod
-                        );
+     my $dist = $Module->new( module => $Mod );
     
     ok( $dist,                  "Dist object created" );
     isa_ok( $dist,              $Module );

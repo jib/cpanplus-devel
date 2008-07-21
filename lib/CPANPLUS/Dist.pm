@@ -13,17 +13,9 @@ use Params::Check               qw[check];
 use Module::Load::Conditional   qw[can_load check_install];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
-local $Params::Check::VERBOSE = 1;
+use base 'Object::Accessor';
 
-my @methods = qw[status parent];
-for my $key ( @methods ) {
-    no strict 'refs';
-    *{__PACKAGE__."::$key"} = sub {
-        my $self = shift;
-        $self->{$key} = $_[0] if @_;
-        return $self->{$key};
-    }
-}
+local $Params::Check::VERBOSE = 1;
 
 =pod
 
@@ -33,8 +25,7 @@ CPANPLUS::Dist
 
 =head1 SYNOPSIS
 
-    my $dist = CPANPLUS::Dist->new(
-                                format  => 'build',
+    my $dist = CPANPLUS::Dist::YOUR_DIST_TYPE_HERE->new(
                                 module  => $modobj,
                             );
 
@@ -94,44 +85,41 @@ works. This will be set upon a successful create.
 
 =back
 
-=head2 $dist = CPANPLUS::Dist->new( module => MODOBJ, [format => DIST_TYPE] );
+=head2 $dist = CPANPLUS::Dist::YOUR_DIST_TYPE_HERE->new( module => MODOBJ );
 
-Create a new C<CPANPLUS::Dist> object based on the provided C<MODOBJ>.
+Create a new C<CPANPLUS::Dist::YOUR_DIST_TYPE_HERE> object based on the 
+provided C<MODOBJ>.
+
+*** DEPRECATED ***
 The optional argument C<format> is used to indicate what type of dist
-you would like to create (like C<makemaker> for a C<CPANPLUS::Dist::MM>
-object, C<build> for a C<CPANPLUS::Dist::Build> object, and so on ).
-If not provided, will default to the setting as specified by your
-config C<dist_type>.
+you would like to create (like C<CPANPLUS::Dist::MM> or 
+C<CPANPLUS::Dist::Build> and so on ).
 
-Returns a C<CPANPLUS::Dist> object on success and false on failure.
+C<< CPANPLUS::Dist->new >> is exlusively meant as a method to be
+inherited by C<CPANPLUS::Dist::MM|Build>.
+
+Returns a C<CPANPLUS::Dist::YOUR_DIST_TYPE_HERE> object on success 
+and false on failure.
 
 =cut
 
 sub new {
-    my $self = shift;
-    my %hash = @_;
+    my $self    = shift;
+    my $class   = ref $self || $self;
+    my %hash    = @_;
 
-    local $Params::Check::ALLOW_UNKNOWN = 1;
+
 
     ### first verify we got a module object ###
-    my $mod;
+    my( $mod, $format );
     my $tmpl = {
         module  => { required => 1, allow => IS_MODOBJ, store => \$mod },
+        ### for backwards compatibility
+        format  => { default  => $class, store => \$format, 
+                     allow    => [ __PACKAGE__->dist_types ],
+        },
     };
     check( $tmpl, \%hash ) or return;
-
-    ### get the conf object ###
-    my $conf = $mod->parent->configure_object();
-
-    ### figure out what type of dist object to create ###
-    my $format;
-    my $tmpl2 = {
-        format  => {    default => $conf->get_conf('dist_type'),
-                        allow   => [ __PACKAGE__->dist_types ],
-                        store   => \$format  },
-    };
-    check( $tmpl2, \%hash ) or return;
-
 
     unless( can_load( modules => { $format => '0.0' }, verbose => 1 ) ) {
         error(loc("'%1' not found -- you need '%2' version '%3' or higher ".
@@ -139,14 +127,13 @@ sub new {
         return;
     }
 
-    ### bless the object in the child class ###
-    my $obj = bless { parent => $mod }, $format;
+    ### get an empty o::a object for this class
+    my $obj = $format->SUPER::new;
 
-    ### check if the format is available in this environment ###
-    if( $conf->_get_build('sanity_check') and not $obj->format_available ) {
-        error( loc( "Format '%1' is not available",$format) );
-        return;
-    }
+    $obj->mk_accessors( qw[parent status] );
+    
+    ### set the parent
+    $obj->parent( $mod );
 
     ### create a status object ###
     {   my $acc = Object::Accessor->new;
@@ -155,6 +142,15 @@ sub new {
         ### add minimum supported accessors
         $acc->mk_accessors( qw[prepared created installed uninstalled 
                                distdir dist] );
+    }
+
+    ### get the conf object ###
+    my $conf = $mod->parent->configure_object();
+
+    ### check if the format is available in this environment ###
+    if( $conf->_get_build('sanity_check') and not $obj->format_available ) {
+        error( loc( "Format '%1' is not available", $format) );
+        return;
     }
 
     ### now initialize it or admit failure
@@ -206,6 +202,7 @@ Returns a list of the CPANPLUS::Dist::* classes available
                             sub_name    => '_dist_types',
                             search_path => __PACKAGE__,
                             only        => qr/$only_re/,
+                            require     => 1,
                             except      => [ INSTALLER_MM, 
                                              INSTALLER_SAMPLE,
                                              INSTALLER_BASE,

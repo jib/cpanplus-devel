@@ -723,6 +723,7 @@ sub dist {
     my $tmpl = {
         format  => { default => $conf->get_conf('dist_type') ||
                                 $self->status->installer_type,
+                     allow   => [ CPANPLUS::Dist->dist_types ],
                      store   => \$type },
         target  => { default => TARGET_CREATE, store => \$target },                     
         args    => { default => {}, store => \$args },
@@ -730,17 +731,17 @@ sub dist {
 
     check( $tmpl, \%hash ) or return;
 
-    my $dist = CPANPLUS::Dist->new( 
-                                format => $type,
-                                module => $self
-                            ) or return;
+    unless( can_load( modules => { $type => '0.0' }, verbose => 1 ) ) {
+        error(loc("'%1' not found -- you need '%2' version '%3' or higher ".
+                    "to detect plugins", $type, 'Module::Pluggable','2.4'));
+        return;
+    }
+
+    my $dist = $type->new( module => $self ) or return;
 
     my $dist_cpan = $type eq $self->status->installer_type
                         ? $dist
-                        : CPANPLUS::Dist->new(
-                                format  => $self->status->installer_type,
-                                module  => $self,
-                            );           
+                        : $self->status->installer_type->new( module => $self );           
 
     ### store the dists
     $self->status->dist_cpan(   $dist_cpan );

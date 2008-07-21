@@ -2,8 +2,7 @@ package CPANPLUS::Dist::MM;
 
 use strict;
 use vars    qw[@ISA $STATUS];
-@ISA =      qw[CPANPLUS::Dist];
-
+use base    'CPANPLUS::Dist::Base';
 
 use CPANPLUS::Internals::Constants;
 use CPANPLUS::Internals::Constants::Report;
@@ -27,10 +26,8 @@ CPANPLUS::Dist::MM
 
 =head1 SYNOPSIS
 
-    my $mm = CPANPLUS::Dist->new( 
-                                format  => 'CPANPLUS::Dist::MM',
-                                module  => $modobj, 
-                            );
+    $mm = CPANPLUS::Dist::MM->new( module => $modobj );
+    
     $mm->create;        # runs make && make test
     $mm->install;       # runs make install
 
