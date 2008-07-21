@@ -433,6 +433,15 @@ a module using the interactive shell. Defaults to 'true'.
 
         $Conf->{'conf'}->{'write_install_logs'} = 1;
 
+=item source_engine
+
+Class to use as the source engine, which is generally a subclass of
+C<CPANPLUS::Internals::Source>. Default to C<CPANPLUS::Internals::Source::Memory>.
+
+=cut
+
+        $Conf->{'conf'}->{'source_engine'} = DEFAULT_SOURCE_ENGINE; 
+
 =back
     
 =head2 Section 'program'

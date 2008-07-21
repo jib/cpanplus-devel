@@ -142,7 +142,6 @@ Or you may install them using your system's package manager.
     print "\n";
 }
 
-
 ### toss out the old source files, they might be compiled
 ### in an incompatilbe format (rt #18121)
 {   my $stored = $Backend->__storable_file( $Config->get_conf('base') );      
