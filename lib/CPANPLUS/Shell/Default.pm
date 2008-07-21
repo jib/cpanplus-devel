@@ -1260,6 +1260,9 @@ sub _set_conf {
             $i++;
             $self->__print( "\t[$i] $uri\n" );
         }
+        
+        $self->__print(
+            loc("\nTo edit this list, please type: '%1'\n", 's edit') );
 
     } elsif ( $type eq 'selfupdate' ) {
         my %valid = map { $_ => $_ } 
