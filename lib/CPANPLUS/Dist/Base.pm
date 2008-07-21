@@ -57,6 +57,16 @@ class are called:
 
 =cut
 
+=head2 @subs = $Class->methods
+
+Returns a list of methods that this class implements that you can
+override.
+
+=cut
+
+sub methods { 
+    return qw[format_available init prepare create install uninstall] 
+}
 
 =head2 $bool = $Class->format_available
 
