@@ -21,7 +21,8 @@ use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 $Params::Check::VERBOSE = 1;
 
 ### list of methods the parent class must implement
-{   for my $sub ( qw[_init_trees _finalize_trees _trees_completed
+{   for my $sub ( qw[_init_trees _finalize_trees 
+                     _standard_trees_completed _custom_trees_completed
                      _add_module_object _add_author_object
                     ] 
     ) {
@@ -178,7 +179,7 @@ sub _build_trees {
  
     ### did we get everything from a stored state? if not,
     ### process them now.
-    if( not $self->_trees_completed ) {
+    if( not $self->_standard_trees_completed ) {
      
         ### first, prep the author tree
         $self->__create_author_tree(
@@ -193,7 +194,16 @@ sub _build_trees {
                 path        => $path,
                 verbose     => $verbose, 
         );
-
+    }
+    
+    ### XXX unpleasant hack. since custom sources uses ->parse_module, we
+    ### already have a special module object with extra meta data. that 
+    ### doesn't gelwell with the sqlite storage engine. So, we check 'normal'
+    ### trees from seperate trees, so the engine can treat them differently.
+    ### Effectively this means that with the SQLite engine, for now, custom
+    ### sources are continuously reparsed =/ -kane
+    if( not $self->_custom_trees_completed ) {
+    
         ### update them if the other sources are also deemed out of date
         if( $conf->get_conf('enable_custom_sources') ) {
             $self->__update_custom_module_sources( verbose => $verbose ) 
@@ -532,9 +542,6 @@ sub __create_author_tree {
     ### don't need it anymore ###
     unlink $out;
 
-    ### initalize it
-    $self->_atree( {} );
-    
     for ( split /\n/, $cont ) {
         my($id, $name, $email) = m/^alias \s+
                                     (\S+) \s+
@@ -623,8 +630,6 @@ sub _create_mod_tree {
 
     my $flag;
 
-    ### initialize it
-    $self->_mtree( {} );
     for ( split /\n/, $cont ) {
 
         ### quick hack to read past the header of the file ###
@@ -687,6 +692,7 @@ sub _create_mod_tree {
                                         # 'foo-bar-baz-1.03.tar.gz'
             description => $dslip_tree->{ $data[0] }->{'description'},
             dslip       => $dslip,
+            mtime       => '',
         ) or error( loc( "Could not add module '%1'", $data[0] ) );
 
     } #for

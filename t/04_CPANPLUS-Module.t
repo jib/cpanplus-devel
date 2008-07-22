@@ -177,7 +177,7 @@ isa_ok( $Auth->parent,          'CPANPLUS::Backend' );
 ### dslip & related
 {   my $dslip = $Mod->dslip;   
     ok( $dslip,             "Got dslip information from $ModName ($dslip)" );
-    
+
     ### now find it for a submodule
     {   my $submod = $CB->module_tree( TEST_CONF_MODULE_SUB );
         ok( $submod,        "   Found submodule " . $submod->name );

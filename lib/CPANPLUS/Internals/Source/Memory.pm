@@ -16,7 +16,7 @@ use Archive::Extract;
 use IPC::Cmd                    qw[can_run];
 use File::Temp                  qw[tempdir];
 use File::Basename              qw[dirname];
-use Params::Check               qw[check];
+use Params::Check               qw[allow check];
 use Module::Load::Conditional   qw[can_load];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
@@ -58,7 +58,8 @@ $Params::Check::VERBOSE = 1;
         return 1;
     }
 
-    sub _trees_completed { return $from_storable }
+    sub _standard_trees_completed { return $from_storable }
+    sub _custom_trees_completed   { return $from_storable }
 
     sub _finalize_trees {
         my $self = shift;
@@ -102,10 +103,11 @@ sub _add_author_object {
         check( $tmpl, \%hash ) or return;
     };
     
-    $self->author_tree->{ $href->{'cpanid'} } = 
-        $class->new( %$href, _id => $self->_id ) or return;
+    my $obj = $class->new( %$href, _id => $self->_id );
+    
+    $self->author_tree->{ $href->{'cpanid'} } = $obj or return;
 
-    return 1;
+    return $obj;
 }
 
 sub _add_module_object {
@@ -116,7 +118,7 @@ sub _add_module_object {
     my $tmpl = {
         class   => { default => 'CPANPLUS::Module', store => \$class },
         map { $_ => { required => 1 } } 
-            qw[ module version path comment author package description dslip ]
+            qw[ module version path comment author package description dslip mtime ]
     };
 
     my $href = do {
@@ -124,13 +126,56 @@ sub _add_module_object {
         check( $tmpl, \%hash ) or return;
     };
     
+    my $obj = $class->new( %$href, _id => $self->_id );
+    
     ### Every module get's stored as a module object ###
-    $self->module_tree->{ $href->{module} } = 
-        $class->new( %$href, _id => $self->_id ) or return;
+    $self->module_tree->{ $href->{module} } = $obj or return;
 
-    return 1;    
+    return $obj;    
 }
 
+{   my %map = (
+        _source_search_module_tree  => [ module_tree => 'CPANPLUS::Module' ],
+        _source_search_author_tree  => [ author_tree => 'CPANPLUS::Module::Author' ],
+    );        
+
+    while( my($sub, $aref) = each %map ) {
+        no strict 'refs';
+        
+        my($meth, $class) = @$aref;
+        
+        *$sub = sub {
+            my $self = shift;
+            my $conf = $self->configure_object;
+            my %hash = @_;
+        
+            my($authors,$list,$verbose,$type);
+            my $tmpl = {
+                data    => { default    => [],
+                             strict_type=> 1, store     => \$authors },
+                allow   => { required   => 1, default   => [ ], strict_type => 1,
+                             store      => \$list },
+                verbose => { default    => $conf->get_conf('verbose'),
+                             store      => \$verbose },
+                type    => { required   => 1, allow => [$class->accessors()],
+                             store      => \$type },
+            };
+        
+            my $args = check( $tmpl, \%hash ) or return;            
+        
+            my @rv;
+            for my $obj ( values %{ $self->$meth } ) {
+                #push @rv, $auth if check(
+                #                        { $type => { allow => $list } },
+                #                        { $type => $auth->$type }
+                #                    );
+                push @rv, $obj if allow( $obj->$type() => $list );
+            }        
+        
+            return @rv;
+        }
+    }
+}
 
 =pod
 

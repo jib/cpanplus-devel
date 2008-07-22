@@ -304,6 +304,9 @@ use constant CUSTOM_AUTHOR_ID
 
 use constant DOT_SHELL_DEFAULT_RC
                             => '.shell-default.rc';
+                            
+use constant SOURCE_SQLITE_DB
+                            => 'db.sql';
 
 use constant PREREQ_IGNORE  => 0;                
 use constant PREREQ_INSTALL => 1;

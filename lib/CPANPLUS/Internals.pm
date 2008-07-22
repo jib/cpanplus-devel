@@ -259,6 +259,7 @@ be flushed.
             ### forgotten --kane
             } elsif ( $what eq 'modules' ) {
                 for my $modobj ( values %{$self->module_tree} ) {
+
                     $modobj->_flush;
                 }
 
