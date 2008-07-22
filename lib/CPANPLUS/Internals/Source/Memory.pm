@@ -22,6 +22,12 @@ use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
 $Params::Check::VERBOSE = 1;
 
+=head1 NAME 
+
+CPANPLUS::Internals::Source::Memory - In memory implementation
+
+=cut
+
 ### flag to show if init_trees got its' data from storable. This allows
 ### us to not write an existing stored file back to disk
 {   my $from_storable;

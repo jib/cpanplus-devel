@@ -101,14 +101,19 @@ The flow looks like this:
             $cb->__update_custom_module_sources 
                 $cb->__update_custom_module_source
         $cb->_build_trees
+            ### engine methods
+            {   $cb->_init_trees;
+                $cb->_standard_trees_completed
+                $cb->_custom_trees_completed
+            }                
             $cb->__create_author_tree
-                $cb->__retrieve_source
+                ### engine methods
+                { $cb->_add_author_object }
             $cb->__create_module_tree
-                $cb->__retrieve_source
                 $cb->__create_dslip_tree
-                    $cb->__retrieve_source
+                ### engine methods
+                { $cb->_add_module_object }
             $cb->__create_custom_module_entries                    
-            $cb->_save_source
 
     $cb->_dslip_defs
 

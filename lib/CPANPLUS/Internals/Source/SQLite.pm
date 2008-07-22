@@ -16,6 +16,11 @@ use DBD::SQLite;
 use Params::Check               qw[allow check];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
+=head1 NAME 
+
+CPANPLUS::Internals::Source::SQLite - SQLite implementation
+
+=cut
 
 {   my $Dbh;
     my $DbFile;
