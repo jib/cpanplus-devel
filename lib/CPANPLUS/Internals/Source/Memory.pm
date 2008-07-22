@@ -90,15 +90,20 @@ sub _add_author_object {
     my $self = shift;
     my %hash = @_;
     
+    my $class;
     my $tmpl = {
+        class   => { default => 'CPANPLUS::Module::Author', store => \$class },
         map { $_ => { required => 1 } } 
             qw[ author cpanid email ]
     };
 
-    my $href = check( $tmpl, \%hash ) or return;
-
+    my $href = do {
+        local $Params::Check::NO_DUPLICATES = 1;
+        check( $tmpl, \%hash ) or return;
+    };
+    
     $self->author_tree->{ $href->{'cpanid'} } = 
-        CPANPLUS::Module::Author->new( %$href, _id => $self->_id ) or return;
+        $class->new( %$href, _id => $self->_id ) or return;
 
     return 1;
 }
@@ -106,17 +111,22 @@ sub _add_author_object {
 sub _add_module_object {
     my $self = shift;
     my %hash = @_;
-    
+
+    my $class;    
     my $tmpl = {
+        class   => { default => 'CPANPLUS::Module', store => \$class },
         map { $_ => { required => 1 } } 
             qw[ module version path comment author package description dslip ]
     };
 
-    my $href = check( $tmpl, \%hash ) or return;
+    my $href = do {
+        local $Params::Check::NO_DUPLICATES = 1;
+        check( $tmpl, \%hash ) or return;
+    };
     
     ### Every module get's stored as a module object ###
     $self->module_tree->{ $href->{module} } = 
-        CPANPLUS::Module->new( %$href, _id => $self->_id ) or return;
+        $class->new( %$href, _id => $self->_id ) or return;
 
     return 1;    
 }
