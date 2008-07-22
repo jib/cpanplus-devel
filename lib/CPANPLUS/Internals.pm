@@ -80,7 +80,7 @@ Get/set the id
 
 ### autogenerate accessors ###
 for my $key ( qw[_conf _id _modules _hosts _methods _status
-                 _callbacks _selfupdate]
+                 _callbacks _selfupdate _mtree _atree]
 ) {
     no strict 'refs';
     *{__PACKAGE__."::$key"} = sub {

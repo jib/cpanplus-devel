@@ -14,7 +14,11 @@ use Data::Dumper;
 use File::Basename qw[dirname];
 
 my $conf = gimme_conf();
+
+#$conf->set_conf( source_engine => 'CPANPLUS::Internals::Source::SQLite' );
+
 my $cb   = CPANPLUS::Backend->new( $conf );
+
 
 ### XXX temp
 # $conf->set_conf( verbose => 1 );
