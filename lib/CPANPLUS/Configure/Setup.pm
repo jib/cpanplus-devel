@@ -969,6 +969,32 @@ Would you like to do this?
 
     {
         ###################
+        ## use sqlite  ? ##
+        ###################
+
+        print loc("
+        
+To limit the amount of RAM used by CPANPLUS, you can use the SQLite 
+source backend instead. Note that it is currently still experimental.
+Would you like to do this?
+
+");
+        my $type    = 'source_engine';
+        my $class   = 'CPANPLUS::Internals::Source::SQLite';
+        my $yn      = $term->ask_yn(
+                        prompt  => loc("Use SQLite?"),
+                        default => $conf->get_conf( $type ) eq $class ? 1 : 0,
+                      );
+        print "\n";
+        print $yn
+                ? loc("I will use SQLite")
+                : loc("I will not use SQLite");
+
+        $conf->set_conf( $type => $class );
+    }
+
+    {
+        ###################
         ## use cpantest? ##
         ###################
 

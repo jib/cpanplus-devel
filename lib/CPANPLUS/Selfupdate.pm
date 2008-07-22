@@ -160,6 +160,17 @@ CPANPLUS::Selfupdate
                     return $cb->configure_object->get_conf('storable');
                 },
             ],
+            sqlite_backend => [
+                {   'DBIx::Simple' => '0.0',
+                    'DBD::SQLite'  => '0.0',
+                },
+                sub {
+                    my $cb   = shift;
+                    my $conf = $cb->configure_object;
+                    return $conf->get_conf('source_engine') 
+                        eq 'CPANPLUS::Internals::Source::SQLite'
+                },                        
+            ],                    
         },
         core => {
             'CPANPLUS' => '0.0',
