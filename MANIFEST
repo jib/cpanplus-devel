@@ -75,6 +75,9 @@ lib/CPANPLUS/Internals/Fetch.pm
 lib/CPANPLUS/Internals/Report.pm
 lib/CPANPLUS/Internals/Search.pm
 lib/CPANPLUS/Internals/Source.pm
+lib/CPANPLUS/Internals/Source/Memory.pm
+lib/CPANPLUS/Internals/Source/SQLite.pm
+lib/CPANPLUS/Internals/Source/SQLite/Tie.pm
 lib/CPANPLUS/Internals/Utils.pm
 lib/CPANPLUS/Internals/Utils/Autoflush.pm
 lib/CPANPLUS/Module.pm
@@ -100,6 +103,8 @@ t/00_CPANPLUS-Inc.t
 t/00_CPANPLUS-Internals-Utils.t
 t/01_CPANPLUS-Configure.t
 t/02_CPANPLUS-Internals.t
+t/031_CPANPLUS-Internals-Source-SQLite.t
+t/032_CPANPLUS-Internals-Source-via-sqlite.t
 t/03_CPANPLUS-Internals-Source.t
 t/04_CPANPLUS-Module.t
 t/05_CPANPLUS-Internals-Fetch.t
