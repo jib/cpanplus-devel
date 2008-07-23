@@ -1,3 +1,19 @@
+Changes for 0.85_03     Wed Jul 23 02:07:11 2008
+================================================
+* Add experimental SQLite backend for sources. This can be
+  used instead of the normal memory/storable implementation.
+  You can enable it by running by starting the default shell
+  and typing:
+  's conf source_engine CPANPLUS::Internals::Source::SQLite; s save'
+* Selfupdate now understands the SQLite dependencies
+* Setup knows how to ask you about SQLite
+* CPANPLUS::Dist::new() is now implemented as a properly inherited
+  method, with no additional magic. Now, dists are instantiated as:
+  use base 'CPANPLUS::Dist::Base';
+  CPANPLUS::Dist::YourDist->new;
+* Add diagnostic to 's mirrors' to show how to edit the list
+  This address #37651: Explain the best way to add mirrors
+
 Changes for 0.85_02     Sun May 18 17:40:56 2008
 ================================================
 * Speed up search slightly be not checking the template
