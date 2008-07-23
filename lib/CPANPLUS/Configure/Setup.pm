@@ -211,13 +211,13 @@ installation directory.
 I see you already have this file:
     %1
 
-If you continue & save this file, the previous version will be overwritten.
+The file will not be overwritten until you explicitly save it.
 
             ], $file );
             
             redo ASK_CONFIG_TYPE 
                 unless $term->ask_yn(
-                    prompt  => loc( "Shall I overwrite it?"),
+                    prompt  => loc( "Do you wish to use this file?"),
                     default => 'n',
                 );
         }
