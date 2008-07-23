@@ -442,6 +442,20 @@ C<CPANPLUS::Internals::Source>. Default to C<CPANPLUS::Internals::Source::Memory
 
         $Conf->{'conf'}->{'source_engine'} = DEFAULT_SOURCE_ENGINE; 
 
+=item cpantest_reporter_args
+
+A hashref of key => value pairs that are passed to the constructor
+of C<Test::Reporter>. If you'd want to enable TLS for example, you'd
+set it to:
+
+  { transport       => 'Net::SMTP::TLS',
+    transport_args  => [ User => 'Joe', Password => '123' ],
+  }  
+
+=cut
+
+        $Conf->{'conf'}->{'cpantest_reporter_args'} = {};
+
 =back
     
 =head2 Section 'program'

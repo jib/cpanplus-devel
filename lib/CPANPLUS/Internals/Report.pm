@@ -507,14 +507,25 @@ sub _send_report {
     msg( loc("Sending test report for '%1'", $dist), $verbose);
 
     ### reporter object ###
-    my $reporter = Test::Reporter->new(
-                        grade           => $grade,
-                        distribution    => $dist,
-                        via             => "CPANPLUS $int_ver",
-                        timeout         => $conf->get_conf('timeout') || 60,
-                        debug           => $conf->get_conf('debug'),
-                    );
-                    
+    my $reporter = do {
+        my $args = $conf->get_conf('cpantest_reporter_args') || {};
+        
+        unless( UNIVERSAL::isa( $args, 'HASH' ) ) {
+            error(loc("'%1' must be a hashref, ignoring...",
+                      'cpantest_reporter_args'));
+            $args = {};
+        }
+        
+        Test::Reporter->new(
+            grade           => $grade,
+            distribution    => $dist,
+            via             => "CPANPLUS $int_ver",
+            timeout         => $conf->get_conf('timeout') || 60,
+            debug           => $conf->get_conf('debug'),
+            %$args,
+        );
+    };
+    
     ### set a custom mx, if requested
     $reporter->mx( [ $conf->get_conf('cpantest_mx') ] ) 
         if $conf->get_conf('cpantest_mx');
