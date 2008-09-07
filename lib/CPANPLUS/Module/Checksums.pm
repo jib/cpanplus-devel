@@ -141,7 +141,7 @@ sub _get_checksums_file {
     my $clone = $self->clone;
     $clone->package( CHECKSUMS );
 
-    my $file = $clone->fetch( %hash, force => 1 ) or return;
+    my $file = $clone->fetch( ttl => 3600, %hash ) or return;
 
     return $file;
 }

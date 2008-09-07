@@ -143,7 +143,7 @@ isa_ok( $Auth->parent,          'CPANPLUS::Backend' );
         skip(q[You chose not to enable checksum verification], 5)
             unless $Conf->get_conf('md5');
     
-        my $cksum_file = $Mod->checksums( force => 1 );
+        my $cksum_file = $Mod->checksums;
         ok( $cksum_file,    "Checksum file found" );
         is( $cksum_file, $Mod->status->checksums,
                             "   File stored in module object" );
@@ -153,6 +153,15 @@ isa_ok( $Auth->parent,          'CPANPLUS::Backend' );
         ### XXX test checksum_value if there's digest::md5 + config wants it
         ok( $Mod->status->checksum_ok,
                             "   Checksum is ok" );
+                            
+        ### check ttl code for checksums; fetching it now means the cache 
+        ### should kick in
+        {   CPANPLUS::Error->flush;
+            ok( $Mod->checksums,       
+                            "   Checksums re-fetched" );
+            like( CPANPLUS::Error->stack_as_string, qr/Using cached file/,
+                            "       Cached file used" );
+        }                            
     }
 }
 
