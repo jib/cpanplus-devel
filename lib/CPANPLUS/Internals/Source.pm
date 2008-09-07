@@ -307,7 +307,7 @@ sub _check_trees {
     for my $name (qw[auth dslip mod]) {
         for my $file ( $conf->_get_source( $name ) ) {
             $self->__check_uptodate(
-                file            => File::Spec->catfile( $args->{path}, $file ),
+                file            => File::Spec->catfile( $path, $file ),
                 name            => $name,
                 update_source   => $update_source,
                 verbose         => $verbose,
