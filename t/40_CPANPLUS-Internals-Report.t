@@ -146,7 +146,7 @@ my $map = {
         failed      => 1,
         match       => ['/This distribution has been tested/',
                         '/http://testers.cpan.org/',
-                        '/FAIL/',
+                        '/UNKNOWN/',
                     ],
         check       => 0,    
     },
@@ -430,7 +430,6 @@ SKIP: {
 #                            buffer  => $map->{$type}->{'buffer'},
 #                            failed  => $map->{$type}->{'failed'},
 #                            address => NOBODY,
-#                            dontcc  => 1,
 #                        );
 #            ok( $ok,                "   Mailed report to NOBODY" );
 #       }

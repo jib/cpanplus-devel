@@ -1,3 +1,10 @@
+Changes for XXXXXXX
+================================================
+* Updated CPAN Testers reporting to follow new project guidelines:
+  modules authors are no longer copied on reports (the dontcc config option 
+  has been removed); failures during *.PL or make stages are now reported
+  as UNKNOWN instead of FAIL; output buffer now included in NA reports
+
 Changes for 0.85_03     Wed Jul 23 02:07:11 2008
 ================================================
 * Add experimental SQLite backend for sources. This can be
