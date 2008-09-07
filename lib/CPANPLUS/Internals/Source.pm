@@ -661,8 +661,8 @@ sub _create_mod_tree {
         ### remove file name from the path
         $data[2] =~ s|/[^/]+$||;
 
-
-        unless( $self->author_tree($author) ) {
+        my $aobj = $self->author_tree($author);
+        unless( $aobj ) {
             error( loc( "No such author '%1' -- can't make module object " .
                         "'%2' that is supposed to belong to this author",
                         $author, $data[0] ) );
@@ -679,6 +679,11 @@ sub _create_mod_tree {
                             ? $dslip_tree->{ $data[0] }->{$item}
                             : ' ';
         }
+        
+        ### XXX this could be sped up if we used author names, not author
+        ### objects in creation, and then look them up in the author tree
+        ### when needed. This will need a fix to all the places that create
+        ### fake author/module objects as well.
 
         ### callback to store the individual object
         $self->_add_module_object(
@@ -692,7 +697,7 @@ sub _create_mod_tree {
                             ),          # extended path on the cpan mirror,
                                         # like /A/AB/ABIGAIL
             comment     => $data[3],    # comment on the module
-            author      => $self->author_tree($author),
+            author      => $aobj,
             package     => $package,    # package name, like
                                         # 'foo-bar-baz-1.03.tar.gz'
             description => $dslip_tree->{ $data[0] }->{'description'},
@@ -1334,7 +1339,7 @@ Returns true on success, false on failure.
     
             my $fh = OPEN_FILE->( $file ) or next;
     
-            while( <$fh> ) {
+            while( local $_ = <$fh> ) {
                 chomp;
                 next if /^#/;
                 next unless /\S+/;

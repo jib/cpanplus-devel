@@ -1068,7 +1068,7 @@ sub bundle_modules {
                         $file,$!)), next );
 
         my $flag;
-        while(<$fh>) {
+        while( local $_ = <$fh> ) {
             ### quick hack to read past the header of the file ###
             last if $flag && m|^=head|i;
 
