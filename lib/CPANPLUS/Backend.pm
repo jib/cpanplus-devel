@@ -369,19 +369,21 @@ for my $func (qw[fetch extract install readme files distributions]) {
         my $conf = $self->configure_object;
         my %hash = @_;
 
-        local $Params::Check::NO_DUPLICATES = 1;
-        local $Params::Check::ALLOW_UNKNOWN = 1;
-
         my ($mods);
-        my $tmpl = {
-            modules     => { default  => [],    strict_type => 1,
-                             required => 1,     store => \$mods },
-        };
+        my $args = do {
+            local $Params::Check::NO_DUPLICATES = 1;
+            local $Params::Check::ALLOW_UNKNOWN = 1;
 
-        my $args = check( $tmpl, \%hash ) or return;
+            my $tmpl = {
+                modules     => { default  => [],    strict_type => 1,
+                                 required => 1,     store => \$mods },
+            };
+
+            check( $tmpl, \%hash );
+        } or return;
 
         ### make them all into module objects ###
-        my %mods = map {$_ => $self->parse_module(module => $_) || ''} @$mods;
+        my %mods = map { $_ => $self->parse_module(module => $_) || '' } @$mods;
 
         my $flag; my $href;
         while( my($name,$obj) = each %mods ) {
