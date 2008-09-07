@@ -197,20 +197,21 @@ Returns a list of the CPANPLUS::Dist::* classes available
             require Module::Pluggable;
 
             my $only_re = __PACKAGE__ . '::\w+$';
+            my %except  = map { $_ => 1 }
+                              INSTALLER_SAMPLE,
+                              INSTALLER_BASE;
 
             Module::Pluggable->import(
                             sub_name    => '_dist_types',
                             search_path => __PACKAGE__,
                             only        => qr/$only_re/,
                             require     => 1,
-                            except      => [ INSTALLER_MM, 
-                                             INSTALLER_SAMPLE,
-                                             INSTALLER_BASE,
-                                        ]
+                            except      => [ keys %except ]
                         );
             my %ignore = map { $_ => $_ } @Ignore;                        
                         
-            push @Dists, grep { not $ignore{$_}  } __PACKAGE__->_dist_types;
+            push @Dists, grep { not $ignore{$_} and not $except{$_} }
+                __PACKAGE__->_dist_types;
         }
 
         return @Dists;
