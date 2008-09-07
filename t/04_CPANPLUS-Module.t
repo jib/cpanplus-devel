@@ -296,7 +296,7 @@ isa_ok( $Auth->parent,          'CPANPLUS::Backend' );
                                 "       Object" );
                                 
     ### skiptests to make sure we don't get any test header mismatches
-    my $rv = $bundle->create( preeq_target => 'create', skiptest => 1 );
+    my $rv = $bundle->create( prereq_target => 'create', skiptest => 1 );
     ok( $rv,                    "   Tested prereqs" );
 
 }
