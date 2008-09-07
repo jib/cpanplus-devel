@@ -123,20 +123,26 @@ CPANPLUS::Internals::Source::SQLite - SQLite implementation
 
 {   my $txn_count = 0;
 
+    ### XXX move this outside the sub, so we only compute it once
+    my $class;
+    my @keys    = qw[ author cpanid email ];
+    my $tmpl    = {
+        class   => { default => 'CPANPLUS::Module::Author', store => \$class },
+        map { $_ => { required => 1 } } @keys
+     };
+    
+    ### dbix::simple's expansion of (??) is REALLY expensive, so do it manually
+    my $ph      = join ',', map { '?' } @keys;
+
+
     sub _add_author_object {
         my $self = shift;
         my %hash = @_;
         my $dbh  = $self->__sqlite_dbh;
-        
-        my $class;
-        my $tmpl = {
-            class   => { default => 'CPANPLUS::Module::Author', store => \$class },
-            map { $_ => { required => 1 } } 
-                qw[ author cpanid email ]
-        };
     
         my $href = do {
-            local $Params::Check::NO_DUPLICATES = 1;
+            local $Params::Check::NO_DUPLICATES         = 1;            
+            local $Params::Check::SANITY_CHECK_TEMPLATE = 0;
             check( $tmpl, \%hash ) or return;
         };
 
@@ -148,7 +154,7 @@ CPANPLUS::Internals::Source::SQLite - SQLite implementation
         }
         
         $dbh->query( 
-            "INSERT INTO author (". join(',',keys(%$href)) .") VALUES (??)",
+            "INSERT INTO author (". join(',',keys(%$href)) .") VALUES ($ph)",
             values %$href
         ) or do {
             error( $dbh->error );
@@ -161,20 +167,25 @@ CPANPLUS::Internals::Source::SQLite - SQLite implementation
 
 {   my $txn_count = 0;
 
+    ### XXX move this outside the sub, so we only compute it once
+    my $class;    
+    my @keys = qw[ module version path comment author package description dslip mtime ];
+    my $tmpl = {
+        class   => { default => 'CPANPLUS::Module', store => \$class },
+        map { $_ => { required => 1 } } @keys
+    };
+    
+    ### dbix::simple's expansion of (??) is REALLY expensive, so do it manually
+    my $ph      = join ',', map { '?' } @keys;
+
     sub _add_module_object {
         my $self = shift;
         my %hash = @_;
         my $dbh  = $self->__sqlite_dbh;
     
-        my $class;    
-        my $tmpl = {
-            class   => { default => 'CPANPLUS::Module', store => \$class },
-            map { $_ => { required => 1 } } 
-                qw[ module version path comment author package description dslip mtime ]
-        };
-    
         my $href = do {
-            local $Params::Check::NO_DUPLICATES = 1;
+            local $Params::Check::NO_DUPLICATES         = 1;
+            local $Params::Check::SANITY_CHECK_TEMPLATE = 0;
             check( $tmpl, \%hash ) or return;
         };
         
@@ -189,7 +200,7 @@ CPANPLUS::Internals::Source::SQLite - SQLite implementation
         }
         
         $dbh->query( 
-            "INSERT INTO module (". join(',',keys(%$href)) .") VALUES (??)",
+            "INSERT INTO module (". join(',',keys(%$href)) .") VALUES ($ph)", 
             values %$href
         ) or do {
             error( $dbh->error );
