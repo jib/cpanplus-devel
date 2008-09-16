@@ -61,7 +61,7 @@ CPANPLUS::Selfupdate
             'Archive::Extract'          => '0.16', # ./Dir bug fix
             'Archive::Tar'              => '1.23',
             'IO::Zlib'                  => '1.04', # needed for Archive::Tar
-            'Object::Accessor'          => '0.32', # overloaded stringification
+            'Object::Accessor'          => '0.34', # mk_aliases support
             'Module::CoreList'          => '2.09',
             'Module::Pluggable'         => '2.4',
             'Module::Loaded'            => '0.01',
