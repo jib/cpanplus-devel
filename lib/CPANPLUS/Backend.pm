@@ -558,7 +558,7 @@ sub parse_module {
     } else {
         $author = shift @parts || '';
     }
-    
+
     my($pkg, $version, $ext, $full) = 
         $self->_split_package_string( package => $dist );
     
@@ -601,7 +601,12 @@ sub parse_module {
                 my $modobj = CPANPLUS::Module::Fake->new(
                     module  => $maybe->module,
                     version => $version,
-                    package => $full,
+                    ### no extension? use the extension the original package
+                    ### had instead
+                    package => do { $ext 
+                                        ? $full 
+                                        : $full .'.'. $maybe->package_extension 
+                                },
                     path    => $path,
                     author  => $auth_obj,
                     _id     => $maybe->_id

@@ -90,6 +90,13 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
             $mod->package_name, 
             '0.01',
         ],
+        ### existing module, no extension given
+        ### this used to create a modobj with no package extension
+        'EUNOXS/Foo-Bar-0.02' => [ 
+            'EUNOXS',              
+            'Foo-Bar',
+            '0.02',
+        ],
         'Foo-Bar-EU-NOXS-0.09' => [ 
             $mod->author->cpanid,  
             $mod->package_name, 
@@ -170,6 +177,11 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
             'HTML-Embperl', 
             '1.2.1',
         ],
+        'KANE/File-Fetch-0.15_03',  => [
+            'KANE',
+            'File-Fetch',
+            '0.15_03',
+        ],
     );       
 
     while ( my($guess, $attr) = splice @map, 0, 2 ) {
@@ -191,6 +203,10 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
                                 "   Proper package_name found: $pkg_name" );
         unlike( $obj->package_name, qr/\d/,
                                 "       No digits in package name" );
+        {   my $ext = $obj->package_extension;
+            ok( $ext,           "       Has extension as well: $ext" );
+        }
+        
         like( $obj->author->cpanid, "/$author/i", 
                                 "   Proper author found: $author");
         like( $obj->path,           "/$author/i", 
