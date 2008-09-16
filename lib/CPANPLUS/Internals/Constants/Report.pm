@@ -231,11 +231,6 @@ $prereqs
     }
 );
 
-If you are interested in making a more flexible Makefile.PL that can
-probe for missing dependencies and install them, ExtUtils::AutoInstall
-at <http://search.cpan.org/dist/ExtUtils-AutoInstall/> may be
-worth a look.
-
 Thanks! :-)
 
 .
