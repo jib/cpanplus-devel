@@ -523,7 +523,6 @@ remains empty if you do not require super user permissiosn to install.
 =cut
 
         $Conf->{'program'}->{'sudo'} = do {
-
             ### let's assume you dont need sudo,
             ### unless one of the below criteria tells us otherwise
             my $sudo = undef;
@@ -532,17 +531,20 @@ remains empty if you do not require super user permissiosn to install.
             if( $> ) {
     
                 ### check for all install dirs!
-                ### installsiteman3dir is a 5.8'ism.. don't check
-                ### it on 5.6.x...            
                 ### you have write permissions to the installdir,
                 ### you don't need sudo
-                if( -w $Config{'installsitelib'} &&
-                    ( defined $Config{'installsiteman3dir'} && 
-                      -w $Config{'installsiteman3dir'} 
-                    ) && -w $Config{'installsitebin'} 
-                ) {                    
-                    $sudo = undef;
+                if( -w $Config{'installsitelib'} && -w $Config{'installsitebin'} ) {                    
                     
+                    ### installsiteman3dir is a 5.8'ism.. don't check
+                    ### it on 5.6.x...            
+                    if( defined $Config{'installsiteman3dir'} ) {
+                        $sudo = -w $Config{'installsiteman3dir'} 
+                            ? undef
+                            : can_run('sudo');
+                    } else {
+                        $sudo = undef;
+                    }
+
                 ### you have PERL_MM_OPT set to some alternate
                 ### install place. You probably have write permissions
                 ### to that
