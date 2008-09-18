@@ -1223,7 +1223,7 @@ sub __update_custom_module_source {
             #msg(loc("Index file written to '%1'", $to), $verbose);
         }
     
-    ### copy it to the real spot and update it's timestamp
+    ### copy it to the real spot and update its timestamp
     } else {            
         $self->_move( file => $res, to => $local ) or return;
         $self->_update_timestamp( file => $local );

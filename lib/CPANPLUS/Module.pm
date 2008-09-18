@@ -1595,9 +1595,9 @@ sub _extutils_installed {
 =head2 $bool = $self->add_to_includepath;
 
 Adds the current modules path to C<@INC> and C<$PERL5LIB>. This allows
-you to add the module from it's build dir to your path.
+you to add the module from its build dir to your path.
 
-You can reset C<@INC> and C<$PERL5LIB> to it's original state when you
+You can reset C<@INC> and C<$PERL5LIB> to its original state when you
 started the program, by calling:
 
     $self->parent->flush('lib');

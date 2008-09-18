@@ -1199,7 +1199,7 @@ sub _set_conf {
             boxed   => CONFIG_BOXED,
         }->{ $key } || CONFIG_USER;      
         
-        ### boxed is special, so let's get it's value from %INC
+        ### boxed is special, so let's get its value from %INC
         ### so we can tell it where to save
         ### XXX perhaps this logic should be generic for all
         ### types, and put in the ->save() routine
@@ -1656,7 +1656,7 @@ sub _reports {
         }
     }
     
-    ### dispatch a plugin command to it's function
+    ### dispatch a plugin command to its function
     sub _meta {
         my $self = shift;
         my %hash = @_;

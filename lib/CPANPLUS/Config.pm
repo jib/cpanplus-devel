@@ -134,7 +134,7 @@ are run interactively or not. Defaults to 'true'.
 
 =item base
 
-The directory CPANPLUS keeps all it's build and state information in.
+The directory CPANPLUS keeps all its build and state information in.
 Defaults to ~/.cpanplus.
 
 =cut

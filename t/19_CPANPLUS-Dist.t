@@ -55,7 +55,7 @@ my $ModPrereq   = TEST_CONF_INST_MODULE;
 ### XXX this version doesn't exist, but we don't check for it either ###
 my $Prereq      = { $ModPrereq => '1000' };
 
-### since it's in this file, not in it's own module file,
+### since it's in this file, not in its own module file,
 ### make M::L::C think it already was loaded
 $Module::Load::Conditional::CACHE->{$Module}->{usable} = 1;
 

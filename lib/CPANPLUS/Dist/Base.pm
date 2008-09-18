@@ -99,7 +99,7 @@ object, which you might do as follows:
     $dist->status->mk_accessors( qw[my_implementation_accessor] );
     
 The C<status> object is implemented as an instance of the 
-C<Object::Accessor> class. Please refer to it's documentation for 
+C<Object::Accessor> class. Please refer to its documentation for 
 details.
     
 Return true if the initialization was successul, and false if it was
