@@ -1,9 +1,27 @@
-Changes for XXXXXXX
+Changes for 0.85_04     Mon Sep  8 15:37:01 2008
 ================================================
 * Updated CPAN Testers reporting to follow new project guidelines:
   modules authors are no longer copied on reports (the dontcc config option 
   has been removed); failures during *.PL or make stages are now reported
   as UNKNOWN instead of FAIL; output buffer now included in NA reports
+* Set $ENV{MAILDOMAIN} so that T::R does not try to resolve our maildomain,
+  which can lead to large timeouts for *every* invocation in T::R < 1.51_01
+  see: http://code.google.com/p/test-reporter/issues/detail?id=15
+* Address #38324: no caching of CHECKSUMS
+  Checksum files are now cached for 3600 seconds by default to avoid
+  refetching to often. This can be overrided by force or setting a lower ttl.
+* Address #38290: CPANPLUS::Backend-&gt;install() always reindexes
+  Params::Check::NO_DUPLICATES was enabled, and that meant an empty 
+  hash lookup. Use the assigned scalar instead
+* Some speed ups for the sqlite engine. turns out dbix::simple's (??) 
+  expansion is very expensive
+* Address: #38643: CPANPLUS::Backend methods are not $_ safe. 
+  Make sure all while( <$fh> ) is written as while( local $_ = <$fh>)
+* Address #34345: Should be able to send reports via system
+  add 'cpantest_reporter_args' so you can add extra arguments to
+  test::reporter's new method sendmail
+* Address: #37652: Infinite loop in Setup.pm
+  This was merely a wording issue; made the help text more clear
 
 Changes for 0.85_03     Wed Jul 23 02:07:11 2008
 ================================================
@@ -34,7 +52,7 @@ Changes for 0.85_02     Sun May 18 17:40:56 2008
 Changes for 0.85_01     Sun Apr  6 15:22:43 2008 
 ================================================
 * Address #34519 Getting Wrong File with SENGER/NET-IPFilterSimple_V1.1.tar.gz
-  The delimiter (_) wsa being replaced by - after parsing. This is now fixed.
+  The delimiter (_) was being replaced by - after parsing. This is now fixed.
 * Depend on a newer EU::Installed (1.42), so we can now install into a non-site
   wide dir and actually do uninstalls properly. Requires a few clever dir
   manipulations from our side, but it works.
