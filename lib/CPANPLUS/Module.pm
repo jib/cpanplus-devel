@@ -293,7 +293,7 @@ The checksum value this distribution is expected to have
 
 =head1 METHODS
 
-=head2 $self = CPANPLUS::Module::new( OPTIONS )
+=head2 $self = CPANPLUS::Module->new( OPTIONS )
 
 This method returns a C<CPANPLUS::Module> object. Normal users
 should never call this method directly, but instead use the
@@ -666,11 +666,15 @@ sub get_installer_type {
     }
 
     ### ok, so it's a 'build' installer, but you don't /have/ module build
-    if( $type eq INSTALLER_BUILD and ( 
-            not grep { $_ eq INSTALLER_BUILD } CPANPLUS::Dist->dist_types )
+    if( $type eq INSTALLER_BUILD and 
+        not CPANPLUS::Dist->has_dist_type( INSTALLER_BUILD )
     ) {
+    
+        ### XXX this is for recording purposes only. We *have* to install
+        ### these before even creating a dist object, or we'll get an error
+        ### saying 'no such dist type';
         my $href = $self->status->configure_requires || {};
-        my $deps = { 'CPANPLUS::Dist::Build' => 0, %$href };
+        my $deps = { INSTALLER_BUILD, 0, %$href };
         
         $self->status->configure_requires( $deps );
         
@@ -723,7 +727,6 @@ sub dist {
     my $tmpl = {
         format  => { default => $conf->get_conf('dist_type') ||
                                 $self->status->installer_type,
-                     allow   => [ CPANPLUS::Dist->dist_types ],
                      store   => \$type },
         target  => { default => TARGET_CREATE, store => \$target },                     
         args    => { default => {}, store => \$args },
@@ -731,10 +734,42 @@ sub dist {
 
     check( $tmpl, \%hash ) or return;
 
-    unless( can_load( modules => { $type => '0.0' }, verbose => 1 ) ) {
-        error(loc("'%1' not found -- you need '%2' version '%3' or higher ".
-                    "to detect plugins", $type, 'Module::Pluggable','2.4'));
-        return;
+    ### ok, check for $type. Do we have it?
+    unless( CPANPLUS::Dist->has_dist_type( $type ) ) {
+
+        ### ok, we don't have it. Is it C::D::Build? if so we can install the
+        ### whole thing now
+        ### XXX we _could_ do this for any type we dont have actually...
+        if( $type eq INSTALLER_BUILD ) {
+            msg(loc("Bootstrapping installer '%1'", $type));
+        
+            ### don't propagate the format, it's the one we're trying to
+            ### bootstrap, so it'll be an infinite loop if we do
+        
+            $cb->module_tree( $type )->install( target => $target, %$args ) or
+                do {
+                    error(loc("Could not bootstrap installer '%1' -- ".
+                              "can not continue", $type));
+                    return;                          
+                };
+        
+            ### re-scan for available modules now
+            CPANPLUS::Dist->rescan_dist_types;
+            
+            unless( CPANPLUS::Dist->has_dist_type( $type ) ) {
+                error(loc("Newly installed installer type '%1' should be ".
+                          "available, but is not! -- aborting", $type));
+                return;
+            } else {
+                msg(loc("Installer '%1' succesfully bootstrapped", $type));
+            }
+            
+        ### some other plugin you dont have. Abort
+        } else {
+            error(loc("Installer type '%1' not found. Please verify your ".
+                      "installation -- aborting", $type ));
+            return;
+        }            
     }
 
     my $dist = $type->new( module => $self ) or return;

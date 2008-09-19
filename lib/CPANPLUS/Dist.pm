@@ -182,6 +182,7 @@ Returns a list of the CPANPLUS::Dist::* classes available
     
     ### backdoor method to exclude dist types
     sub _ignore_dist_types  { my $self = shift; push @Ignore, @_ };
+    sub _reset_dist_ignore  { @Ignore = () };
 
     ### locally add the plugins dir to @INC, so we can find extra plugins
     #local @INC = @INC, File::Spec->catdir(
@@ -216,9 +217,36 @@ Returns a list of the CPANPLUS::Dist::* classes available
 
         return @Dists;
     }
+
+=head2 $bool = CPANPLUS::Dist->rescan_dist_types;
+
+Rescans C<@INC> for available dist types. Useful if you've installed new
+C<CPANPLUS::Dist::*> classes and want to make them available to the
+current process.
+
+=cut
+    
+    sub rescan_dist_types {
+        my $dist    = shift;
+        $Loaded     = 0;    # reset the flag;
+        return $dist->dist_types;
+    }        
 }
 
-=head2 prereq_satisfied( modobj => $modobj, version => $version_spec )
+=head2 $bool = CPANPLUS::Dist->has_dist_type( $type )
+
+Returns true if distribution type C<$type> is loaded/supported.
+
+=cut
+
+sub has_dist_type {
+    my $dist = shift;
+    my $type = shift or return;
+    
+    return scalar grep { $_ eq $type } CPANPLUS::Dist->dist_types;
+}    
+
+=head2 $bool = $dist->prereq_satisfied( modobj => $modobj, version => $version_spec )
 
 Returns true if this prereq is satisfied.  Returns false if it's not.
 Also issues an error if it seems "unsatisfiable," i.e. if it can't be
