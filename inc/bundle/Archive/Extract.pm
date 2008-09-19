@@ -122,14 +122,15 @@ my $Mapping = {
 
 {
     my $tmpl = {
-        archive => { required => 1, allow => FILE_EXISTS },
-        type    => { default => '', allow => [ @Types ] },
+        archive         => { required => 1, allow => FILE_EXISTS },
+        type            => { default => '', allow => [ @Types ] },
+        _error_msg      => { no_override => 1, default => [], },
+        _error_msg_long => { no_override => 1, default => [], },
     };
 
     ### build accesssors ###
     for my $method( keys %$tmpl, 
                     qw[_extractor _gunzip_to files extract_path],
-                    qw[_error_msg _error_msg_long]
     ) {
         no strict 'refs';
         *$method = sub {
@@ -239,11 +240,11 @@ C<cwd()>.
 
 Since C<.gz> files never hold a directory, but only a single file; if 
 the C<to> argument is an existing directory, the file is extracted 
-there, with it's C<.gz> suffix stripped. 
+there, with its C<.gz> suffix stripped. 
 If the C<to> argument is not an existing directory, the C<to> argument 
 is understood to be a filename, if the archive type is C<gz>. 
 In the case that you did not specify a C<to> argument, the output
-file will be the name of the archive file, stripped from it's C<.gz>
+file will be the name of the archive file, stripped from its C<.gz>
 suffix, in the current working directory.
 
 C<extract> will try a pure perl solution first, and then fall back to
@@ -278,6 +279,10 @@ the tar specification.
 sub extract {
     my $self = shift;
     my %hash = @_;
+
+    ### reset error messages
+    $self->_error_msg( [] );
+    $self->_error_msg_long( [] );
 
     my $to;
     my $tmpl = {
@@ -504,7 +509,7 @@ sub have_old_bunzip2 {
     ### double hateful: bunzip2 --version also hangs if input is a pipe
     ### See #32370: Archive::Extract will hang if stdin is a pipe [+PATCH]
     ### So, we have to provide *another* argument which is a fake filename,
-    ### just so it wont try to read from stdin to print it's version..
+    ### just so it wont try to read from stdin to print its version..
     ### *sigh*
     ### Even if the file exists, it won't clobber or change it.
     my $buffer;
@@ -1267,14 +1272,15 @@ sub _unlzma_cz {
 sub _error {
     my $self    = shift;
     my $error   = shift;
-    
-    $self->_error_msg( $error );
-    $self->_error_msg_long( Carp::longmess($error) );
+    my $lerror  = Carp::longmess($error);
+
+    push @{$self->_error_msg},      $error;
+    push @{$self->_error_msg_long}, $lerror;
     
     ### set $Archive::Extract::WARN to 0 to disable printing
     ### of errors
     if( $WARN ) {
-        carp $DEBUG ? $self->_error_msg_long : $self->_error_msg;
+        carp $DEBUG ? $lerror : $error;
     }
 
     return;
@@ -1282,7 +1288,11 @@ sub _error {
 
 sub error {
     my $self = shift;
-    return shift() ? $self->_error_msg_long : $self->_error_msg;
+
+    ### make sure we have a fallback aref
+    my $aref = do { shift() ? $self->_error_msg_long : $self->_error_msg } || [];
+   
+    return join $/, @$aref;
 }
 
 sub _no_buffer_files {

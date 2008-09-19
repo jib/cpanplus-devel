@@ -4,10 +4,12 @@ use strict;
 
 BEGIN {
 
-    use constant IS_VMS      => $^O eq 'VMS'                       ? 1 : 0;    
-    use constant IS_WIN32    => $^O eq 'MSWin32'                   ? 1 : 0;
-    use constant IS_WIN98    => (IS_WIN32 and !Win32::IsWinNT())   ? 1 : 0;
-    use constant ALARM_CLASS => __PACKAGE__ . '::TimeOut';
+    use constant IS_VMS         => $^O eq 'VMS'                       ? 1 : 0;    
+    use constant IS_WIN32       => $^O eq 'MSWin32'                   ? 1 : 0;
+    use constant IS_WIN98       => (IS_WIN32 and !Win32::IsWinNT())   ? 1 : 0;
+    use constant ALARM_CLASS    => __PACKAGE__ . '::TimeOut';
+    use constant SPECIAL_CHARS  => qw[< > | &];
+    use constant QUOTE          => do { $^O eq 'MSWin32' ? q["] : q['] };            
 
     use Exporter    ();
     use vars        qw[ @ISA $VERSION @EXPORT_OK $VERBOSE $DEBUG
@@ -490,6 +492,10 @@ sub _open3_run {
     $self->_fds( \@fds_to_dup );
     $self->__dup_fds( @fds_to_dup );
     
+    ### pipes have to come in a quoted string, and that clashes with
+    ### whitespace. This sub fixes up such commands so they run properly
+    $cmd = $self->__fix_cmd_whitespace_and_special_chars( $cmd );
+        
     ### dont stringify @$cmd, so spaces in filenames/paths are
     ### treated properly
     my $pid = eval { 
@@ -598,11 +604,14 @@ sub _ipc_run {
     # ]
 
     
-    my @command; my $special_chars;
+    my @command; 
+    my $special_chars;
+    
+    my $re = do { my $x = join '', SPECIAL_CHARS; qr/([$x])/ };
     if( ref $cmd ) {
         my $aref = [];
         for my $item (@$cmd) {
-            if( $item =~ /([<>|&])/ ) {
+            if( $item =~ $re ) {
                 push @command, $aref, $item;
                 $aref = [];
                 $special_chars .= $1;
@@ -612,13 +621,13 @@ sub _ipc_run {
         }
         push @command, $aref;
     } else {
-        @command = map { if( /([<>|&])/ ) {
+        @command = map { if( $_ =~ $re ) {
                             $special_chars .= $1; $_;
                          } else {
 #                            [ split / +/ ]
-                             [ map { m/\ / ? qq{'$_'} : $_ } shellwords($cmd) ]
+                             [ map { m/\ / ? qq{'$_'} : $_ } shellwords($_) ]
                          }
-                    } split( /\s*([<>|&])\s*/, $cmd );
+                    } split( /\s*$re\s*/, $cmd );
     }
  
     ### if there's a pipe in the command, *STDIN needs to 
@@ -680,6 +689,10 @@ sub _system_run {
     my $cmd     = shift;
     my $verbose = shift || 0;
 
+    ### pipes have to come in a quoted string, and that clashes with
+    ### whitespace. This sub fixes up such commands so they run properly
+    $cmd = $self->__fix_cmd_whitespace_and_special_chars( $cmd );
+
     my @fds_to_dup = $verbose ? () : qw[STDOUT STDERR];
     $self->_fds( \@fds_to_dup );
     $self->__dup_fds( @fds_to_dup );
@@ -696,6 +709,33 @@ sub _system_run {
 
     return unless $self->ok;
     return $self->ok;
+}
+
+{   my %sc_lookup = map { $_ => $_ } SPECIAL_CHARS;
+
+
+    sub __fix_cmd_whitespace_and_special_chars {
+        my $self = shift;
+        my $cmd  = shift;
+
+        ### command has a special char in it
+        if( ref $cmd and grep { $sc_lookup{$_} } @$cmd ) {
+            
+            ### since we have special chars, we have to quote white space
+            ### this *may* conflict with the parsing :(
+            my $fixed;
+            my @cmd = map { / / ? do { $fixed++; QUOTE.$_.QUOTE } : $_ } @$cmd;
+            
+            $self->_debug( "# Quoted $fixed arguments containing whitespace" )
+                    if $DEBUG && $fixed;
+            
+            ### stringify it, so the special char isn't escaped as argument
+            ### to the program
+            $cmd = join ' ', @cmd;
+        }
+
+        return $cmd;
+    }
 }
 
 {   use File::Spec;
@@ -880,11 +920,27 @@ Defaults to true. Turn this off at your own risk.
 
 =over 4
 
-=item Whitespace
+=item Whitespace and IPC::Open3 / system()
 
-When you provide a string as this argument, the string will be
-split on whitespace to determine the individual elements of your
-command. Although this will usually just Do What You Mean, it may
+When using C<IPC::Open3> or C<system>, if you provide a string as the
+C<command> argument, it is assumed to be appropriately escaped. However,
+if you provide and C<Array Reference>, special rules apply:
+
+If your command contains C<Special Characters> (< > | &), it will
+be internally stringified before executing the command, to avoid that these
+special characters are escaped and passed as arguments instead of retaining
+their special meaning.
+
+However, if the command contained arguments that contained whitespace, 
+stringifying the command would loose the significance of the whitespace.
+Therefor, C<IPC::Cmd> will quote any arguments containing whitespace in your
+command if the command is passed as an arrayref and contains special characters.
+
+=item Whitespace and IPC::Run
+
+When using C<IPC::Run>, if you provide a string as the C<command> argument, 
+the string will be split on whitespace to determine the individual elements 
+of your command. Although this will usually just Do What You Mean, it may
 break if you have files or commands with whitespace in them.
 
 If you do not wish this to happen, you should provide an array
@@ -911,6 +967,7 @@ But take care not to pass it as, for example
     ['gzip -cdf foo.tar.gz', '|', 'tar -xf -']
 
 Since this will lead to issues as described above.
+
 
 =item IO Redirect
 

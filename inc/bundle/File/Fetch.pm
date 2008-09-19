@@ -37,9 +37,9 @@ $WARN           = 1;
 
 ### methods available to fetch the file depending on the scheme
 $METHODS = {
-    http    => [ qw|lwp wget curl lynx| ],
-    ftp     => [ qw|lwp netftp wget curl ncftp ftp| ],
-    file    => [ qw|lwp file| ],
+    http    => [ qw|lwp wget curl lftp lynx| ],
+    ftp     => [ qw|lwp netftp wget curl lftp ncftp ftp| ],
+    file    => [ qw|lwp lftp file| ],
     rsync   => [ qw|rsync| ]
 };
 
@@ -656,6 +656,80 @@ sub _wget_fetch {
     }
 }
 
+### /bin/wget fetch ###
+sub _lftp_fetch {
+    my $self = shift;
+    my %hash = @_;
+
+    my ($to);
+    my $tmpl = {
+        to  => { required => 1, store => \$to }
+    };
+    check( $tmpl, \%hash ) or return;
+
+    ### a & in the uri will make the program background
+    ### that does not really work for us, so skip these
+    ### types of uris
+    if( $self->uri =~ /&/ ) {
+        $self->_error(loc("URI '%1' contains a '%2' which makes %3 background itself. ".
+                          "Can not fetch with %4", $self->uri, '&', 'lftp', 'lftp'));
+        return;
+    }      
+
+    ### see if we have a wget binary ###
+    if( my $lftp = can_run('lftp') ) {
+
+        ### no verboseness, thanks ###
+        my $cmd = [ $lftp, '-q', '-c' ];
+
+        my $str = QUOTE;
+
+        ### if a timeout is set, add it ###
+        $str .= "set net:timeout $TIMEOUT; " if $TIMEOUT;
+
+        ### run passive if specified ###
+        $str .= 'set ftp:passive-mode 1; ' if $FTP_PASSIVE;
+
+        ### set the output document, add the uri ###
+        ### quote the URI, because lftp supports certain shell
+        ### expansions, most notably & for backgrounding.
+        ### ' quote does nto work, must be "
+        $str .= 'get '. $self->uri .' -o '. $to;
+
+        $str .= QUOTE;
+
+        ### the command needs to be 1 string to be executed
+        push @$cmd, $str;
+
+        ### with IPC::Cmd > 0.41, this is fixed in teh library,
+        ### and there's no need for special casing any more.
+        ### DO NOT quote things for IPC::Run, it breaks stuff.
+        # $IPC::Cmd::USE_IPC_RUN
+        #    ? ($to, $self->uri)
+        #    : (QUOTE. $to .QUOTE, QUOTE. $self->uri .QUOTE);
+
+        ### shell out ###
+        my $captured;
+        unless(run( command => $cmd,
+                    buffer  => \$captured,
+                    verbose => $DEBUG
+        )) {
+            ### wget creates the output document always, even if the fetch
+            ### fails.. so unlink it in that case
+            1 while unlink $to;
+
+            return $self->_error(loc( "Command failed: %1", $captured || '' ));
+        }
+
+        return $to;
+
+    } else {
+        $METHOD_FAIL->{'lftp'} = 1;
+        return;
+    }
+}
+
+
 
 ### /bin/ftp fetch ###
 sub _ftp_fetch {
@@ -1074,9 +1148,9 @@ external programs and modules.
 Below is a mapping of what utilities will be used in what order
 for what schemes, if available:
 
-    file    => LWP, file
-    http    => LWP, wget, curl, lynx
-    ftp     => LWP, Net::FTP, wget, curl, ncftp, ftp
+    file    => LWP, lftp, file
+    http    => LWP, wget, curl, lftp, lynx
+    ftp     => LWP, Net::FTP, wget, curl, lftp, ncftp, ftp
     rsync   => rsync
 
 If you'd like to disable the use of one or more of these utilities
@@ -1192,6 +1266,7 @@ the $BLACKLIST, $METHOD_FAIL and other internal functions.
     ftp         => ftp
     curl        => curl
     rsync       => rsync
+    lftp        => lftp
 
 =head1 FREQUENTLY ASKED QUESTIONS
 
