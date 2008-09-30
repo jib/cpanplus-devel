@@ -15,7 +15,8 @@ my $Conf        = gimme_conf();
 my $CB          = CPANPLUS::Backend->new( $Conf );
 
 ### so we get an object with *our* configuration
-*CPANPLUS::Backend::new = sub { $CB };
+no warnings 'redefine';
+local *CPANPLUS::Backend::new = sub { $CB };
 
 use_ok( $Class );
 

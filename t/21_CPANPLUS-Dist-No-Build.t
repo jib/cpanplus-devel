@@ -58,7 +58,8 @@ ok( not grep { $_ eq $Inst } CPANPLUS::Dist->dist_types,
 
 ### now run the test, it should trigger the installation of the installer
 ### XXX whitebox test
-{   local *CPANPLUS::Backend::module_tree = sub { 
+{   no warnings 'redefine';
+    local *CPANPLUS::Backend::module_tree = sub { 
                            # mark C::D::Build as loaded
         CPANPLUS::Dist->_reset_dist_ignore; # make sure it's picked up next time
         CPANPLUS::Test::Module->new         # and provide an empty object to use
