@@ -1081,7 +1081,8 @@ sub _details {
     $self->_pager_open if scalar @$mods * 10 > $self->_term_rowcount;
 
 
-    my $format = "%-30s %-30s\n";
+    my $format  = "%-24s %-45s\n";
+    my $cformat = "%-24s %-45s %-10s\n";
     for my $mod (@$mods) {
         my $href = $mod->details( %$opts );
         my @list = sort { $a->module cmp $b->module } $mod->contains;
@@ -1101,7 +1102,8 @@ sub _details {
             my $showed;
             for my $item ( @list ) {
                 $self->__printf(
-                    $format, ($showed ? '' : 'Contains:'), $item->module
+                    $cformat, ($showed ? '' : 'Contains:'), 
+                             $item->module, $item->version
                 );
                 $showed++;
             }
