@@ -9,7 +9,7 @@ use strict;
 use Module::Load;
 use Test::More eval { load 'CPANPLUS::Internals::Source::SQLite'; 1 }
             ? 'no_plan'
-            : skip_all => "SQLite engine not available";
+            : (skip_all => "SQLite engine not available");
 
 use Data::Dumper;
 use File::Basename qw[dirname];

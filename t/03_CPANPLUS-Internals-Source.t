@@ -10,7 +10,7 @@ use Module::Load;
 use Test::More eval { 
             load $ENV{CPANPLUS_SOURCE_ENGINE} if $ENV{CPANPLUS_SOURCE_ENGINE}; 1 
         } ? 'no_plan'
-          : skip_all => "SQLite engine not available";
+          : (skip_all => "SQLite engine not available");
 
 
 use CPANPLUS::Backend;
