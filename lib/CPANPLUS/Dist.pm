@@ -297,8 +297,11 @@ sub find_configure_requires {
     my %hash = @_;
     
     my $meta;
-    my $tmpl = {
-        file    => { default => META_YML->( $mod->status->extract ),
+    my $tmpl = {                ### check if we have an extract path. if not, we 
+                                ### get 'undef value' warnings from file::spec
+        file    => { default => do { defined $mod->status->extract
+                                        ? META_YML->( $mod->status->extract )
+                                        : '' },
                      store   => \$meta,
                 },
     };                
