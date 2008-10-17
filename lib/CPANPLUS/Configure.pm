@@ -149,6 +149,11 @@ Returns true on success, false on failure.
             warn Params::Check->last_error, return
         );        
         
+        ### if the base dir is changed, we have to rescan it
+        ### for any CPANPLUS::Config::* files as well, so keep
+        ### track of it
+        my $cur_base = $self->get_conf('base');
+        
         ### warn if we find an old style config specified
         ### via environment variables
         {   my $env = ENV_CPANPLUS_CONFIG;
@@ -163,7 +168,7 @@ Returns true on success, false on failure.
         }            
         
         {   ### make sure that the homedir is included now
-            local @INC = ( CONFIG_USER_LIB_DIR->(), @INC );
+            local @INC = ( LIB_DIR->($cur_base), @INC );
         
             ### only set it up once
             if( !$loaded++ or $rescan ) {   
@@ -173,7 +178,7 @@ Returns true on success, false on failure.
                 
                 Module::Pluggable->import(
                     search_path => ['CPANPLUS::Config'],
-                    search_dirs => [ CONFIG_USER_LIB_DIR ],
+                    search_dirs => [ LIB_DIR->($cur_base) ],
                     except      => qr/::SUPER$/,
                     sub_name    => 'configs'
                 );
@@ -200,9 +205,12 @@ Returns true on success, false on failure.
                 } else {
                     msg(loc("  Loading config '%1'", $plugin),0);
                 
-                    eval { load $plugin };
-                    msg(loc("  Loaded '%1' (%2)", 
+                    if( eval { load $plugin; 1 } ) {
+                        msg(loc("  Loaded '%1' (%2)", 
                             $plugin, Module::Loaded::is_loaded( $plugin ) ), 0);
+                    } else {
+                        error(loc("  Error loading '%1': %2", $plugin, $@));
+                    }                        
                 }                   
                 
                 if( $@ ) {
@@ -215,7 +223,14 @@ Returns true on success, false on failure.
             }
         }
         
-        
+        ### did one of the plugins change the base dir? then we should
+        ### scan the dirs again
+        if( $cur_base ne $self->get_conf('base') ) {
+            msg(loc("Base dir changed from '%1' to '%2', rescanning",
+                    $cur_base, $self->get_conf('base')), 0);
+            $self->init( @_, rescan => 1 );
+        }      
+            
         ### clean up the paths once more, just in case
         $obj->_clean_up_paths;
 
