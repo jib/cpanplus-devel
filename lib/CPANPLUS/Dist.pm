@@ -9,6 +9,7 @@ use Cwd ();
 use Object::Accessor;
 use Parse::CPAN::Meta;
 
+use IPC::Cmd                    qw[run];
 use Params::Check               qw[check];
 use Module::Load::Conditional   qw[can_load check_install];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
@@ -107,8 +108,6 @@ sub new {
     my $self    = shift;
     my $class   = ref $self || $self;
     my %hash    = @_;
-
-
 
     ### first verify we got a module object ###
     my( $mod, $format );
@@ -441,6 +440,23 @@ sub _resolve_prereqs {
     
     for my $mod ( @sorted_prereqs ) {
         my $version = $prereqs->{$mod};
+        
+        ### 'perl' is a special case, there's no mod object for it
+        if( $mod eq PERL_CORE ) {
+            
+            ### run a CLI invocation to see if the perl you specified is
+            ### uptodate
+            my $ok = run( command => "$^X -M$version -e1", verbose => 0 );
+
+            unless( $ok ) {
+                error(loc(  "Module '%1' needs perl version '%2', but you ".
+                            "only have version '%3' -- can not proceed",
+                            $self->module, $version, 
+                            $cb->_perl_version( perl => $^X ) ) );
+                return;                            
+            }
+        }
+        
         my $modobj  = $cb->module_tree($mod);
 
         #### XXX we ignore the version, and just assume that the latest

@@ -226,6 +226,13 @@ ok( $Mod,                       "Got module object" );
                 ### set the conf back ###
                 sub { $conf->set_conf(prereqs => PREREQ_INSTALL); },
             ],
+            'Perl binary version too low' => [
+                sub { $cb->module_tree( $ModName )
+                        ->status->prereqs({ PERL_CORE, 10000000000 }); '' },
+                sub { like( CPANPLUS::Error->stack_as_string, 
+                            qr/needs perl version/,
+                            "   Perl version not high enough" ) },
+            ],                            
         },
         1 => {
             'Simple create'     => [
@@ -305,8 +312,14 @@ ok( $Mod,                       "Got module object" );
                       qr/Recursive dependency detected/,
                             "   Recursive dependency recorded ok" ) },
             ],
-
-          },
+            'Perl binary version sufficient' => [
+                sub { $cb->module_tree( $ModName )
+                        ->status->prereqs({ PERL_CORE, 1 }); '' },
+                sub { unlike( CPANPLUS::Error->stack_as_string, 
+                            qr/needs perl version/,
+                            "   Perl version sufficient" ) },
+            ],                            
+        },
     };
 
     for my $bool ( sort keys %$map ) {
@@ -329,7 +342,8 @@ ok( $Mod,                       "Got module object" );
             $cb->_status->mk_flush;
 
             ### get a new dist from Text::Bastardize ###
-            my $dist = $Module->new( module => $cb->module_tree( $ModName ) );
+            my $mod  = $cb->module_tree( $ModName );
+            my $dist = $Module->new( module => $mod );
 
             ### first sub returns target ###
             my $sub    = shift @$aref;
@@ -339,7 +353,7 @@ ok( $Mod,                       "Got module object" );
                             format  => $Module,
                             force   => 1,
                             target  => $target,
-                            prereqs => $Prereq );
+                            prereqs => ($mod->status->prereqs || $Prereq) );
 
             is( !!$flag, !!$bool,   $txt );
 
