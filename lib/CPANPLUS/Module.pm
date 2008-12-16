@@ -1207,6 +1207,11 @@ Returns the currently installed version of this module, if any.
 Returns the location of the currently installed file of this module,
 if any.
 
+=head2 $dir = $self->installed_dir()
+
+Returns the directory (or more accurately, the C<@INC> handle) from
+which this module was loaded, if any.
+
 =head2 $bool = $self->is_uptodate([version => VERSION_NUMBER])
 
 Returns a boolean indicating if this module is uptodate or not.
@@ -1217,6 +1222,7 @@ Returns a boolean indicating if this module is uptodate or not.
 {   my $map = {             # hashkey,      alternate rv
         installed_version   => ['version',  0 ],
         installed_file      => ['file',     ''],
+        installed_dir       => ['dir',      ''],
         is_uptodate         => ['uptodate', 0 ],
     };
 
