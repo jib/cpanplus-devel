@@ -1843,6 +1843,10 @@ sub _read_configuration_from_rc {
         loc( "You can run an interactive setup using '%1'", 's reconfigure' ),    
         loc( "You can add custom sources to your index. See '%1' for details",
              '/cs --help' ),
+        loc( "CPANPLUS now has an experimental SQLite backend. You can enable ".
+             "it via: '%1'. Update dependencies via '%2'",
+             's conf source_engine CPANPLUS::Internals::Source::SQLite; s save',
+             's selfupdate enabled_features ' ),             
     );
     
     sub _show_random_tip {
