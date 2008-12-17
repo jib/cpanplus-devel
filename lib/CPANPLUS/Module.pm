@@ -1120,7 +1120,7 @@ sub bundle_modules {
 
             if ($flag && /^(?!=)(\S+)\s*(\S+)?/) {
                 my $module  = $1;
-                my $version = $2 || '0';
+                my $version = $cb->_version_to_number( version => $2 );
 
                 my $obj = $cb->module_tree($module);
 
