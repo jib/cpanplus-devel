@@ -26,6 +26,23 @@ use Module::Load::Conditional   qw[check_install];
 
 CPANPLUS::Config
 
+=head1 SYNOPSIS
+
+    ### conf object via CPANPLUS::Backend;
+    $cb   = CPANPLUS::Backend->new;
+    $conf = $cb->configure_object;
+    
+    ### or as a standalone object
+    $conf = CPANPLUS::Configure->new;
+
+    ### values in 'conf' section
+    $verbose = $conf->get_conf( 'verbose' );    
+    $conf->set_conf( verbose => 1 );
+
+    ### values in 'program' section
+    $editor = $conf->get_program( 'editor' );
+    $conf->set_program( editor => '/bin/vi' );
+
 =head1 DESCRIPTION
 
 This module contains defaults and heuristics for configuration 
