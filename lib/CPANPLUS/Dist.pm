@@ -455,6 +455,8 @@ sub _resolve_prereqs {
                             $cb->_perl_version( perl => $^X ) ) );
                 return;                            
             }
+
+            next;
         }
         
         my $modobj  = $cb->module_tree($mod);

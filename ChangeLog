@@ -1,3 +1,8 @@
+Changes for XXXXXX
+================================================
+* Address #43128: Fixes 'no such module perl on CPAN' errors:
+  when 'perl' is listed as a prerequisite, its version should be checked,
+  but should not be checked against the index of modules on CPAN
 Changes for 0.85_04     Mon Sep  8 15:37:01 2008
 ================================================
 * Updated CPAN Testers reporting to follow new project guidelines:
