@@ -103,36 +103,44 @@ otherwise.
 
 This function queries the CPAN testers database at
 I<http://testers.cpan.org/> for test results of specified module objects,
-module names or distributions.
+module names or distributions. 
 
 The optional argument C<all_versions> controls whether all versions of
 a given distribution should be grabbed.  It defaults to false
 (fetching only reports for the current version).
 
 Returns the a list with the following data structures (for CPANPLUS
-version 0.042) on success, or false on failure:
+version 0.042) on success, or false on failure. The contents of the
+data structure depends on what I<http://testers.cpan.org> returns,
+but generally looks like this:
 
           {
             'grade' => 'PASS',
             'dist' => 'CPANPLUS-0.042',
             'platform' => 'i686-pld-linux-thread-multi'
+            'details' => 'http://nntp.x.perl.org/group/perl.cpan.testers/98316'
+            ...
           },
           {
             'grade' => 'PASS',
             'dist' => 'CPANPLUS-0.042',
             'platform' => 'i686-linux-thread-multi'
+            'details' => 'http://nntp.x.perl.org/group/perl.cpan.testers/99416'
+            ...
           },
           {
             'grade' => 'FAIL',
             'dist' => 'CPANPLUS-0.042',
             'platform' => 'cygwin-multi-64int',
             'details' => 'http://nntp.x.perl.org/group/perl.cpan.testers/99371'
+            ...
           },
           {
             'grade' => 'FAIL',
             'dist' => 'CPANPLUS-0.042',
             'platform' => 'i586-linux',
             'details' => 'http://nntp.x.perl.org/group/perl.cpan.testers/99396'
+            ...
           },
 
 The status of the test can be one of the following:
