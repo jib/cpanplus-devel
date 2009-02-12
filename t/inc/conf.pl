@@ -184,8 +184,8 @@ sub gimme_conf {
         }
     }
 
-$conf->set_conf( source_engine =>  $ENV{CPANPLUS_SOURCE_ENGINE} )
-    if $ENV{CPANPLUS_SOURCE_ENGINE};
+    $conf->set_conf( source_engine =>  $ENV{CPANPLUS_SOURCE_ENGINE} )
+        if $ENV{CPANPLUS_SOURCE_ENGINE};
     
     _clean_test_dir( [
         $conf->get_conf('base'),     
