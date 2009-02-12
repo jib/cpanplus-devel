@@ -91,6 +91,12 @@ CPANPLUS::Internals::Source::Memory - In memory implementation
     
         return 1;
     }
+    
+    ### saves current memory state
+    sub _save_state {
+        my $self = shift;
+        return $self->_finalize_trees( @_, uptodate => 0 );
+    }        
 }
 
 sub _add_author_object {

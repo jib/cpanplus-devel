@@ -13,6 +13,7 @@ use Test::More eval { load 'CPANPLUS::Internals::Source::SQLite'; 1 }
 
 use Data::Dumper;
 use File::Basename qw[dirname];
+use CPANPLUS::Error;
 use CPANPLUS::Backend;
 use CPANPLUS::Internals::Constants;
 
@@ -30,12 +31,22 @@ ok( $cb->reload_indices( update_source => 1 ),
 ok( $cb->__sqlite_dbh,          "   Got a DBH " );
 ok( $cb->__sqlite_file,         "   Got a DB file" );
 
+
 ### make sure we have trees and they're hashes
 {   ok( $cb->author_tree,       "Got author tree" );
     isa_ok( $cb->author_tree,   "HASH" );
 
     ok( $cb->module_tree,       "Got module tree" );
     isa_ok( $cb->module_tree,   "HASH" );
+}
+
+### save state, shouldn't work
+{   CPANPLUS::Error->flush;
+    my $rv = $cb->save_state;
+    
+    ok( !$rv,                   "Saving state not implemented" );
+    like( CPANPLUS::Error->stack_as_string, qr/not implemented/i,
+                                "   Diagnostics confirmed" );
 }
 
 ### test look ups

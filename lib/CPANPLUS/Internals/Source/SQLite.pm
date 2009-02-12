@@ -119,6 +119,12 @@ CPANPLUS::Internals::Source::SQLite - SQLite implementation
     sub _custom_trees_completed     { return }
     ### finish transaction
     sub _finalize_trees             { $_[0]->__sqlite_dbh->query('COMMIT'); return 1 }
+
+    ### saves current memory state, but not implemented in sqlite
+    sub _save_state                 { 
+        error(loc("%1 has not implemented writing state to disk", __PACKAGE__)); 
+        return;
+    }
 }
 
 {   my $txn_count = 0;

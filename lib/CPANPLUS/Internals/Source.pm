@@ -23,7 +23,7 @@ $Params::Check::VERBOSE = 1;
 ### list of methods the parent class must implement
 {   for my $sub ( qw[_init_trees _finalize_trees 
                      _standard_trees_completed _custom_trees_completed
-                     _add_module_object _add_author_object
+                     _add_module_object _add_author_object _save_state
                     ] 
     ) {
         no strict 'refs';
