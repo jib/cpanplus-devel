@@ -203,14 +203,15 @@ sub _query_report {
         return;
     };
 
-    my $dist = $mod->package_name .'-'. $mod->package_version;
+    my $dist    = $mod->package_name .'-'. $mod->package_version;
+    my $details = TESTERS_DETAILS_URL->($mod->package_name);
 
     my @rv;
     for my $href ( @$aref ) {
         next unless $all or defined $href->{'distversion'} && 
                             $href->{'distversion'} eq $dist;
 
-        $href->{'details'}  = TESTERS_DETAILS_URL->($mod->package_name);
+        $href->{'details'}  = $details;
         
         ### backwards compatibility :(
         $href->{'dist'}     = delete $href->{'distversion'};
