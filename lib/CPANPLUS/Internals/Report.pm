@@ -202,13 +202,13 @@ sub _query_report {
         next unless $all or defined $href->{'distversion'} && 
                             $href->{'distversion'} eq $dist;
 
-        push @rv, { platform    => $href->{'platform'},
-                    grade       => $href->{'action'},
-                    dist        => $href->{'distversion'},
-                    ( $href->{'action'} eq 'FAIL'
-                        ? (details => TESTERS_DETAILS_URL->($mod->package_name))
-                        : ()
-                    ) };
+        $href->{'details'}  = TESTERS_DETAILS_URL->($mod->package_name);
+        
+        ### backwards compatibility :(
+        $href->{'dist'}     = delete $href->{'distversion'};
+        $href->{'grade'}    = delete $href->{'action'};
+
+        push @rv, $href;
     }
 
     return @rv if @rv;
