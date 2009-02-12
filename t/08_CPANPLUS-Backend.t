@@ -177,11 +177,16 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
             'HTML-Embperl', 
             '1.2.1',
         ],
-        'KANE/File-Fetch-0.15_03',  => [
+        'KANE/File-Fetch-0.15_03' => [
             'KANE',
             'File-Fetch',
             '0.15_03',
         ],
+        'AUSCHUTZ/IO-Stty-.02.tar.gz' => [
+            'AUSCHUTZ',
+            'IO-Stty',
+            '.02',
+        ],            
     );       
 
     while ( my($guess, $attr) = splice @map, 0, 2 ) {

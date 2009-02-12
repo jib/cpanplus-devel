@@ -495,8 +495,8 @@ For example, C<Foo-Bar-1.2.tar.gz> would return the following parts:
                     )*
                 /xi;   
     
-    my $ver_re = qr/[a-z]*\d+[a-z]*     # contains a digit and possibly letters
-                    (?:
+    my $ver_re = qr/[a-z]*\d*?[a-z]*    # contains a digit and possibly letters
+                    (?:                 # however, some start with a . only :(
                         [-._]           # followed by a delimiter
                         [a-z\d]+        # and more digits and or letters
                     )*?
