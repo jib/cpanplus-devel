@@ -11,13 +11,13 @@ use vars    qw[$VERSION @ISA @EXPORT];
 
 use Package::Constants;
 
+### for the version
+require CPANPLUS::Internals;
 
-$VERSION    = 0.01;
+$VERSION    = $CPANPLUS::Internals::VERSION = $CPANPLUS::Internals::VERSION;
 @ISA        = qw[Exporter];
 @EXPORT     = Package::Constants->list( __PACKAGE__ );
 
-### for the version
-require CPANPLUS::Internals;
 
 ### OS to regex map ###
 my %OS = (
