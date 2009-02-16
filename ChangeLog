@@ -1,8 +1,45 @@
-Changes for XXXXXX
+Changes for 0.85_05     Mon Feb 16 12:13:18 2009
 ================================================
+* Address: #39399: configure_requires doesn't quite work yet; CPANPLUS now 
+  bootstraps CPANPLUS::Dist::Build and Module::Build if the module-to-be-
+  installed requires it. Used 't CPAN::Test::Dummy::Perl5::Build' to verify
+  against a pristine 5.8.8 as well as adding tests to t/21 to make sure this
+  mechanism works.
 * Address #43128: Fixes 'no such module perl on CPAN' errors:
   when 'perl' is listed as a prerequisite, its version should be checked,
   but should not be checked against the index of modules on CPAN
+* Address: #40255: Special case for 'perl' requirement: if a requirement for
+  'perl' is specified in the META.yml/PREREQ_PM/Build.PL, it is now special
+  cased and CPANPLUS will verify the version of perl you are using is uptodate.
+  This is equivalent to the more traditional 'require 5.x.y' at the top of a
+  Makefile.PL  
+* Address #41760: [PATCH] Add 'build_dir_reuse' option. This adds
+  $cb->save_state as an API call, which makes it possible to save
+  state between two sessions.
+* Inspired by: #39095: Multiple modules with different version
+  numbers in one release go wrong: CPANPLUS now adds the version numbers of the
+  modules in the Contains: line in the default shell
+* Add all the return values from the CPAN Testers report to $mod->fetch_report,
+  not just selected fields.
+* Add $module->installed_dir as a feature; this requires a newer
+  Module::Load::Conditional
+* When a user generated config.pm changes the base dir, CPANPLUS will now rescan
+  for config files in that base dir too
+* New edge case in package naming discovered; adapt regex and add tests
+* Address: #41756 (Prerequisite Lists Inconsistent) by using 
+  $cb->_version_to_number for Bundle::* modules as well	 
+* Address: #41157: Module::module_is_supplied_with_perl_core()
+  broken for perl 5.10
+* Address #39948: Test warnings in 0.85_04; quell more warnings
+* Address #40892: Fix CPANPLUS::Config docs to be more clear on how
+  to set/change configs	 
+* Remove independant version statements; all versions are now derived
+  from CPANPLUS::Internals::Version
+* Mention the sqlite backend in a tip	 
+* Test fix to set makeflags as we intended to do. required to deal with IPC::Cmd  
+  0.42, which parses whitespace slightly different on win32
+* Updated bundled modules  
+  
 Changes for 0.85_04     Mon Sep  8 15:37:01 2008
 ================================================
 * Updated CPAN Testers reporting to follow new project guidelines:
@@ -15,7 +52,7 @@ Changes for 0.85_04     Mon Sep  8 15:37:01 2008
 * Address #38324: no caching of CHECKSUMS
   Checksum files are now cached for 3600 seconds by default to avoid
   refetching to often. This can be overrided by force or setting a lower ttl.
-* Address #38290: CPANPLUS::Backend-&gt;install() always reindexes
+* Address #38290: CPANPLUS::Backend->install() always reindexes
   Params::Check::NO_DUPLICATES was enabled, and that meant an empty 
   hash lookup. Use the assigned scalar instead
 * Some speed ups for the sqlite engine. turns out dbix::simple's (??) 
