@@ -9,14 +9,14 @@ BEGIN {
     use constant IS_WIN98       => (IS_WIN32 and !Win32::IsWinNT())   ? 1 : 0;
     use constant ALARM_CLASS    => __PACKAGE__ . '::TimeOut';
     use constant SPECIAL_CHARS  => qw[< > | &];
-    use constant QUOTE          => do { $^O eq 'MSWin32' ? q["] : q['] };            
+    use constant QUOTE          => do { IS_WIN32 ? q["] : q['] };            
 
     use Exporter    ();
     use vars        qw[ @ISA $VERSION @EXPORT_OK $VERBOSE $DEBUG
                         $USE_IPC_RUN $USE_IPC_OPEN3 $WARN
                     ];
 
-    $VERSION        = '0.41_04';
+    $VERSION        = '0.42';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -24,13 +24,13 @@ BEGIN {
     $USE_IPC_OPEN3  = not IS_VMS;
 
     @ISA            = qw[Exporter];
-    @EXPORT_OK      = qw[can_run run];
+    @EXPORT_OK      = qw[can_run run QUOTE];
 }
 
 require Carp;
 use File::Spec;
 use Params::Check               qw[check];
-use Text::ParseWords            qw[shellwords];
+use Text::ParseWords            ();             # import ONLY if needed!
 use Module::Load::Conditional   qw[can_load];
 use Locale::Maketext::Simple    Style => 'gettext';
 
@@ -78,6 +78,7 @@ IPC::Cmd - finding and running system commands made easy
     ### don't have IPC::Cmd be verbose, ie don't print to stdout or
     ### stderr when running commands -- default is '0'
     $IPC::Cmd::VERBOSE = 0;
+         
 
 =head1 DESCRIPTION
 
@@ -91,7 +92,7 @@ as adhere to your verbosity settings.
 
 =head1 CLASS METHODS 
 
-=head2 $bool = IPC::Cmd->can_use_ipc_run( [VERBOSE] )
+=head2 $ipc_run_version = IPC::Cmd->can_use_ipc_run( [VERBOSE] )
 
 Utility function that tells you if C<IPC::Run> is available. 
 If the verbose flag is passed, it will print diagnostic messages
@@ -114,10 +115,10 @@ sub can_use_ipc_run     {
                     );
                     
     ### otherwise, we're good to go
-    return 1;                    
+    return $IPC::Run::VERSION;                    
 }
 
-=head2 $bool = IPC::Cmd->can_use_ipc_open3( [VERBOSE] )
+=head2 $ipc_open3_version = IPC::Cmd->can_use_ipc_open3( [VERBOSE] )
 
 Utility function that tells you if C<IPC::Open3> is available. 
 If the verbose flag is passed, it will print diagnostic messages
@@ -141,7 +142,7 @@ sub can_use_ipc_open3   {
         verbose => ($WARN && $verbose),
     );
     
-    return 1;
+    return $IPC::Open3::VERSION;
 }
 
 =head2 $bool = IPC::Cmd->can_capture_buffer
@@ -441,7 +442,7 @@ sub run {
         if ( $@ and ref $@ and $@->isa( ALARM_CLASS ) ) {
             $err = $@->();  # the error code is an expired alarm
 
-        ### another error happened, set by the dispatch sub
+        ### another error happened, set by the dispatchub
         } else {
             $err = $self->error;
         }
@@ -577,110 +578,116 @@ sub _open3_run {
     }
 }
 
+### text::parsewords::shellwordss() uses unix semantics. that will break
+### on win32
+{   my $parse_sub = IS_WIN32 
+                        ? __PACKAGE__->can('_split_like_shell_win32')
+                        : Text::ParseWords->can('shellwords');
 
-sub _ipc_run {  
-    my $self            = shift;
-    my $cmd             = shift;
-    my $_out_handler    = shift;
-    my $_err_handler    = shift;
-    
-    STDOUT->autoflush(1); STDERR->autoflush(1);
+    sub _ipc_run {  
+        my $self            = shift;
+        my $cmd             = shift;
+        my $_out_handler    = shift;
+        my $_err_handler    = shift;
+        
+        STDOUT->autoflush(1); STDERR->autoflush(1);
 
-    ### a command like:
-    # [
-    #     '/usr/bin/gzip',
-    #     '-cdf',
-    #     '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz',
-    #     '|',
-    #     '/usr/bin/tar',
-    #     '-tf -'
-    # ]
-    ### needs to become:
-    # [
-    #     ['/usr/bin/gzip', '-cdf',
-    #       '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz']
-    #     '|',
-    #     ['/usr/bin/tar', '-tf -']
-    # ]
+        ### a command like:
+        # [
+        #     '/usr/bin/gzip',
+        #     '-cdf',
+        #     '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz',
+        #     '|',
+        #     '/usr/bin/tar',
+        #     '-tf -'
+        # ]
+        ### needs to become:
+        # [
+        #     ['/usr/bin/gzip', '-cdf',
+        #       '/Users/kane/sources/p4/other/archive-extract/t/src/x.tgz']
+        #     '|',
+        #     ['/usr/bin/tar', '-tf -']
+        # ]
 
     
-    my @command; 
-    my $special_chars;
+        my @command; 
+        my $special_chars;
     
-    my $re = do { my $x = join '', SPECIAL_CHARS; qr/([$x])/ };
-    if( ref $cmd ) {
-        my $aref = [];
-        for my $item (@$cmd) {
-            if( $item =~ $re ) {
-                push @command, $aref, $item;
-                $aref = [];
-                $special_chars .= $1;
-            } else {
-                push @$aref, $item;
+        my $re = do { my $x = join '', SPECIAL_CHARS; qr/([$x])/ };
+        if( ref $cmd ) {
+            my $aref = [];
+            for my $item (@$cmd) {
+                if( $item =~ $re ) {
+                    push @command, $aref, $item;
+                    $aref = [];
+                    $special_chars .= $1;
+                } else {
+                    push @$aref, $item;
+                }
             }
-        }
-        push @command, $aref;
-    } else {
-        @command = map { if( $_ =~ $re ) {
-                            $special_chars .= $1; $_;
-                         } else {
-#                            [ split / +/ ]
-                             [ map { m/\ / ? qq{'$_'} : $_ } shellwords($_) ]
-                         }
-                    } split( /\s*$re\s*/, $cmd );
-    }
- 
-    ### if there's a pipe in the command, *STDIN needs to 
-    ### be inserted *BEFORE* the pipe, to work on win32
-    ### this also works on *nix, so we should do it when possible
-    ### this should *also* work on multiple pipes in the command
-    ### if there's no pipe in the command, append STDIN to the back
-    ### of the command instead.
-    ### XXX seems IPC::Run works it out for itself if you just
-    ### dont pass STDIN at all.
-    #     if( $special_chars and $special_chars =~ /\|/ ) {
-    #         ### only add STDIN the first time..
-    #         my $i;
-    #         @command = map { ($_ eq '|' && not $i++) 
-    #                             ? ( \*STDIN, $_ ) 
-    #                             : $_ 
-    #                         } @command; 
-    #     } else {
-    #         push @command, \*STDIN;
-    #     }
-  
-    # \*STDIN is already included in the @command, see a few lines up
-    my $ok = eval { IPC::Run::run(   @command, 
-                            fileno(STDOUT).'>',
-                            $_out_handler,
-                            fileno(STDERR).'>',
-                            $_err_handler
-                        )
-                    };
-
-    ### all is well
-    if( $ok ) {
-        return $self->ok( $ok );
-
-    ### some error occurred
-    } else {
-        $self->ok( 0 );
-
-        ### if the eval fails due to an exception, deal with it
-        ### unless it's an alarm 
-        if( $@ and not UNIVERSAL::isa( $@, ALARM_CLASS ) ) {        
-            $self->error( $@ );
-
-        ### if it *is* an alarm, propagate        
-        } elsif( $@ ) {
-            die $@;
-
-        ### some error in the sub command
+            push @command, $aref;
         } else {
-            $self->error( $self->_pp_child_error( $cmd, $? ) );
+            @command = map { if( $_ =~ $re ) {
+                                $special_chars .= $1; $_;
+                             } else {
+#                                [ split /\s+/ ]
+                                 [ map { m/[ ]/ ? qq{'$_'} : $_ } $parse_sub->($_) ]
+                             }
+                        } split( /\s*$re\s*/, $cmd );
         }
 
-        return;
+        ### if there's a pipe in the command, *STDIN needs to 
+        ### be inserted *BEFORE* the pipe, to work on win32
+        ### this also works on *nix, so we should do it when possible
+        ### this should *also* work on multiple pipes in the command
+        ### if there's no pipe in the command, append STDIN to the back
+        ### of the command instead.
+        ### XXX seems IPC::Run works it out for itself if you just
+        ### dont pass STDIN at all.
+        #     if( $special_chars and $special_chars =~ /\|/ ) {
+        #         ### only add STDIN the first time..
+        #         my $i;
+        #         @command = map { ($_ eq '|' && not $i++) 
+        #                             ? ( \*STDIN, $_ ) 
+        #                             : $_ 
+        #                         } @command; 
+        #     } else {
+        #         push @command, \*STDIN;
+        #     }
+  
+        # \*STDIN is already included in the @command, see a few lines up
+        my $ok = eval { IPC::Run::run(   @command, 
+                                fileno(STDOUT).'>',
+                                $_out_handler,
+                                fileno(STDERR).'>',
+                                $_err_handler
+                            )
+                        };
+
+        ### all is well
+        if( $ok ) {
+            return $self->ok( $ok );
+
+        ### some error occurred
+        } else {
+            $self->ok( 0 );
+
+            ### if the eval fails due to an exception, deal with it
+            ### unless it's an alarm 
+            if( $@ and not UNIVERSAL::isa( $@, ALARM_CLASS ) ) {        
+                $self->error( $@ );
+
+            ### if it *is* an alarm, propagate        
+            } elsif( $@ ) {
+                die $@;
+
+            ### some error in the sub command
+            } else {
+                $self->error( $self->_pp_child_error( $cmd, $? ) );
+            }
+    
+            return;
+        }
     }
 }
 
@@ -737,6 +744,68 @@ sub _system_run {
         return $cmd;
     }
 }
+
+
+### XXX this is cribbed STRAIGHT from M::B 0.30 here:
+### http://search.cpan.org/src/KWILLIAMS/Module-Build-0.30/lib/Module/Build/Platform/Windows.pm:split_like_shell
+### XXX this *should* be integrated into text::parsewords
+sub _split_like_shell_win32 {
+  # As it turns out, Windows command-parsing is very different from
+  # Unix command-parsing.  Double-quotes mean different things,
+  # backslashes don't necessarily mean escapes, and so on.  So we
+  # can't use Text::ParseWords::shellwords() to break a command string
+  # into words.  The algorithm below was bashed out by Randy and Ken
+  # (mostly Randy), and there are a lot of regression tests, so we
+  # should feel free to adjust if desired.
+  
+  local $_ = shift;
+  
+  my @argv;
+  return @argv unless defined() && length();
+  
+  my $arg = '';
+  my( $i, $quote_mode ) = ( 0, 0 );
+  
+  while ( $i < length() ) {
+    
+    my $ch      = substr( $_, $i  , 1 );
+    my $next_ch = substr( $_, $i+1, 1 );
+    
+    if ( $ch eq '\\' && $next_ch eq '"' ) {
+      $arg .= '"';
+      $i++;
+    } elsif ( $ch eq '\\' && $next_ch eq '\\' ) {
+      $arg .= '\\';
+      $i++;
+    } elsif ( $ch eq '"' && $next_ch eq '"' && $quote_mode ) {
+      $quote_mode = !$quote_mode;
+      $arg .= '"';
+      $i++;
+    } elsif ( $ch eq '"' && $next_ch eq '"' && !$quote_mode &&
+          ( $i + 2 == length()  ||
+        substr( $_, $i + 2, 1 ) eq ' ' )
+        ) { # for cases like: a"" => [ 'a' ]
+      push( @argv, $arg );
+      $arg = '';
+      $i += 2;
+    } elsif ( $ch eq '"' ) {
+      $quote_mode = !$quote_mode;
+    } elsif ( $ch eq ' ' && !$quote_mode ) {
+      push( @argv, $arg ) if $arg;
+      $arg = '';
+      ++$i while substr( $_, $i + 1, 1 ) eq ' ';
+    } else {
+      $arg .= $ch;
+    }
+    
+    $i++;
+  }
+  
+  push( @argv, $arg ) if defined( $arg ) && length( $arg );
+  return @argv;
+}
+
+
 
 {   use File::Spec;
     use Symbol;
@@ -850,6 +919,19 @@ sub _pp_child_error {
 
 1;
 
+=head2 $q = QUOTE
+
+Returns the character used for quoting strings on this platform. This is
+usually a C<'> (single quote) on most systems, but some systems use different
+quotes. For example, C<Win32> uses C<"> (double quote). 
+
+You can use it as follows:
+
+  use IPC::Cmd qw[run QUOTE];
+  my $cmd = q[echo ] . QUOTE . q[foo bar] . QUOTE;
+
+This makes sure that C<foo bar> is treated as a string, rather than two
+seperate arguments to the C<echo> function.
 
 __END__
 
@@ -923,8 +1005,9 @@ Defaults to true. Turn this off at your own risk.
 =item Whitespace and IPC::Open3 / system()
 
 When using C<IPC::Open3> or C<system>, if you provide a string as the
-C<command> argument, it is assumed to be appropriately escaped. However,
-if you provide and C<Array Reference>, special rules apply:
+C<command> argument, it is assumed to be appropriately escaped. You can
+use the C<QUOTE> constant to use as a portable quote character (see above).
+However, if you provide and C<Array Reference>, special rules apply:
 
 If your command contains C<Special Characters> (< > | &), it will
 be internally stringified before executing the command, to avoid that these

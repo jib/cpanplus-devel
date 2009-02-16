@@ -6,7 +6,7 @@ use Carp qw[carp];
 BEGIN { use base 'Exporter';
         use vars qw[@EXPORT $VERSION];
         
-        $VERSION = '0.01';
+        $VERSION = '0.02';
         @EXPORT  = qw[mark_as_loaded mark_as_unloaded is_loaded];
 }
 
