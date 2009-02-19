@@ -59,15 +59,27 @@ ok( not grep { $_ eq $Inst } CPANPLUS::Dist->dist_types,
 ### now run the test, it should trigger the installation of the installer
 ### XXX whitebox test
 {   no warnings 'redefine';
+
+    ### bootstrapping creates a call to $cb->module_tree('c::d::build')->install
+    ### we need to intercept that call
+    my $org_mt = CPANPLUS::Backend->can('module_tree');
     local *CPANPLUS::Backend::module_tree = sub { 
-                           # mark C::D::Build as loaded
-        CPANPLUS::Dist->_reset_dist_ignore; # make sure it's picked up next time
-        CPANPLUS::Test::Module->new         # and provide an empty object to use
+        my $self = shift;
+        my $mod  = shift;
+        
+        ### return a dummy object if this is the bootstrap call
+        return CPANPLUS::Test::Module->new if $mod eq $Inst;
+        
+        ### otherwise do a regular call
+        return $org_mt->( $self, $mod, @_ );
     };
-
-    ok( $Mod->create( skiptest => 1),
-                                'Ran $Mod->create()' );
-
+    
+    ### bootstrap install call will abort the ->create() call, so catch
+    ### that here
+    eval { $Mod->create( skiptest => 1) };
+    
+    ok( $@,                     "Create call aborted at bootstrap phase" );
+    like( $@, qr/$Inst/,        "   Diagnostics confirmed" );
     
     my $diag = CPANPLUS::Error->stack_as_string;
     like( $diag, qr/This module requires.*$Inst/,
@@ -80,16 +92,23 @@ ok( not grep { $_ eq $Inst } CPANPLUS::Dist->dist_types,
 
 END { 1 while unlink output_file()  }
 
-### place holder package to serve as a module object
+### place holder package to serve as a module object for C::D::Build
 {   package CPANPLUS::Test::Module;
     sub new     { return bless {} }
-    sub install { return 1 }
+    sub install { 
+        ### at load time we ignored C::D::Build. Reset the ignore here
+        ### so a 'rescan' after the 'install' picks up C::D::Build
+        CPANPLUS::Dist->_reset_dist_ignore;
+        return 1; 
+    }
 }
 
 ### test package for cpanplus::dist::build
 {   package CPANPLUS::Dist::Build;
     use base 'CPANPLUS::Dist::Base';
     
+    ### shortcut out of the installation procedure
+    sub new                 { die __PACKAGE__ };
     sub format_available    { 1 }
     sub init                { 1 }
     sub prepare             { 1 }
