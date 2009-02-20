@@ -1444,7 +1444,7 @@ sub uninstall {
 
     for my $dir ( sort @$dirs ) {
         local *DIR;
-        open DIR, $dir or next;
+        opendir DIR, $dir or next;
         my @count = readdir(DIR);
         close DIR;
 
