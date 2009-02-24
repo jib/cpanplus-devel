@@ -1,3 +1,10 @@
+Changes for 0.85_06     Tue Feb 24 18:27:37 2009
+================================================
+* This is a test suite fix. Users of 0.85_05 need not upgrade.
+* With configure_requires/C::D::Build bootstrapping, the tests in 
+  t/21_CPANPLUS-Dist-No-Build.t were no longer correct and caused test 
+  failures on machines without C::D::Build installed.
+
 Changes for 0.85_05     Mon Feb 16 12:13:18 2009
 ================================================
 * Address: #39399: configure_requires doesn't quite work yet; CPANPLUS now 
