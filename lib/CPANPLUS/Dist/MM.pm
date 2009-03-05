@@ -222,7 +222,7 @@ sub prepare {
         my $tmpl = {
             perl            => {    default => $^X, store => \$perl },
             makemakerflags  => {    default =>
-                                        $conf->get_conf('makemakerflags'),
+                                        $conf->get_conf('makemakerflags') || '',
                                     store => \$mmflags },                 
             force           => {    default => $conf->get_conf('force'), 
                                     store   => \$force },
