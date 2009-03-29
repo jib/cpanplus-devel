@@ -46,9 +46,6 @@ We're sorry for the inconvenience.
     require 5.008001;
 }
 
-### dont use, we dont want the coderef in @INC
-### XXX other modules use it, so the coderef will still be there ;(
-require CPANPLUS::inc;              # XXX get rid of me!
 ### it spews warnings though, so grep those out
 ### also grep out the warnings we get from using Module::Loaded
 BEGIN { 
