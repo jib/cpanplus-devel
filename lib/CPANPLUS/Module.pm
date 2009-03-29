@@ -992,6 +992,7 @@ sub install {
 
 
     ### do SIGNATURE checks? ###
+    ### XXX check status and not recheck EVERY time?
     if( $conf->get_conf('signature') ) {
         unless( $self->check_signature( verbose => $args->{verbose} ) ) {
             error( loc( "Signature check failed for module '%1' ".
