@@ -1597,6 +1597,24 @@ sub _extutils_installed {
                         verbose     => $verbose,
                     );
 
+    my @config_names = (
+        ### lib
+        {   lib     => 'privlib',       # perl-only
+            arch    => 'archlib',       # compiled code
+            prefix  => 'prefix',        # prefix to both
+        },
+        ### site
+        {   lib      => 'sitelib',
+            arch     => 'sitearch',
+            prefix   => 'siteprefix',
+        },
+        ### vendor
+        {   lib     => 'vendorlib',
+            arch    => 'vendorarch',
+            prefix  => 'vendorprefix',
+        },
+    );
+
     ### search in your regular @INC, and anything you added to your config.
     ### this lets EU::Installed find .packlists that are *not* in the standard
     ### compiled in @INC path. Requires EU::I 1.42 or up. this addresses #33438
@@ -1605,30 +1623,42 @@ sub _extutils_installed {
     my @libs;
     for my $lib ( @{ $conf->get_conf('lib') } ) {
         require Config;
-        
+  
+        ### and just the standard dir
+        push @libs, $lib;
+  
         ### figure out what an MM prefix expands to. Basically, it's the
         ### site install target from %Config, ie: /opt/lib/perl5/site_perl/5.8.8 
         ### minus the site wide prefix, ie: /opt
         ### this lets users add the dir they have set as their EU::MM PREFIX
         ### to our 'lib' config and it Just Works
-        ### XXX is this the right thing to do?
-        push @libs, do {   
-            my $site    = $Config::Config{sitelib};
-            my $prefix  = quotemeta $Config::Config{prefix};
-        
-            ### strip the prefix from the site dir
-            $site =~ s/^$prefix//;
-            
-            File::Spec->catdir( $lib, $site ), 
-            File::Spec->catdir( $lib, $site, $Config::Config{'archname'} );
-        };
-
         ### the arch specific dir, ie:
         ### /opt/lib/perl5/site_perl/5.8.8/darwin-2level        
-        push @libs, File::Spec->catdir( $lib, $Config::Config{'archname'} );
-    
-        ### and just the standard dir
-        push @libs, $lib;
+        ### XXX is this the right thing to do?
+        
+        ### we add all 6 dir combos for prefixes:
+        ### /foo/lib
+        ### /foo/lib/arch
+        ### /foo/site/lib
+        ### /foo/site/lib/arch
+        ### /foo/vendor/lib
+        ### /foo/vendor/lib/arch
+        for my $href ( @config_names ) {
+            for my $key ( qw[lib arch] ) {
+            
+                ### look up the config value -- use EXP for the EXPANDED
+                ### version, so no ~ etc are found in there
+                my $dir     = $Config::Config{ $href->{ $key } .'exp' } or next;
+                my $prefix  = $Config::Config{ $href->{prefix} };
+
+                ### remove the prefix from it, so we can append to our $lib
+                $dir        =~ s/^\Q$prefix\E//;
+                
+                ### do the appending
+                push @libs, File::Spec->catdir( $lib, $dir );
+                
+            }
+        }
     }        
 
     my $inst;    
