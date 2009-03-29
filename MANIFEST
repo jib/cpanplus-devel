@@ -66,7 +66,6 @@ lib/CPANPLUS/Dist/Sample.pm
 lib/CPANPLUS/Error.pm
 lib/CPANPLUS/FAQ.pod
 lib/CPANPLUS/Hacking.pod
-lib/CPANPLUS/inc.pm
 lib/CPANPLUS/Internals.pm
 lib/CPANPLUS/Internals/Constants.pm
 lib/CPANPLUS/Internals/Constants/Report.pm
@@ -99,7 +98,6 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 META.yml
 README
-t/00_CPANPLUS-Inc.t
 t/00_CPANPLUS-Internals-Utils.t
 t/01_CPANPLUS-Configure.t
 t/02_CPANPLUS-Internals.t
