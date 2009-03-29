@@ -427,7 +427,7 @@ sub _add_to_includepath {
     ### only add if it's not added yet
     for my $lib (@$dirs) {
         push @INC, $lib unless grep { $_ eq $lib } @INC;
-
+        #
         ### it will be complaining if $ENV{PERL5LIB] is not defined (yet).   
         local $^W;  
         $ENV{'PERL5LIB'} .= $s . $lib 
