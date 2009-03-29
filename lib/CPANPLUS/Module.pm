@@ -777,15 +777,24 @@ sub dist {
         }            
     }
 
-    my $dist = $type->new( module => $self ) or return;
-
-    my $dist_cpan = $type eq $self->status->installer_type
+    ### make sure we don't overwrite it, just in case we came 
+    ### back from a ->save_state. This allows restoration to
+    ### work correctly    
+    unless( $self->status->dist ) {
+        my $dist = $type->new( module => $self ) or return;
+        $self->status->dist( $dist );
+    }
+    
+    unless( $self->status->dist_cpan ) {
+        
+        my $dist_cpan = $type eq $self->status->installer_type
                         ? $dist
                         : $self->status->installer_type->new( module => $self );           
 
-    ### store the dists
-    $self->status->dist_cpan(   $dist_cpan );
-    $self->status->dist(        $dist );
+
+        $self->status->dist_cpan(   $dist_cpan );
+    }
+    
     
     DIST: {
         ### first prepare the dist
