@@ -436,19 +436,24 @@ L<Module::ThirdParty> for more details.
 
     sub package_is_perl_core {
         my $self = shift;
+        my $cb   = $self->parent;
 
         ### check if the package looks like a perl core package
         return 1 if $self->package_name eq PERL_CORE;
+
+        ### address #44562: ::Module->package_is_perl_code : problem comparing 
+        ### version strings -- use $cb->_vcmp to avoid warnings when version 
+        ### have _ in them
 
         my $core = $self->module_is_supplied_with_perl_core;
         ### ok, so it's found in the core, BUT it could be dual-lifed
         if ($core) {
             ### if the package is newer than installed, then it's dual-lifed
-            return if $self->version > $self->installed_version;
+            return if $cb->_vcmp($self->installed_version, $self->version) > 0;
 
             ### if the package is newer or equal to the corelist, 
             ### then it's dual-lifed
-            return if $self->version >= $core;
+            return if $cb->_vcmp( $core, $self->version ) >= 0;
 
             ### otherwise, it's older than corelist, thus unsuitable.
             return 1;
