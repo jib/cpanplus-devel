@@ -114,28 +114,31 @@ We appologize for the inconvenience.
     $setup->init;
 }    
     
-### mention our prereqs
-if ($] < 5.009005)
 {   print loc("
 ### PLEASE NOTE ###################################################
 
-Since CPANPLUS has a few prerequisites that are not included
-in versions of perl prior to 5.9.5, they are bundled with the 
-distribution for boot-strapping purposes.
+CPANPLUS also ships a 'boxed' cpanp client, so you can run it
+out of it's extraction dir, by typing:
 
-You should install these prerequisites before continuing to
-install CPANPLUS. You can do this from the build directory
-with the following commands:
+    \$ perl bin/cpanp-boxed
 
-    \$ %1
-    \$ %2
+This may help you with bootstrap issues, or other situations 
+where you need to use CPANPLUS but can not use a system installation.
 
-Or you may install them using your system's package manager.
+You can install all of CPANPLUS' dependencies like this, before 
+installing CPANPLUS itself by running:
 
+    \$ perl bin/cpanp-boxed -s selfupdate dependencies 
+
+All the modules bundled are found in the 'inc/bundle' directory. If
+you, for whatever reason, wish to not install these from cpan, you
+could include them into your environment as such (using tcsh):
+
+    \$ setenv PERL5LIB $FindBin::Bin/inc/bundle
+    
 ###################################################################
     
-    ",  "$^X bin/cpanp-boxed -s selfupdate dependencies" ,
-        "$^X bin/cpanp-boxed -s selfupdate enabled_features" );  
+    " );  
     print "\n";
 }
 
