@@ -1,3 +1,25 @@
+Changes for 0.85_07     Tue Feb 24 18:27:37 2009
+================================================
+* Address: #44562: $mod->package_is_perl_code: problem comparing version 
+  strings. The method would warn when a version contained a non-numeric
+  character. This is now fixed.
+* Address #43355: (possibly harmless) Warning in CPANPLUS-Dist-MM
+  Make sure to quell the warning when 'makemakerflags' is set to
+  undef instead of the empty string.  
+* ExtUtils::Installed methods were not handed all possible include directories
+  to scan, as they were found to vary on non-Unix OS's. All possible paths
+  are now added for scanning.
+* Make sure we don't overwrite $mod->status->dist/dist_cpan so ->save_state
+  will DTRT upon restore.
+* Make sure we call $mod->add_to-include_path again, just in case we came 
+  from ->save_state, at which point we need to restore @INC/$PERL5LIB
+* t/20 now uses global verbosity settings
+* Avoid duplicates in PERL5LIB, just like we do for @INC when calling
+  $mod->add_to_includepath and add tests for it.
+* Get rid of CPANPLUS::inc; it's not used anywhere anymore
+* Remove deleted files from manifest
+* Update bundled modules
+
 Changes for 0.85_06     Tue Feb 24 18:27:37 2009
 ================================================
 * This is a test suite fix. Users of 0.85_05 need not upgrade.
