@@ -449,11 +449,11 @@ L<Module::ThirdParty> for more details.
         ### ok, so it's found in the core, BUT it could be dual-lifed
         if ($core) {
             ### if the package is newer than installed, then it's dual-lifed
-            return if $cb->_vcmp($self->installed_version, $self->version) > 0;
-
+            return if $cb->_vcmp($self->version, $self->installed_version) > 0;
+            
             ### if the package is newer or equal to the corelist, 
             ### then it's dual-lifed
-            return if $cb->_vcmp( $core, $self->version ) >= 0;
+            return if $cb->_vcmp( $self->version, $core ) >= 0; 
 
             ### otherwise, it's older than corelist, thus unsuitable.
             return 1;
