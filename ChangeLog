@@ -1,3 +1,8 @@
+Changes for 0.85_08     Mon Apr 20 18:54:49 2009
+================================================
+* Fix issues with $mod->package_is_perl_core; The conditionals were
+  the wrong way around, thanks to BingOS for spotting
+
 Changes for 0.85_07     Tue Feb 24 18:27:37 2009
 ================================================
 * Address: #44562: $mod->package_is_perl_code: problem comparing version 
@@ -11,7 +16,7 @@ Changes for 0.85_07     Tue Feb 24 18:27:37 2009
   are now added for scanning.
 * Make sure we don't overwrite $mod->status->dist/dist_cpan so ->save_state
   will DTRT upon restore.
-* Make sure we call $mod->add_to-include_path again, just in case we came 
+* Make sure we call $mod->add_to_include_path again, just in case we came 
   from ->save_state, at which point we need to restore @INC/$PERL5LIB
 * t/20 now uses global verbosity settings
 * Avoid duplicates in PERL5LIB, just like we do for @INC when calling
