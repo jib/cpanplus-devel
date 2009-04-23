@@ -1521,37 +1521,13 @@ sub distributions {
 
 Returns a list of files used by this module, if it is installed.
 
-=cut
-
-sub files {
-    return shift->_extutils_installed( @_, method => 'files' );
-}
-
-=pod
-
 =head2 @list = $self->directory_tree ()
 
 Returns a list of directories used by this module.
 
-=cut
-
-sub directory_tree {
-    return shift->_extutils_installed( @_, method => 'directory_tree' );
-}
-
-=pod
-
 =head2 @list = $self->packlist ()
 
 Returns the C<ExtUtils::Packlist> object for this module.
-
-=cut
-
-sub packlist {
-    return shift->_extutils_installed( @_, method => 'packlist' );
-}
-
-=pod
 
 =head2 @list = $self->validate ()
 
@@ -1560,14 +1536,19 @@ are present in the .packlist file.
 
 =cut
 
-sub validate {
-    return shift->_extutils_installed( method => 'validate' );
+for my $sub (qw[files directory_tree packlist validate]) {
+    no strict 'refs';
+    *$sub = sub {
+        return shift->_extutils_installed( @_, method => $sub );
+    }
 }
 
 ### generic method to call an ExtUtils::Installed method ###
 sub _extutils_installed {
     my $self = shift;
-    my $conf = $self->parent->configure_object();
+    my $cb   = $self->parent;
+    my $conf = $cb->configure_object;
+    my $home = $cb->_home_dir;          # may be needed to fix up prefixes
     my %hash = @_;
 
     my ($verbose,$type,$method);
@@ -1650,6 +1631,10 @@ sub _extutils_installed {
                 ### version, so no ~ etc are found in there
                 my $dir     = $Config::Config{ $href->{ $key } .'exp' } or next;
                 my $prefix  = $Config::Config{ $href->{prefix} };
+
+                ### prefix may be relative to home, and contain a ~
+                ### if so, fix it up.
+                $prefix     =~ s/^~/$home/;
 
                 ### remove the prefix from it, so we can append to our $lib
                 $dir        =~ s/^\Q$prefix\E//;
