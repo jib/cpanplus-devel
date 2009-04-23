@@ -1,3 +1,13 @@
+Changes for 0.85_09     Thu Apr 23 15:32:49 2009
+================================================
+* ExtUtils::Installed functions wouldn't work properly if the install
+  prefix was set to something containing ~, like for example '~/perl'.
+  If we encounter this, substitute the ~ for the real home dir so 
+  EU::Installed's path lookups work properly.
+* Work around a bug in version.pm which causes 64bit 5.8.x installs 
+  to fail big version comparisons. See here for details:
+  https://rt.cpan.org/Ticket/Display.html?id=45241
+
 Changes for 0.85_08     Mon Apr 20 18:54:49 2009
 ================================================
 * Fix issues with $mod->package_is_perl_core; The conditionals were
