@@ -3,7 +3,7 @@ package Package::Constants;
 use strict;
 use vars qw[$VERSION $DEBUG];
 
-$VERSION    = '0.01';
+$VERSION    = '0.02';
 $DEBUG      = 0;
 
 =head1 NAME 
