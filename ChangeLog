@@ -1,3 +1,8 @@
+Changes for 0.86        Sun Apr 26 17:27:54 2009
+================================================
+* Promote 0.85_09 to stable
+* Update bundled modules
+
 Changes for 0.85_09     Thu Apr 23 15:32:49 2009
 ================================================
 * ExtUtils::Installed functions wouldn't work properly if the install
