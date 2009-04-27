@@ -1,3 +1,11 @@
+Changes for 0.86        Mon Apr 27 18:07:34 2009
+================================================
+* Older versions of CPANPLUS::Dist::Build use the (private) module
+  CPANPLUS::inc, which got removed in the 0.86 release. 
+  C::D::Build versions of 0.24 and higher are not affected by this,
+  and CPANPLUS now specifies 0.24 as a minimum requirement.
+  Users of C::D::Build of version 0.24 or higher need not upgrade.
+
 Changes for 0.86        Sun Apr 26 17:27:54 2009
 ================================================
 * Promote 0.85_09 to stable
