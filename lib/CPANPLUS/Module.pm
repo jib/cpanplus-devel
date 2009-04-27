@@ -683,8 +683,9 @@ sub get_installer_type {
         ### XXX this is for recording purposes only. We *have* to install
         ### these before even creating a dist object, or we'll get an error
         ### saying 'no such dist type';
+        ### XXX duplicated from CPANPLUS::Selfupdate. fix somehow?
         my $href = $self->status->configure_requires || {};
-        my $deps = { INSTALLER_BUILD, 0, %$href };
+        my $deps = { INSTALLER_BUILD, '0.24', %$href };
         
         $self->status->configure_requires( $deps );
         
