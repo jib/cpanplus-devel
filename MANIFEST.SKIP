@@ -31,3 +31,4 @@ dev-bin/
 ^sandbox
 ~$
 ^patches
+^.git
