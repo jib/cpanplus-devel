@@ -14,6 +14,7 @@ use CPANPLUS::Backend::RV;
 use FileHandle;
 use File::Spec                  ();
 use File::Spec::Unix            ();
+use File::Basename		();
 use Params::Check               qw[check];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
@@ -478,6 +479,26 @@ sub parse_module {
         ### perhaps we can find it in the module tree?
         my $maybe = $self->module_tree($mod);
         return $maybe if IS_MODOBJ->( module => $maybe );
+    }
+
+    ### Special case for the current working directory
+
+    if ( $mod eq '.' ) {
+	my $dir = File::Spec->rel2abs('.');
+	my $parent = File::Spec->rel2abs('..');
+	my $dist = $mod = File::Basename::basename($dir);
+	$dist .= '-1.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;
+        my $modobj = CPANPLUS::Module::Fake->new(
+                        module  => $mod,
+                        version => 1,
+                        package => $dist,
+                        path    => $parent,
+                        author  => CPANPLUS::Module::Author::Fake->new
+                    );
+	$modobj->status->fetch( $parent );
+	$modobj->status->extract( $dir );
+	$modobj->get_installer_type;
+	return $modobj;
     }
 
     ### ok, so it looks like a distribution then?
