@@ -495,6 +495,20 @@ sub parse_module {
                         path    => $parent,
                         author  => CPANPLUS::Module::Author::Fake->new
                     );
+
+        ### better guess for the version
+        $modobj->version( $modobj->package_version ) 
+            if defined $modobj->package_version;
+        
+        ### better guess at module name, if possible
+        if ( my $pkgname = $modobj->package_name ) {
+            $pkgname =~ s/-/::/g;
+        
+            ### no sense replacing it unless we changed something
+            $modobj->module( $pkgname ) 
+                if ($pkgname ne $modobj->package_name) || $pkgname !~ /-/;
+        }                
+
 	$modobj->status->fetch( $parent );
 	$modobj->status->extract( $dir );
 	$modobj->get_installer_type;
