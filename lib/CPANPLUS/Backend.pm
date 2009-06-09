@@ -487,10 +487,11 @@ sub parse_module {
 	my $dir = File::Spec->rel2abs('.');
 	my $parent = File::Spec->rel2abs('..');
 	my $dist = $mod = File::Basename::basename($dir);
-	$dist .= '-1.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;
+	$dist .= '-0'      unless $dist =~ /\-[0-9._]+$/;
+	$dist .= '.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;
         my $modobj = CPANPLUS::Module::Fake->new(
                         module  => $mod,
-                        version => 1,
+                        version => 0,
                         package => $dist,
                         path    => $parent,
                         author  => CPANPLUS::Module::Author::Fake->new

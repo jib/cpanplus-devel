@@ -190,7 +190,7 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
         '.' => [
             'CPANPLUS',
             't',
-            '1',
+            '',
         ],            
     );       
 
