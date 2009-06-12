@@ -406,7 +406,7 @@ for my $func (qw[fetch extract install readme files distributions]) {
 
 =pod
 
-=head2 $mod_obj = $cb->parse_module( module => $modname|$distname|$modobj|URI )
+=head2 $mod_obj = $cb->parse_module( module => $modname|$distname|$modobj|URI|PATH )
 
 C<parse_module> tries to find a C<CPANPLUS::Module> object that
 matches your query. Here's a list of examples you could give to
@@ -430,12 +430,23 @@ C<parse_module>;
 
 =item file:///tmp/Text-Bastardize-1.06.tar.gz
 
+=item /tmp/Text-Bastardize-1.06
+
+=item ./Text-Bastardize-1.06
+
+=item .
+
 =back
 
 These items would all come up with a C<CPANPLUS::Module> object for
 C<Text::Bastardize>. The ones marked explicitly as being version 1.06
 would give back a C<CPANPLUS::Module> object of that version.
 Even if the version on CPAN is currently higher.
+
+The last three are examples of PATH resolution. In the first, we supply
+an absolute path to the unwrapped distribution. In the second the 
+distribution is relative to the current working directory.
+In the third, we will use the current working directory.
 
 If C<parse_module> is unable to actually find the module you are looking
 for in its module tree, but you supplied it with an author, module
@@ -481,11 +492,11 @@ sub parse_module {
         return $maybe if IS_MODOBJ->( module => $maybe );
     }
 
-    ### Special case for the current working directory
+    ### Special case arbitary file paths such as '.' etc.
 
-    if ( $mod eq '.' ) {
-	my $dir = File::Spec->rel2abs('.');
-	my $parent = File::Spec->rel2abs('..');
+    if ( -d File::Spec->rel2abs( $mod ) ) {
+	my $dir = File::Spec->rel2abs($mod);
+	my $parent = File::Spec->rel2abs( File::Spec->catdir( $dir, '..' ) );
 	my $dist = $mod = File::Basename::basename($dir);
 	$dist .= '-0'      unless $dist =~ /\-[0-9._]+$/;
 	$dist .= '.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;

@@ -104,6 +104,7 @@ CPANPLUS::Shell::Default
     cpanp> i Acme::Foo       # install Acme::Foo
     cpanp> i Acme-Foo-1.3    # install version 1.3 of Acme::Foo
     cpanp> i <URI>           # install from URI, like ftp://foo.com/X.tgz
+    cpanp> i <DIR>           # install from an absolute or relative directory
     cpanp> i 1 3..5          # install search results 1, 3, 4 and 5
     cpanp> i *               # install all search results
     cpanp> a KANE; i *;      # find modules by kane, install all results
