@@ -493,13 +493,14 @@ sub parse_module {
     }
 
     ### Special case arbitary file paths such as '.' etc.
+    if (-d File::Spec->rel2abs($mod) ) {
+        my $dir    = File::Spec->rel2abs($mod);
+        my $parent = File::Spec->rel2abs( File::Spec->catdir( $dir, '..' ) );
 
-    if ( -d File::Spec->rel2abs( $mod ) ) {
-	my $dir = File::Spec->rel2abs($mod);
-	my $parent = File::Spec->rel2abs( File::Spec->catdir( $dir, '..' ) );
-	my $dist = $mod = File::Basename::basename($dir);
-	$dist .= '-0'      unless $dist =~ /\-[0-9._]+$/;
-	$dist .= '.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;
+        my $dist   = $mod = File::Basename::basename($dir);
+        $dist     .= '-0'      unless $dist =~ /\-[0-9._]+$/;
+        $dist     .= '.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;
+
         my $modobj = CPANPLUS::Module::Fake->new(
                         module  => $mod,
                         version => 0,
