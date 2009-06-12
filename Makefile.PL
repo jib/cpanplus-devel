@@ -145,9 +145,14 @@ could include them into your environment as such (using tcsh):
 ### toss out the old source files, they might be compiled
 ### in an incompatilbe format (rt #18121)
 ### use 'can', because it might be  different backend now
-if( $Backend->can( '__storable_file' ) ) {   
-    my $stored = $Backend->__storable_file( $Config->get_conf('base') );      
-    1 while $stored && unlink $stored;
+{   my $pat = File::Spec->catfile( 
+                    $Config->get_conf('base'), 
+                    $Config->_get_source('stored') .'*'. STORABLE_EXT,
+                );
+        
+    for my $file( glob($pat) ) {
+        1 while $file && unlink $file;
+    }
 }
 
 ### write the makefile.pl
