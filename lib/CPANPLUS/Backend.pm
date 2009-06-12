@@ -521,10 +521,10 @@ sub parse_module {
                 if ($pkgname ne $modobj->package_name) || $pkgname !~ /-/;
         }                
 
-	$modobj->status->fetch( $parent );
-	$modobj->status->extract( $dir );
-	$modobj->get_installer_type;
-	return $modobj;
+        $modobj->status->fetch( $parent );
+        $modobj->status->extract( $dir );
+        $modobj->get_installer_type;
+        return $modobj;
     }
 
     ### ok, so it looks like a distribution then?
