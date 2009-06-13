@@ -1,3 +1,7 @@
+Chagnes for 0.87_02     Sat Jun 13 13:13:58 2009
+================================================
+* Fix typo in the help message for the default shell
+
 Changes for 0.87_01     Fri Jun 12 18:54:27 2009
 ================================================
 * CPANPLUS now supports installing a directory as well. From the shell,
