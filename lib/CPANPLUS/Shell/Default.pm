@@ -591,9 +591,9 @@ loc('   /? [PLUGIN NAME]        # show usage for (a particular) plugin(s)'  ),
         $self->__print( map {"$_\n"} @help );
         $self->__print( $/ );
         $self->_pager_close;
-    }
     
-    return 1;
+        return 1;
+    }
 }
 
 ### eval some code ###
@@ -1627,7 +1627,6 @@ sub _reports {
     return 1;
 }
 
-
 ### Load plugins
 {   my @PluginModules;
     my %Dispatch = ( 
@@ -1641,6 +1640,7 @@ sub _reports {
     
     my $init_done;
     sub _plugins_init {
+
         ### only initialize once
         return if $init_done++;
         
