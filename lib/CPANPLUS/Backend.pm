@@ -497,6 +497,12 @@ sub parse_module {
         my $dir    = File::Spec->rel2abs($mod);
         my $parent = File::Spec->rel2abs( File::Spec->catdir( $dir, '..' ) );
 
+        ### fix paths on VMS
+        if (ON_VMS) {
+            $dir    = VMS::Filespec::unixify($dir);
+            $parent = VMS::Filespec::unixify($parent);
+        }
+
         my $dist   = $mod = File::Basename::basename($dir);
         $dist     .= '-0'      unless $dist =~ /\-[0-9._]+$/;
         $dist     .= '.tar.gz' unless $dist =~ /\.[A-Za-z]+$/;
