@@ -1,3 +1,13 @@
+Changes for 0.88        Tue Jul  7 12:47:08 2009
+================================================
+* Adress #47640: [PATCH] [Documentation] Add links to the CPANPLUS
+  Subversion repository
+* Address #47543: Snapshot installation instructions are incorrect
+* Add support for $mod->install( target => init ), which only creates
+  a dist object and stops after the $dist->init stage.
+* CPANPLUS::Dist::MM was using an incorrect capture argument for 
+  passing tests. Spotted by Mst.
+
 Changes for 0.87_03     Sat Jun 27 16:27:34 2009
 ================================================
 * Apply VMS patches from Craig Berry
