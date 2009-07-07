@@ -1,4 +1,13 @@
-Chagnes for 0.87_02     Sat Jun 13 13:13:58 2009
+Changes for 0.87_03     Sat Jun 27 16:27:34 2009
+================================================
+* Apply VMS patches from Craig Berry
+* Address #47250: cpanp always returns true when run in batch mode
+  $shell->dispatch_on_input now returns a failure indicator if run in
+  noninteractive mode (which is what cpanp does)
+* With the new cpantesters, the yaml files got redone which broke
+  the ->fetch_report code
+
+Changes for 0.87_02     Sat Jun 13 13:13:58 2009
 ================================================
 * Fix typo in the help message for the default shell
 
