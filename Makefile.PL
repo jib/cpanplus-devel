@@ -184,6 +184,7 @@ could include them into your environment as such (using tcsh):
                         't/dummy-perl/bin/* ' . 't/dummy-perl/lib/* ' .
                         't/dummy-perl/man/man1/* ' . 't/dummy-perl/man/man3/*'
                     } );
+    repository      ('http://oss.dwim.org/cpanplus-devel');
 
     ### write the makefile 
     ### this makes all prereqs rediscovered
