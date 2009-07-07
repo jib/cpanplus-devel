@@ -13,4 +13,4 @@ no_index:
     - lib/CPANPLUS/inc
     - inc
     - t
-version: 0.87_02
+version: 0.87_03
