@@ -329,7 +329,7 @@ sub dispatch_on_input {
         ### dispatch meta locally at all times ###
         if( $key eq '/' ) {
             ### keep track of failures
-            $rv *= $self->$method(input => $input, options => $options);
+            $rv *= length $self->$method(input => $input, options => $options);
             next;
         }
 
@@ -355,7 +355,7 @@ sub dispatch_on_input {
                     unless $status;
 
                 ### keep track of failures
-                $rv *= $status;
+                $rv *= length $status;
 
                 $self->_pager_open if $buff =~ tr/\n// > $self->_term_rowcount;
                 $self->__print( $buff );
@@ -377,10 +377,11 @@ sub dispatch_on_input {
                         unless grep {$key eq $_} qw[! m a v w x p s b / ? h];
 
                 ### keep track of failures
-                $rv *= eval { $self->$method(   modules => \@mods,
-                                                options => $options,
-                                                input   => $input,
-                                                choice  => $key )
+                $rv *= defined eval { $self->$method(   
+                                        modules => \@mods,
+                                        options => $options,
+                                        input   => $input,
+                                        choice  => $key )
                 };
                 error( $@ ) if $@;
             }
@@ -748,7 +749,7 @@ sub _fetch {
     for my $mod (@$mods) {
         my $where = $mod->fetch( %$opts );
 
-        $rv *= $where;
+        $rv *= length $where;
 
         $self->__print(
             $where
