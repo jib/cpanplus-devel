@@ -56,9 +56,9 @@ otherwise.
 ### XXX remove this list and move it into selfupdate, somehow..
 ### this is dual administration
 {   my $query_list = {
-        'File::Fetch'   => '0.13_02',
-        'YAML::Tiny'    => '0.0',
-        'File::Temp'    => '0.0',
+        'File::Fetch'          => '0.13_02',
+        'Parse::CPAN::Meta'    => '0.0',
+        'File::Temp'           => '0.0',
     };
 
     my $send_list = {
@@ -196,7 +196,7 @@ sub _query_report {
         do { local $/; <$fh> };
     };
 
-    my ($aref) = eval { YAML::Tiny::Load( $res ) };
+    my ($aref) = eval { Parse::CPAN::Meta::Load( $res ) };
 
     if( $@ ) {
         error(loc("Error reading result: %1", $@));
