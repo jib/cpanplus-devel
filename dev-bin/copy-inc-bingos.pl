@@ -12,7 +12,7 @@ my $Target      = $Cwd . '/inc/bundle';    # Target dir to copy to
 my $CB          = CPANPLUS::Backend->new;
 my $MineOnly    = @ARGV ? 1 : 0;
 
-$CB->configure_object->set_conf( verbose => 0 );
+$CB->configure_object->set_conf( verbose => 1 );
 
 ### from p4 
 {   my @Copy    = qw[
