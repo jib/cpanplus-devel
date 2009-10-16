@@ -367,7 +367,7 @@ sub _send_report {
                     last GRADE;        
                 }
 
-                if( $cb->_vcmp( $prq_ver, $obj->installed_version ) > 0 ) {
+                if( $obj and $cb->_vcmp( $prq_ver, $obj->installed_version ) > 0 ) {
                     msg(loc( "Installed version of '%1' ('%2') is too low for ".
                              "'%3' (needs '%4') -- sending N/A grade", 
                              $prq_name, $obj->installed_version, 
