@@ -1,3 +1,17 @@
+Changes for 0.89_01     Fri Oct 16 10:22:43 2009
+================================================
+* Corrected spelling mistake in CPANPLUS::Configure documentation
+* Fixed a problem with the core module detection when sending 
+  NA reports
+* Internals::Report will use Parse::CPAN::Meta instead of 
+  YAML::Tiny for parsing CPAN Test report data
+* Address #50428 Fixed edge-case in the arbitary paths support in 
+  parse_module(), reported by Robert Krimen
+* Address #49104 Fixed the SYNOPSIS in CPANPLUS::Module::Author::Fake
+  reported by Tyler MacDonald
+* Address #47820 Don't try to update custom sources if they are disabled
+  in configuration, reported by Curtis Jewell
+
 Changes for 0.88        Tue Jul  7 12:47:08 2009
 ================================================
 * Adress #47640: [PATCH] [Documentation] Add links to the CPANPLUS
