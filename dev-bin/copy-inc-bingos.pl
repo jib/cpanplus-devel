@@ -136,6 +136,7 @@ unless( $MineOnly ) {
 
 ### revert all that wasn't touched
 chdir $Cwd or die "Could not chdir back!";
+exit 0;
 system("find $Target -type f | xargs svk add");
 system("svk diff | less");
 system("svk commit");
