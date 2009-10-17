@@ -1,4 +1,5 @@
 my $Ver = shift or die usage();
+my $Scm = shift || 'svk';
 
 my %Files = (
     qq[s/VERSION\\s*=.*?;/VERSION = "$Ver";/]
@@ -23,15 +24,15 @@ while( my($re,$aref) = each %Files ) {
     }
 }    
 
-system("svk diff | less");
-system("svk commit");
+system("$Scm diff | less");
+system("$Scm commit" . $Scm eq 'git' ? ' -a' : '');
 
 
 
 sub usage {
     return qq[
 Usage:
-    $0 NEW_VERSION
+    $0 NEW_VERSION [git]
 
     ];
 }    

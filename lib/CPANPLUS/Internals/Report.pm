@@ -367,6 +367,19 @@ sub _send_report {
                     last GRADE;        
                 }
 
+                if ( !$obj ) {
+                    my $vcore = $sub->( $prq_name );
+                    if ( $cb->_vcmp( $prq_ver, $vcore ) > 0 ) {
+                      msg(loc( "Version of core module '%1' ('%2') is too low for ".
+                               "'%3' (needs '%4') -- sending N/A grade", 
+                               $prq_name, $vcore, 
+                               $name, $prq_ver ), $verbose );
+                             
+                      $grade = GRADE_NA;
+                      last GRADE;        
+                    }
+                }
+
                 if( $obj and $cb->_vcmp( $prq_ver, $obj->installed_version ) > 0 ) {
                     msg(loc( "Installed version of '%1' ('%2') is too low for ".
                              "'%3' (needs '%4') -- sending N/A grade", 
