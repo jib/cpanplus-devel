@@ -25,7 +25,7 @@ while( my($re,$aref) = each %Files ) {
 }    
 
 system("$Scm diff | less");
-system("$Scm commit" . $Scm eq 'git' ? ' -a' : '');
+system("$Scm commit" . ($Scm eq 'git' ? ' -a' : ''));
 
 
 
