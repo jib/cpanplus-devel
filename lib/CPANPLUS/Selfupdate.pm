@@ -85,7 +85,7 @@ CPANPLUS::Selfupdate
             ],            
             cpantest        => [
                 { 'Test::Reporter'  => '1.34',
-                  'YAML::Tiny'      => '0.0'
+                  'Parse::CPAN::Meta' => '0.0'
                 },
                 sub { 
                     my $cb = shift;
