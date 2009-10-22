@@ -62,7 +62,7 @@ CPANPLUS::Selfupdate
             'Archive::Tar'              => '1.23',
             'IO::Zlib'                  => '1.04', # needed for Archive::Tar
             'Object::Accessor'          => '0.34', # mk_aliases support
-            'Module::CoreList'          => '2.09',
+            'Module::CoreList'          => '2.22', # deprecated core modules
             'Module::Pluggable'         => '2.4',
             'Module::Loaded'            => '0.01',
             'Parse::CPAN::Meta'         => '0.02', # config_requires support
