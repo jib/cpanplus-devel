@@ -1,3 +1,9 @@
+Changes for 0.89_04     Fri Oct 23 11:12:57 2009
+================================================
+* Added deprecated dual-life module support which
+  requires newer versions of Module::CoreList and
+  Module::Load::Conditional
+
 Changes for 0.89_03     Mon Oct 19 20:06:03 2009
 ================================================
 * Work out if a prereq is a core module and only warn if we can't 
