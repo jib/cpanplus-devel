@@ -914,6 +914,15 @@ sub _install {
         ### would you like a log file of what happened?
         if( $conf->get_conf('write_install_logs') ) {
 
+            if ( ON_WIN32 and !check_install(
+                              module => 'IPC::Run', version => 0.55 ) 
+               ) {
+               error(loc("IPC::Run version '%1' is required on MSWin32" 
+                         . " in order to capture buffers." 
+                         . " The logfile generated may not contain" 
+                         . " any useful data, until it is installed", 0.55));
+            }
+
             my $dir = File::Spec->catdir(
                             $conf->get_conf('base'),
                             $conf->_get_build('install_log_dir'),
