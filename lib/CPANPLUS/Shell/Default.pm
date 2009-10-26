@@ -1264,7 +1264,7 @@ sub _set_conf {
         }->{ $key } || CONFIG_USER;      
 
         my $file = $conf->_config_pm_to_file( $where );
-        system("$editor $file");
+        system($editor,$file);
 
         ### now reload it
         ### disable warnings for this
