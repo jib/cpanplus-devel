@@ -1,3 +1,12 @@
+Changes for 0.89_05     Tue Oct 27 09:24:55 2009
+================================================
+* Change the way editing config files is called. This fixes RT #50832, 
+  reported by Dave Golden
+* Issue a warning in the shell if we are on MSWin32, don't have IPC::Run 
+  installed and are writing a log file.
+* Apply several patches from Alexandr Ciornii (CHORNY) RT #48636 that 
+  add toolchain versions listing to tester reports.
+
 Changes for 0.89_04     Fri Oct 23 11:12:57 2009
 ================================================
 * Added deprecated dual-life module support which
