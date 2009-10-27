@@ -164,6 +164,9 @@ could include them into your environment as such (using tcsh):
                     } $su->list_enabled_features
                 );
 
+    my @scripts = _scripts();
+    my $extraclean .= join ' ', grep { /\d$/ } @scripts;
+
     ### restore the original @INC, so proper probing of missing 
     ### prereqs can be done
     @INC = @ORIG_INC;
@@ -174,7 +177,8 @@ could include them into your environment as such (using tcsh):
     license         ('perl');
     no_index        ( directory => 'lib/CPANPLUS/inc' );
     installdirs     ( $] >= 5.009005 ? 'perl' : 'site' ),
-    install_script  ($_) for grep { $_ !~ /cpanp-boxed/ } glob('bin/*');
+    install_script  ($_) for @scripts;
+    #install_script  ($_) for grep { $_ !~ /cpanp-boxed/ } glob('bin/*');
     requires        (%prereq);
     makemaker_args  ( test => { TESTS => $Tests } ) if $Tests;
     makemaker_args  ( clean => { FILES => 
@@ -182,7 +186,8 @@ could include them into your environment as such (using tcsh):
                         't/dummy-cpanplus/* t/dummy-cpanplus/.cpanplus '.
                         't/dummy-localmirror/* ' . 't/dummy-perl/arch ' .
                         't/dummy-perl/bin/* ' . 't/dummy-perl/lib/* ' .
-                        't/dummy-perl/man/man1/* ' . 't/dummy-perl/man/man3/*'
+                        't/dummy-perl/man/man1/* ' . 't/dummy-perl/man/man3/*'.
+                        ( $extraclean ? " $extraclean" : '' )
                     } );
     repository      ('http://oss.dwim.org/cpanplus-devel');
 
@@ -200,3 +205,17 @@ could include them into your environment as such (using tcsh):
     }
 }
 
+sub _scripts {
+  my @scripts = grep { $_ !~ /cpanp-boxed/ } glob('bin/*');
+  if ( $] >= 5.009005 ) {
+    require Config;
+    my $version = sprintf("%vd",$^V);
+    if ( $Config::Config{versiononly} and
+         $Config::Config{startperl} =~ /\Q$version\E$/ ) {
+         require File::Copy;
+         File::Copy::copy( $_, "$_$version" ) for @scripts;
+         @scripts = glob("bin/*$version");
+    }
+  }
+  return @scripts;
+}
