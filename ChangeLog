@@ -1,3 +1,10 @@
+Changes for 0.89_06     Thu Oct 29 14:55:25 2009
+================================================
+* Fool the installer into replacing our scripts that were installed 
+  by core with versiononly set.
+* Handle PREREQS being mentioned twice in Makefile. Use _vcmp() 
+  to compare the versions, take the highest.
+
 Changes for 0.89_05     Tue Oct 27 09:24:55 2009
 ================================================
 * Change the way editing config files is called. This fixes RT #50832, 
