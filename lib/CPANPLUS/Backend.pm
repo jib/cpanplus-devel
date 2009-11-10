@@ -729,6 +729,24 @@ sub parse_module {
     ### let's start putting the blame somewhere
     } else {
 
+        # Lets not give up too easily. There is one last chance
+        # http://perlmonks.org/?node_id=805957
+        # This should catch edge-cases where the package name
+        # is unrelated to the modules it contains.
+
+        if ( my @mods = $self->search( type => 'package', allow => [ qr/^\Q$mod\E/ ] ) ) {
+          my %hash;
+          $hash{$_}++ for map { $_->package } @mods;
+          if ( scalar keys %hash > 1 ) {
+            my ($package) = grep { /^\Q$mod\E\-\d/ } keys %hash;
+            my ($modobj) = grep { $_->package eq $package } @mods;
+            return $modobj;
+          }
+          else {
+            return shift @mods;
+          }
+        }
+
         unless( $author ) {
             error( loc( "'%1' does not contain an author part", $mod ) );
         }
