@@ -1,3 +1,11 @@
+Changes for 0.89_08     Tue Nov 10 23:29:06 2009
+================================================
+* Make the default config prefer Build.PL if perl version is 
+  greater than or equal to 5.10.1
+* Fix a problem with parse_module() where it would not 
+  resolve some edge-case distributions, addresses
+  http://perlmonks.org/?node_id=805957
+
 Changes for 0.89_07     Thu Nov  5 14:05:11 2009
 ================================================
 * MYMETA.yml support added from Jos' branch
