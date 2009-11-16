@@ -1,3 +1,6 @@
+* Resolve RT #51516 setting conf options which
+  include spaces.
+
 Changes for 0.89_09     Thu Nov 12 21:54:01 2009
 ================================================
 * Only look for missing prereqs in the output of the last 
