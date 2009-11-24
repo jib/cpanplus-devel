@@ -541,7 +541,7 @@ $ENV{SHELL} setting, or $ENV{COMSPEC} on Windows.
 
 A string holding the path to your C<sudo> binary if your install path
 requires super user permissions. Looks for C<sudo> in your path, or 
-remains empty if you do not require super user permissiosn to install.
+remains empty if you do not require super user permissions to install.
 
 =cut
 
