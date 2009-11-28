@@ -16,7 +16,7 @@ BEGIN {
                         $USE_IPC_RUN $USE_IPC_OPEN3 $CAN_USE_RUN_FORKED $WARN
                     ];
 
-    $VERSION        = '0.51_01';
+    $VERSION        = '0.54';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -29,9 +29,9 @@ BEGIN {
         require IPC::Open3; IPC::Open3->import();
         require IO::Select; IO::Select->import();
         require IO::Handle; IO::Handle->import();
-        require Time::HiRes; Time::HiRes->import();
         require FileHandle; FileHandle->import();
         require Socket; Socket->import();
+        require Time::HiRes; Time::HiRes->import();
     };
     $CAN_USE_RUN_FORKED = $@ || !IS_VMS && !IS_WIN32;
 
@@ -358,7 +358,7 @@ sub kill_gently {
     }
 
     $wait_cycles = $wait_cycles + 1;
-    usleep(250000); # half a second
+    Time::HiRes::usleep(250000); # half a second
   }
 }
 
@@ -457,7 +457,7 @@ sub open3_run {
       }
     }
 
-    usleep(1);
+    Time::HiRes::usleep(1);
 
     foreach my $fd ($select->can_read(1/100)) {
       my $str = $child_output->{$fd->fileno};
@@ -508,7 +508,91 @@ sub open3_run {
   }
 }
 
-=head2 $ok | ($ok, $err, $full_buf, $stdout_buff, $stderr_buff) = run_forked( command => COMMAND, [verbose => BOOL, buffer => \$SCALAR, timeout => DIGIT] );
+=head2 $hashref = run_forked( command => COMMAND, { child_stdin => SCALAR, timeout => DIGIT, stdout_handler => CODEREF, stderr_handler => CODEREF} );
+
+C<run_forked> is used to execute some program,
+optionally feed it with some input, get its return code
+and output (both stdout and stderr into seperate buffers).
+In addition it allows to terminate the program
+which take too long to finish.
+
+The important and distinguishing feature of run_forked
+is execution timeout which at first seems to be
+quite a simple task but if you think
+that the program which you're spawning
+might spawn some children itself (which
+in their turn could do the same and so on)
+it turns out to be not a simple issue.
+
+C<run_forked> is designed to survive and
+successfully terminate almost any long running task,
+even a fork bomb in case your system has the resources
+to survive during given timeout.
+
+This is achieved by creating separate watchdog process
+which spawns the specified program in a separate
+process session and supervises it: optionally
+feeds it with input, stores its exit code,
+stdout and stderr, terminates it in case
+it runs longer than specified.
+
+Invocation requires the command to be executed and optionally a hashref of options:
+
+=over
+
+=item C<timeout>
+
+Specify in seconds how long the command may run for before it is killed with with SIG_KILL (9) 
+which effectively terminates it and all of its children (direct or indirect).
+
+=item C<child_stdin>
+
+Specify some text that will be passed into C<STDIN> of the executed program.
+
+=item C<stdout_handler>
+
+You may provide a coderef of a subroutine that will be called a portion of data is received on 
+stdout from the executing program.
+
+=item C<stderr_handler>
+
+You may provide a coderef of a subroutine that will be called a portion of data is received on 
+stderr from the executing program.
+
+=back
+
+C<run_forked> will return a HASHREF with the following keys:
+
+=over
+
+=item C<exit_code>
+
+The exit code of the executed program.
+
+=item C<timeout>
+
+The number of seconds the program ran for before being terminated, or 0 if no timeout occurred.
+
+=item C<stdout>
+
+Holds the standard output of the executed command
+(or empty string if there were no stdout output; it's always defined!)
+
+=item C<stderr>
+
+Holds the standard error of the executed command
+(or empty string if there were no stderr output; it's always defined!)
+
+=item C<merged>
+
+Holds the standard output and error of the executed command merged into one stream
+(or empty string if there were no output at all; it's always defined!)
+
+=item C<err_msg>
+
+Holds some explanation in the case of an error.
+
+=back
 
 =cut
 
@@ -520,7 +604,6 @@ sub run_forked {
         Carp::carp("run_forked is not available: $CAN_USE_RUN_FORKED");
         return;
     }
-    use Time::HiRes qw/usleep/;
 
     my ($cmd, $opts) = @_;
 
@@ -591,8 +674,9 @@ sub run_forked {
   #    print "child $pid started\n";
 
       my $child_finished = 0;
-      my $child_stdout = "";
-      my $child_stderr = "";
+      my $child_stdout = '';
+      my $child_stderr = '';
+      my $child_merged = '';
       my $child_exit_code = 0;
 
       my $got_sig_child = 0;
@@ -646,6 +730,7 @@ sub run_forked {
 
         while (my $l = <$child_stdout_socket>) {
           $child_stdout .= $l;
+          $child_merged .= $l;
 
           if ($opts->{'stdout_handler'} && ref($opts->{'stdout_handler'}) eq 'CODE') {
             $opts->{'stdout_handler'}->($l);
@@ -653,13 +738,14 @@ sub run_forked {
         }
         while (my $l = <$child_stderr_socket>) {
           $child_stderr .= $l;
+          $child_merged .= $l;
 
           if ($opts->{'stderr_handler'} && ref($opts->{'stderr_handler'}) eq 'CODE') {
             $opts->{'stderr_handler'}->($l);
           }
         }
 
-        usleep(1);
+        Time::HiRes::usleep(1);
       }
 
       # $child_pid_pid is not defined in two cases:
@@ -687,11 +773,12 @@ sub run_forked {
       my $o = {
         'stdout' => $child_stdout,
         'stderr' => $child_stderr,
+        'merged' => $child_merged,
         'timeout' => $child_timedout ? $opts->{'timeout'} : 0,
         'exit_code' => $child_exit_code,
         };
 
-      my $err_msg = "";
+      my $err_msg = '';
       if ($o->{'exit_code'}) {
         $err_msg .= "exited with code [$o->{'exit_code'}]\n";
       }
@@ -1540,6 +1627,8 @@ C<IPC::Run>, C<IPC::Open3>
 
 Thanks to James Mastros and Martijn van der Streek for their
 help in getting IPC::Open3 to behave nicely.
+
+Thanks to Petya Kohts for the C<run_forked> code.
 
 =head1 BUG REPORTS
 
