@@ -1,5 +1,8 @@
+Changes for 0.89_10     Sat Nov 28 23:20:09 2009
+================================================
 * Resolve RT #51516 setting conf options which
   include spaces.
+* Explicitly use Cwd's chdir in _chdir()
 
 Changes for 0.89_09     Thu Nov 12 21:54:01 2009
 ================================================
