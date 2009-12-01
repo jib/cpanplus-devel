@@ -1,3 +1,10 @@
+Changes for 0.89_11     Tue Dec  1 13:14:24 2009
+================================================
+* Fixed RT #52287 reported by Apocalypse regarding
+  Test::Reporter barfing on send()
+* Change SQLite to AutoCommit, resolves RT #52308,
+  reported by Apocalypse
+
 Changes for 0.89_10     Sat Nov 28 23:20:09 2009
 ================================================
 * Resolve RT #51516 setting conf options which
