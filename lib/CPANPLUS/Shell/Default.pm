@@ -1564,7 +1564,7 @@ should use the same package manager to uninstall them
             loc("All modules %tense(uninstall,past) successfully"), "\n" );
     } else {
         $self->__print( 
-            loc("Problem %tense(uninstalling,present) one or more modules" ),
+            loc("Problem %tense(uninstall,present) one or more modules" ),
             "\n" );
             
         $self->__print( 
