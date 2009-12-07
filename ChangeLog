@@ -1,5 +1,7 @@
+Changes for 0.89_12     Mon Dec  7 13:33:16 2009
 ================================================
 * Resolve RT #52348 Duplicate test output, reported by Apocalypse
+* Fixed typo in Shell::Default, RT #52376, reported by Apocalypse
 
 Changes for 0.89_11     Tue Dec  1 13:14:24 2009
 ================================================
