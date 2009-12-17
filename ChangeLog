@@ -1,3 +1,7 @@
+Changes for 0.90        Thu Dec 17 21:40:13 2009
+================================================
+* Version bump
+
 Changes for 0.89_12     Mon Dec  7 13:33:16 2009
 ================================================
 * Resolve RT #52348 Duplicate test output, reported by Apocalypse
