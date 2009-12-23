@@ -672,7 +672,7 @@ sub _resolve_prereqs {
     keys %$prereqs;
 
     ### chdir back to where we started
-    chdir $original_wd;
+    $cb->_chdir( dir => $original_wd );
 
     return 1 unless $flag;
     return;
