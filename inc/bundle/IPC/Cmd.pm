@@ -16,7 +16,7 @@ BEGIN {
                         $USE_IPC_RUN $USE_IPC_OPEN3 $CAN_USE_RUN_FORKED $WARN
                     ];
 
-    $VERSION        = '0.54';
+    $VERSION        = '0.56';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -508,9 +508,9 @@ sub open3_run {
   }
 }
 
-=head2 $hashref = run_forked( command => COMMAND, { child_stdin => SCALAR, timeout => DIGIT, stdout_handler => CODEREF, stderr_handler => CODEREF} );
+=head2 $hashref = run_forked( COMMAND, { child_stdin => SCALAR, timeout => DIGIT, stdout_handler => CODEREF, stderr_handler => CODEREF} );
 
-C<run_forked> is used to execute some program,
+C<run_forked> is used to execute some program or a coderef,
 optionally feed it with some input, get its return code
 and output (both stdout and stderr into seperate buffers).
 In addition it allows to terminate the program
@@ -536,7 +536,7 @@ feeds it with input, stores its exit code,
 stdout and stderr, terminates it in case
 it runs longer than specified.
 
-Invocation requires the command to be executed and optionally a hashref of options:
+Invocation requires the command to be executed or a coderef and optionally a hashref of options:
 
 =over
 
@@ -810,12 +810,31 @@ sub run_forked {
       close($child_stderr_socket);
       close($child_info_socket);
 
-      my $child_exit_code = open3_run($cmd, {
-        'parent_info' => $parent_info_socket,
-        'parent_stdout' => $parent_stdout_socket,
-        'parent_stderr' => $parent_stderr_socket,
-        'child_stdin' => $opts->{'child_stdin'},
-        });
+      my $child_exit_code;
+
+      # allow both external programs
+      # and internal perl calls
+      if (!ref($cmd)) {
+        $child_exit_code = open3_run($cmd, {
+          'parent_info' => $parent_info_socket,
+          'parent_stdout' => $parent_stdout_socket,
+          'parent_stderr' => $parent_stderr_socket,
+          'child_stdin' => $opts->{'child_stdin'},
+          });
+      }
+      elsif (ref($cmd) eq 'CODE') {
+        $child_exit_code = $cmd->({
+          'opts' => $opts,
+          'parent_info' => $parent_info_socket,
+          'parent_stdout' => $parent_stdout_socket,
+          'parent_stderr' => $parent_stderr_socket,
+          'child_stdin' => $opts->{'child_stdin'},
+          });
+      }
+      else {
+        print $parent_stderr_socket "Invalid command reference: " . ref($cmd) . "\n";
+        $child_exit_code = 1;
+      }
 
       close($parent_stdout_socket);
       close($parent_stderr_socket);

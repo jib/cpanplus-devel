@@ -18,7 +18,7 @@ BEGIN {
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.34';
+    $VERSION        = '0.36';
     $VERBOSE        = 0;
     $DEPRECATED     = 0;
     $FIND_VERSION   = 1;
@@ -321,6 +321,9 @@ sub _parse_version {
     my $self    = shift;
     my $str     = shift or return;
     my $verbose = shift or 0;
+
+    ### skip lines which doesn't contain VERSION
+    return unless $str =~ /VERSION/;
 
     ### skip commented out lines, they won't eval to anything.
     return if $str =~ /^\s*#/;
