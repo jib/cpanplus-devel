@@ -1,3 +1,11 @@
+Changes for 0.9003      Mon Mar 15 13:51:12 2010
+================================================
+* Resolve warnings when using blead perl, reported by Apocalypse RT #55501
+* Applied patch from Apocalypse RT #55541 that changes the 
+  behviour when a prereq on a core-only module is detected. We 
+  raise a warning now, but will proceed with the installation.
+  This is how CPAN.pm handles it.
+
 Changes for 0.9002      Fri Mar 12 13:11:00 2010
 ================================================
 * Added support for CPAN Testers 2.0 (David Golden)
