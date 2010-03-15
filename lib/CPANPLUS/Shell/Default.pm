@@ -1222,6 +1222,7 @@ sub _set_conf {
 
     my ($type,$key,$value) = $input =~ m/(\w+)\s*(\w*)\s*(.*?)$/;
     $value =~ s/\s+$//g if $value;
+    $type = '' unless defined $type;
     $type = lc $type;
 
     if( $type eq 'reconfigure' ) {
