@@ -611,10 +611,10 @@ sub _resolve_prereqs {
         ### part of core?
         if( $modobj->package_is_perl_core ) {
             error(loc("Prerequisite '%1' is perl-core (%2) -- not ".
-                      "installing that. Aborting install",
+                      "installing that. -- Note that the overall ".
+                      "install may fail due to this.",
                       $modobj->module, $modobj->package ) );
-            $flag++;
-            last;
+            next;
         }
 
         ### circular dependency code ###
