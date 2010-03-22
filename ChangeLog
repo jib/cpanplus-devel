@@ -1,3 +1,7 @@
+================================================
+* Applied a patch from Schwern RT #53133 "test failure occurs if
+  the build directory is symlinked"
+
 Changes for 0.9003      Mon Mar 15 13:51:12 2010
 ================================================
 * Resolve warnings when using blead perl, reported by Apocalypse RT #55501
