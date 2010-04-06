@@ -1,7 +1,9 @@
 ================================================
 * Applied a patch from Schwern RT #53133 "test failure occurs if
   the build directory is symlinked"
-
+* Explicitly set the location of cpanp-run-perl when under PERL_CORE
+  in t/inc/conf.pl
+    
 Changes for 0.9003      Mon Mar 15 13:51:12 2010
 ================================================
 * Resolve warnings when using blead perl, reported by Apocalypse RT #55501
