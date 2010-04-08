@@ -3,6 +3,7 @@
   the build directory is symlinked"
 * Explicitly set the location of cpanp-run-perl when under PERL_CORE
   in t/inc/conf.pl
+* Make sure that we find cpanp-run-perl in ../../utils when PERL_CORE
     
 Changes for 0.9003      Mon Mar 15 13:51:12 2010
 ================================================
