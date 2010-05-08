@@ -4,6 +4,12 @@
 * Explicitly set the location of cpanp-run-perl when under PERL_CORE
   in t/inc/conf.pl
 * Make sure that we find cpanp-run-perl in ../../utils when PERL_CORE
+* Apply a patch from Barbie [RT #56768], that fixes regex in 
+  RELEVANT_TEST_RESULT
+* Fixed a typo in the POD for cpan2dist, pointed out by Babar 
+  (Olivier Raginel) on irc.
+* Add a BEGIN {} block to cpanp-run-perl this resolves RT #55964 
+  and RT #57106
     
 Changes for 0.9003      Mon Mar 15 13:51:12 2010
 ================================================
