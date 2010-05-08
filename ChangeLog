@@ -1,3 +1,4 @@
+Changes for 0.9004      Sat May  8 22:21:04 2010
 ================================================
 * Applied a patch from Schwern RT #53133 "test failure occurs if
   the build directory is symlinked"
