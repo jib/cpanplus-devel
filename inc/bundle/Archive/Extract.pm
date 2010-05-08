@@ -118,7 +118,7 @@ See the C<HOW IT WORKS> section further down for details.
 
 ### see what /bin/programs are available ###
 $PROGRAMS = {};
-for my $pgm (qw[tar unzip gzip bunzip2 uncompress unlzma]) {
+for my $pgm (qw[tar unzip gzip bunzip2 uncompress unlzma pax]) {
     $PROGRAMS->{$pgm} = can_run($pgm);
 }
 
@@ -531,6 +531,7 @@ sub bin_bunzip2     { return $PROGRAMS->{'bunzip2'} if $PROGRAMS->{'bunzip2'} }
 sub bin_uncompress  { return $PROGRAMS->{'uncompress'} 
                                                  if $PROGRAMS->{'uncompress'} }
 sub bin_unlzma      { return $PROGRAMS->{'unlzma'}  if $PROGRAMS->{'unlzma'} }
+sub bin_pax         { return $PROGRAMS->{'pax'}     if $PROGRAMS->{'pax'}   }
 
 =head2 $bool = $ae->have_old_bunzip2
 

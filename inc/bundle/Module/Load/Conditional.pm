@@ -18,7 +18,7 @@ BEGIN {
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.36';
+    $VERSION        = '0.38';
     $VERBOSE        = 0;
     $DEPRECATED     = 0;
     $FIND_VERSION   = 1;
@@ -298,10 +298,18 @@ sub check_install {
         ### Update from JPeacock: apparently qv() and version->new
         ### are different things, and we *must* use version->new
         ### here, or things like #30056 might start happening
-        $href->{uptodate} = 
+
+        ### We have to wrap this in an eval as version-0.82 raises
+        ### exceptions and not warnings now *sigh*
+
+        eval {
+
+          $href->{uptodate} = 
             version->new( $args->{version} ) <= version->new( $href->{version} )
                 ? 1 
                 : 0;
+
+        };
     }
 
     if ( $DEPRECATED and version->new($]) >= version->new('5.011') ) {

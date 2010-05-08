@@ -31,7 +31,7 @@ use vars qw[$DEBUG $error $VERSION $WARN $FOLLOW_SYMLINK $CHOWN $CHMOD
 $DEBUG                  = 0;
 $WARN                   = 1;
 $FOLLOW_SYMLINK         = 0;
-$VERSION                = "1.58";
+$VERSION                = "1.60";
 $CHOWN                  = 1;
 $CHMOD                  = 1;
 $SAME_PERMISSIONS       = $> == 0 ? 1 : 0;
@@ -1244,8 +1244,8 @@ sub write {
                         : $HAS_PERLIO ? $dummy
                         : do { seek $handle, 0, 0; local $/; <$handle> };
 
-    ### make sure to close the handle;
-    close $handle;
+    ### make sure to close the handle if we created it
+    close $handle unless ref($file);
 
     return $rv;
 }
