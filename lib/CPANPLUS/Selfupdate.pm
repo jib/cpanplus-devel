@@ -4,6 +4,7 @@ use strict;
 use Params::Check               qw[check];
 use IPC::Cmd                    qw[can_run];
 use CPANPLUS::Error             qw[error msg];
+use Module::Load::Conditional   qw[check_install];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
 use CPANPLUS::Internals::Constants;
@@ -67,6 +68,8 @@ CPANPLUS::Selfupdate
             'Module::Loaded'            => '0.01',
             'Parse::CPAN::Meta'         => '0.02', # config_requires support
             'ExtUtils::Install'         => '1.42', # uninstall outside @INC
+            ( check_install( module => 'CPANPLUS::Dist::Build' ) 
+              ? ( 'CPANPLUS::Dist::Build' => '0.24' ) : () ),
         },
     
         features => {
