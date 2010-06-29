@@ -320,7 +320,46 @@ sub __sqlite_create_db {
         error( $dbh->error );
         return;
     };        
-        
+
+    $dbh->query( qq[
+        /* the module index */
+        CREATE INDEX IX_module_module ON module (
+            module
+        );
+
+        \n]
+
+    ) or do {
+        error( $dbh->error );
+        return;
+    };
+
+    $dbh->query( qq[
+        /* the version index */
+        CREATE INDEX IX_module_version ON module (
+            version
+        );
+
+        \n]
+
+    ) or do {
+        error( $dbh->error );
+        return;
+    };
+
+    $dbh->query( qq[
+        /* the module-version index */
+        CREATE INDEX IX_module_module_version ON module (
+            module, version
+        );
+
+        \n]
+
+    ) or do {
+        error( $dbh->error );
+        return;
+    };
+
     return 1;    
 }
 

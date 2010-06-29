@@ -2,6 +2,8 @@
 * Amend SQLite source engine to set SYNCHRONOUS pragma to OFF
 * Make sure that Selfupdate checks if CPANPLUS::Dist::Build is
   installed or not and update it if it is. Spotted by Ilmari
+* Apply a patch from Peter Ludikovsky RT #55782 that adds indexes
+  to Source::SQLite
 
 Changes for 0.9004      Sat May  8 22:21:04 2010
 ================================================
