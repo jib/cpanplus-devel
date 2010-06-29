@@ -1,3 +1,5 @@
+Changes for 0.9005      Tue Jun 29 22:42:25 2010
+================================================
 * Corrected spelling mistakes in POD, pointed out by H.Merijn Brand
 * Amend SQLite source engine to set SYNCHRONOUS pragma to OFF
 * Make sure that Selfupdate checks if CPANPLUS::Dist::Build is
