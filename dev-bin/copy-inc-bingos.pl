@@ -13,6 +13,7 @@ my $CB          = CPANPLUS::Backend->new;
 my $MineOnly    = @ARGV ? 1 : 0;
 
 $CB->configure_object->set_conf( verbose => 1 );
+$CB->configure_object->set_conf( hosts => [ { scheme => 'ftp', host => 'localhost', path => '/CPAN/' } ] );
 
 ### from p4 
 {   my @Copy    = qw[
