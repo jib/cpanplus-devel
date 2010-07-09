@@ -9,11 +9,14 @@ my $Prefix      = '../';           # updir from cpanplus/devel
 my $Libdir      = 'lib/';
 my $Cwd         = cwd();
 my $Target      = $Cwd . '/inc/bundle';    # Target dir to copy to
-my $CB          = CPANPLUS::Backend->new;
+my $Conf        = CPANPLUS::Configure->new();
+$Conf->set_conf( enable_custom_sources => 0 );
+$Conf->set_conf( verbose => 1 );
+$Conf->set_conf( hosts => [ { scheme => 'ftp', host => 'localhost', path => '/CPAN/' } ] );
+$Conf->set_conf( no_update => 1 );
+$Conf->set_conf( source_engine => 'CPANPLUS::Internals::Source::CPANIDX' );
+my $CB          = CPANPLUS::Backend->new( $Conf );
 my $MineOnly    = @ARGV ? 1 : 0;
-
-$CB->configure_object->set_conf( verbose => 1 );
-$CB->configure_object->set_conf( hosts => [ { scheme => 'ftp', host => 'localhost', path => '/CPAN/' } ] );
 
 ### from p4 
 {   my @Copy    = qw[
