@@ -1,3 +1,8 @@
+Changes for 0.9006      Fri Jul  9 13:44:22 2010
+================================================
+* Finally resolved the issue where a prereq on Config would not be 
+  recognised as a core module
+
 Changes for 0.9005      Tue Jun 29 22:42:25 2010
 ================================================
 * Corrected spelling mistakes in POD, pointed out by H.Merijn Brand
