@@ -1,3 +1,8 @@
+Changes for 0.9007      Tue Jul 13 10:44:30 2010
+================================================
+* Fix the shell test to skip if test is not being run under a
+  terminal, reported by Justin Case RT #59254
+
 Changes for 0.9006      Fri Jul  9 13:44:22 2010
 ================================================
 * Finally resolved the issue where a prereq on Config would not be 
