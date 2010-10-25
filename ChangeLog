@@ -1,3 +1,7 @@
+Changes for 0.9009      Mon Oct 25 21:03:39 2010
+================================================
+* Resolve issues with the SQLite source engine
+
 Changes for 0.9008      Mon Oct 25 17:01:34 2010
 ================================================
 * Normalise prereqs version strings before resolving prereqs
