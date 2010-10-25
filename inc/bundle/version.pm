@@ -6,7 +6,7 @@ use strict;
 
 use vars qw(@ISA $VERSION $CLASS $STRICT $LAX *declare *qv);
 
-$VERSION = 0.82;
+$VERSION = 0.84;
 
 $CLASS = 'version';
 
@@ -123,13 +123,7 @@ if ( $@ ) { # don't have the XS version installed
     *version::qv = \&version::vpp::qv;
     *version::declare = \&version::vpp::declare;
     *version::_VERSION = \&version::vpp::_VERSION;
-    if ($] > 5.009001 && $] < 5.010000) {
-	no strict 'refs';
-	*version::stringify = \&version::vpp::stringify;
-	*{'version::(""'} = \&version::vpp::stringify;
-	*version::new = \&version::vpp::new;
-    }
-    elsif ($] == 5.010000 || $] == 5.010001) {
+    if ($] >= 5.009000 && $] < 5.011004) {
 	no strict 'refs';
 	*version::stringify = \&version::vpp::stringify;
 	*{'version::(""'} = \&version::vpp::stringify;
@@ -143,12 +137,8 @@ else { # use XS module
     *version::declare = \&version::vxs::declare;
     *version::qv = \&version::vxs::qv;
     *version::_VERSION = \&version::vxs::_VERSION;
-    if ($] > 5.009001 && $] < 5.010000) {
-	no strict 'refs';
-	*version::stringify = \&version::vxs::stringify;
-	*{'version::(""'} = \&version::vxs::stringify;
-    }
-    elsif ($] == 5.010000 || $] == 5.010001) {
+    *version::vcmp = \&version::vxs::VCMP;
+    if ($] >= 5.009000 && $] < 5.011004) {
 	no strict 'refs';
 	*version::stringify = \&version::vxs::stringify;
 	*{'version::(""'} = \&version::vxs::stringify;

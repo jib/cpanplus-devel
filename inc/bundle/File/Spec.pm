@@ -3,7 +3,7 @@ package File::Spec;
 use strict;
 use vars qw(@ISA $VERSION);
 
-$VERSION = '3.31';
+$VERSION = '3.33';
 $VERSION = eval $VERSION;
 
 my %module = (MacOS   => 'Mac',
@@ -166,6 +166,7 @@ directory. (Does not strip symlinks, only '.', '..', and equivalents.)
 
 Returns a true or false value indicating, respectively, that alphabetic
 case is not or is significant when comparing file specifications.
+Cygwin and Win32 accept an optional drive argument.
 
     $is_case_tolerant = File::Spec->case_tolerant();
 
@@ -214,7 +215,7 @@ The results can be passed to L</catpath()> to get back a path equivalent to
 =item splitdir
 X<splitdir> X<split, dir>
 
-The opposite of L</catdir()>.
+The opposite of L</catdir>.
 
     @dirs = File::Spec->splitdir( $directories );
 
@@ -289,7 +290,7 @@ On systems that have a grammar that indicates filenames, this ignores the
 C<$base> filename as well. Otherwise all path components are assumed to be
 directories.
 
-If C<$path> is absolute, it is cleaned up and returned using L</canonpath()>.
+If C<$path> is absolute, it is cleaned up and returned using L</canonpath>.
 
 No checks against the filesystem are made.  On VMS, there is
 interaction with the working environment, as logicals and
@@ -328,7 +329,7 @@ splitpath(), splitdir(), catpath() and catdir() by Barrie Slaymaker.
 
 =head1 COPYRIGHT
 
-Copyright (c) 2004 by the Perl 5 Porters.  All rights reserved.
+Copyright (c) 2004-2010 by the Perl 5 Porters.  All rights reserved.
 
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

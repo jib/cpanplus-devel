@@ -121,7 +121,7 @@ use strict;
 use POSIX qw/locale_h/;
 use locale;
 use vars qw ($VERSION @ISA @REGEXS);
-$VERSION = 0.82;
+$VERSION = 0.84;
 
 use overload (
     '""'       => \&stringify,
@@ -819,23 +819,55 @@ sub _verify {
     }
 }
 
+sub _is_non_alphanumeric {
+    my $s = shift;
+    $s = new charstar $s;
+    while ($s) {
+	return 0 if isSPACE($s); # early out
+	return 1 unless (isALPHA($s) || isDIGIT($s) || $s =~ /[.-]/);
+	$s++;
+    }
+    return 0;
+}
+
 sub _un_vstring {
     my $value = shift;
     # may be a v-string
-    if ( $] >= 5.006_000 && length($value) >= 3 && $value !~ /[._]/) {
-	foreach my $char (split(//,$value)) {
-	    # if one of the characters is non-text assume v-string
-	    if (ord($char) < ord(" ")) {
-		my $tvalue = sprintf("v%vd",$value);
-		if ( $tvalue =~ /^v\d+(\.\d+){2,}$/ ) {
-		    # must be a v-string
-		    $value = $tvalue;
-		}
-		last;
+    if ( length($value) >= 3 && $value !~ /[._]/ 
+	&& _is_non_alphanumeric($value)) {
+	my $tvalue;
+	if ( $] ge 5.008_001 ) {
+	    $tvalue = _find_magic_vstring($value);
+	    $value = $tvalue if length $tvalue;
+	}
+	elsif ( $] ge 5.006_000 ) {
+	    $tvalue = sprintf("v%vd",$value);
+	    if ( $tvalue =~ /^v\d+(\.\d+){2,}$/ ) {
+		# must be a v-string
+		$value = $tvalue;
 	    }
 	}
     }
     return $value;
+}
+
+sub _find_magic_vstring {
+    my $value = shift;
+    my $tvalue = '';
+    require B;
+    my $sv = B::svref_2object(\$value);
+    my $magic = ref($sv) eq 'B::PVMG' ? $sv->MAGIC : undef;
+    while ( $magic ) {
+	if ( $magic->TYPE eq 'V' ) {
+	    $tvalue = $magic->PTR;
+	    $tvalue =~ s/^v?(.+)$/v$1/;
+	    last;
+	}
+	else {
+	    $magic = $magic->MOREMAGIC;
+	}
+    }
+    return $tvalue;
 }
 
 sub _VERSION {
