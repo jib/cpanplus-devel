@@ -1,3 +1,8 @@
+CHanges for 0.9010      Thu Oct 28 23:20:19 2010
+================================================
+* Added PERL_MM_OPT to the CPANPLUS-Dist-MM test to hopefully 
+  resolve RT#57241 which relates to local::lib and cpanm
+
 Changes for 0.9009      Mon Oct 25 21:03:39 2010
 ================================================
 * Resolve issues with the SQLite source engine
