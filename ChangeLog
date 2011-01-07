@@ -1,3 +1,11 @@
+Changes for 0.9011      Fri Jan  7 22:01:56 2011
+================================================
+* Remove reporting $! after make test fails. It is misleading 
+  in test reports
+* Don't unset PERL_MM_USE_DEFAULT if it is already set
+  in cpan2dist
+* Apply blead patches from Peter Acklam
+
 CHanges for 0.9010      Thu Oct 28 23:20:19 2010
 ================================================
 * Added PERL_MM_OPT to the CPANPLUS-Dist-MM test to hopefully 
