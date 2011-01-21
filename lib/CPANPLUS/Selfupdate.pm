@@ -236,7 +236,7 @@ See C<selfupdate> for details.
     sub list_categories { return sort keys %$cache }
 
 =head2 %list = $self->list_modules_to_update( update => "core|dependencies|enabled_features|features|all", [latest => BOOL] )
-    
+
 List which modules C<selfupdate> would upgrade. You can update either 
 the core (CPANPLUS itself), the core dependencies, all features you have
 currently turned on, or all features available, or everything.
@@ -249,11 +249,11 @@ Returns a hash of feature names and lists of module objects to be
 upgraded based on the category you provided. For example:
 
     %list = $self->list_modules_to_update( update => 'core' );
-    
+
 Would return:
 
     ( core => [ $module_object_for_cpanplus ] );
-    
+
 =cut    
     
     sub list_modules_to_update {
@@ -290,7 +290,7 @@ Would return:
         
         return %list;
     }
-    
+
 =head2 $bool = $self->selfupdate( update => "core|dependencies|enabled_features|features|all", [latest => BOOL, force => BOOL] )
 
 Selfupdate CPANPLUS. You can update either the core (CPANPLUS itself),
