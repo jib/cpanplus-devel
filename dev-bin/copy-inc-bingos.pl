@@ -57,6 +57,8 @@ unless( $MineOnly ) {
         Module::Pluggable
         version
         Parse::CPAN::Meta
+        JSON::PP
+        CPAN::Meta::YAML
     ];
     
     # IPC::Run no more!

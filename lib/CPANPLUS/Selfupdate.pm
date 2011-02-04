@@ -66,7 +66,7 @@ CPANPLUS::Selfupdate
             'Module::CoreList'          => '2.22', # deprecated core modules
             'Module::Pluggable'         => '2.4',
             'Module::Loaded'            => '0.01',
-            'Parse::CPAN::Meta'         => '0.02', # config_requires support
+            'Parse::CPAN::Meta'         => '1.4200', # config_requires support
             'ExtUtils::Install'         => '1.42', # uninstall outside @INC
             ( check_install( module => 'CPANPLUS::Dist::Build' ) 
               ? ( 'CPANPLUS::Dist::Build' => '0.24' ) : () ),
