@@ -12,6 +12,7 @@ my $Target      = $Cwd . '/inc/bundle';    # Target dir to copy to
 my $Conf        = CPANPLUS::Configure->new();
 $Conf->set_conf( enable_custom_sources => 0 );
 $Conf->set_conf( verbose => 1 );
+$Conf->set_conf( prefer_bin => 1 );
 $Conf->set_conf( hosts => [ { scheme => 'ftp', host => 'localhost', path => '/CPAN/' } ] );
 $Conf->set_conf( no_update => 1 );
 $Conf->set_conf( source_engine => 'CPANPLUS::Internals::Source::CPANIDX' );
