@@ -7,6 +7,7 @@ inc/bundle/Archive/Extract.pm
 inc/bundle/Archive/Tar.pm
 inc/bundle/Archive/Tar/Constant.pm
 inc/bundle/Archive/Tar/File.pm
+inc/bundle/CPAN/Meta/YAML.pm
 inc/bundle/Class/Inspector.pm
 inc/bundle/Devel/InnerPackage.pm
 inc/bundle/File/Fetch.pm
@@ -23,6 +24,8 @@ inc/bundle/File/Spec/Win32.pm
 inc/bundle/IO/String.pm
 inc/bundle/IO/Zlib.pm
 inc/bundle/IPC/Cmd.pm
+inc/bundle/JSON/PP.pm
+inc/bundle/JSON/PP/Boolean.pm
 inc/bundle/Locale/Maketext/Simple.pm
 inc/bundle/Log/Message.pm
 inc/bundle/Log/Message/Config.pm

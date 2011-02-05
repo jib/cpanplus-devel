@@ -297,14 +297,14 @@ when invoked. Defaults to an empty string.
 
 =item md5
 
-A boolean indicating whether or not md5 checks should be done when
-an archive is fetched. Defaults to 'true' if you have C<Digest::MD5>
+A boolean indicating whether or not sha256 checks should be done when
+an archive is fetched. Defaults to 'true' if you have C<Digest::SHA>
 installed, 'false' otherwise.
 
 =cut
 
         $Conf->{'conf'}->{'md5'} = ( 
-                            check_install( module => 'Digest::MD5' ) ? 1 : 0 );
+                            check_install( module => 'Digest::SHA' ) ? 1 : 0 );
 
 =item no_update
 

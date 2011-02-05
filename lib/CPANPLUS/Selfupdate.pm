@@ -110,7 +110,7 @@ CPANPLUS::Selfupdate
 
             md5 => [
                 {
-                    'Digest::MD5'   => '0.0',
+                    'Digest::SHA'   => '0.0',
                 },            
                 sub { 
                     my $cb = shift;
