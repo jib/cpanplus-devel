@@ -1,3 +1,12 @@
+Changes for 0.90_12     Sun Feb  6 19:48:49 2011
+================================================
+* Remove more trailing whitespace spotted by Nicholas Clark
+  with patch to fix, RT #64976
+* Added META.json and MYMETA.json support. Requires a more
+  recent Parse::CPAN::Meta
+* Switch to Digest::SHA and SHA256 checksums instead of 
+  Digest::MD5 and MD5, which has dropped v5.6.x support.
+
 Changes for 0.9011      Fri Jan  7 22:01:56 2011
 ================================================
 * Remove reporting $! after make test fails. It is misleading 
