@@ -332,6 +332,7 @@ C<Compress::Zlib> installed (as that would mean we could not extract
 C<.tar.gz> files)
 
 =cut
+
         ### if we dont have c::zlib, we'll need to use /bin/tar or we
         ### can not extract any files. Good time to change the default
         $Conf->{'conf'}->{'prefer_bin'} = 
