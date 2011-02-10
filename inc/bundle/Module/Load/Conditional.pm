@@ -18,7 +18,7 @@ BEGIN {
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.40';
+    $VERSION        = '0.44';
     $VERBOSE        = 0;
     $DEPRECATED     = 0;
     $FIND_VERSION   = 1;
@@ -85,7 +85,7 @@ and so forth.
 
 =head1 Methods
 
-=head1 $href = check_install( module => NAME [, version => VERSION, verbose => BOOL ] );
+=head2 $href = check_install( module => NAME [, version => VERSION, verbose => BOOL ] );
 
 C<check_install> allows you to verify if a certain module is installed
 or not. You may call it with the following arguments:
@@ -204,6 +204,8 @@ sub check_install {
             if ( ref $dir ) {
                 ### @INC hook -- we invoke it and get the filehandle back
                 ### this is actually documented behaviour as of 5.8 ;)
+
+                my $existed_in_inc = $INC{$file_inc};
     
                 if (UNIVERSAL::isa($dir, 'CODE')) {
                     ($fh) = $dir->($dir, $file);
@@ -222,6 +224,8 @@ sub check_install {
                 }
     
                 $filename = $INC{$file_inc} || $file;
+
+                delete $INC{$file_inc} if not $existed_in_inc;
     
             } else {
                 $filename = File::Spec->catfile($dir, $file);
