@@ -375,11 +375,11 @@ sub find_mymeta_requires {
           push @args, ( file => $mfile );
           if ( $mfile =~ /\.json/ ) {
             $href = $self->_prereqs_from_meta_json( @args,
-                keys => [ qw|runtime build test| ] );
+                keys => [ qw|build test runtime| ] );
           }
           else {
             $href = $self->_prereqs_from_meta_file( @args,
-                keys => [ qw|requires build_requires| ] );
+                keys => [ qw|build_requires requires| ] );
           }
           last META;
       }
