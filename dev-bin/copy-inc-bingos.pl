@@ -19,7 +19,8 @@ $Conf->set_conf( source_engine => 'CPANPLUS::Internals::Source::CPANIDX' );
 my $CB          = CPANPLUS::Backend->new( $Conf );
 my $MineOnly    = @ARGV ? 1 : 0;
 
-### from p4 
+### from p4
+if ( 0 )
 {   my @Copy    = qw[
         Archive-Extract/
         Archive-Tar/
@@ -38,7 +39,7 @@ my $MineOnly    = @ARGV ? 1 : 0;
 
     for my $entry (@Copy) {
         my $dir = $Prefix . $entry . $Libdir;
-        
+
         print "Copying files from $entry...";
         system("cp -R $dir $Target");
         print "done\n";
@@ -47,9 +48,22 @@ my $MineOnly    = @ARGV ? 1 : 0;
 
 
 
-### from installations 
-unless( $MineOnly ) {  
+### from installations
+unless( $MineOnly ) {
     my @Modules = qw[
+        Archive::Extract
+        Archive::Tar
+        File::Fetch
+        IPC::Cmd
+        Log::Message
+        Log::Message::Simple
+        Module::Load
+        Module::Loaded
+        Module::Load::Conditional
+        Object::Accessor
+        Package::Constants
+        Params::Check
+        Term::UI
         File::Spec
         IO::String
         IO::Zlib
