@@ -1,3 +1,8 @@
+Changes for 0.9103      Sun Mar 20 00:38:05 2011
+================================================
+* Fixed the logic not sending NA reports when 
+  'perl' is expressed as a prereq
+
 Changes for 0.9102      Mon Feb 28 11:35:43 2011
 ================================================
 * Only send NAs for a 'perl' prereq when it actually is
