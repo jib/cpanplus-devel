@@ -37,8 +37,8 @@ manpage for additional functionality available via this package.
 
 =head2 history("message string" [,VERBOSE])
 
-Records a message on the stack, and prints it to C<STDOUT> 
-(or actually C<$HISTORY_FH>, see the C<GLOBAL VARIABLES> section 
+Records a message on the stack, and prints it to C<STDOUT>
+(or actually C<$HISTORY_FH>, see the C<GLOBAL VARIABLES> section
 below), if the C<VERBOSE> option is true.
 
 The C<VERBOSE> option defaults to true.
@@ -55,7 +55,7 @@ BEGIN {
 
     for my $func ( @EXPORT ) {
         no strict 'refs';
-        
+
         *$func = sub {  my $msg     = shift;
                         $log->store(
                                 message => $msg,
@@ -75,7 +75,7 @@ BEGIN {
 
 
 {   package Log::Message::Handlers;
-    
+
     sub history {
         my $self    = shift;
         my $verbose = shift;

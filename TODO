@@ -4,8 +4,8 @@
     feasible to have EU::AI install prereqs. bundle them for now.
     * compat API added to CPANPLUS, but we still have a bootstrap issue
       without some of these prereqs, so keep bundling anyway
-   
-   
+
+
 ### todo code marks things that are present in 0.04x but not in 0.05x yet
 ### wishlist is new features we want to add
 
@@ -49,7 +49,7 @@
 * Periodic host checking (see if they're still good mirrors)
 * Make error stack reports available on a per-module (dist) basis,
     as discussed in '[Cpanplus-devel] error stack reporting a bit overzealous'
-* Test reports should only contain texts of the module they pertain to, 
+* Test reports should only contain texts of the module they pertain to,
     rather than all modules in the current loop (like i 1..10 from the shell)
     also reported as ticket [#11404]
 

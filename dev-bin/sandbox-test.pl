@@ -52,7 +52,7 @@ system("find $Target -type f | xargs p4 edit");
 
 for my $entry (@Copy) {
     my $dir = $Prefix . $entry . $Libdir;
-    
+
     system("cp -R $dir $Target");
 }
 

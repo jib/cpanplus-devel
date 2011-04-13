@@ -32,21 +32,21 @@ out of it's extraction dir, by typing:
 
     $ perl bin/cpanp-boxed
 
-This may help you with bootstrap issues, or other situations 
+This may help you with bootstrap issues, or other situations
 where you need to use CPANPLUS but can not use a system installation.
 
-You can install all of CPANPLUS' dependencies like this, before 
+You can install all of CPANPLUS' dependencies like this, before
 installing CPANPLUS itself by running:
 
-    $ perl bin/cpanp-boxed -s selfupdate dependencies 
+    $ perl bin/cpanp-boxed -s selfupdate dependencies
 
 All the modules bundled are found in the 'inc/bundle' directory. If
 you, for whatever reason, wish to not install these from cpan, you
 could include them into your environment as such (using tcsh):
 
     $ setenv PERL5LIB `pwd`/inc/bundle
-    
-    
+
+
 ###################################################################
 ###
 ### Notes for windows users
@@ -89,10 +89,10 @@ DBI package.
 If you wish to report module test results as part of installation process,
 please answer "Y" to the 'Report tests results? [y/N]:' question during
 the interactive configuration. You can also type "s edit" in the CPANPLUS
-Default Shell to edit the config file manually, or just enter "s conf 
+Default Shell to edit the config file manually, or just enter "s conf
 cpantest 1" and "s save" to save the settings.
 
-Please consult the CPAN Tester's Website (http://testers.cpan.org/) for 
+Please consult the CPAN Tester's Website (http://testers.cpan.org/) for
 detailed information.
 
 

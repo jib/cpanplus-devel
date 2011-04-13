@@ -165,7 +165,7 @@ sub import {
 	map { $args{$_} = 1 } @_
     }
     else { # no parameters at all on use line
-    	%args = 
+    	%args =
 	(
 	    qv => 1,
 	    'UNIVERSAL::VERSION' => 1,
@@ -173,9 +173,9 @@ sub import {
     }
 
     my $callpkg = caller();
-    
+
     if (exists($args{declare})) {
-	*{$callpkg.'::declare'} = 
+	*{$callpkg.'::declare'} =
 	    sub {return $class->declare(shift) }
 	  unless defined(&{$callpkg.'::declare'});
     }
@@ -188,7 +188,7 @@ sub import {
 
     if (exists($args{'UNIVERSAL::VERSION'})) {
 	local $^W;
-	*UNIVERSAL::VERSION 
+	*UNIVERSAL::VERSION
 		= \&version::_VERSION;
     }
 

@@ -388,7 +388,7 @@ my $notmuch = sub { return };
 
 *fileno    = $notmuch;
 *error     = $notmuch;
-*clearerr  = $notmuch; 
+*clearerr  = $notmuch;
 *sync      = $notmuch;
 *flush     = $notmuch;
 *setbuf    = $notmuch;

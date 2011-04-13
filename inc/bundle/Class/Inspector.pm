@@ -9,21 +9,21 @@ Class::Inspector - Get information about a class and its structure
 =head1 SYNOPSIS
 
   use Class::Inspector;
-  
+
   # Is a class installed and/or loaded
   Class::Inspector->installed( 'Foo::Class' );
   Class::Inspector->loaded( 'Foo::Class' );
-  
+
   # Filename related information
   Class::Inspector->filename( 'Foo::Class' );
   Class::Inspector->resolved_filename( 'Foo::Class' );
-  
+
   # Get subroutine related information
   Class::Inspector->functions( 'Foo::Class' );
   Class::Inspector->function_refs( 'Foo::Class' );
   Class::Inspector->function_exists( 'Foo::Class', 'bar' );
   Class::Inspector->methods( 'Foo::Class', 'full', 'public' );
-  
+
   # Find all loaded subclasses or something
   Class::Inspector->subclasses( 'Foo::Class' );
 
@@ -32,7 +32,7 @@ Class::Inspector - Get information about a class and its structure
 Class::Inspector allows you to get information about a loaded class. Most or
 all of this information can be found in other ways, but they arn't always
 very friendly, and usually involve a relatively high level of Perl wizardry,
-or strange and unusual looking code. Class::Inspector attempts to provide 
+or strange and unusual looking code. Class::Inspector attempts to provide
 an easier, more friendly interface to this information.
 
 =head1 METHODS
@@ -321,7 +321,7 @@ order.
 =item public
 
 The C<public> option will return only 'public' methods, as defined by the Perl
-convention of prepending an underscore to any 'private' methods. The C<public> 
+convention of prepending an underscore to any 'private' methods. The C<public>
 option will effectively remove any methods that start with an underscore.
 
 =item private
@@ -342,12 +342,12 @@ C<[ 'Class::method1', 'AnotherClass::method2', 'Class::method3' ]>.
 
 =item expanded
 
-The C<expanded> option will cause a lot more information about method to be 
+The C<expanded> option will cause a lot more information about method to be
 returned. Instead of just the method name, you will instead get an array
 reference containing the method name as a single combined name, ala C<full>,
 the seperate class and method, and a CODE ref to the actual function ( if
-available ). Please note that the function reference is not guarenteed to 
-be available. C<Class::Inspector> is intended at some later time, work 
+available ). Please note that the function reference is not guarenteed to
+be available. C<Class::Inspector> is intended at some later time, work
 with modules that have some some of common run-time loader in place ( e.g
 C<Autoloader> or C<Class::Autouse> for example.
 
@@ -420,7 +420,7 @@ sub methods {
 	foreach my $namespace ( @path ) {
 		my @functions = grep { ! $methods{$_} }
 			grep { /$RE_IDENT/o }
-			grep { defined &{"${namespace}::$_"} } 
+			grep { defined &{"${namespace}::$_"} }
 			keys %{"${namespace}::"};
 		foreach ( @functions ) {
 			$methods{$_} = $namespace;
@@ -434,8 +434,8 @@ sub methods {
 
 	# Return in the correct format
 	@methodlist = map { "$methods{$_}::$_" } @methodlist if $options{full};
-	@methodlist = map { 
-		[ "$methods{$_}::$_", $methods{$_}, $_, \&{"$methods{$_}::$_"} ] 
+	@methodlist = map {
+		[ "$methods{$_}::$_", $methods{$_}, $_, \&{"$methods{$_}::$_"} ]
 		} @methodlist if $options{expanded};
 
 	\@methodlist;
@@ -536,7 +536,7 @@ sub recursive_children {
 	my $name     = $class->_class(shift) or return ();
 	my @children = ( $name );
 
-	# Do the search using a nicer, more memory efficient 
+	# Do the search using a nicer, more memory efficient
 	# variant of actual recursion.
 	my $i = 0;
 	no strict 'refs';

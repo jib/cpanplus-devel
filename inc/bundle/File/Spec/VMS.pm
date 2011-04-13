@@ -26,7 +26,7 @@ See File::Spec::Unix for a documentation of the methods provided
 there. This package overrides the implementation of these methods, not
 the semantics.
 
-The default behavior is to allow either VMS or Unix syntax on input and to 
+The default behavior is to allow either VMS or Unix syntax on input and to
 return VMS syntax on output, even when Unix syntax was given on input.
 
 When used with a Perl of version 5.10 or greater and a CRTL possessing the
@@ -59,7 +59,7 @@ sub _unix_rpt {
         $unix_rpt = VMS::Feature::current("filename_unix_report");
     } else {
         my $env_unix_rpt = $ENV{'DECC$FILENAME_UNIX_REPORT'} || '';
-        $unix_rpt = $env_unix_rpt =~ /^[ET1]/i; 
+        $unix_rpt = $env_unix_rpt =~ /^[ET1]/i;
     }
     return $unix_rpt;
 }
@@ -72,7 +72,7 @@ sub _efs {
         $efs = VMS::Feature::current("efs_charset");
     } else {
         my $env_efs = $ENV{'DECC$EFS_CHARSET'} || '';
-        $efs = $env_efs =~ /^[ET1]/i; 
+        $efs = $env_efs =~ /^[ET1]/i;
     }
     return $efs;
 }
@@ -273,7 +273,7 @@ sub catdir {
 
 	} else {
 	    # Traditional ODS-2 mode.
-	    $spath =~ s/\.dir\Z(?!\n)//i; $sdir =~ s/\.dir\Z(?!\n)//i; 
+	    $spath =~ s/\.dir\Z(?!\n)//i; $sdir =~ s/\.dir\Z(?!\n)//i;
 
 	    $sdir = $self->eliminate_macros($sdir)
 		unless $sdir =~ /^[\w\-]+\Z(?!\n)/s;
@@ -284,13 +284,13 @@ sub catdir {
 	    # eliminate_macros(), since Unix syntax has no way to express
 	    # "absolute from the top of this device's directory tree".
 	    if ($spath =~ /^[\[<][^.\-]/s) { $rslt =~ s/^[^\[<]+//s; }
-	} 
+	}
     } else {
 	# Single directory, just make sure it is in directory format
 	# Return an empty string on null input, and pass through macros.
 
 	if    (not defined $dir or not length $dir) { $rslt = ''; }
-	elsif ($dir =~ /^\$\([^\)]+\)\Z(?!\n)/s) { 
+	elsif ($dir =~ /^\$\([^\)]+\)\Z(?!\n)/s) {
 	    $rslt = $dir;
 	} else {
             my $unix_mode = 0;
@@ -377,7 +377,7 @@ sub catfile {
                 $tdir_unix = 1 if ($tdir =~ /^\.\.?$/);
 
                 if (!$tdir_vms) {
-                    if ($tdir_unix) { 
+                    if ($tdir_unix) {
                         $tdir = vmspath($tdir);
                     } else {
                         $tdir =~ s/\.dir\Z(?!\n)//i;
@@ -695,7 +695,7 @@ Construct a complete filespec.
 
 sub catpath {
     my($self,$dev,$dir,$file) = @_;
-    
+
     my $efs = $self->_efs;
     my $unix_rpt = $self->_unix_rpt;
 
@@ -713,7 +713,7 @@ sub catpath {
         } else {
             $unix_mode = $dir_unix;
         }
-    } 
+    }
 
     # We look for a volume in $dev, then in $dir, but not both
     # but only if using VMS syntax.
@@ -835,15 +835,15 @@ sub abs2rel {
     for ($path, $base) { $_ = $self->canonpath($_) }
 
     # Are we even starting $path on the same (node::)device as $base?  Note that
-    # logical paths or nodename differences may be on the "same device" 
-    # but the comparison that ignores device differences so as to concatenate 
-    # [---] up directory specs is not even a good idea in cases where there is 
+    # logical paths or nodename differences may be on the "same device"
+    # but the comparison that ignores device differences so as to concatenate
+    # [---] up directory specs is not even a good idea in cases where there is
     # a logical path difference between $path and $base nodename and/or device.
     # Hence we fall back to returning the absolute $path spec
     # if there is a case blind device (or node) difference of any sort
     # and we do not even try to call $parse() or consult %ENV for $trnlnm()
     # (this module needs to run on non VMS platforms after all).
-    
+
     my ($path_volume, $path_directories, $path_file) = $self->splitpath($path);
     my ($base_volume, $base_directories, $base_file) = $self->splitpath($base);
     return $path unless lc($path_volume) eq lc($base_volume);
@@ -858,9 +858,9 @@ sub abs2rel {
     my $basechunks = @basechunks;
     unshift(@basechunks,'000000') unless $basechunks[0] eq '000000';
 
-    while ( @pathchunks && 
-            @basechunks && 
-            lc( $pathchunks[0] ) eq lc( $basechunks[0] ) 
+    while ( @pathchunks &&
+            @basechunks &&
+            lc( $pathchunks[0] ) eq lc( $basechunks[0] )
           ) {
         shift @pathchunks ;
         shift @basechunks ;
@@ -964,7 +964,7 @@ sub rel2abs {
             } else {
                 $base_unix = 1 if ($base =~ m#/#);
                 $base_unix = 1 if ($base =~ /^\.\.?$/);
-                $base = vmspath($base) if $base_unix; 
+                $base = vmspath($base) if $base_unix;
             }
         }
 
@@ -1008,7 +1008,7 @@ sub rel2abs {
 # copies as of 6.06_03 which are the canonical ones.  We leave these
 # here, in peace, so that File::Spec continues to work with MakeMakers
 # prior to 6.06_03.
-# 
+#
 # Please consider these two methods deprecated.  Do not patch them,
 # patch the ones in ExtUtils::MM_VMS instead.
 #
@@ -1036,7 +1036,7 @@ sub eliminate_macros {
     my($head,$macro,$tail);
 
     # perform m##g in scalar context so it acts as an iterator
-    while ($npath =~ m#(.*?)\$\((\S+?)\)(.*)#gs) { 
+    while ($npath =~ m#(.*?)\$\((\S+?)\)(.*)#gs) {
         if (defined $self->{$2}) {
             ($head,$macro,$tail) = ($1,$2,$3);
             if (ref $self->{$macro}) {
@@ -1084,7 +1084,7 @@ sub fixpath {
 	     split /\s+/, $path;
     }
 
-    if ($path =~ m#^\$\([^\)]+\)\Z(?!\n)#s || $path =~ m#[/:>\]]#) { 
+    if ($path =~ m#^\$\([^\)]+\)\Z(?!\n)#s || $path =~ m#[/:>\]]#) {
         if ($force_path or $path =~ /(?:DIR\)|\])\Z(?!\n)/) {
             $fixedpath = vmspath($self->eliminate_macros($path));
         }

@@ -313,7 +313,7 @@ sub find_configure_requires {
         defaults => $mod->status->$meth || {},
       );
 
-      my @possibles = do { defined $mod->status->extract 
+      my @possibles = do { defined $mod->status->extract
                            ? ( META_JSON->( $mod->status->extract ),
                                META_YML->( $mod->status->extract ) )
                            : ()
@@ -363,7 +363,7 @@ sub find_mymeta_requires {
         defaults => $mod->status->$meth || {},
       );
 
-      my @possibles = do { defined $mod->status->extract 
+      my @possibles = do { defined $mod->status->extract
                            ? ( MYMETA_JSON->( $mod->status->extract ),
                                MYMETA_YML->( $mod->status->extract ) )
                            : ()

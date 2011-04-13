@@ -29,24 +29,24 @@ for my $method ( keys %$Tmpl ) {
 sub new {
     my $class = shift;
     my %hash  = @_;
-    
+
     my $args = check( $Tmpl, \%hash ) or return;
-    
+
     bless $args, $class;
 
     if( lc($args->scheme) ne 'file' and not $args->host ) {
         return File::Fetch->_error(loc(
             "Hostname required when fetching from '%1'",$args->scheme));
     }
-    
+
     for (qw[path file]) {
         unless( $args->$_ ) {
             return File::Fetch->_error(loc("No '%1' specified",$_));
         }
     }
-    
+
     return $args;
-}    
+}
 
 
 1;

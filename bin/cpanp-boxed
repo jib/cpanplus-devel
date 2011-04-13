@@ -29,15 +29,15 @@ BEGIN {
 
     @RUN_TIME_INC   = ($PRIV_LIB, @INC);
     unshift @INC, $LIB_DIR, $BUNDLE_DIR;
-    
+
     ### set it in the environment too, for when we shell out
     ### (like at 'perl makefile.pl' time.
-    $ENV{'PERL5LIB'} = join $Config{'path_sep'}, grep { defined } 
+    $ENV{'PERL5LIB'} = join $Config{'path_sep'}, grep { defined }
                         $PRIV_LIB,              # to find the boxed config
-                        #$LIB_DIR,               # the CPANPLUS libs  
-                        $ENV{'PERL5LIB'};       # original PERL5LIB       
+                        #$LIB_DIR,               # the CPANPLUS libs
+                        $ENV{'PERL5LIB'};       # original PERL5LIB
 
-}    
+}
 
 use FindBin;
 use File::Find                          qw[find];
@@ -56,20 +56,20 @@ use CPANPLUS::Internals::Utils;
 
         find( sub { my $file = $File::Find::name;
                 return unless -e $file && -f _ && -s _;
-                
+
                 return if $file =~ /\._/;   # osx temp files
-                
+
                 ### strip base dir. Might not end in / (or local
                 ### dir delimiter), so remove that if needed too
                 $file =~ s/^$base_re(\W)?//;
 
                 ### file already loaded.
                 return if $INC{$file};
-               
+
                 ### construct pm name and strip suffix
-                my $unixfile = File::Spec::Unix->catfile( 
+                my $unixfile = File::Spec::Unix->catfile(
                                     File::Spec->splitdir( $file )
-                                );     
+                                );
                 my $pm       = join '::', File::Spec->splitdir( $file );
                 $pm =~ s/\.pm$//i or return;    # not a .pm file
 
@@ -83,7 +83,7 @@ use CPANPLUS::Internals::Utils;
                 ### file fails or some such.. so remove it from our %INC!
                 if( $@ ) {
                     push @failures, $unixfile;
-    
+
                     ### dont enable warnings -- some modules
                     ### are OS specific. Uncomment only for debug
                     ### reasons
@@ -91,8 +91,8 @@ use CPANPLUS::Internals::Utils;
 
 
                 }
-            }, $dir ); 
-    }            
+            }, $dir );
+    }
 
     ### delete AFTER we've loaded everything!
     delete $INC{$_} for @failures;
@@ -108,12 +108,12 @@ my $Config      = CONFIG_BOXED;
 my $Util        = 'CPANPLUS::Internals::Utils';
 my $ConfigFile  = $ConfObj->_config_pm_to_file( $Config => $PRIV_LIB );
 
-### setup the environment if needed 
+### setup the environment if needed
 {   ### no base dir even, set it up
     unless( IS_DIR->( $BASE ) ) {
         $Util->_mkdir( dir => $BASE ) or die CPANPLUS::Error->stack_as_string;
     }
- 
+
     ### no config file exists yet, so we create it
     unless( -e $ConfigFile ) {
         ### alter what needs changing
@@ -139,7 +139,7 @@ You can bootstrap your CPANPLUS by running:
   s selfupdate enabled_features
 
 ===
-    \n    
+    \n
 ];
 
 ### set the @INC to a runtime version, so our bundled modules

@@ -597,7 +597,7 @@ sub LoadFile {
 	if ( wantarray ) {
 		return @$self;
 	} else {
-		# Return only the last document to match YAML.pm, 
+		# Return only the last document to match YAML.pm,
 		return $self->[-1];
 	}
 }
@@ -615,7 +615,7 @@ BEGIN {
 		*refaddr = *Scalar::Util::refaddr;
 	};
 	eval <<'END_PERL' if $@;
-# Failed to load Scalar::Util	
+# Failed to load Scalar::Util
 sub refaddr {
 	my $pkg = ref($_[0]) or return undef;
 	if ( !! UNIVERSAL::can($_[0], 'can') ) {

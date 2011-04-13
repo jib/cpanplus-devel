@@ -43,7 +43,7 @@ actually traverse the filesystem cleaning up paths like this.
 sub canonpath {
     my ($self,$path) = @_;
     return unless defined $path;
-    
+
     # Handle POSIX-style node names beginning with double slash (qnx, nto)
     # (POSIX says: "a pathname that begins with two successive slashes
     # may be interpreted in an implementation-defined manner, although
@@ -200,7 +200,7 @@ sub case_tolerant { 0 }
 
 Takes as argument a path and returns true if it is an absolute path.
 
-This does not consult the local filesystem on Unix, Win32, OS/2 or Mac 
+This does not consult the local filesystem on Unix, Win32, OS/2 or Mac
 OS (Classic).  It does consult the working environment for VMS (see
 L<File::Spec::VMS/file_name_is_absolute>).
 
@@ -241,10 +241,10 @@ sub join {
     ($volume,$directories,$file) = File::Spec->splitpath( $path, $no_file );
 
 Splits a path into volume, directory, and filename portions. On systems
-with no concept of volume, returns '' for volume. 
+with no concept of volume, returns '' for volume.
 
-For systems with no syntax differentiating filenames from directories, 
-assumes that the last file is a path unless $no_file is true or a 
+For systems with no syntax differentiating filenames from directories,
+assumes that the last file is a path unless $no_file is true or a
 trailing separator or /. or /.. is present. On Unix this means that $no_file
 true makes this return ( '', $path, '' ).
 
@@ -279,7 +279,7 @@ The opposite of L</catdir()>.
 
     @dirs = File::Spec->splitdir( $directories );
 
-$directories must be only the directory portion of the path on systems 
+$directories must be only the directory portion of the path on systems
 that have the concept of a volume or that have path syntax that differentiates
 files from directories.
 
@@ -314,10 +314,10 @@ inserted if needed (though if the directory portion doesn't start with
 sub catpath {
     my ($self,$volume,$directory,$file) = @_;
 
-    if ( $directory ne ''                && 
-         $file ne ''                     && 
-         substr( $directory, -1 ) ne '/' && 
-         substr( $file, 0, 1 ) ne '/' 
+    if ( $directory ne ''                &&
+         $file ne ''                     &&
+         substr( $directory, -1 ) ne '/' &&
+         substr( $file, 0, 1 ) ne '/'
     ) {
         $directory .= "/$file" ;
     }
@@ -341,7 +341,7 @@ relative, then it is converted to absolute form using
 L</rel2abs()>. This means that it is taken to be relative to
 L<cwd()|Cwd>.
 
-On systems that have a grammar that indicates filenames, this ignores the 
+On systems that have a grammar that indicates filenames, this ignores the
 $base filename. Otherwise all path components are assumed to be
 directories.
 
@@ -401,7 +401,7 @@ sub abs2rel {
     }
     return $self->curdir unless @pathchunks || @basechunks;
 
-    # $base now contains the directories the resulting relative path 
+    # $base now contains the directories the resulting relative path
     # must ascend out of before it can descend to $path_directory.
     my $result_dirs = $self->catdir( ($self->updir) x @basechunks, @pathchunks );
     return $self->canonpath( $self->catpath('', $result_dirs, '') );
@@ -413,7 +413,7 @@ sub _same {
 
 =item rel2abs()
 
-Converts a relative path to an absolute path. 
+Converts a relative path to an absolute path.
 
     $abs_path = File::Spec->rel2abs( $path ) ;
     $abs_path = File::Spec->rel2abs( $path, $base ) ;
@@ -502,7 +502,7 @@ sub _collapse {
             length $collapsed[-1]       and   # and its not the rootdir
             $collapsed[-1] ne $updir    and   # nor another updir
             $collapsed[-1] ne $curdir         # nor the curdir
-          ) 
+          )
         {                                     # then
             pop @collapsed;                   # collapse
         }

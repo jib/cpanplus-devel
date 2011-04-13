@@ -275,8 +275,8 @@ sub check {
     my %defs    = %$defs;
 
     ### flag to see if anything went wrong ###
-    my $wrong; 
-    
+    my $wrong;
+
     ### flag to see if we warned for anything, needed for warnings_fatal
     my $warned;
 
@@ -338,7 +338,7 @@ sub check {
         if( exists $tmpl{'allow'} and not do {
                 local $_ERROR_STRING;
                 allow( $args{$key}, $tmpl{'allow'} )
-            }         
+            }
         ) {
             ### stringify the value in the error report -- we don't want dumps
             ### of objects, but we do want to see *roughly* what we passed
@@ -355,7 +355,7 @@ sub check {
 
     }
 
-    ### croak with the collected errors if there were errors and 
+    ### croak with the collected errors if there were errors and
     ### we have the fatal flag toggled.
     croak(__PACKAGE__->last_error) if ($wrong || $warned) && $WARNINGS_FATAL;
 
@@ -439,7 +439,7 @@ sub allow {
         for ( @{$_[1]} ) {
             return 1 if allow( $_[0], $_ );
         }
-        
+
         return;
 
     ### fall back to a simple, but safe 'eq' ###
@@ -509,7 +509,7 @@ sub _sanity_check_and_defaults {
             } grep {
                 not $known_keys{$_}
             } keys %{$utmpl{$key}};
-        
+
             ### make sure you passed a ref, otherwise, complain about it!
             if ( exists $utmpl{$key}->{'store'} ) {
                 _store_error( loc(
@@ -654,7 +654,7 @@ Default is 1;
 
 =head2 $Params::Check::WARNINGS_FATAL
 
-If set to true, L<Params::Check> will C<croak> when an error during 
+If set to true, L<Params::Check> will C<croak> when an error during
 template validation occurs, rather than return C<false>.
 
 Default is 0;
@@ -697,7 +697,7 @@ This module by Jos Boumans E<lt>kane@cpan.orgE<gt>.
 
 =head1 COPYRIGHT
 
-This library is free software; you may redistribute and/or modify it 
+This library is free software; you may redistribute and/or modify it
 under the same terms as Perl itself.
 
 

@@ -14,7 +14,7 @@ features or patches to CPANPLUS.
 
 =head1 OBTAINING CPANPLUS
 
-Checkout CPANPLUS from its Subversion repository at 
+Checkout CPANPLUS from its Subversion repository at
 L<http://oss.dwim.org/cpanplus-devel> .
 
 =head1 INSTALLING CPANPLUS
