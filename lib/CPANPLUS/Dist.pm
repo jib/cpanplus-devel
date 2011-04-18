@@ -418,6 +418,9 @@ sub _prereqs_from_meta_file {
 
         ### Parse::CPAN::Meta uses exceptions for errors
         ### hash returned in list context!!!
+
+        local $ENV{PERL_JSON_BACKEND};
+
         my ($doc) = eval { Parse::CPAN::Meta::LoadFile( $meta ) };
 
         unless( $doc ) {
@@ -465,6 +468,9 @@ sub _prereqs_from_meta_json {
 
         ### Parse::CPAN::Meta uses exceptions for errors
         ### hash returned in list context!!!
+
+        local $ENV{PERL_JSON_BACKEND};
+
         my ($doc) = eval { Parse::CPAN::Meta->load_file( $meta ) };
 
         unless( $doc ) {
