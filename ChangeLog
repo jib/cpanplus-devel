@@ -1,3 +1,8 @@
+Changes for 0.9104      Tue Apr 19 15:13:57 2011
+================================================
+* Force Parse::CPAN::Meta to use a sane default for JSON backend
+* Make sure that test failures aren't reported twice to the terminal
+
 Changes for 0.9103      Sun Mar 20 00:38:05 2011
 ================================================
 * Fixed the logic not sending NA reports when
