@@ -256,7 +256,7 @@ L<CPANPLUS::Shell::Default>, L<CPANPLUS::FAQ>, L<CPANPLUS::Backend>, L<CPANPLUS:
 I<bug-cpanplus@rt.cpan.org>
 
 =item * Questions & suggestions:
-I<cpanplus-devel@lists.sourceforge.net>
+I<bug-cpanplus@rt.cpan.org>
 
 =back
 
