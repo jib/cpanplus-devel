@@ -148,6 +148,8 @@ sub gimme_conf {
     ### never use a pager in the test suite
     $conf->set_program( pager   => '' );
 
+    $conf->set_conf( enable_custom_sources => 0 );
+
     ### dmq tells us that we should run with /nologo
     ### if using nmake, as it's very noisy otherwise.
     {   my $make = $conf->get_program('make');

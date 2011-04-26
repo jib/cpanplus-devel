@@ -20,6 +20,7 @@ use Data::Dumper;
 use File::Basename qw[dirname];
 
 my $conf = gimme_conf();
+$conf->set_conf( enable_custom_sources => 1 );
 my $cb   = CPANPLUS::Backend->new( $conf );
 
 ### XXX temp
