@@ -1,3 +1,11 @@
+Changes for 0.9105      Thu May  5 21:47:45 2011
+================================================
+* remove any pointers to the sourceforge mailing list
+* point to the github repo instead
+* Only enable custom sources in the tests where it is actually
+  required for testing
+* Added support to parse_module() for 'Module/Type.pm' parsing
+
 Changes for 0.9104      Tue Apr 19 15:13:57 2011
 ================================================
 * Force Parse::CPAN::Meta to use a sane default for JSON backend
