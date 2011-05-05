@@ -418,6 +418,8 @@ C<parse_module>;
 
 =item Text-Bastardize
 
+=item Text/Bastardize.pm
+
 =item Text-Bastardize-1.06
 
 =item AYRNIEU/Text-Bastardize
@@ -568,6 +570,16 @@ sub parse_module {
         }
 
         return $modobj;
+    }
+
+    # Stolen from cpanminus to support 'Module/Install.pm'
+    # type input
+    if ( ( my $tmpmod = $mod ) =~ s/\.pm$//i ) {
+        my ($volume, $dirs, $file) = File::Spec->splitpath( $tmpmod );
+        $tmpmod = join '::', grep { $_ } File::Spec->splitdir( $dirs ), $file;
+        ### perhaps we can find it in the module tree?
+        my $maybe = $self->module_tree( $tmpmod );
+        return $maybe if IS_MODOBJ->( module => $maybe );
     }
 
     ### perhaps we can find it's a third party module?

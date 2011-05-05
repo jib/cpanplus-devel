@@ -192,6 +192,11 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
             't',
             '',
         ],
+        'Foo/Bar.pm' => [
+            $mod->author->cpanid,   # author
+            $mod->package_name,     # package name
+            $mod->version,          # version
+        ],
     );
 
     while ( my($guess, $attr) = splice @map, 0, 2 ) {
