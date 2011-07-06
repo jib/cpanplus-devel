@@ -17,7 +17,7 @@ BEGIN {
                         $INSTANCES
                     ];
 
-    $VERSION        = '0.70';
+    $VERSION        = '0.72';
     $VERBOSE        = 0;
     $DEBUG          = 0;
     $WARN           = 1;
@@ -169,7 +169,7 @@ sub can_capture_buffer {
     my $self    = shift;
 
     return 1 if $USE_IPC_RUN    && $self->can_use_ipc_run;
-    return 1 if $USE_IPC_OPEN3  && $self->can_use_ipc_open3 && !IS_WIN32;
+    return 1 if $USE_IPC_OPEN3  && $self->can_use_ipc_open3;
     return;
 }
 
@@ -1127,7 +1127,7 @@ sub run {
         alarm $timeout || 0;
 
         ### IPC::Run is first choice if $USE_IPC_RUN is set.
-        if( $USE_IPC_RUN and $self->can_use_ipc_run( 1 ) ) {
+        if( !IS_WIN32 and $USE_IPC_RUN and $self->can_use_ipc_run( 1 ) ) {
             ### ipc::run handlers needs the command as a string or an array ref
 
             $self->_debug( "# Using IPC::Run. Have buffer: $have_buffer" )
@@ -1144,7 +1144,10 @@ sub run {
 
             ### in case there are pipes in there;
             ### IPC::Open3 will call exec and exec will do the right thing
-            $ok = $self->_open3_run(
+
+            my $method = IS_WIN32 ? '_open3_run_win32' : '_open3_run';
+
+            $ok = $self->$method(
                                     $cmd, $_out_handler, $_err_handler, $verbose
                                 );
 
@@ -1186,6 +1189,83 @@ sub run {
                 : $ok
 
 
+}
+
+sub _open3_run_win32 {
+  my $self    = shift;
+  my $cmd     = shift;
+  my $outhand = shift;
+  my $errhand = shift;
+
+  my $pipe = sub {
+    socketpair($_[0], $_[1], AF_UNIX, SOCK_STREAM, PF_UNSPEC)
+        or return undef;
+    shutdown($_[0], 1);  # No more writing for reader
+    shutdown($_[1], 0);  # No more reading for writer
+    return 1;
+  };
+
+  my $open3 = sub {
+    local (*TO_CHLD_R,     *TO_CHLD_W);
+    local (*FR_CHLD_R,     *FR_CHLD_W);
+    local (*FR_CHLD_ERR_R, *FR_CHLD_ERR_W);
+
+    $pipe->(*TO_CHLD_R,     *TO_CHLD_W    ) or die $^E;
+    $pipe->(*FR_CHLD_R,     *FR_CHLD_W    ) or die $^E;
+    $pipe->(*FR_CHLD_ERR_R, *FR_CHLD_ERR_W) or die $^E;
+
+    my $pid = IPC::Open3::open3('>&TO_CHLD_R', '<&FR_CHLD_W', '<&FR_CHLD_ERR_W', @_);
+
+    return ( $pid, *TO_CHLD_W, *FR_CHLD_R, *FR_CHLD_ERR_R );
+  };
+
+  $cmd = [ grep { defined && length } @$cmd ] if ref $cmd;
+  $cmd = $self->__fix_cmd_whitespace_and_special_chars( $cmd );
+
+  my ($pid, $to_chld, $fr_chld, $fr_chld_err) =
+    $open3->( ( ref $cmd ? @$cmd : $cmd ) );
+
+  my $in_sel  = IO::Select->new();
+  my $out_sel = IO::Select->new();
+
+  my %objs;
+
+  $objs{ fileno( $fr_chld ) } = $outhand;
+  $objs{ fileno( $fr_chld_err ) } = $errhand;
+  $in_sel->add( $fr_chld );
+  $in_sel->add( $fr_chld_err );
+
+  close($to_chld);
+
+  while ($in_sel->count() + $out_sel->count()) {
+    my ($ins, $outs) = IO::Select::select($in_sel, $out_sel, undef);
+
+    for my $fh (@$ins) {
+        my $obj = $objs{ fileno($fh) };
+        my $buf;
+        my $bytes_read = sysread($fh, $buf, 64*1024 ); #, length($buf));
+        if (!$bytes_read) {
+            $in_sel->remove($fh);
+        }
+        else {
+	          $obj->( "$buf" );
+	      }
+      }
+
+      for my $fh (@$outs) {
+      }
+  }
+
+  waitpid($pid, 0);
+
+  ### some error occurred
+  if( $? ) {
+        $self->error( $self->_pp_child_error( $cmd, $? ) );
+        $self->ok( 0 );
+        return;
+  } else {
+        return $self->ok( 1 );
+  }
 }
 
 sub _open3_run {
@@ -1706,14 +1786,15 @@ C<run> will try to execute your command using the following logic:
 
 If you have C<IPC::Run> installed, and the variable C<$IPC::Cmd::USE_IPC_RUN>
 is set to true (See the L<"Global Variables"> section) use that to execute
-the command. You will have the full output available in buffers, interactive commands are sure to work  and you are guaranteed to have your verbosity
+the command. You will have the full output available in buffers, interactive commands
+are sure to work  and you are guaranteed to have your verbosity
 settings honored cleanly.
 
 =item *
 
 Otherwise, if the variable C<$IPC::Cmd::USE_IPC_OPEN3> is set to true
 (See the L<"Global Variables"> section), try to execute the command using
-L<IPC::Open3>. Buffers will be available on all platforms except C<Win32>,
+L<IPC::Open3>. Buffers will be available on all platforms,
 interactive commands will still execute cleanly, and also your verbosity
 settings will be adhered to nicely;
 
@@ -1745,7 +1826,7 @@ commands to the screen or not. The default is 0.
 =head2 $IPC::Cmd::USE_IPC_RUN
 
 This variable controls whether IPC::Cmd will try to use L<IPC::Run>
-when available and suitable. Defaults to true if you are on C<Win32>.
+when available and suitable.
 
 =head2 $IPC::Cmd::USE_IPC_OPEN3
 

@@ -10,7 +10,7 @@ use Data::Dumper;
 ### disable string overloading for callbacks
 require overload;
 
-$VERSION    = '0.38';
+$VERSION    = '0.42';
 $FATAL      = 0;
 $DEBUG      = 0;
 
@@ -513,7 +513,7 @@ sub ___autoload {
         }
 
         ### need to check the value?
-        if( exists $self->{$method}->[ALLOW] ) {
+        if( defined $self->{$method}->[ALLOW] ) {
 
             ### double assignment due to 'used only once' warnings
             local $Params::Check::VERBOSE = 0;
@@ -576,7 +576,7 @@ sub ___set {
     my $method  = shift or return;
 
     ### you didn't give us a value to set!
-    exists $_[0] or return;
+    @_ or return;
     my $val     = shift;
 
     ### if there's more arguments than $self, then

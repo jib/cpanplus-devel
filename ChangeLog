@@ -1,3 +1,8 @@
+Changes for 0.9106      Wed Jul  6 09:53:44 2011
+================================================
+* synchronisation with blead to remove profanity
+  from the source. No other changes.
+
 Changes for 0.9105      Thu May  5 21:47:45 2011
 ================================================
 * remove any pointers to the sourceforge mailing list
