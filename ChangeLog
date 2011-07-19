@@ -1,3 +1,9 @@
+Changes for 0.9107      Tue Jul 12 15:22:14 2011
+================================================
+* Add support for v-strings and x.y.z versions, using the version module.
+* Resolve [rt.cpan.org #69420] "type checking for CPANPLUS::Backend::RV::new is incorrect"
+* Resolve [rt.cpan.org #69203] "custom sources ignores timeout config option"
+
 Changes for 0.9106      Wed Jul  6 09:53:44 2011
 ================================================
 * synchronisation with blead to remove profanity
