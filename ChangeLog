@@ -1,3 +1,7 @@
+Changes for 0.9109      Tue Jul 19 22:44:53 2011
+================================================
+* Fix support for v-strings and x.y.z versions with v5.8.4
+
 Changes for 0.9108      Fri Jul 15 15:15:06 2011
 ================================================
 * Always use INSTALLER_MM for Module-Build
