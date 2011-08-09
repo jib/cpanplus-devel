@@ -2,6 +2,7 @@
 abstract: Ameliorated interface to the CPAN
 author: 'Jos Boumans <kane@cpan.org>'
 distribution_type: module
+dynamic_config: 1
 generated_by: Module::Install version 0.650
 license: perl
 meta-spec:
