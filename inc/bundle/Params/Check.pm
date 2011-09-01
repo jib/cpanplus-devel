@@ -5,8 +5,6 @@ use strict;
 use Carp                        qw[carp croak];
 use Locale::Maketext::Simple    Style => 'gettext';
 
-use Data::Dumper;
-
 BEGIN {
     use Exporter    ();
     use vars        qw[ @ISA $VERSION @EXPORT_OK $VERBOSE $ALLOW_UNKNOWN
@@ -18,7 +16,7 @@ BEGIN {
     @ISA        =   qw[ Exporter ];
     @EXPORT_OK  =   qw[check allow last_error];
 
-    $VERSION                = '0.28';
+    $VERSION                = '0.32';
     $VERBOSE                = $^W ? 1 : 0;
     $NO_DUPLICATES          = 0;
     $STRIP_LEADING_DASHES   = 0;
@@ -247,14 +245,18 @@ on this.
 sub check {
     my ($utmpl, $href, $verbose) = @_;
 
+    ### clear the current error string ###
+    _clear_error();
+
     ### did we get the arguments we need? ###
-    return if !$utmpl or !$href;
+    if ( !$utmpl or !$href ) {
+      _store_error(loc('check() expects two arguments'));
+      return unless $WARNINGS_FATAL;
+      croak(__PACKAGE__->last_error);
+    }
 
     ### sensible defaults ###
     $verbose ||= $VERBOSE || 0;
-
-    ### clear the current error string ###
-    _clear_error();
 
     ### XXX what type of template is it? ###
     ### { key => { } } ?
