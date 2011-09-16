@@ -31,7 +31,7 @@ use vars qw[$DEBUG $error $VERSION $WARN $FOLLOW_SYMLINK $CHOWN $CHMOD
 $DEBUG                  = 0;
 $WARN                   = 1;
 $FOLLOW_SYMLINK         = 0;
-$VERSION                = "1.76";
+$VERSION                = "1.78";
 $CHOWN                  = 1;
 $CHMOD                  = 1;
 $SAME_PERMISSIONS       = $> == 0 ? 1 : 0;
@@ -68,6 +68,8 @@ Archive::Tar - module for manipulations of tar archives
     $tar->add_data('file/baz.txt', 'This is the contents now');
 
     $tar->rename('oldname', 'new/file/name');
+    $tar->chown('/', 'root');
+    $tar->chown('/', 'root:root');
 
     $tar->write('files.tar');                   # plain tar
     $tar->write('files.tgz', COMPRESS_GZIP);    # gzip compressed
@@ -1082,6 +1084,26 @@ sub rename {
     return $entry->rename( $new );
 }
 
+=head2 $tar->chown( $file, $uname [, $gname] )
+
+Change owner $file to $uname and $gname.
+
+Returns true on success and false on failure.
+
+=cut
+
+sub chown {
+    my $self = shift;
+    my $file = shift; return unless defined $file;
+    my $uname  = shift; return unless defined $uname;
+    my @args   = ($uname);
+    push(@args, shift);
+
+    my $entry = $self->_find_entry( $file ) or return;
+    my $x = $entry->chown( @args );
+    return $x;
+}
+
 =head2 $tar->remove (@filenamelist)
 
 Removes any entries with names matching any of the given filenames
@@ -1645,7 +1667,7 @@ Example usage:
 sub iter {
     my $class       = shift;
     my $filename    = shift or return;
-    my $compressed  = shift or 0;
+    my $compressed  = shift || 0;
     my $opts        = shift || {};
 
     ### get a handle to read from.

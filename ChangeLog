@@ -1,3 +1,8 @@
+Changes for 0.9111      Fri Sep 16 10:15:06 2011
+================================================
+* Enhance CPANPLUS::Dist::MM Makefile/Makefile.PL
+  age checking code to resolve some issues.
+
 Changes for 0.9110      Thu Sep  1 13:43:06 2011
 ================================================
 * CPANPLUS::Dist::MM now ensures that Makefile.PL
@@ -5,7 +10,7 @@ Changes for 0.9110      Thu Sep  1 13:43:06 2011
 * When resolving dependencies ignore any @INC-hook
   when finding installed modules
 * Updated the META.yml in the dist to specify
-  'dynamic_config' as true. 
+  'dynamic_config' as true.
 
 Changes for 0.9109      Tue Jul 19 22:44:53 2011
 ================================================
