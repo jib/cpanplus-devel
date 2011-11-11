@@ -1,3 +1,7 @@
+Changes for 0.9112      Fri Nov 11 11:10:59 2011
+================================================
+* The 'perlwrapper' is no longer required.
+
 Changes for 0.9111      Fri Sep 16 10:15:06 2011
 ================================================
 * Enhance CPANPLUS::Dist::MM Makefile/Makefile.PL
