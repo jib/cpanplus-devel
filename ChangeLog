@@ -1,3 +1,7 @@
+Changes for 0.9113      Fri Dec  9 16:05:07 2011
+================================================
+* Add more detail and reason for NA to NA reports
+
 Changes for 0.9112      Fri Nov 11 11:10:59 2011
 ================================================
 * The 'perlwrapper' is no longer required.
