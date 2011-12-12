@@ -74,6 +74,7 @@ unless( $MineOnly ) {
         Parse::CPAN::Meta
         JSON::PP
         CPAN::Meta::YAML
+        HTTP::Tiny
     ];
 
     # IPC::Run no more!
