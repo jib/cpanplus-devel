@@ -6,16 +6,22 @@ use File::Spec::Functions qw[
   catdir splitpath splitdir catpath rel2abs abs2rel
 ];
 use B qw[perlstring];
+use Log::Message::Simple qw[msg error];
+
+my $VERBOSE = shift;
 
 $|=1;
 
+msg("Generating 'cpanp-fat'", $VERBOSE);
 open my $fat, '>', 'cpanp-fat' or die "$!\n";
 my $fatpacked = '#!/usr/bin/env perl' . "\n" . fatpack_files() . open_cpanp();
 print {$fat} $fatpacked;
 close $fat;
+msg("Generated 'cpanp-fat'", 1);
 exit 0;
 
 sub open_cpanp {
+  msg("Slurping 'bin/cpanp'", $VERBOSE);
   my $cpanp = do {
     open my $CPANP, '<', 'bin/cpanp' or die "Doh $!\n";
     local $/;
@@ -38,7 +44,9 @@ sub fatpack_files {
   foreach my $dir (@dirs) {
     find(sub {
       return unless -f $_;
-      !/\.pm$/ and warn "File ${File::Find::name} isn't a .pm file - can't pack this and if you hoped we were going to things may not be what you expected later\n" and return;
+      !/\.pm$/ and error("File ${File::Find::name} isn't a .pm file",$VERBOSE)
+         and return;
+      msg("Found '$File::Find::name'", $VERBOSE);
       $files{abs2rel($File::Find::name,$dir)} = do {
         local (@ARGV, $/) = ($File::Find::name); <>
       };
