@@ -1,3 +1,8 @@
+Changes for 0.9114      Mon Dec 19 21:15:38 2011
+================================================
+* Fail earlier on unresolvable prereqs as per
+  [rt.cpan.org #73310]
+
 Changes for 0.9113      Fri Dec  9 16:05:07 2011
 ================================================
 * Add more detail and reason for NA to NA reports
