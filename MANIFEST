@@ -24,6 +24,7 @@ inc/bundle/File/Spec/Win32.pm
 inc/bundle/IO/String.pm
 inc/bundle/IO/Zlib.pm
 inc/bundle/IPC/Cmd.pm
+inc/bundle/HTTP/Tiny.pm
 inc/bundle/JSON/PP.pm
 inc/bundle/JSON/PP/Boolean.pm
 inc/bundle/Locale/Maketext/Simple.pm
