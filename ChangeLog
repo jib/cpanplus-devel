@@ -1,3 +1,8 @@
+Changes for 0.9115      Tue Dec 20 21:10:24 2011
+================================================
+* Added new config option 'allow_unknown_prereqs'
+  to resolve issues with 0.9114 release
+
 Changes for 0.9114      Mon Dec 19 21:15:38 2011
 ================================================
 * Fail earlier on unresolvable prereqs as per
