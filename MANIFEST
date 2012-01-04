@@ -8,7 +8,6 @@ inc/bundle/Archive/Tar.pm
 inc/bundle/Archive/Tar/Constant.pm
 inc/bundle/Archive/Tar/File.pm
 inc/bundle/CPAN/Meta/YAML.pm
-inc/bundle/Class/Inspector.pm
 inc/bundle/Devel/InnerPackage.pm
 inc/bundle/File/Fetch.pm
 inc/bundle/File/Fetch/Item.pm
