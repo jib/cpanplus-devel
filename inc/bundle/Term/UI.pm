@@ -11,7 +11,7 @@ use strict;
 BEGIN {
     use vars        qw[$VERSION $AUTOREPLY $VERBOSE $INVALID];
     $VERBOSE    =   1;
-    $VERSION    =   '0.26';
+    $VERSION    =   '0.30';
     $INVALID    =   loc('Invalid selection, please try again: ');
 }
 
@@ -35,7 +35,7 @@ Term::UI - Term::ReadLine UI made easy
     my $reply = $term->get_reply(
                     prompt => 'What is your favourite colour?',
                     choices => [qw|blue red green|],
-                    default => blue,
+                    default => 'blue',
     );
 
     my $bool = $term->ask_yn(

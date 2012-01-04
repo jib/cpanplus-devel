@@ -8,7 +8,7 @@ use base 'Log::Message::Simple';
 
 =head1 NAME
 
-Term::UI::History
+Term::UI::History - history function
 
 =head1 SYNOPSIS
 
@@ -74,7 +74,9 @@ BEGIN {
 }
 
 
-{   package Log::Message::Handlers;
+{
+    package # hide this from PAUSE
+      Log::Message::Handlers;
 
     sub history {
         my $self    = shift;

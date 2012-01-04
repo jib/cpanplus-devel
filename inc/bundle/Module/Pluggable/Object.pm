@@ -19,7 +19,7 @@ sub new {
 
 }
 
-### Eugggh, this code smells
+### Eugggh, this code smells 
 ### This is what happens when you keep adding patches
 ### *sigh*
 
@@ -42,7 +42,7 @@ sub plugins {
         }
 
         # default search path is '<Module>::<Name>::Plugin'
-        $self->{'search_path'} = ["${pkg}::Plugin"] unless $self->{'search_path'};
+        $self->{'search_path'} = ["${pkg}::Plugin"] unless $self->{'search_path'}; 
 
 
         #my %opts = %$self;
@@ -59,7 +59,7 @@ sub plugins {
         push(@plugins, $self->handle_innerpackages($_)) for @{$self->{'search_path'}};
 
         # push @plugins, map { print STDERR "$_\n"; $_->require } list_packages($_) for (@{$self->{'search_path'}});
-
+        
         # return blank unless we've found anything
         return () unless @plugins;
 
@@ -77,7 +77,7 @@ sub plugins {
         if (defined $self->{'instantiate'}) {
             my $method = $self->{'instantiate'};
             return map { ($_->can($method)) ? $_->$method(@_) : () } keys %plugins;
-        } else {
+        } else { 
             # no? just return the names
             return keys %plugins;
         }
@@ -88,8 +88,8 @@ sub plugins {
 sub _setup_exceptions {
     my $self = shift;
 
-    my %only;
-    my %except;
+    my %only;   
+    my %except; 
     my $only;
     my $except;
 
@@ -102,7 +102,7 @@ sub _setup_exceptions {
             $only{$self->{'only'}} = 1;
         }
     }
-
+        
 
     if (defined $self->{'except'}) {
         if (ref($self->{'except'}) eq 'ARRAY') {
@@ -117,7 +117,7 @@ sub _setup_exceptions {
     $self->{_exceptions}->{only}        = $only;
     $self->{_exceptions}->{except_hash} = \%except;
     $self->{_exceptions}->{except}      = $except;
-
+        
 }
 
 sub _is_legit {
@@ -168,10 +168,10 @@ sub search_paths {
 
         my @files = $self->find_files($sp);
 
-        # foreach one we've found
+        # foreach one we've found 
         foreach my $file (@files) {
             # untaint the file; accept .pm only
-            next unless ($file) = ($file =~ /(.*$file_regex)$/);
+            next unless ($file) = ($file =~ /(.*$file_regex)$/); 
             # parse the file to get the name
             my ($name, $directory, $suffix) = fileparse($file, $file_regex);
 
@@ -206,10 +206,10 @@ sub search_paths {
             my @dirs = ();
             if ($directory) {
                 ($directory) = ($directory =~ /(.*)/);
-                @dirs = grep(length($_), splitdir($directory))
+                @dirs = grep(length($_), splitdir($directory)) 
                     unless $directory eq curdir();
                 for my $d (reverse @dirs) {
-                    my $pkg_dir = pop @pkg_dirs;
+                    my $pkg_dir = pop @pkg_dirs; 
                     last unless defined $pkg_dir;
                     $d =~ s/\Q$pkg_dir\E/$pkg_dir/i;  # Correct case
                 }
@@ -222,7 +222,7 @@ sub search_paths {
 
             my $err = $self->handle_finding_plugin($plugin);
             carp "Couldn't require $plugin : $err" if $err;
-
+             
             push @plugins, $plugin;
         }
 
@@ -255,7 +255,7 @@ sub handle_finding_plugin {
     my $self   = shift;
     my $plugin = shift;
 
-    return unless (defined $self->{'instantiate'} || $self->{'require'});
+    return unless (defined $self->{'instantiate'} || $self->{'require'}); 
     return unless $self->_is_legit($plugin);
     $self->_require($plugin);
 }
@@ -272,8 +272,8 @@ sub find_files {
     my @files = ();
     { # for the benefit of perl 5.6.1's Find, localize topic
         local $_;
-        File::Find::find( { no_chdir => 1,
-                           wanted => sub {
+        File::Find::find( { no_chdir => 1, 
+                           wanted => sub { 
                              # Inlined from File::Find::Rule C< name => '*.pm' >
                              return unless $File::Find::name =~ /$file_regex/;
                              (my $path = $File::Find::name) =~ s#^\\./##;
@@ -328,18 +328,18 @@ Simple use Module::Pluggable -
 
     package MyClass;
     use Module::Pluggable::Object;
-
+    
     my $finder = Module::Pluggable::Object->new(%opts);
     print "My plugins are: ".join(", ", $finder->plugins)."\n";
 
 =head1 DESCRIPTION
 
-Provides a simple but, hopefully, extensible way of having 'plugins' for
+Provides a simple but, hopefully, extensible way of having 'plugins' for 
 your module. Obviously this isn't going to be the be all and end all of
 solutions but it works for me.
 
-Essentially all it does is export a method into your namespace that
-looks through a search path for .pm files and turn those into class names.
+Essentially all it does is export a method into your namespace that 
+looks through a search path for .pm files and turn those into class names. 
 
 Optionally it instantiates those classes for you.
 
@@ -369,5 +369,5 @@ None known.
 
 L<Module::Pluggable>
 
-=cut
+=cut 
 
