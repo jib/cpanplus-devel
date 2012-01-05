@@ -1,3 +1,9 @@
+Changes for 0.9116      Thu Jan  5 22:45:06 2012
+================================================
+* add NAME headings in modules with POD, Debian
+  Lintian fixes, http://bugs.debian.org/65045
+* Implement reload command in the shell
+
 Changes for 0.9115      Tue Dec 20 21:10:24 2011
 ================================================
 * Added new config option 'allow_unknown_prereqs'
