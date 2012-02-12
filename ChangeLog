@@ -1,3 +1,7 @@
+Changes for 0.91_17     Sun Feb 12 23:02:43 2012
+================================================
+* Test reporting enhancements
+
 Changes for 0.9116      Thu Jan  5 22:45:06 2012
 ================================================
 * add NAME headings in modules with POD, Debian

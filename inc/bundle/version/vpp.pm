@@ -121,7 +121,7 @@ use strict;
 use POSIX qw/locale_h/;
 use locale;
 use vars qw ($VERSION @ISA @REGEXS);
-$VERSION = 0.95;
+$VERSION = 0.96;
 
 use overload (
     '""'       => \&stringify,
@@ -133,8 +133,11 @@ use overload (
     '-'        => \&vnoop,
     '*'        => \&vnoop,
     '/'        => \&vnoop,
+    '+='        => \&vnoop,
+    '-='        => \&vnoop,
+    '*='        => \&vnoop,
+    '/='        => \&vnoop,
     'abs'      => \&vnoop,
-    'nomethod' => \&vnoop,
 );
 
 eval "use warnings";
@@ -729,7 +732,7 @@ sub vcmp
     }
     unless (_verify($right)) {
 	require Carp;
-	Carp::croak("Invalid version object");
+	Carp::croak("Invalid version format");
     }
     my $l = $#{$left->{version}};
     my $r = $#{$right->{version}};

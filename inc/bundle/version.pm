@@ -6,7 +6,7 @@ use strict;
 
 use vars qw(@ISA $VERSION $CLASS $STRICT $LAX *declare *qv);
 
-$VERSION = 0.95;
+$VERSION = 0.96;
 
 $CLASS = 'version';
 
@@ -125,10 +125,12 @@ $LAX =
 	*version::qv = \&version::vpp::qv;
 	*version::declare = \&version::vpp::declare;
 	*version::_VERSION = \&version::vpp::_VERSION;
+	*version::vcmp = \&version::vpp::vcmp;
 	if ($] >= 5.009000) {
 	    no strict 'refs';
 	    *version::stringify = \&version::vpp::stringify;
 	    *{'version::(""'} = \&version::vpp::stringify;
+	    *{'version::(<=>'} = \&version::vpp::vcmp;
 	    *version::new = \&version::vpp::new;
 	    *version::parse = \&version::vpp::parse;
 	}
@@ -144,6 +146,7 @@ $LAX =
 	    no strict 'refs';
 	    *version::stringify = \&version::vxs::stringify;
 	    *{'version::(""'} = \&version::vxs::stringify;
+	    *{'version::(<=>'} = \&version::vxs::VCMP;
 	    *version::new = \&version::vxs::new;
 	    *version::parse = \&version::vxs::parse;
 	}
