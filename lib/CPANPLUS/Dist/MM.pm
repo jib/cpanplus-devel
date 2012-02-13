@@ -743,6 +743,7 @@ sub create {
             module  => $self,
             failed  => $test_fail || $fail,
             buffer  => CPANPLUS::Error->stack_as_string,
+            status  => $status,
             verbose => $verbose,
             force   => $force,
         ) or error(loc("Failed to send test report for '%1'",
