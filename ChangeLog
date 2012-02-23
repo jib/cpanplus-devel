@@ -1,3 +1,9 @@
+Changes for 0.9119      Thu Feb 23 20:54:53 2012
+================================================
+* Added progress indicators for indexing when
+  'verbose' is set, [rt #75233], contributed by
+  reisub
+
 Changes for 0.9118      Mon Feb 13 22:29:33 2012
 ================================================
 * Test reporting enhancements
