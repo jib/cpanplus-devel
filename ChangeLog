@@ -1,3 +1,7 @@
+Changes for 0.9120      Sun Mar  4 12:12:52 2012
+================================================
+* Resolved a regression with NA test reports
+
 Changes for 0.9119      Thu Feb 23 20:54:53 2012
 ================================================
 * Added progress indicators for indexing when
