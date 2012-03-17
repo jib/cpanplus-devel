@@ -1,3 +1,8 @@
+Changes for 0.9121      Sat Mar 17 23:23:42 2012
+================================================
+* Resolved a regression with dev '_' version
+  numbers since 0.9109
+
 Changes for 0.9120      Sun Mar  4 12:12:52 2012
 ================================================
 * Resolved a regression with NA test reports
