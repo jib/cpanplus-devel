@@ -1,3 +1,8 @@
+Changes for 0.9122      Wed Mar 28 21:52:38 2012
+================================================
+* Don't spawn a process to check whether perl
+  version prereqs are satisfied
+
 Changes for 0.9121      Sat Mar 17 23:23:42 2012
 ================================================
 * Resolved a regression with dev '_' version
