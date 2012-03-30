@@ -465,12 +465,14 @@ sub _add_to_path {
 
     my $s = $Config{'path_sep'};
 
+    require File::Glob;
+
     ### only add if it's not added yet
     for my $dir (@$dirs) {
         $dir =~ s![\\/]*$!!g;
         next if $ENV{PATH} =~ qr|\Q$dir\E|;
         next unless -d $dir;
-        next unless glob( ( ON_WIN32 ? Win32::GetShortPathName( $dir ) : $dir ) . q{/*} );
+        next unless File::Glob::bsd_glob( $dir . q{/*} );
         $ENV{PATH} = join $s, $dir, $ENV{PATH};
     }
 
