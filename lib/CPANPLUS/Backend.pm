@@ -519,7 +519,7 @@ sub parse_module {
 
         ### better guess for the version
         $modobj->version( $modobj->package_version )
-            if defined $modobj->package_version && length $modobj->package_version;
+            if defined $modobj->package_version;
 
         ### better guess at module name, if possible
         if ( my $pkgname = $modobj->package_name ) {
