@@ -282,6 +282,15 @@ etc. Defaults to 'false'.
 
         $Conf->{'conf'}->{'force'} = 0;
 
+=item histfile
+
+A string containing the history filename of the CPANPLUS readline instance.
+
+=cut
+
+        $Conf->{'conf'}->{'histfile'} = File::Spec->catdir(
+                                        __PACKAGE__->_home_dir, DOT_CPANPLUS, 'history' );
+
 =item lib
 
 An array ref holding directories to be added to C<@INC> when CPANPLUS
