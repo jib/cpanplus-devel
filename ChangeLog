@@ -1,3 +1,5 @@
+Changes for 0.9124      Fri Apr  6 19:24:55 2012
+================================================
 * Save the history between invocations of the
   shell.
 
