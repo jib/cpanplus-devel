@@ -630,7 +630,7 @@ sub _create_mod_tree {
     my $self = shift;
     my %hash = @_;
     my $conf = $self->configure_object;
-
+    my $base = $conf->_get_mirror('base');
 
     my $tmpl = {
         path     => { default => $conf->get_conf('base') },
@@ -751,7 +751,7 @@ sub _create_mod_tree {
                                 ? '0.0'
                                 : $data[1]),
             path        => File::Spec::Unix->catfile(
-                                $conf->_get_mirror('base'),
+                                $base,
                                 $data[2],
                             ),          # extended path on the cpan mirror,
                                         # like /A/AB/ABIGAIL
