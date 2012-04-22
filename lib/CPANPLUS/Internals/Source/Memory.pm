@@ -135,6 +135,7 @@ sub _add_module_object {
 
     my $href = do {
         local $Params::Check::NO_DUPLICATES = 1;
+        local $Params::Check::SANITY_CHECK_TEMPLATE = 0;
         check( $tmpl, \%hash ) or return;
     };
 
