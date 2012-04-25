@@ -673,30 +673,32 @@ sub _create_mod_tree {
    and print "\t0%";
 
     for ( split /\n/, $content ) {
-        ### quick hack to read past the header of the file ###
-        ### this is still rather evil... fix some time - Kane
-        if( m|^\s*$| ) {
-            unless( $count ) {
-                error(loc("Could not determine line count from %1", $file));
-                return;
-            }
-            $past_header = 1;
-        }
 
         ### we're still in the header -- find the amount of lines we expect
         unless( $past_header ) {
 
-            ### if the line count doesn't match what we expect, bail out
-            ### this should address: #45644: detect broken index
-            $count = $1 if /^Line-Count:\s+(\d+)/;
-            if( $count ) {
-                if( $lines < $count ) {
-                    error(loc("Expected to read at least %1 lines, but %2 ".
-                              "contains only %3 lines!",
-                              $count, $file, $lines ));
+            ### header has ended -- did we get the line count?
+            if( m|^\s*$| ) {
+                unless( $count ) {
+                    error(loc("Could not determine line count from %1", $file));
                     return;
                 }
+                $past_header = 1;
+
+            ### if the line count doesn't match what we expect, bail out
+            ### this should address: #45644: detect broken index
+            } else {
+                $count = $1 if /^Line-Count:\s+(\d+)/;
+                if( $count ) {
+                    if( $lines < $count ) {
+                        error(loc("Expected to read at least %1 lines, but %2 ".
+                                  "contains only %3 lines!",
+                                  $count, $file, $lines ));
+                        return;
+                    }
+                }
             }
+
             ### still in the header, keep moving
             next;
         }
