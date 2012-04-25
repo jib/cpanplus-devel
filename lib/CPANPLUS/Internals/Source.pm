@@ -647,6 +647,8 @@ sub _create_mod_tree {
 
     my $dslip_tree = $self->__create_dslip_tree( %$args );
 
+    my $author_tree = $self->author_tree;
+
     ### extract the file ###
     my $ae      = Archive::Extract->new( archive => $file ) or return;
     my $out     = STRIP_GZ_SUFFIX->($file);
@@ -720,7 +722,7 @@ sub _create_mod_tree {
         ### remove file name from the path
         $data[2] =~ s|/[^/]+$||;
 
-        my $aobj = $self->author_tree($author);
+        my $aobj = $author_tree->{$author};
         unless( $aobj ) {
             error( loc( "No such author '%1' -- can't make module object " .
                         "'%2' that is supposed to belong to this author",
