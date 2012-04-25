@@ -703,10 +703,9 @@ sub _create_mod_tree {
             next;
         }
 
-        ### skip empty lines ###
-        next unless /\S/;
-
         my @data = split /\s+/;
+        ### three fields expected on each line
+        next unless @data == 3;
 
         ### filter out the author and filename as well ###
         ### authors can apparently have digits in their names,
