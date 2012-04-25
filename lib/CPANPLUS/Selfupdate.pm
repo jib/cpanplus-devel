@@ -53,7 +53,7 @@ CPANPLUS::Selfupdate - self-updating for CPANPLUS
                                                    # addresses #24630 and
                                                    # #24675
                                                    # Address ~0 overflow issue
-            'Params::Check'             => '0.22',
+            'Params::Check'             => '0.34',
             'Package::Constants'        => '0.01',
             'Term::UI'                  => '0.18', # option parsing
             'Test::Harness'             => '2.62', # due to bug #19505
@@ -62,7 +62,7 @@ CPANPLUS::Selfupdate - self-updating for CPANPLUS
             'Archive::Extract'          => '0.16', # ./Dir bug fix
             'Archive::Tar'              => '1.23',
             'IO::Zlib'                  => '1.04', # needed for Archive::Tar
-            'Object::Accessor'          => '0.34', # mk_aliases support
+            'Object::Accessor'          => '0.44', # mk_aliases support
             'Module::CoreList'          => '2.22', # deprecated core modules
             'Module::Pluggable'         => '2.4',
             'Module::Loaded'            => '0.01',
