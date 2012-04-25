@@ -705,7 +705,6 @@ sub _create_mod_tree {
 
         ### skip empty lines ###
         next unless /\S/;
-        chomp;
 
         my @data = split /\s+/;
 
