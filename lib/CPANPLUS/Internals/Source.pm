@@ -730,15 +730,14 @@ sub _create_mod_tree {
             next;
         }
 
+        my $dslip_mod = $dslip_tree->{ $data[0] };
+
         ### adding the dslip info
-        ### probably can use some optimization
         my $dslip;
         for my $item ( qw[ statd stats statl stati statp ] ) {
             ### checking if there's an entry in the dslip info before
             ### catting it on. appeasing warnings this way
-            $dslip .=   $dslip_tree->{ $data[0] }->{$item}
-                            ? $dslip_tree->{ $data[0] }->{$item}
-                            : ' ';
+            $dslip .= $dslip_mod->{$item} || ' ';
         }
 
         ### XXX this could be sped up if we used author names, not author
@@ -761,7 +760,7 @@ sub _create_mod_tree {
             author      => $aobj,
             package     => $package,    # package name, like
                                         # 'foo-bar-baz-1.03.tar.gz'
-            description => $dslip_tree->{ $data[0] }->{'description'},
+            description => $dslip_mod->{'description'},
             dslip       => $dslip,
             mtime       => '',
         ) or error( loc( "Could not add module '%1'", $data[0] ) );
