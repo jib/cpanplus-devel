@@ -47,13 +47,13 @@ CPANPLUS::Selfupdate - self-updating for CPANPLUS
             'Locale::Maketext::Simple'  => '0.01',
             'Log::Message'              => '0.01',
             'Module::Load'              => '0.10',
-            'Module::Load::Conditional' => '0.38', # returns dir for loaded
+            'Module::Load::Conditional' => '0.50', # returns dir for loaded
                                                    # modules
             'version'                   => '0.77', # needed for M::L::C
                                                    # addresses #24630 and
                                                    # #24675
                                                    # Address ~0 overflow issue
-            'Params::Check'             => '0.34',
+            'Params::Check'             => '0.36',
             'Package::Constants'        => '0.01',
             'Term::UI'                  => '0.18', # option parsing
             'Test::Harness'             => '2.62', # due to bug #19505
