@@ -123,25 +123,22 @@ sub _add_author_object {
 }
 
 {
-    my @required_opts = map { $_ => { required => 1 } } qw[
-        module version path comment author package description dslip mtime
-    ];
+    my $tmpl = {
+        class => { default => 'CPANPLUS::Module' },
+        map { $_ => { required => 1 } } qw[
+           module version path comment author package description dslip mtime
+        ],
+    };
 
     sub _add_module_object {
         my $self = shift;
         my %hash = @_;
 
-        my $class;
-        my $tmpl = {
-            class   => { default => 'CPANPLUS::Module', store => \$class },
-            @required_opts,
-        };
-
         my $href = do {
-            local $Params::Check::NO_DUPLICATES = 1;
             local $Params::Check::SANITY_CHECK_TEMPLATE = 0;
             check( $tmpl, \%hash ) or return;
         };
+        my $class = delete $href->{class};
 
         my $obj = $class->new( %$href, _id => $self->_id );
 
