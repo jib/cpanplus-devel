@@ -551,10 +551,13 @@ sub __create_author_tree {
 
     my ($tot,$prce,$prc,$idx);
 
-    $args->{verbose}
-   and local $|=1,
-       $tot = scalar(split /\n/, $cont),
-       ($prce, $prc, $idx) = (int $tot / 25, 0, 0);
+    {
+      no warnings;
+      $args->{verbose}
+        and local $|=1,
+        $tot = scalar(split /\n/, $cont),
+        ($prce, $prc, $idx) = (int $tot / 25, 0, 0);
+    }
 
     $args->{verbose}
    and print "\t0%";
@@ -666,10 +669,13 @@ sub _create_mod_tree {
 
     my($past_header, $count, $tot, $prce, $prc, $idx);
 
-    $args->{verbose}
-   and local $|=1,
-       $tot = scalar(split /\n/, $content),
-       ($prce, $prc, $idx) = (int $tot / 25, 0, 0);
+    {
+      no warnings;
+      $args->{verbose}
+        and local $|=1,
+        $tot = scalar(split /\n/, $content),
+        ($prce, $prc, $idx) = (int $tot / 25, 0, 0);
+    }
 
     $args->{verbose}
    and print "\t0%";
