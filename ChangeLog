@@ -1,3 +1,8 @@
+Changes for 0.9127      Sat Apr 28 20:34:44 2012
+================================================
+* Silenced annoying warnings related to older
+  perls and the progress indicators
+
 Changes for 0.9126      Sat Apr 28 00:49:43 2012
 ================================================
 * More speed enhancements to module indexing,
