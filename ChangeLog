@@ -1,3 +1,12 @@
+Changes for 0.9129      Wed May  9 21:22:41 2012
+================================================
+* Handle multiple makemakerargs and makeflags
+  arguments better.
+* Use File::HomeDir for home directory location
+  if it is available, thanks to kmx
+* Added PERL5_CPANPLUS_HOME for altering where
+  the .cpanplus directory is located
+
 Changes for 0.9128      Sat Apr 28 21:27:06 2012
 ================================================
 * Fix the previous fix
