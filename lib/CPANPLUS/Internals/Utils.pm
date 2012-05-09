@@ -392,6 +392,10 @@ Returns the user's homedir, or C<cwd> if it could not be found
 =cut
 
 sub _home_dir {
+    if (eval {require File::HomeDir}) {
+      return File::HomeDir->my_home if -d File::HomeDir->my_home;
+    }
+
     my @os_home_envs = qw( APPDATA HOME USERPROFILE WINDIR SYS$LOGIN );
 
     for my $env ( @os_home_envs ) {
