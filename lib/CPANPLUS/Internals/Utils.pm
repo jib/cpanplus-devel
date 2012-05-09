@@ -392,7 +392,8 @@ Returns the user's homedir, or C<cwd> if it could not be found
 =cut
 
 sub _home_dir {
-    if (eval {require File::HomeDir}) {
+
+    if ( can_load( modules => { 'File::HomeDir' => 0.0 } ) ) {
       return File::HomeDir->my_home if -d File::HomeDir->my_home;
     }
 
