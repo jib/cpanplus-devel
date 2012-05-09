@@ -61,6 +61,7 @@ lib/CPANPLUS.pm
 lib/CPANPLUS/Backend.pm
 lib/CPANPLUS/Backend/RV.pm
 lib/CPANPLUS/Config.pm
+lib/CPANPLUS/Config/HomeEnv.pm
 lib/CPANPLUS/Configure.pm
 lib/CPANPLUS/Configure/Setup.pm
 lib/CPANPLUS/Dist.pm
