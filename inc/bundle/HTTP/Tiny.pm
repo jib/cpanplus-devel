@@ -3,7 +3,7 @@ package HTTP::Tiny;
 use strict;
 use warnings;
 # ABSTRACT: A small, simple, correct HTTP/1.1 client
-our $VERSION = '0.018'; # VERSION
+our $VERSION = '0.021'; # VERSION
 
 use Carp ();
 
@@ -420,8 +420,8 @@ sub connect {
     my ($self, $scheme, $host, $port) = @_;
 
     if ( $scheme eq 'https' ) {
-        die(qq/IO::Socket::SSL must be installed for https support\n/)
-            unless eval { require IO::Socket::SSL };
+        die(qq/IO::Socket::SSL 1.56 must be installed for https support\n/)
+            unless eval {require IO::Socket::SSL; IO::Socket::SSL->VERSION(1.56)};
     }
     elsif ( $scheme ne 'http' ) {
       die(qq/Unsupported URL scheme '$scheme'\n/);
@@ -887,7 +887,7 @@ HTTP::Tiny - A small, simple, correct HTTP/1.1 client
 
 =head1 VERSION
 
-version 0.018
+version 0.021
 
 =head1 SYNOPSIS
 
@@ -1164,10 +1164,10 @@ SSL_options
 
 =head1 SSL SUPPORT
 
-Direct C<https> connections are supported only if L<IO::Socket::SSL> is
-installed. An exception will be thrown if IO::Socket::SSL is not installed or
-if the SSL encryption fails. There is no support for C<https> connections via
-proxy.
+Direct C<https> connections are supported only if L<IO::Socket::SSL> 1.56 or
+greater is installed. An exception will be thrown if a new enough
+IO::Socket::SSL is not installed or if the SSL encryption fails. There is no
+support for C<https> connections via proxy (i.e. RFC 2817).
 
 SSL provides two distinct capabilities:
 

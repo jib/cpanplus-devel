@@ -1,3 +1,8 @@
+Changes for 0.9130      Thu May 24 22:04:10 2012
+================================================
+* Always re-fetch CHECKSUMS if fetchdir is set
+  (Torsten Schoenfeld)
+
 Changes for 0.9129      Wed May  9 21:22:41 2012
 ================================================
 * Handle multiple makemakerargs and makeflags
