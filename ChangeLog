@@ -1,3 +1,9 @@
+Changes for 0.9131      Tue Sep 18 14:10:16 2012
+================================================
+* Add Pod::* modules to reported toolchain modules
+* Resolve issue with $cb->search() and SQLite
+  source engine
+
 Changes for 0.9130      Thu May 24 22:04:10 2012
 ================================================
 * Always re-fetch CHECKSUMS if fetchdir is set

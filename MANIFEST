@@ -20,10 +20,10 @@ inc/bundle/File/Spec/OS2.pm
 inc/bundle/File/Spec/Unix.pm
 inc/bundle/File/Spec/VMS.pm
 inc/bundle/File/Spec/Win32.pm
+inc/bundle/HTTP/Tiny.pm
 inc/bundle/IO/String.pm
 inc/bundle/IO/Zlib.pm
 inc/bundle/IPC/Cmd.pm
-inc/bundle/HTTP/Tiny.pm
 inc/bundle/JSON/PP.pm
 inc/bundle/JSON/PP/Boolean.pm
 inc/bundle/Locale/Maketext/Simple.pm
@@ -33,6 +33,7 @@ inc/bundle/Log/Message/Handlers.pm
 inc/bundle/Log/Message/Item.pm
 inc/bundle/Log/Message/Simple.pm
 inc/bundle/Module/CoreList.pm
+inc/bundle/Module/CoreList/TieHashDelta.pm
 inc/bundle/Module/Load.pm
 inc/bundle/Module/Load/Conditional.pm
 inc/bundle/Module/Loaded.pm
