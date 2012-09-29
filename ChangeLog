@@ -1,3 +1,7 @@
+Changes for 0.9133      Sat Sep 29 11:49:02 2012
+================================================
+* Fix MANIFEST for last release
+
 Changes for 0.9132      Sat Sep 29 11:40:53 2012
 ================================================
 * Resolve RT #79925, Module::Metadata was missing
