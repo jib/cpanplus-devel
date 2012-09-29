@@ -61,6 +61,7 @@ unless( $MineOnly ) {
         Module::Load
         Module::Loaded
         Module::Load::Conditional
+        Module::Metadata
         Object::Accessor
         Package::Constants
         Params::Check

@@ -3,7 +3,7 @@ use strict;
 use vars qw/$VERSION %released %version %families %upstream
 	    %bug_tracker %deprecated/;
 use Module::CoreList::TieHashDelta;
-$VERSION = '2.72';
+$VERSION = '2.73';
 
 my $dumpinc = 0;
 sub import {
@@ -206,6 +206,7 @@ sub changes_between {
     5.017001 => '2012-06-20',
     5.017002 => '2012-07-20',
     5.017003 => '2012-08-20',
+    5.017004 => '2012-09-20',
   );
 
 for my $version ( sort { $a <=> $b } keys %released ) {
@@ -902,6 +903,7 @@ my %delta = (
             'CPAN::FirstTime'       => '1.54 ',
             'CPAN::Nox'             => '1.00_01',
             'Carp'                  => '1.01',
+            'Carp::Heavy'           => '1.01',
             'Class::ISA'            => '0.32',
             'Class::Struct'         => '0.61',
             'Cwd'                   => '2.06',
@@ -1069,7 +1071,7 @@ my %delta = (
             'Pod::Text::Overstrike' => '1.08',
             'Pod::Text::Termcap'    => '1.09',
             'Safe'                  => '2.07',
-            'Scalar::Util'          => undef,
+            'Scalar::Util'          => '1.06_00',
             'Search::Dict'          => '1.02',
             'SelectSaver'           => '1.00',
             'SelfLoader'            => '1.0903',
@@ -1171,7 +1173,6 @@ my %delta = (
             'CPAN'                  => '1.61',
             'CPAN::FirstTime'       => '1.56 ',
             'CPAN::Nox'             => '1.02',
-            'Carp::Heavy'           => 'undef',
             'Digest::MD5'           => '2.20',
             'Dumpvalue'             => '1.11',
             'Encode'                => '1.75',
@@ -1247,7 +1248,7 @@ my %delta = (
             'PerlIO::via::QuotedPrint'=> '0.04',
             'Pod::Man'              => '1.33',
             'Pod::Text'             => '2.19',
-            'Scalar::Util'          => 'undef',
+            'Scalar::Util'          => '1.07_00',
             'Storable'              => '2.04',
             'Switch'                => '2.09',
             'Sys::Syslog'           => '0.03',
@@ -1323,7 +1324,6 @@ my %delta = (
             'CPAN'                  => '1.76_01',
             'CPAN::FirstTime'       => '1.60 ',
             'CPAN::Nox'             => '1.03',
-            'Carp::Heavy'           => '1.01',
             'Class::Struct'         => '0.63',
             'Cwd'                   => '2.08',
             'DB_File'               => '1.806',
@@ -1472,7 +1472,7 @@ my %delta = (
             'Pod::Perldoc::ToPod'   => undef,
             'Pod::Perldoc::ToRtf'   => undef,
             'Pod::Perldoc::ToText'  => undef,
-            'Pod::Perldoc::ToTk'    => 'undef',
+            'Pod::Perldoc::ToTk'    => undef,
             'Pod::Perldoc::ToXml'   => undef,
             'Pod::PlainText'        => '2.01',
             'Pod::Text'             => '2.21',
@@ -1558,7 +1558,6 @@ my %delta = (
             'Net::Domain'           => '2.19',
             'Net::FTP'              => '2.72',
             'Pod::Perldoc'          => '3.11',
-            'Pod::Perldoc::ToTk'    => undef,
             'Time::HiRes'           => '1.52',
             'Unicode::Collate'      => '0.30',
             'Unicode::Normalize'    => '0.25',
@@ -1600,7 +1599,6 @@ my %delta = (
             'Pod::Html'             => '1.0502',
             'Pod::Parser'           => '1.14',
             'Pod::Perldoc'          => '3.12',
-            'Pod::Perldoc::ToTk'    => 'undef',
             'Pod::PlainText'        => '2.02',
             'Storable'              => '2.09',
             'Test::Harness'         => '2.40',
@@ -1689,6 +1687,7 @@ my %delta = (
             'CGI::Carp'             => '1.28',
             'CGI::Util'             => '1.5',
             'Carp'                  => '1.03',
+            'Carp::Heavy'           => '1.03',
             'Cwd'                   => '2.19',
             'DB_File'               => '1.809',
             'Digest'                => '1.08',
@@ -1771,7 +1770,6 @@ my %delta = (
             'B::Deparse'            => '0.69',
             'B::Lint'               => '1.03',
             'B::Showlex'            => '1.02',
-            'Carp::Heavy'           => '1.03',
             'Cwd'                   => '3.01',
             'DB_File'               => '1.810',
             'Data::Dumper'          => '2.121_02',
@@ -1854,7 +1852,6 @@ my %delta = (
             'Pod::ParseUtils'       => '1.3',
             'Pod::Parser'           => '1.3',
             'Pod::Perldoc'          => '3.14',
-            'Pod::Perldoc::ToTk'    => undef,
             'Pod::Select'           => '1.3',
             'Pod::Usage'            => '1.3',
             'SelectSaver'           => '1.01',
@@ -2343,7 +2340,6 @@ my %delta = (
             'Fatal'                 => '1.04',
             'OS2::DLL'              => '1.02',
             'Opcode'                => '1.06',
-            'Pod::Perldoc::ToTk'    => 'undef',
             'Time::HiRes'           => '1.51',
             'Unicode::Collate'      => '0.28',
             'Unicode::Normalize'    => '0.23',
@@ -4344,7 +4340,6 @@ my %delta = (
             'Module::CoreList'      => '2.50',
         },
         removed => {
-            'ExtUtils::Miniperl'    => 1,
         }
     },
     5.013 => {
@@ -4628,7 +4623,6 @@ my %delta = (
             'warnings'              => '1.10',
         },
         removed => {
-            'ExtUtils::Miniperl'    => 1,
             'TAP::Parser::Source::Perl'=> 1,
         }
     },
@@ -4649,7 +4643,6 @@ my %delta = (
             'Compress::Raw::Bzip2'  => '2.030',
             'Compress::Raw::Zlib'   => '2.030',
             'Compress::Zlib'        => '2.030',
-            'ExtUtils::Miniperl'    => undef,
             'ExtUtils::ParseXS'     => '2.2207',
             'File::Spec'            => '3.31_01',
             'I18N::Langinfo'        => '0.04',
@@ -7160,6 +7153,78 @@ my %delta = (
         removed => {
         }
     },
+    5.017004 => {
+        delta_from => 5.017003,
+        changed => {
+            'Archive::Tar'          => '1.90',
+            'Archive::Tar::Constant'=> '1.90',
+            'Archive::Tar::File'    => '1.90',
+            'B'                     => '1.38',
+            'B::Concise'            => '0.93',
+            'B::Deparse'            => '1.17',
+            'B::Xref'               => '1.04',
+            'CPANPLUS'              => '0.9131',
+            'CPANPLUS::Internals'   => '0.9131',
+            'CPANPLUS::Shell::Default'=> '0.9131',
+            'DB_File'               => '1.827',
+            'Devel::Peek'           => '1.10',
+            'DynaLoader'            => '1.16',
+            'Errno'                 => '1.16',
+            'ExtUtils::ParseXS'     => '3.18',
+            'ExtUtils::ParseXS::Constants'=> '3.18',
+            'ExtUtils::ParseXS::CountLines'=> '3.18',
+            'ExtUtils::ParseXS::Utilities'=> '3.18',
+            'File::Copy'            => '2.24',
+            'File::Find'            => '1.22',
+            'IPC::Open3'            => '1.13',
+            'Locale::Codes'         => '3.23',
+            'Locale::Codes::Constants'=> '3.23',
+            'Locale::Codes::Country'=> '3.23',
+            'Locale::Codes::Country_Codes'=> '3.23',
+            'Locale::Codes::Country_Retired'=> '3.23',
+            'Locale::Codes::Currency'=> '3.23',
+            'Locale::Codes::Currency_Codes'=> '3.23',
+            'Locale::Codes::Currency_Retired'=> '3.23',
+            'Locale::Codes::LangExt'=> '3.23',
+            'Locale::Codes::LangExt_Codes'=> '3.23',
+            'Locale::Codes::LangExt_Retired'=> '3.23',
+            'Locale::Codes::LangFam'=> '3.23',
+            'Locale::Codes::LangFam_Codes'=> '3.23',
+            'Locale::Codes::LangFam_Retired'=> '3.23',
+            'Locale::Codes::LangVar'=> '3.23',
+            'Locale::Codes::LangVar_Codes'=> '3.23',
+            'Locale::Codes::LangVar_Retired'=> '3.23',
+            'Locale::Codes::Language'=> '3.23',
+            'Locale::Codes::Language_Codes'=> '3.23',
+            'Locale::Codes::Language_Retired'=> '3.23',
+            'Locale::Codes::Script' => '3.23',
+            'Locale::Codes::Script_Codes'=> '3.23',
+            'Locale::Codes::Script_Retired'=> '3.23',
+            'Locale::Country'       => '3.23',
+            'Locale::Currency'      => '3.23',
+            'Locale::Language'      => '3.23',
+            'Locale::Script'        => '3.23',
+            'Math::BigFloat::Trace' => '0.30',
+            'Math::BigInt::Trace'   => '0.30',
+            'Module::CoreList'      => '2.73',
+            'Module::CoreList::TieHashDelta'=> '2.73',
+            'Opcode'                => '1.24',
+            'Socket'                => '2.006',
+            'Storable'              => '2.39',
+            'Sys::Syslog'           => '0.32',
+            'Unicode::UCD'          => '0.46',
+            'XS::APItest'           => '0.43',
+            'bignum'                => '0.30',
+            'bigrat'                => '0.30',
+            'constant'              => '1.24',
+            'feature'               => '1.30',
+            'threads::shared'       => '1.41',
+            'version'               => '0.9901',
+            'warnings'              => '1.14',
+        },
+        removed => {
+        }
+    },
 );
 
 for my $version (sort { $a <=> $b } keys %delta) {
@@ -7319,6 +7384,8 @@ for my $version (sort { $a <=> $b } keys %delta) {
     5.017002 => {
     },
     5.017003 => {
+    },
+    5.017004 => {
     },
 );
 
@@ -7843,7 +7910,7 @@ for my $version (sort { $a <=> $b } keys %delta) {
     'Win32API::File'        => 'cpan',
     'Win32API::File::ExtUtils::Myconst2perl'=> 'cpan',
     'Win32CORE'             => undef,
-    'XSLoader'              => 'blead',
+    'XSLoader'              => undef,
     'autodie'               => 'cpan',
     'autodie::exception'    => 'cpan',
     'autodie::exception::system'=> 'cpan',
@@ -8382,7 +8449,7 @@ for my $version (sort { $a <=> $b } keys %delta) {
     'Win32'                 => undef,
     'Win32API::File'        => undef,
     'Win32API::File::ExtUtils::Myconst2perl'=> undef,
-    'XSLoader'              => undef,
+    'XSLoader'              => 'https://rt.perl.org/rt3/Search/Results.html?Query=Queue=\'perl5\' AND Content LIKE \'module=XSLoader\' AND (Status=\'open\' OR Status=\'new\' OR Status=\'stalled\')',
     'autodie'               => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=autodie',
     'autodie::exception'    => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=autodie',
     'autodie::exception::system'=> 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=autodie',
