@@ -3,8 +3,8 @@ package File::Spec::Unix;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = '3.33';
-$VERSION = eval $VERSION;
+$VERSION = '3.40';
+$VERSION =~ tr/_//;
 
 =head1 NAME
 
@@ -43,7 +43,7 @@ actually traverse the filesystem cleaning up paths like this.
 sub canonpath {
     my ($self,$path) = @_;
     return unless defined $path;
-
+    
     # Handle POSIX-style node names beginning with double slash (qnx, nto)
     # (POSIX says: "a pathname that begins with two successive slashes
     # may be interpreted in an implementation-defined manner, although
@@ -135,7 +135,7 @@ writable:
     $ENV{TMPDIR}
     /tmp
 
-Since perl 5.8.0, if running under taint mode, and if $ENV{TMPDIR}
+If running under taint mode, and if $ENV{TMPDIR}
 is tainted, it is not used.
 
 =cut
@@ -150,6 +150,9 @@ sub _tmpdir {
 	if (${"\cTAINT"}) { # Check for taint mode on perl >= 5.8.0
             require Scalar::Util;
 	    @dirlist = grep { ! Scalar::Util::tainted($_) } @dirlist;
+	}
+	elsif ($] < 5.007) { # No ${^TAINT} before 5.8
+	    @dirlist = grep { eval { eval('1'.substr $_,0,0) } } @dirlist;
 	}
     }
     foreach (@dirlist) {
@@ -200,7 +203,7 @@ sub case_tolerant { 0 }
 
 Takes as argument a path and returns true if it is an absolute path.
 
-This does not consult the local filesystem on Unix, Win32, OS/2 or Mac
+This does not consult the local filesystem on Unix, Win32, OS/2 or Mac 
 OS (Classic).  It does consult the working environment for VMS (see
 L<File::Spec::VMS/file_name_is_absolute>).
 
@@ -238,13 +241,14 @@ sub join {
 =item splitpath
 
     ($volume,$directories,$file) = File::Spec->splitpath( $path );
-    ($volume,$directories,$file) = File::Spec->splitpath( $path, $no_file );
+    ($volume,$directories,$file) = File::Spec->splitpath( $path,
+                                                          $no_file );
 
 Splits a path into volume, directory, and filename portions. On systems
-with no concept of volume, returns '' for volume.
+with no concept of volume, returns '' for volume. 
 
-For systems with no syntax differentiating filenames from directories,
-assumes that the last file is a path unless $no_file is true or a
+For systems with no syntax differentiating filenames from directories, 
+assumes that the last file is a path unless $no_file is true or a 
 trailing separator or /. or /.. is present. On Unix this means that $no_file
 true makes this return ( '', $path, '' ).
 
@@ -279,7 +283,7 @@ The opposite of L</catdir()>.
 
     @dirs = File::Spec->splitdir( $directories );
 
-$directories must be only the directory portion of the path on systems
+$directories must be only the directory portion of the path on systems 
 that have the concept of a volume or that have path syntax that differentiates
 files from directories.
 
@@ -314,10 +318,10 @@ inserted if needed (though if the directory portion doesn't start with
 sub catpath {
     my ($self,$volume,$directory,$file) = @_;
 
-    if ( $directory ne ''                &&
-         $file ne ''                     &&
-         substr( $directory, -1 ) ne '/' &&
-         substr( $file, 0, 1 ) ne '/'
+    if ( $directory ne ''                && 
+         $file ne ''                     && 
+         substr( $directory, -1 ) ne '/' && 
+         substr( $file, 0, 1 ) ne '/' 
     ) {
         $directory .= "/$file" ;
     }
@@ -341,16 +345,18 @@ relative, then it is converted to absolute form using
 L</rel2abs()>. This means that it is taken to be relative to
 L<cwd()|Cwd>.
 
-On systems that have a grammar that indicates filenames, this ignores the
+On systems that have a grammar that indicates filenames, this ignores the 
 $base filename. Otherwise all path components are assumed to be
 directories.
 
 If $path is relative, it is converted to absolute form using L</rel2abs()>.
 This means that it is taken to be relative to L<cwd()|Cwd>.
 
-No checks against the filesystem are made.  On VMS, there is
-interaction with the working environment, as logicals and
-macros are expanded.
+No checks against the filesystem are made, so the result may not be correct if
+C<$base> contains symbolic links.  (Apply
+L<Cwd::abs_path()|Cwd/abs_path> beforehand if that
+is a concern.)  On VMS, there is interaction with the working environment, as
+logicals and macros are expanded.
 
 Based on code written by Shigio Yamaguchi.
 
@@ -362,13 +368,11 @@ sub abs2rel {
 
     ($path, $base) = map $self->canonpath($_), $path, $base;
 
+    my $path_directories;
+    my $base_directories;
+
     if (grep $self->file_name_is_absolute($_), $path, $base) {
 	($path, $base) = map $self->rel2abs($_), $path, $base;
-    }
-    else {
-	# save a couple of cwd()s if both paths are relative
-	($path, $base) = map $self->catdir('/', $_), $path, $base;
-    }
 
     my ($path_volume) = $self->splitpath($path, 1);
     my ($base_volume) = $self->splitpath($base, 1);
@@ -376,8 +380,8 @@ sub abs2rel {
     # Can't relativize across volumes
     return $path unless $path_volume eq $base_volume;
 
-    my $path_directories = ($self->splitpath($path, 1))[1];
-    my $base_directories = ($self->splitpath($base, 1))[1];
+	$path_directories = ($self->splitpath($path, 1))[1];
+	$base_directories = ($self->splitpath($base, 1))[1];
 
     # For UNC paths, the user might give a volume like //foo/bar that
     # strictly speaking has no directory portion.  Treat it as if it
@@ -385,25 +389,51 @@ sub abs2rel {
     if (!length($base_directories) and $self->file_name_is_absolute($base)) {
       $base_directories = $self->rootdir;
     }
+    }
+    else {
+	my $wd= ($self->splitpath($self->_cwd(), 1))[1];
+	$path_directories = $self->catdir($wd, $path);
+	$base_directories = $self->catdir($wd, $base);
+    }
 
     # Now, remove all leading components that are the same
     my @pathchunks = $self->splitdir( $path_directories );
     my @basechunks = $self->splitdir( $base_directories );
 
     if ($base_directories eq $self->rootdir) {
+      return $self->curdir if $path_directories eq $self->rootdir;
       shift @pathchunks;
       return $self->canonpath( $self->catpath('', $self->catdir( @pathchunks ), '') );
     }
 
+    my @common;
     while (@pathchunks && @basechunks && $self->_same($pathchunks[0], $basechunks[0])) {
-        shift @pathchunks ;
+        push @common, shift @pathchunks ;
         shift @basechunks ;
     }
     return $self->curdir unless @pathchunks || @basechunks;
 
-    # $base now contains the directories the resulting relative path
-    # must ascend out of before it can descend to $path_directory.
-    my $result_dirs = $self->catdir( ($self->updir) x @basechunks, @pathchunks );
+    # @basechunks now contains the directories the resulting relative path 
+    # must ascend out of before it can descend to $path_directory.  If there
+    # are updir components, we must descend into the corresponding directories
+    # (this only works if they are no symlinks).
+    my @reverse_base;
+    while( defined(my $dir= shift @basechunks) ) {
+	if( $dir ne $self->updir ) {
+	    unshift @reverse_base, $self->updir;
+	    push @common, $dir;
+	}
+	elsif( @common ) {
+	    if( @reverse_base && $reverse_base[0] eq $self->updir ) {
+		shift @reverse_base;
+		pop @common;
+	    }
+	    else {
+		unshift @reverse_base, pop @common;
+	    }
+	}
+    }
+    my $result_dirs = $self->catdir( @reverse_base, @pathchunks );
     return $self->canonpath( $self->catpath('', $result_dirs, '') );
 }
 
@@ -413,7 +443,7 @@ sub _same {
 
 =item rel2abs()
 
-Converts a relative path to an absolute path.
+Converts a relative path to an absolute path. 
 
     $abs_path = File::Spec->rel2abs( $path ) ;
     $abs_path = File::Spec->rel2abs( $path, $base ) ;
@@ -469,6 +499,8 @@ Copyright (c) 2004 by the Perl 5 Porters.  All rights reserved.
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
+Please submit bug reports and patches to perlbug@perl.org.
+
 =head1 SEE ALSO
 
 L<File::Spec>
@@ -502,7 +534,7 @@ sub _collapse {
             length $collapsed[-1]       and   # and its not the rootdir
             $collapsed[-1] ne $updir    and   # nor another updir
             $collapsed[-1] ne $curdir         # nor the curdir
-          )
+          ) 
         {                                     # then
             pop @collapsed;                   # collapse
         }

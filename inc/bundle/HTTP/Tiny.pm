@@ -3,7 +3,7 @@ package HTTP::Tiny;
 use strict;
 use warnings;
 # ABSTRACT: A small, simple, correct HTTP/1.1 client
-our $VERSION = '0.022'; # VERSION
+our $VERSION = '0.025'; # VERSION
 
 use Carp ();
 
@@ -21,13 +21,20 @@ BEGIN {
 
 sub new {
     my($class, %args) = @_;
-    (my $agent = $class) =~ s{::}{-}g;
+
+    (my $default_agent = $class) =~ s{::}{-}g;
+    $default_agent .= "/" . ($class->VERSION || 0);
+
     my $self = {
-        agent        => $agent . "/" . ($class->VERSION || 0),
+        agent        => $default_agent,
         max_redirect => 5,
         timeout      => 60,
         verify_SSL   => $args{verify_SSL} || $args{verify_ssl} || 0, # no verification by default
     };
+
+    $args{agent} .= $default_agent
+        if defined $args{agent} && $args{agent} =~ / $/;
+
     for my $key ( @attributes ) {
         $self->{$key} = $args{$key} if exists $args{$key}
     }
@@ -423,6 +430,8 @@ sub connect {
     if ( $scheme eq 'https' ) {
         die(qq/IO::Socket::SSL 1.56 must be installed for https support\n/)
             unless eval {require IO::Socket::SSL; IO::Socket::SSL->VERSION(1.56)};
+        die(qq/Net::SSLeay 1.49 must be installed for https support\n/)
+            unless eval {require Net::SSLeay; Net::SSLeay->VERSION(1.49)};
     }
     elsif ( $scheme ne 'http' ) {
       die(qq/Unsupported URL scheme '$scheme'\n/);
@@ -430,7 +439,7 @@ sub connect {
     $self->{fh} = 'IO::Socket::INET'->new(
         PeerHost  => $host,
         PeerPort  => $port,
-        $self->{local_address} ? 
+        $self->{local_address} ?
             ( LocalAddr => $self->{local_address} ) : (),
         Proto     => 'tcp',
         Type      => SOCK_STREAM,
@@ -442,7 +451,15 @@ sub connect {
 
     if ( $scheme eq 'https') {
         my $ssl_args = $self->_ssl_args($host);
-        IO::Socket::SSL->start_SSL($self->{fh}, %$ssl_args);
+        IO::Socket::SSL->start_SSL(
+            $self->{fh},
+            %$ssl_args,
+            SSL_create_ctx_callback => sub {
+                my $ctx = shift;
+                Net::SSLeay::CTX_set_mode($ctx, Net::SSLeay::MODE_AUTO_RETRY());
+            },
+        );
+
         unless ( ref($self->{fh}) eq 'IO::Socket::SSL' ) {
             my $ssl_err = IO::Socket::SSL->errstr;
             die(qq/SSL connection failed for $host: $ssl_err\n/);
@@ -489,7 +506,14 @@ sub write {
             die(qq/Socket closed by remote server: $!\n/);
         }
         elsif ($! != EINTR) {
-            die(qq/Could not write to socket: '$!'\n/);
+            if ($self->{fh}->can('errstr')){
+                my $err = $self->{fh}->errstr();
+                die (qq/Could not write to SSL socket: '$err'\n /);
+            }
+            else {
+                die(qq/Could not write to socket: '$!'\n/);
+            }
+
         }
     }
     return $off;
@@ -517,7 +541,13 @@ sub read {
             $len -= $r;
         }
         elsif ($! != EINTR) {
-            die(qq/Could not read from socket: '$!'\n/);
+            if ($self->{fh}->can('errstr')){
+                my $err = $self->{fh}->errstr();
+                die (qq/Could not read from SSL socket: '$err'\n /);
+            }
+            else {
+                die(qq/Could not read from socket: '$!'\n/);
+            }
         }
     }
     if ($len && !$allow_partial) {
@@ -544,7 +574,13 @@ sub readline {
             last unless $r;
         }
         elsif ($! != EINTR) {
-            die(qq/Could not read from socket: '$!'\n/);
+            if ($self->{fh}->can('errstr')){
+                my $err = $self->{fh}->errstr();
+                die (qq/Could not read from SSL socket: '$err'\n /);
+            }
+            else {
+                die(qq/Could not read from socket: '$!'\n/);
+            }
         }
     }
     die(qq/Unexpected end of stream while looking for line\n/);
@@ -834,6 +870,11 @@ sub can_write {
 # Try to find a CA bundle to validate the SSL cert,
 # prefer Mozilla::CA or fallback to a system file
 sub _find_CA_file {
+    my $self = shift();
+
+    return $self->{SSL_options}->{SSL_ca_file}
+        if $self->{SSL_options}->{SSL_ca_file} and -e $self->{SSL_options}->{SSL_ca_file};
+
     return Mozilla::CA::SSL_ca_file()
         if eval { require Mozilla::CA };
 
@@ -878,9 +919,8 @@ sub _ssl_args {
 
 1;
 
-
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -889,7 +929,7 @@ HTTP::Tiny - A small, simple, correct HTTP/1.1 client
 
 =head1 VERSION
 
-version 0.022
+version 0.025
 
 =head1 SYNOPSIS
 
@@ -932,7 +972,7 @@ This constructor returns a new HTTP::Tiny object.  Valid attributes include:
 
 C<agent>
 
-A user-agent string (defaults to 'HTTP::Tiny/$VERSION')
+A user-agent string (defaults to 'HTTP-Tiny/$VERSION'). If C<agent> ends in a space character, the default user-agent string is appended.
 
 =item *
 
@@ -1174,9 +1214,10 @@ SSL_options
 =head1 SSL SUPPORT
 
 Direct C<https> connections are supported only if L<IO::Socket::SSL> 1.56 or
-greater is installed. An exception will be thrown if a new enough
-IO::Socket::SSL is not installed or if the SSL encryption fails. There is no
-support for C<https> connections via proxy (i.e. RFC 2817).
+greater and L<Net::SSLeay> 1.49 or greater are installed. An exception will be
+thrown if a new enough versions of these modules not installed or if the SSL
+encryption fails. There is no support for C<https> connections via proxy (i.e.
+RFC 2817).
 
 SSL provides two distinct capabilities:
 
@@ -1336,6 +1377,10 @@ L<IO::Socket::SSL>
 
 L<Mozilla::CA>
 
+=item *
+
+L<Net::SSLeay>
+
 =back
 
 =for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
@@ -1345,7 +1390,7 @@ L<Mozilla::CA>
 =head2 Bugs / Feature Requests
 
 Please report any bugs or feature requests through the issue tracker
-at L<http://rt.cpan.org/Public/Dist/Display.html?Name=HTTP-Tiny>.
+at L<https://rt.cpan.org/Public/Dist/Display.html?Name=HTTP-Tiny>.
 You will be notified automatically of any progress on your issue.
 
 =head2 Source Code
@@ -1353,9 +1398,9 @@ You will be notified automatically of any progress on your issue.
 This is open source software.  The code repository is available for
 public review and contribution under the terms of the license.
 
-L<https://github.com/dagolden/p5-http-tiny>
+L<https://github.com/dagolden/http-tiny>
 
-  git clone https://github.com/dagolden/p5-http-tiny.git
+  git clone git://github.com/dagolden/http-tiny.git
 
 =head1 AUTHORS
 
@@ -1383,4 +1428,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
