@@ -72,6 +72,7 @@ CPANPLUS::Selfupdate - self-updating for CPANPLUS
             'Parse::CPAN::Meta'         => '1.4200', # config_requires support
             'ExtUtils::Install'         => '1.42', # uninstall outside @INC
             ( check_install( module => 'CPANPLUS::Dist::Build' )
+                && !check_install( module => 'CPANPLUS::Dist::Build', version => '0.60' )
               ? ( 'CPANPLUS::Dist::Build' => '0.60' ) : () ),
         },
 
