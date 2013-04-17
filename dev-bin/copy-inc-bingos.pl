@@ -75,6 +75,7 @@ unless( $MineOnly ) {
         version
         Parse::CPAN::Meta
         JSON::PP
+        JSON::PP::Compat5006.pm
         CPAN::Meta::YAML
         HTTP::Tiny
     ];
