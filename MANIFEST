@@ -26,6 +26,7 @@ inc/bundle/IO/Zlib.pm
 inc/bundle/IPC/Cmd.pm
 inc/bundle/JSON/PP.pm
 inc/bundle/JSON/PP/Boolean.pm
+inc/bundle/JSON/PP/Compat5006.pm
 inc/bundle/Locale/Maketext/Simple.pm
 inc/bundle/Log/Message.pm
 inc/bundle/Log/Message/Config.pm

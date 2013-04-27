@@ -100,7 +100,7 @@ sub connect {
     $shell->remote( $con );
 
     my($status,$buffer) = $shell->__send_remote_command(
-                            "VERSION = "0.9136";
+                            "VERSION=$CPANPLUS::Shell::Default::VERSION");
 
     if( $status ) {
         print "\n$buffer\n\n";
