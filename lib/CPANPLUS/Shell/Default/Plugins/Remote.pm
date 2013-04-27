@@ -8,7 +8,7 @@ use CPANPLUS::Error             qw[error msg];
 use Locale::Maketext::Simple    Class => 'CPANPLUS', Style => 'gettext';
 
 use vars qw[$VERSION];
-$VERSION = "0.9134";
+$VERSION = "0.9136";
 
 =head1 NAME
 
@@ -100,7 +100,7 @@ sub connect {
     $shell->remote( $con );
 
     my($status,$buffer) = $shell->__send_remote_command(
-                            "VERSION=$CPANPLUS::Shell::Default::VERSION");
+                            "VERSION = "0.9136";
 
     if( $status ) {
         print "\n$buffer\n\n";
