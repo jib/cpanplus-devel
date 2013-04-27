@@ -1,3 +1,7 @@
+Changes for 0.9136      Sat Apr 27 15:06:02 2013
+================================================
+* Don't bother with 03modlist.data anymore
+
 Changes for 0.9134      Mon Jan 21 20:00:03 2013
 ================================================
 * $VERSION all library files

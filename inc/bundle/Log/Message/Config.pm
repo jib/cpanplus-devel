@@ -1,4 +1,5 @@
 package Log::Message::Config;
+use if $] > 5.017, 'deprecate';
 use strict;
 
 use Params::Check qw[check];
@@ -8,7 +9,7 @@ use Locale::Maketext::Simple Style => 'gettext';
 
 BEGIN {
     use vars        qw[$VERSION $AUTOLOAD];
-    $VERSION    =   0.04;
+    $VERSION    =   '0.08';
 }
 
 sub new {
@@ -69,7 +70,7 @@ sub _read_config_file {
 
     my $conf = {};
     my $FH = new FileHandle;
-    $FH->open("$file") or (
+    $FH->open("$file", 'r') or (
                         warn(loc(q[Could not open config file '%1': %2],$file,$!)),
                         return {}
                     );

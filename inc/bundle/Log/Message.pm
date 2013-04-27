@@ -1,4 +1,5 @@
 package Log::Message;
+use if $] > 5.017, 'deprecate';
 
 use strict;
 
@@ -11,9 +12,7 @@ local $Params::Check::VERBOSE = 1;
 
 BEGIN {
     use vars        qw[$VERSION @ISA $STACK $CONFIG];
-
-    $VERSION    =   0.04;
-
+    $VERSION    =   '0.08';
     $STACK      =   [];
 }
 

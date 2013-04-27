@@ -1,11 +1,12 @@
 package Log::Message::Simple;
+use if $] > 5.017, 'deprecate';
 
 use strict;
 use Log::Message private => 0;;
 
 BEGIN {
     use vars qw[$VERSION];
-    $VERSION = 0.08;
+    $VERSION = '0.10';
 }
 
 
