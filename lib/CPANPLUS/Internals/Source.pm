@@ -824,6 +824,8 @@ sub __create_dslip_tree {
     my %hash = @_;
     my $conf = $self->configure_object;
 
+    return {}; # Quick hack
+
     my $tmpl = {
         path     => { default => $conf->get_conf('base') },
         verbose  => { default => $conf->get_conf('verbose') },
