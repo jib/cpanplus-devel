@@ -61,7 +61,7 @@ the function C<hw_help> will be called, which might look like this:
 
     sub hw_help { "    /helloworld      # prints "Hello, world!\n" }
 
-If you dont provide a corresponding _help function to your commands, the
+If you don't provide a corresponding _help function to your commands, the
 default shell will handle it gracefully, but the user will be stuck without
 usage information on your commands, so it's considered undesirable to omit
 the help functions.
