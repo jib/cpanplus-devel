@@ -1087,7 +1087,9 @@ sub install {
     return;
 }
 
-=pod @list = $self->bundle_modules()
+=pod
+
+=head2 @list = $self->bundle_modules()
 
 Returns a list of module objects the Bundle specifies.
 
