@@ -23,7 +23,7 @@ $Params::Check::VERBOSE = 1;
 use vars qw[@ISA $VERSION];
 
 @ISA     = qw[CPANPLUS::Internals];
-$VERSION = "0.9136";
+$VERSION = "0.9138";
 
 ### mark that we're running under CPANPLUS to spawned processes
 $ENV{'PERL5_CPANPLUS_IS_RUNNING'} = $$;
@@ -1112,7 +1112,7 @@ sub autobundle {
     print $fh <<EOF;
 package $name;
 
-\$VERSION = "0.9136";
+\$VERSION = "0.9138";
 
 1;
 
