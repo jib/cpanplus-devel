@@ -1,16 +1,22 @@
 use strict;
 use warnings;
 use Cwd qw[cwd];
+use IPC::Cmd qw[can_run run];
 use File::Find qw[find];
 use File::Spec::Functions qw[
-  catdir splitpath splitdir catpath rel2abs abs2rel
+  catdir splitpath splitdir catpath rel2abs abs2rel catfile
 ];
 use B qw[perlstring];
 use Log::Message::Simple qw[msg error];
 
 my $VERBOSE = shift;
 
+my $diff = catfile( qw[dev-bin Module-Pluggable.patch] );
+my $meep = catfile( qw[inc bundle Module Pluggable Object.pm] );
+
 $|=1;
+
+patch_mpo();
 
 msg("Generating 'cpanp-fat'", $VERBOSE);
 open my $fat, '>', 'cpanp-fat' or die "$!\n";
@@ -63,6 +69,20 @@ sub fatpack_files {
 
     my $i = 0;
     unshift @INC, sub {
+      if ( $_[1] eq 'FatPacked/Internals.pm' ) {
+        my $fatfile = "/tmp/fat_pack_" . $i;
+        $i++;
+        open my $wfh, '>', $fatfile or die "Error opening file";
+        my $internals = "package FatPacked::Internals;\n\nuse strict;\nuse warnings;\n";
+        $internals .= "sub fatpacked {\nreturn (\n";
+        $internals .= join "\n", map { "'$_'," } sort keys %fatpacked;
+        $internals .= "); }\n\n1;\n";
+        print { $wfh } $internals;
+        close $wfh;
+        open my $fh, '<', $fatfile;
+        unlink $fatfile;
+        return $fh;
+      }
       if (my $fat = $fatpacked{$_[1]}) {
         my $fatfile = "/tmp/fat_pack_" . $i;
         $i++;
@@ -86,4 +106,9 @@ sub fatpack_files {
     .qq!${data}${name}\n!;
   } sort keys %files;
   return join "\n", $start, @segments, $end;
+}
+
+sub patch_mpo {
+  my $git_exe = can_run('git') || die "No 'git' utility found, giving up\n";
+  die unless scalar run( command => [ $git_exe, 'apply', $diff ], verbose => 1 );
 }

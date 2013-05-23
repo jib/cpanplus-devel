@@ -1,0 +1,24 @@
+diff --git a/inc/bundle/Module/Pluggable/Object.pm b/inc/bundle/Module/Pluggable/Object.pm
+index 6b1d265..a832caa 100644
+--- a/inc/bundle/Module/Pluggable/Object.pm
++++ b/inc/bundle/Module/Pluggable/Object.pm
+@@ -160,7 +160,19 @@ sub search_directories {
+     my @plugins;
+     # go through our @INC
+     foreach my $dir (@SEARCHDIR) {
++      if ( ref $dir eq 'CODE' ) {
++        # Fatpack
++        eval "require FatPacked::Internals";
++        unless ($@) {
++          my $path = join '|', map { quotemeta $_ } map { join '/', split /::/ } @{$self->{'search_path'}};
++          my @fooble = map { s!\.pm$!!; $_ }
++              map { join '::', split m!/! } grep { /^($path)/ } FatPacked::Internals->fatpacked();
++          $self->handle_finding_plugin($_, \@plugins) for @fooble;
++        }
++      }
++      else {
+         push @plugins, $self->search_paths($dir);
++      }
+     }
+     return @plugins;
+ }
