@@ -24,6 +24,7 @@ my $fatpacked = '#!/usr/bin/env perl' . "\n" . fatpack_files() . open_cpanp();
 print {$fat} $fatpacked;
 close $fat;
 msg("Generated 'cpanp-fat'", 1);
+run( command => [ 'git', 'checkout', 'inc/bundle/Module/Pluggable/Object.pm' ], verbose => 1 );
 exit 0;
 
 sub open_cpanp {
