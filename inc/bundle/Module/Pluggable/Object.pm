@@ -10,7 +10,7 @@ use vars qw($VERSION);
 
 use if $] > 5.017, 'deprecate';
 
-$VERSION = '4.6';
+$VERSION = '4.8';
 
 
 sub new {
@@ -79,7 +79,7 @@ sub plugins {
         $plugins{$_} = 1;
     }
 
-    # are we instantiating or requring?
+    # are we instantiating or requiring?
     if (defined $self->{'instantiate'}) {
         my $method = $self->{'instantiate'};
         my @objs   = ();
