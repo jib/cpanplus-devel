@@ -8,8 +8,31 @@ use File::Spec::Functions qw[
 ];
 use B qw[perlstring];
 use Log::Message::Simple qw[msg error];
+use Getopt::Long;
 
-my $VERBOSE = shift;
+my $VERBOSE = 0;
+my $STRIP   = 0;
+
+GetOptions (
+  "strip"    => \$STRIP,
+  "verbose"  => \$VERBOSE,
+)
+or die("Error in command line arguments\n");
+
+my $filter;
+
+if ( $STRIP ) {
+  require Perl::Strip;
+  $filter = sub {
+    my ($data) = @_;
+    return Perl::Strip->new( keep_nl => 0, optimise_size => 0, )->strip($data);
+  };
+}
+else {
+  $filter = sub {
+    return shift;
+  };
+}
 
 my $diff = catfile( qw[dev-bin Module-Pluggable.patch] );
 my $meep = catfile( qw[inc bundle Module Pluggable Object.pm] );
@@ -102,7 +125,9 @@ sub fatpack_files {
   my @segments = map {
     (my $stub = $_) =~ s/\.pm$//;
     my $name = uc join '_', split '/', $stub;
-    my $data = $files{$_}; $data =~ s/^/  /mg; $data =~ s/(?<!\n)\z/\n/;
+    my $data = $files{$_};
+    $data = $filter->( $data );
+    $data =~ s/^/  /mg; $data =~ s/(?<!\n)\z/\n/;
     '$fatpacked{'.perlstring($_).qq!} = <<'${name}';\n!
     .qq!${data}${name}\n!;
   } sort keys %files;
