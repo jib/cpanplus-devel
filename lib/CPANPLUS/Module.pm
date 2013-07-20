@@ -541,7 +541,7 @@ a fake C<CPANPLUS::Module::Author> object.
 
 =cut
 
-{   ### accessors dont change during run time, so only compute once
+{   ### accessors don't change during run time, so only compute once
     my @acc = grep !/status/, __PACKAGE__->accessors();
 
     sub clone {
@@ -761,7 +761,7 @@ sub dist {
 
         ### ok, we don't have it. Is it C::D::Build? if so we can install the
         ### whole thing now
-        ### XXX we _could_ do this for any type we dont have actually...
+        ### XXX we _could_ do this for any type we don't have actually...
         if( $type eq INSTALLER_BUILD ) {
             msg(loc("Bootstrapping installer '%1'", $type));
 
@@ -786,7 +786,7 @@ sub dist {
                 msg(loc("Installer '%1' successfully bootstrapped", $type));
             }
 
-        ### some other plugin you dont have. Abort
+        ### some other plugin you don't have. Abort
         } else {
             error(loc("Installer type '%1' not found. Please verify your ".
                       "installation -- aborting", $type ));
@@ -932,7 +932,7 @@ sub install {
     ### not supported.
     $args->{'prereq_target'} ||= TARGET_CREATE if $target ne TARGET_INSTALL;
 
-    ### check if it's already upto date ###
+    ### check if it's already uptodate ###
     if( $target eq TARGET_INSTALL and !$args->{'force'} and
         !$self->package_is_perl_core() and         # separate rules apply
         ( $self->status->installed() or $self->is_uptodate ) and
