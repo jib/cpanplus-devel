@@ -164,7 +164,7 @@ sub _extract {
         return;
     }
 
-    ### if ->files is not filled, we dont know what the hell was
+    ### if ->files is not filled, we don't know what the hell was
     ### extracted.. try to offer a suggestion and bail :(
     unless ( $ae->files ) {
         error( loc( "'%1' was not able to determine extracted ".
