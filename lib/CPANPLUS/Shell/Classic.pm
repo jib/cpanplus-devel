@@ -671,7 +671,7 @@ sub _distribution {
                                         allow   => [qr/$path/i],
                                         data    => \@data );
 
-                ### make sure we dont list the same dist twice
+                ### make sure we don't list the same dist twice
                 for my $val ( @list ) {
                     next if $seen->{$val->package}++;
 
@@ -685,7 +685,7 @@ sub _distribution {
                 {   my @list = $cb->search( type    => 'package',
                                             allow   => [qr/$match/i] );
 
-                    ### make sure we dont list the same dist twice
+                    ### make sure we don't list the same dist twice
                     for my $val ( @list ) {
                         next if $seen->{$val->package}++;
 
@@ -696,7 +696,7 @@ sub _distribution {
                 {   my @list = $cb->search( type    => 'path',
                                             allow   => [qr/$match/i] );
 
-                    ### make sure we dont list the same dist twice
+                    ### make sure we don't list the same dist twice
                     for my $val ( @list ) {
                         next if $seen->{$val->package}++;
 
@@ -716,7 +716,7 @@ sub _distribution {
                                         allow   => [qr/$path$/i],
                                         data    => \@data);
 
-                ### make sure we dont list the same dist twice
+                ### make sure we don't list the same dist twice
                 my $seen;
                 for my $val ( @list ) {
                     next if $seen->{$val->package}++;
