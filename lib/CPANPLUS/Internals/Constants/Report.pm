@@ -291,7 +291,7 @@ use constant REPORT_LOADED_PREREQS
                                 ### not every prereq may be coming from CPAN
                                 ### so maybe we wont find it in our module
                                 ### tree at all...
-                                ### skip ones that cant be found in teh list
+                                ### skip ones that can't be found in the list
                                 ### as reported in #12723
                                 my @prq = grep { defined }
                                           map { $cb->module_tree($_) }
