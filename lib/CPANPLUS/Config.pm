@@ -207,7 +207,7 @@ settings. Defaults to an empty string.
 
 =item debug
 
-Boolean flag to enable or disable extensive debuggging information.
+Boolean flag to enable or disable extensive debugging information.
 Defaults to 'false'.
 
 =cut
@@ -360,7 +360,7 @@ C<.tar.gz> files)
 
 =cut
 
-        ### if we dont have c::zlib, we'll need to use /bin/tar or we
+        ### if we don't have c::zlib, we'll need to use /bin/tar or we
         ### can not extract any files. Good time to change the default
         $Conf->{'conf'}->{'prefer_bin'} =
                                 (eval {require Compress::Zlib; 1} ? 0 : 1 );
@@ -574,7 +574,7 @@ remains empty if you do not require super user permissions to install.
 =cut
 
         $Conf->{'program'}->{'sudo'} = do {
-            ### let's assume you dont need sudo,
+            ### let's assume you don't need sudo,
             ### unless one of the below criteria tells us otherwise
             my $sudo = undef;
 
@@ -686,7 +686,7 @@ with CPANPLUS, which is used to enable autoflushing in spawned processes.
                 ### or user installs
                 ### note that we don't use 'can_run' as it's
                 ### not an executable, just a wrapper...
-                ### prefer anything that's found in the path paralel to your $^X
+                ### prefer anything that's found in the path parallel to your $^X
                 for my $dir (File::Spec->rel2abs( dirname($^X) ),
                              split(/\Q$Config::Config{path_sep}\E/, $ENV{PATH}),
                              File::Spec->curdir,
@@ -757,7 +757,7 @@ sub new {
 
     $obj->_clean_up_paths;
 
-    ### shut up IPC::Cmd warning about not findin IPC::Run on win32
+    ### shut up IPC::Cmd warning about not finding IPC::Run on win32
     $IPC::Cmd::WARN = 0;
 
     return $obj;
@@ -776,7 +776,7 @@ sub _clean_up_paths {
             if ($path and $path =~ /\s+/) {
                 my($prog, $args);
 
-                ### patch from Steve Hay, 13nd of June 2007
+                ### patch from Steve Hay, 13th of June 2007
                 ### msg-id: <467012A4.6060705@uk.radan.com>
                 ### windows directories are not allowed to end with
                 ### a space, so any occurrence of '\w\s+/\w+' means
