@@ -581,7 +581,7 @@ sub _resolve_prereqs {
     ### can find them, but for example cpanplus::dist::build won't,
     ### which gets messy FAST. So, here we sort our prereqs only IF
     ### the parent module is Bundle::CPANPLUS::Dependencies.
-    ### Really, we would wnat some sort of sorted prereq mechanism,
+    ### Really, we would want some sort of sorted prereq mechanism,
     ### but Bundle:: doesn't support it, and we flatten everything
     ### to a hash internally. A sorted hash *might* do the trick if
     ### we got a transparent implementation.. that would mean we would
@@ -698,7 +698,7 @@ sub _resolve_prereqs {
         my($modobj,$version) = @$aref;
 
         ### another prereq may have already installed this one...
-        ### so dont ask again if the module turns out to be uptodate
+        ### so don't ask again if the module turns out to be uptodate
         ### see bug [#11840]
         ### if either force or prereq_build are given, the prereq
         ### should be built anyway
