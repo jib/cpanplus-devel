@@ -13,7 +13,7 @@ use strict;
 BEGIN {
     use vars        qw[$VERSION $AUTOREPLY $VERBOSE $INVALID];
     $VERBOSE    =   1;
-    $VERSION    =   '0.34';
+    $VERSION    =   '0.36';
     $INVALID    =   loc('Invalid selection, please try again: ');
 }
 
@@ -103,7 +103,7 @@ You can indicate that the user is allowed to enter multiple answers by
 toggling the C<multi> flag. Note that a list of answers will then be
 returned to you, rather than a simple string.
 
-By specifying an C<allow> hander, you can yourself validate the answer
+By specifying an C<allow> handler, you can yourself validate the answer
 a user gives. This can be any of the types that the Params::Check C<allow>
 function allows, so please refer to that manpage for details.
 
@@ -281,7 +281,7 @@ sub _tt_readline {
     ### are we in autoreply mode?
     if ($AUTOREPLY) {
 
-        ### you used autoreply, but didnt provide a default!
+        ### you used autoreply, but didn't provide a default!
         carp loc(
             q[You have '%1' set to true, but did not provide a default!],
             '$AUTOREPLY'

@@ -10,7 +10,7 @@ use Params::Check   qw[allow];
 ### disable string overloading for callbacks
 require overload;
 
-$VERSION    = '0.46';
+$VERSION    = '0.48';
 $FATAL      = 0;
 $DEBUG      = 0;
 
@@ -288,7 +288,7 @@ accessors as the current object, but without the data stored in them.
 =cut
 
 ### XXX this creates an object WITH allow handlers at all times.
-### even if the original didnt
+### even if the original didn't
 sub mk_clone {
     my $self    = $_[0];
     my $class   = ref $self;
@@ -296,7 +296,7 @@ sub mk_clone {
     my $clone   = $class->new;
 
     ### split out accessors with and without allow handlers, so we
-    ### don't install dummy allow handers (which makes O::A::lvalue
+    ### don't install dummy allow handlers (which makes O::A::lvalue
     ### warn for example)
     my %hash; my @list;
     for my $acc ( $self->ls_accessors ) {
@@ -709,7 +709,7 @@ See C<perldoc perlsub> for details.
 
         $self->___autoload( $method, @_ ) or return;
 
-        ### *dont* add return to it, or it won't be stored
+        ### *don't* add return to it, or it won't be stored
         ### see perldoc perlsub on lvalue subs
         ### XXX can't use $self->___get( ... ), as we MUST have
         ### the container that's used for the lvalue assign as
