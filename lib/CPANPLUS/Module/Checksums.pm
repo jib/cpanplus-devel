@@ -15,7 +15,7 @@ use Module::Load::Conditional   qw[can_load];
 $Params::Check::VERBOSE = 1;
 
 @ISA = qw[ CPANPLUS::Module::Signature ];
-$VERSION = "0.9138";
+$VERSION = "0.9140";
 
 =head1 NAME
 
