@@ -176,7 +176,8 @@ sub _extract {
 
 
     ### print out what files we extracted ###
-    msg(loc("Extracted '%1'",$_),$verbose) for @{$ae->files};
+    ### No one needs to see this, but we'll log it
+    msg(loc("Extracted '%1'",$_),0) for @{$ae->files};
 
     ### set them all to be +w for the owner, so we don't get permission
     ### denied for overwriting files that are just +r
