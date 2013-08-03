@@ -142,6 +142,8 @@ could include them into your environment as such (using tcsh):
     print "\n";
 }
 
+_check_site_bin();
+
 ### toss out the old source files, they might be compiled
 ### in an incompatilbe format (rt #18121)
 ### use 'can', because it might be  different backend now
@@ -176,7 +178,7 @@ could include them into your environment as such (using tcsh):
     version_from    ('lib/CPANPLUS/Internals.pm');
     license         ('perl');
     no_index        ( directory => 'lib/CPANPLUS/inc' );
-    installdirs     ( $] >= 5.009005 ? 'perl' : 'site' ),
+    installdirs     ( $] >= 5.009005 && $] < 5.012 ? 'perl' : 'site' ),
     install_script  ($_) for @scripts;
     #install_script  ($_) for grep { $_ !~ /cpanp-boxed/ } glob('bin/*');
     requires        (%prereq);
@@ -218,4 +220,22 @@ sub _scripts {
     }
   }
   return @scripts;
+}
+
+sub _check_site_bin
+{
+  require Config;
+  return if $] < 5.012;
+  return if $Config::Config{installscript} eq $Config::Config{installsitescript};
+    print qq(
+### IMPORTANT! ######################################################
+
+Your site and core script locations are different. We will be put the
+scripts provided by this distribution in the site location.
+
+Please ensure that the site location is in your PATH.
+
+#####################################################################
+
+    ) . $/;
 }
