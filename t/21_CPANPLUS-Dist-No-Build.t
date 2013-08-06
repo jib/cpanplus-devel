@@ -92,7 +92,7 @@ ok( not grep { $_ eq $Inst } CPANPLUS::Dist->dist_types,
                                 "       Successful bootstrap recorded" );
 }
 
-END { 1 while unlink output_file()  }
+END { unless ( ON_CYGWIN ) { 1 while unlink output_file() }  }
 
 ### place holder package to serve as a module object for C::D::Build
 {   package CPANPLUS::Test::Module;

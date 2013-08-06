@@ -279,6 +279,8 @@ SKIP: {
         ok( $unlink_sts,        "Deleting Makefile.PL");
     }
 
+    sleep 5 if ON_WIN32;
+
     ok( !-s $makefile_pl,       "   Makefile.PL deleted" );
     ok( !-s $makefile,          "   Makefile deleted" );
     ok($dist->write_makefile_pl,"   Makefile.PL written" );
