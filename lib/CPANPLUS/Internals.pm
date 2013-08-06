@@ -317,7 +317,7 @@ test report and false to skip it.
 =item munge_test_report
 
 Is called when the test report message has been composed, giving
-the user a chance to programatically alter it. Should return the
+the user a chance to programmatically alter it. Should return the
 (munged) message to be sent.
 
 =item edit_test_report
@@ -337,7 +337,7 @@ the test failed.
 
 Is called when the C<CPANPLUS::Dist::*> metafile is created, like
 C<control> for C<CPANPLUS::Dist::Deb>, giving the user a chance to
-programatically alter it. Should return the (munged) text to be
+programmatically alter it. Should return the (munged) text to be
 written to the metafile.
 
 =back

@@ -184,7 +184,7 @@ sub distributions {
         ### shortcut asap, so we avoid extra ops. On big checksums files
         ### the call to clone() takes up a lot of time.
         ### .meta files are now also in the checksums file,
-        ### which means we have to filter out things that dont
+        ### which means we have to filter out things that don't
         ### match our regex
         next if $mod->package_extension( $name ) eq META_EXT;
 

@@ -334,7 +334,7 @@ sub dispatch_on_input {
                 unless $key eq '!';
         }
 
-        ### emtpy line? ###
+        ### empty line? ###
         return unless $key;
 
         ### time to quit ###
@@ -895,7 +895,7 @@ sub _reload_indices {
 
     my $rv = $cb->reload_indices( %$opts );
 
-    ### so the update failed, but you didnt give it any options either
+    ### so the update failed, but you didn't give it any options either
     if( !$rv and !(keys %$opts) ) {
         $self->__print(
                 "\nFailure may be due to corrupt source files\n" .

@@ -277,7 +277,7 @@ for my $name (@modules) {
     ### is it a tarball? then we get it locally and transform it
     ### and its dependencies into .debs
     if( $tarball ) {
-        ### make sure we use an absolute path, so chdirs() dont
+        ### make sure we use an absolute path, so chdirs() don't
         ### mess things up
         $name = File::Spec->rel2abs( $name );
 
