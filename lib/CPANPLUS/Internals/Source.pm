@@ -205,8 +205,8 @@ sub _build_trees {
     }
 
     ### XXX unpleasant hack. since custom sources uses ->parse_module, we
-    ### already have a special module object with extra meta data. that
-    ### doesn't gelwell with the sqlite storage engine. So, we check 'normal'
+    ### already have a special module object with extra meta data. That
+    ### doesn't go well with the sqlite storage engine. So, we check 'normal'
     ### trees from separate trees, so the engine can treat them differently.
     ### Effectively this means that with the SQLite engine, for now, custom
     ### sources are continuously reparsed =/ -kane
@@ -1035,7 +1035,7 @@ sub _add_custom_module_source {
                 local   => $index,
                 verbose => $verbose,
             ) or do {
-                ### we faild to update it, we probably have an empty
+                ### we failed to update it, we probably have an empty
                 ### possibly silly filename on disk now -- remove it
                 1 while unlink $index;
                 return;
