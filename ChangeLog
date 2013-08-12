@@ -1,3 +1,9 @@
+Changes for 0.9142      Mon Aug 12 23:39:58 2013
+================================================
+* Fix race condition in tests for MSWin32
+* Fix hanging test on Cygwin
+* Update bundled modules
+
 Changes for 0.9140      Sat Aug  3 22:28:25 2013
 ================================================
 * Make extraction less verbose

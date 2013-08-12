@@ -35,6 +35,7 @@ inc/bundle/Log/Message/Item.pm
 inc/bundle/Log/Message/Simple.pm
 inc/bundle/Module/CoreList.pm
 inc/bundle/Module/CoreList/TieHashDelta.pm
+inc/bundle/Module/CoreList/Utils.pm
 inc/bundle/Module/Load.pm
 inc/bundle/Module/Load/Conditional.pm
 inc/bundle/Module/Loaded.pm

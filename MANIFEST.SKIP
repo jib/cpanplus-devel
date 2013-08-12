@@ -32,3 +32,4 @@ dev-bin/
 ~$
 ^patches
 ^.git
+^MYMETA\.*
