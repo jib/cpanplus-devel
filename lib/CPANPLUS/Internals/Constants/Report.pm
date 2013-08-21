@@ -22,7 +22,7 @@ $VERSION = "0.9142";
 my %OS = (
     Amiga       => 'amigaos',
     Atari       => 'mint',
-    BSD         => 'bsdos|darwin|freebsd|openbsd|netbsd',
+    BSD         => 'bsdos|bitrig|darwin|freebsd|openbsd|netbsd',
     Be          => 'beos',
     BeOS        => 'beos',
     Cygwin      => 'cygwin',
@@ -43,7 +43,7 @@ my %OS = (
     RISCOS      => 'riscos',
     SGI         => 'irix',
     Solaris     => 'solaris',
-    Unix        => 'aix|bsdos|darwin|dgux|dynixptx|freebsd|'.
+    Unix        => 'aix|bsdos|bitrig|darwin|dgux|dynixptx|freebsd|'.
                    'linux|hpux|machten|netbsd|next|openbsd|dec_osf|'.
                    'svr4|sco_sv|unicos|unicosmk|solaris|sunos',
     VMS         => 'VMS',
