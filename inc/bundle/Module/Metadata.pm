@@ -10,8 +10,9 @@ package Module::Metadata;
 # parrot future to look at other types of modules).
 
 use strict;
-use vars qw($VERSION);
-$VERSION = '1.000014';
+use warnings;
+
+our $VERSION = '1.000019';
 $VERSION = eval $VERSION;
 
 use Carp qw/croak/;
@@ -345,7 +346,7 @@ sub new_from_module {
     }
 
     # Normalize versions.  Can't use exists() here because of bug in YAML::Node.
-    # XXX "bug in YAML::Node" comment seems irrelvant -- dagolden, 2009-05-18
+    # XXX "bug in YAML::Node" comment seems irrelevant -- dagolden, 2009-05-18
     for (grep defined $_->{version}, values %prime) {
       $_->{version} = $normalize_version->( $_->{version} );
     }
@@ -649,10 +650,11 @@ sub _evaluate_version_line {
   # compiletime/runtime issues with local()
   my $vsub;
   $pn++; # everybody gets their own package
-  my $eval = qq{BEGIN { q#  Hide from _packages_inside()
+  my $eval = qq{BEGIN { my \$dummy = q#  Hide from _packages_inside()
     #; package Module::Metadata::_version::p$pn;
     use version;
     no strict;
+    no warnings;
 
       \$vsub = sub {
         local $sigil$var;
@@ -661,6 +663,8 @@ sub _evaluate_version_line {
         \$$var
       };
   }};
+
+  $eval = $1 if $eval =~ m{^(.+)}s;
 
   local $^W;
   # Try to get the $VERSION
@@ -800,8 +804,10 @@ Module::Metadata - Gather package and POD information from perl module files
 
 =head1 DESCRIPTION
 
-This module provides a standard way to gather metadata about a .pm file
-without executing unsafe code.
+This module provides a standard way to gather metadata about a .pm file through
+(mostly) static analysis and (some) code execution.  When determining the
+version of a module, the C<$VERSION> assignment is C<eval>ed, as is traditional
+in the CPAN toolchain.
 
 =head1 USAGE
 

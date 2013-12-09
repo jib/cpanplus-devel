@@ -13,14 +13,16 @@ use version;
 
 use Module::Metadata ();
 
-use constant ON_VMS  => $^O eq 'VMS';
+use constant ON_VMS   => $^O eq 'VMS';
+use constant ON_WIN32 => $^O eq 'MSWin32' ? 1 : 0;
+use constant QUOTE    => do { ON_WIN32 ? q["] : q['] };
 
 BEGIN {
     use vars        qw[ $VERSION @ISA $VERBOSE $CACHE @EXPORT_OK $DEPRECATED
                         $FIND_VERSION $ERROR $CHECK_INC_HASH];
     use Exporter;
     @ISA            = qw[Exporter];
-    $VERSION        = '0.54';
+    $VERSION        = '0.58';
     $VERBOSE        = 0;
     $DEPRECATED     = 0;
     $FIND_VERSION   = 1;
@@ -195,7 +197,7 @@ sub check_install {
         }
     }
 
-    ### we didnt find the filename yet by looking in %INC,
+    ### we didn't find the filename yet by looking in %INC,
     ### so scan the dirs
     unless( $filename ) {
 
@@ -495,12 +497,15 @@ sub requires {
     }
 
     my $lib = join " ", map { qq["-I$_"] } @INC;
-    my $cmd = qq["$^X" $lib -M$who -e"print(join(qq[\\n],keys(%INC)))"];
+    my $oneliner = 'print(join(qq[\n],map{qq[BONG=$_]}keys(%INC)),qq[\n])';
+    my $cmd = join '', qq["$^X" $lib -M$who -e], QUOTE, $oneliner, QUOTE;
 
     return  sort
                 grep { !/^$who$/  }
                 map  { chomp; s|/|::|g; $_ }
                 grep { s|\.pm$||i; }
+                map  { s!^BONG\=!!; $_ }
+                grep { m!^BONG\=! }
             `$cmd`;
 }
 

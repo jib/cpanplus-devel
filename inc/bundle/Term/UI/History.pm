@@ -1,8 +1,11 @@
 package Term::UI::History;
 
 use strict;
+use vars qw[$VERSION];
 use base 'Exporter';
 use base 'Log::Message::Simple';
+
+$VERSION = '0.38';
 
 =pod
 

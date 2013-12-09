@@ -3,7 +3,7 @@ package HTTP::Tiny;
 use strict;
 use warnings;
 # ABSTRACT: A small, simple, correct HTTP/1.1 client
-our $VERSION = '0.034'; # VERSION
+our $VERSION = '0.039'; # VERSION
 
 use Carp ();
 
@@ -113,13 +113,16 @@ sub mirror {
         $args->{headers}{'if-modified-since'} ||= $self->_http_date($mtime);
     }
     my $tempfile = $file . int(rand(2**31));
-    open my $fh, ">", $tempfile
-        or Carp::croak(qq/Error: Could not open temporary file $tempfile for downloading: $!\n/);
+
+    require Fcntl;
+    sysopen my $fh, $tempfile, Fcntl::O_CREAT()|Fcntl::O_EXCL()|Fcntl::O_WRONLY()
+       or Carp::croak(qq/Error: Could not create temporary file $tempfile for downloading: $!\n/);
     binmode $fh;
     $args->{data_callback} = sub { print {$fh} $_[0] };
     my $response = $self->request('GET', $url, $args);
     close $fh
-        or Carp::croak(qq/Error: Could not close temporary file $tempfile: $!\n/);
+        or Carp::croak(qq/Error: Caught error closing temporary file $tempfile: $!\n/);
+
     if ( $response->{success} ) {
         rename $tempfile, $file
             or Carp::croak(qq/Error replacing $file with $tempfile: $!\n/);
@@ -189,7 +192,7 @@ sub www_form_urlencode {
         }
     }
 
-    return join("&", sort @terms);
+    return join("&", (ref $data eq 'ARRAY') ? (@terms) : (sort @terms) );
 }
 
 #--------------------------------------------------------------------------#
@@ -309,7 +312,7 @@ sub _prepare_headers_and_cb {
     }
 
     # if we have Basic auth parameters, add them
-    if ( length $auth && ! defined $request->{headers}{authentication} ) {
+    if ( length $auth && ! defined $request->{headers}{authorization} ) {
         require MIME::Base64;
         $request->{headers}{authorization} =
             "Basic " . MIME::Base64::encode_base64($auth, "");
@@ -393,6 +396,8 @@ sub _split_url {
     $authority = (length($authority)) ? $authority : 'localhost';
     if ( $authority =~ /@/ ) {
         ($auth,$host) = $authority =~ m/\A([^@]*)@(.*)\z/;   # user:pass@host
+        # userinfo might be percent escaped, so recover real auth info
+        $auth =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
     }
     else {
         $host = $authority;
@@ -1000,7 +1005,7 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -1008,7 +1013,7 @@ HTTP::Tiny - A small, simple, correct HTTP/1.1 client
 
 =head1 VERSION
 
-version 0.034
+version 0.039
 
 =head1 SYNOPSIS
 
@@ -1142,7 +1147,9 @@ The C<success> field of the response will be true if the status code is 2XX.
 
 This method executes a C<POST> request and sends the key/value pairs from a
 form data hash or array reference to the given URL with a C<content-type> of
-C<application/x-www-form-urlencoded>.  See documentation for the
+C<application/x-www-form-urlencoded>.  If data is provided as an array
+reference, the order is preserved; if provided as a hash reference, the terms
+are sorted on key and value for consistency.  See documentation for the
 C<www_form_urlencode> method for details on the encoding.
 
 The URL must have unsafe characters escaped and international domain names
@@ -1186,6 +1193,11 @@ authorization headers.  (Authorization headers will not be included in a
 redirected request.) For example:
 
     $http->request('GET', 'http://Aladdin:open sesame@example.com/');
+
+If the "user:password" stanza contains reserved characters, they must
+be percent-escaped:
+
+    $http->request('GET', 'http://john%40example.com:password@example.com/');
 
 A hashref of options may be appended to modify the request.
 
@@ -1299,8 +1311,10 @@ This method converts the key/value pairs from a data hash or array reference
 into a C<x-www-form-urlencoded> string.  The keys and values from the data
 reference will be UTF-8 encoded and escaped per RFC 3986.  If a value is an
 array reference, the key will be repeated with each of the values of the array
-reference.  The key/value pairs in the resulting string will be sorted by key
-and value.
+reference.  If data is provided as a hash reference, the key/value pairs in the
+resulting string will be sorted by key and value for consistent ordering.
+
+To preserve the order (r
 
 =for Pod::Coverage agent
 cookie_jar
@@ -1469,9 +1483,17 @@ There is no support for IPv6 of any kind.
 
 =back
 
+Despite the limitations listed above, HTTP::Tiny is considered nearly
+feature-complete.  If there are enhancements unrelated to the underlying
+transport, please consider them for L<HTTP::Tiny::UA> instead.
+
 =head1 SEE ALSO
 
 =over 4
+
+=item *
+
+L<HTTP::Tiny::UA> — Higher level UA features for HTTP::Tiny
 
 =item *
 
@@ -1516,7 +1538,7 @@ public review and contribution under the terms of the license.
 
 L<https://github.com/chansen/p5-http-tiny>
 
-  git clone git://github.com/chansen/p5-http-tiny.git
+  git clone https://github.com/chansen/p5-http-tiny.git
 
 =head1 AUTHORS
 
@@ -1587,6 +1609,10 @@ Martin-Louis Bright <mlbright@gmail.com>
 =item *
 
 Mike Doherty <doherty@cpan.org>
+
+=item *
+
+Petr Písař <ppisar@redhat.com>
 
 =item *
 

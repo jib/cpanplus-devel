@@ -17,7 +17,7 @@ use Locale::Maketext::Simple    Style => 'gettext';
 ### solaris has silly /bin/tar output ###
 use constant ON_SOLARIS     => $^O eq 'solaris' ? 1 : 0;
 use constant ON_NETBSD      => $^O eq 'netbsd' ? 1 : 0;
-use constant ON_OPENBSD     => $^O eq 'openbsd' ? 1 : 0;
+use constant ON_OPENBSD     => $^O =~ m!^(openbsd|bitrig)$! ? 1 : 0;
 use constant ON_FREEBSD     => $^O =~ m!^(free|midnight)bsd$! ? 1 : 0;
 use constant ON_LINUX       => $^O eq 'linux' ? 1 : 0;
 use constant FILE_EXISTS    => sub { -e $_[0] ? 1 : 0 };
@@ -48,13 +48,13 @@ use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG
             $_ALLOW_BIN $_ALLOW_PURE_PERL $_ALLOW_TAR_ITER
          ];
 
-$VERSION            = '0.68';
+$VERSION            = '0.70';
 $PREFER_BIN         = 0;
 $WARN               = 1;
 $DEBUG              = 0;
 $_ALLOW_PURE_PERL   = 1;    # allow pure perl extractors
 $_ALLOW_BIN         = 1;    # allow binary extractors
-$_ALLOW_TAR_ITER        = 1;    # try to use Archive::Tar->iter if available
+$_ALLOW_TAR_ITER    = 1;    # try to use Archive::Tar->iter if available
 
 # same as all constants
 my @Types           = ( TGZ, TAR, GZ, ZIP, BZ2, TBZ, Z, LZMA, XZ, TXZ );
@@ -691,7 +691,7 @@ sub have_old_bunzip2 {
         ### depending whether you run with -x or -t
         ### compensate for this insanity by running -t first, then -x
         {    my $cmd =
-                $self->is_tgz ? [$self->bin_gzip, '-cdf', $archive, '|',
+                $self->is_tgz ? [$self->bin_gzip, '-c', '-d', '-f', $archive, '|',
                                  $self->bin_tar, '-tf', '-'] :
                 $self->is_tbz ? [$self->bin_bunzip2, '-cd', $archive, '|',
                                  $self->bin_tar, '-tf', '-'] :
@@ -746,7 +746,7 @@ sub have_old_bunzip2 {
 
         ### now actually extract it ###
         {   my $cmd =
-                $self->is_tgz ? [$self->bin_gzip, '-cdf', $archive, '|',
+                $self->is_tgz ? [$self->bin_gzip, '-c', '-d', '-f', $archive, '|',
                                  $self->bin_tar, '-xf', '-'] :
                 $self->is_tbz ? [$self->bin_bunzip2, '-cd', $archive, '|',
                                  $self->bin_tar, '-xf', '-'] :
@@ -964,7 +964,7 @@ sub _gunzip_bin {
         return $self->_error(loc("Could not open '%1' for writing: %2",
                             $self->_gunzip_to, $! ));
 
-    my $cmd = [ $self->bin_gzip, '-cdf', $self->archive ];
+    my $cmd = [ $self->bin_gzip, '-c', '-d', '-f', $self->archive ];
 
     my $buffer;
     unless( scalar run( command => $cmd,
@@ -1360,7 +1360,7 @@ sub _unxz_bin {
         return $self->_error(loc("Could not open '%1' for writing: %2",
                             $self->_gunzip_to, $! ));
 
-    my $cmd = [ $self->bin_unxz, '-cdf', $self->archive ];
+    my $cmd = [ $self->bin_unxz, '-c', '-d', '-f', $self->archive ];
 
     my $buffer;
     unless( scalar run( command => $cmd,

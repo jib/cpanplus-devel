@@ -1,9 +1,11 @@
 package Package::Constants;
 
+use if $] >= 5.019006, 'deprecate';
+
 use strict;
 use vars qw[$VERSION $DEBUG];
 
-$VERSION    = '0.02';
+$VERSION    = '0.04';
 $DEBUG      = 0;
 
 =head1 NAME
@@ -56,7 +58,7 @@ sub list {
 
             _debug( "       '$name' is a coderef" );
 
-            next unless defined prototype($sub) and
+            next unless defined prototype($sub) and 
                      not length prototype($sub);
 
             _debug( "       '$name' is a constant" );
