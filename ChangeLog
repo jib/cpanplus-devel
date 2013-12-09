@@ -1,48 +1,53 @@
-Changes for 0.9142      Mon Aug 12 23:39:58 2013
-================================================
+0.9144      Mon Dec  9 20:04:25 GMT 2013
+
+* Recognise bitrig as a UNIX
+* No longer download modslip file
+
+0.9142      Mon Aug 12 23:39:58 2013
+
 * Fix race condition in tests for MSWin32
 * Fix hanging test on Cygwin
 * Update bundled modules
 
-Changes for 0.9140      Sat Aug  3 22:28:25 2013
-================================================
+0.9140      Sat Aug  3 22:28:25 2013
+
 * Make extraction less verbose
 * Install into site if >= v5.12.0
 
-Changes for 0.9138      Mon May 20 22:36:38 2013
-================================================
+0.9138      Mon May 20 22:36:38 2013
+
 * Pod fixes by Kevin Ryde and Gregor Herrmann
 
-Changes for 0.9136      Sat Apr 27 15:06:02 2013
-================================================
+0.9136      Sat Apr 27 15:06:02 2013
+
 * Don't bother with 03modlist.data anymore
 
-Changes for 0.9134      Mon Jan 21 20:00:03 2013
-================================================
+0.9134      Mon Jan 21 20:00:03 2013
+
 * $VERSION all library files
 
-Changes for 0.9133      Sat Sep 29 11:49:02 2012
-================================================
+0.9133      Sat Sep 29 11:49:02 2012
+
 * Fix MANIFEST for last release
 
-Changes for 0.9132      Sat Sep 29 11:40:53 2012
-================================================
+0.9132      Sat Sep 29 11:40:53 2012
+
 * Resolve RT #79925, Module::Metadata was missing
   from inc/bundle. Reported by Steve Sanbeg
 
-Changes for 0.9131      Tue Sep 18 14:10:16 2012
-================================================
+0.9131      Tue Sep 18 14:10:16 2012
+
 * Add Pod::* modules to reported toolchain modules
 * Resolve issue with $cb->search() and SQLite
   source engine
 
-Changes for 0.9130      Thu May 24 22:04:10 2012
-================================================
+0.9130      Thu May 24 22:04:10 2012
+
 * Always re-fetch CHECKSUMS if fetchdir is set
   (Torsten Schoenfeld)
 
-Changes for 0.9129      Wed May  9 21:22:41 2012
-================================================
+0.9129      Wed May  9 21:22:41 2012
+
 * Handle multiple makemakerargs and makeflags
   arguments better.
 * Use File::HomeDir for home directory location
@@ -50,89 +55,89 @@ Changes for 0.9129      Wed May  9 21:22:41 2012
 * Added PERL5_CPANPLUS_HOME for altering where
   the .cpanplus directory is located
 
-Changes for 0.9128      Sat Apr 28 21:27:06 2012
-================================================
+0.9128      Sat Apr 28 21:27:06 2012
+
 * Fix the previous fix
 
-Changes for 0.9127      Sat Apr 28 20:34:44 2012
-================================================
+0.9127      Sat Apr 28 20:34:44 2012
+
 * Silenced annoying warnings related to older
   perls and the progress indicators
 
-Changes for 0.9126      Sat Apr 28 00:49:43 2012
-================================================
+0.9126      Sat Apr 28 00:49:43 2012
+
 * More speed enhancements to module indexing,
   thanks to Vincent Pit
 
-Changes for 0.9125      Wed Apr 25 14:28:34 2012
-================================================
+0.9125      Wed Apr 25 14:28:34 2012
+
 * Speed enhancements to module indexing, thanks
   to Vincent Pit
 
-Changes for 0.9124      Fri Apr  6 19:24:55 2012
-================================================
+0.9124      Fri Apr  6 19:24:55 2012
+
 * Save the history between invocations of the
   shell.
 
-Changes for 0.9123      Fri Mar 30 16:46:52 2012
-================================================
+0.9123      Fri Mar 30 16:46:52 2012
+
 * Added support for adding blib/script to PATH
 
-Changes for 0.9122      Wed Mar 28 21:52:38 2012
-================================================
+0.9122      Wed Mar 28 21:52:38 2012
+
 * Don't spawn a process to check whether perl
   version prereqs are satisfied
 
-Changes for 0.9121      Sat Mar 17 23:23:42 2012
-================================================
+0.9121      Sat Mar 17 23:23:42 2012
+
 * Resolved a regression with dev '_' version
   numbers since 0.9109
 
-Changes for 0.9120      Sun Mar  4 12:12:52 2012
-================================================
+0.9120      Sun Mar  4 12:12:52 2012
+
 * Resolved a regression with NA test reports
 
-Changes for 0.9119      Thu Feb 23 20:54:53 2012
-================================================
+0.9119      Thu Feb 23 20:54:53 2012
+
 * Added progress indicators for indexing when
   'verbose' is set, [rt #75233], contributed by
   reisub
 
-Changes for 0.9118      Mon Feb 13 22:29:33 2012
-================================================
+0.9118      Mon Feb 13 22:29:33 2012
+
 * Test reporting enhancements
 
-Changes for 0.9116      Thu Jan  5 22:45:06 2012
-================================================
+0.9116      Thu Jan  5 22:45:06 2012
+
 * add NAME headings in modules with POD, Debian
   Lintian fixes, http://bugs.debian.org/65045
 * Implement reload command in the shell
 
-Changes for 0.9115      Tue Dec 20 21:10:24 2011
-================================================
+0.9115      Tue Dec 20 21:10:24 2011
+
 * Added new config option 'allow_unknown_prereqs'
   to resolve issues with 0.9114 release
 
-Changes for 0.9114      Mon Dec 19 21:15:38 2011
-================================================
+0.9114      Mon Dec 19 21:15:38 2011
+
 * Fail earlier on unresolvable prereqs as per
   [rt.cpan.org #73310]
 
-Changes for 0.9113      Fri Dec  9 16:05:07 2011
-================================================
+0.9113      Fri Dec  9 16:05:07 2011
+
 * Add more detail and reason for NA to NA reports
 
-Changes for 0.9112      Fri Nov 11 11:10:59 2011
-================================================
+0.9112      Fri Nov 11 11:10:59 2011
+
 * The 'perlwrapper' is no longer required.
 
-Changes for 0.9111      Fri Sep 16 10:15:06 2011
-================================================
+0.9111      Fri Sep 16 10:15:06 2011
+
 * Enhance CPANPLUS::Dist::MM Makefile/Makefile.PL
   age checking code to resolve some issues.
 
-Changes for 0.9110      Thu Sep  1 13:43:06 2011
-================================================
+0.9110      Thu Sep  1 13:43:06 2011
+
 * CPANPLUS::Dist::MM now ensures that Makefile.PL
   is older than any generated Makefile
 * When resolving dependencies ignore any @INC-hook
@@ -140,62 +145,62 @@ Changes for 0.9110      Thu Sep  1 13:43:06 2011
 * Updated the META.yml in the dist to specify
   'dynamic_config' as true.
 
-Changes for 0.9109      Tue Jul 19 22:44:53 2011
-================================================
+0.9109      Tue Jul 19 22:44:53 2011
+
 * Fix support for v-strings and x.y.z versions with v5.8.4
 
-Changes for 0.9108      Fri Jul 15 15:15:06 2011
-================================================
+0.9108      Fri Jul 15 15:15:06 2011
+
 * Always use INSTALLER_MM for Module-Build
 
-Changes for 0.9107      Tue Jul 12 15:22:14 2011
-================================================
+0.9107      Tue Jul 12 15:22:14 2011
+
 * Add support for v-strings and x.y.z versions, using the version module.
 * Resolve [rt.cpan.org #69420] "type checking for CPANPLUS::Backend::RV::new is incorrect"
 * Resolve [rt.cpan.org #69203] "custom sources ignores timeout config option"
 
-Changes for 0.9106      Wed Jul  6 09:53:44 2011
-================================================
+0.9106      Wed Jul  6 09:53:44 2011
+
 * synchronisation with blead to remove profanity
   from the source. No other changes.
 
-Changes for 0.9105      Thu May  5 21:47:45 2011
-================================================
+0.9105      Thu May  5 21:47:45 2011
+
 * remove any pointers to the sourceforge mailing list
 * point to the github repo instead
 * Only enable custom sources in the tests where it is actually
   required for testing
 * Added support to parse_module() for 'Module/Type.pm' parsing
 
-Changes for 0.9104      Tue Apr 19 15:13:57 2011
-================================================
+0.9104      Tue Apr 19 15:13:57 2011
+
 * Force Parse::CPAN::Meta to use a sane default for JSON backend
 * Make sure that test failures aren't reported twice to the terminal
 
-Changes for 0.9103      Sun Mar 20 00:38:05 2011
-================================================
+0.9103      Sun Mar 20 00:38:05 2011
+
 * Fixed the logic not sending NA reports when
   'perl' is expressed as a prereq
 
-Changes for 0.9102      Mon Feb 28 11:35:43 2011
-================================================
+0.9102      Mon Feb 28 11:35:43 2011
+
 * Only send NAs for a 'perl' prereq when it actually is
   Not Applicable
 
-Changes for 0.9101      Tue Feb 15 20:58:30 2011
-================================================
+0.9101      Tue Feb 15 20:58:30 2011
+
 * Only a version change for downstream maintainers
 
-Changes for 0.91        Fri Feb 11 22:43:31 2011
-================================================
+0.91        Fri Feb 11 22:43:31 2011
+
 * Making a stable release
 
-Changes for 0.90_13     Mon Feb  7 10:26:35 2011
-================================================
+0.90_13     Mon Feb  7 10:26:35 2011
+
 * Fix Parse::CPAN::Meta prereq version
 
-Changes for 0.90_12     Sun Feb  6 19:48:49 2011
-================================================
+0.90_12     Sun Feb  6 19:48:49 2011
+
 * Remove more trailing whitespace spotted by Nicholas Clark
   with patch to fix, RT #64976
 * Added META.json and MYMETA.json support. Requires a more
@@ -203,39 +208,39 @@ Changes for 0.90_12     Sun Feb  6 19:48:49 2011
 * Switch to Digest::SHA and SHA256 checksums instead of
   Digest::MD5 and MD5, which has dropped v5.6.x support.
 
-Changes for 0.9011      Fri Jan  7 22:01:56 2011
-================================================
+0.9011      Fri Jan  7 22:01:56 2011
+
 * Remove reporting $! after make test fails. It is misleading
   in test reports
 * Don't unset PERL_MM_USE_DEFAULT if it is already set
   in cpan2dist
 * Apply blead patches from Peter Acklam
 
-CHanges for 0.9010      Thu Oct 28 23:20:19 2010
-================================================
+0.9010      Thu Oct 28 23:20:19 2010
+
 * Added PERL_MM_OPT to the CPANPLUS-Dist-MM test to hopefully
   resolve RT#57241 which relates to local::lib and cpanm
 
-Changes for 0.9009      Mon Oct 25 21:03:39 2010
-================================================
+0.9009      Mon Oct 25 21:03:39 2010
+
 * Resolve issues with the SQLite source engine
 
-Changes for 0.9008      Mon Oct 25 17:01:34 2010
-================================================
+0.9008      Mon Oct 25 17:01:34 2010
+
 * Normalise prereqs version strings before resolving prereqs
 
-Changes for 0.9007      Tue Jul 13 10:44:30 2010
-================================================
+0.9007      Tue Jul 13 10:44:30 2010
+
 * Fix the shell test to skip if test is not being run under a
   terminal, reported by Justin Case RT #59254
 
-Changes for 0.9006      Fri Jul  9 13:44:22 2010
-================================================
+0.9006      Fri Jul  9 13:44:22 2010
+
 * Finally resolved the issue where a prereq on Config would not be
   recognised as a core module
 
-Changes for 0.9005      Tue Jun 29 22:42:25 2010
-================================================
+0.9005      Tue Jun 29 22:42:25 2010
+
 * Corrected spelling mistakes in POD, pointed out by H.Merijn Brand
 * Amend SQLite source engine to set SYNCHRONOUS pragma to OFF
 * Make sure that Selfupdate checks if CPANPLUS::Dist::Build is
@@ -243,8 +248,8 @@ Changes for 0.9005      Tue Jun 29 22:42:25 2010
 * Apply a patch from Peter Ludikovsky RT #55782 that adds indexes
   to Source::SQLite
 
-Changes for 0.9004      Sat May  8 22:21:04 2010
-================================================
+0.9004      Sat May  8 22:21:04 2010
+
 * Applied a patch from Schwern RT #53133 "test failure occurs if
   the build directory is symlinked"
 * Explicitly set the location of cpanp-run-perl when under PERL_CORE
@@ -257,8 +262,8 @@ Changes for 0.9004      Sat May  8 22:21:04 2010
 * Add a BEGIN {} block to cpanp-run-perl this resolves RT #55964
   and RT #57106
 
-Changes for 0.9003      Mon Mar 15 13:51:12 2010
-================================================
+0.9003      Mon Mar 15 13:51:12 2010
+
 * Resolve warnings when using blead perl, reported by Apocalypse RT #55501
 * Applied patch from Apocalypse RT #55541 that changes the
   behviour when a prereq on a core-only module is detected. We
@@ -267,64 +272,64 @@ Changes for 0.9003      Mon Mar 15 13:51:12 2010
 * Removed one duff mirror and an out-of-date mirror from
   our default mirror list. Replaced with fast-sync mirrors.
 
-Changes for 0.9002      Fri Mar 12 13:11:00 2010
-================================================
+0.9002      Fri Mar 12 13:11:00 2010
+
 * Added support for CPAN Testers 2.0 (David Golden)
 
-Changes for 0.9001      Thu Dec 24 10:21:11 2009
-================================================
+0.9001      Thu Dec 24 10:21:11 2009
+
 * RT #52988 Regression in Internals::Utils, reported by CRAKRJACK
 * Fix a regression with dist_type not being propagated
 
-Changes for 0.90        Thu Dec 17 21:40:13 2009
-================================================
+0.90        Thu Dec 17 21:40:13 2009
+
 * Version bump
 
-Changes for 0.89_12     Mon Dec  7 13:33:16 2009
-================================================
+0.89_12     Mon Dec  7 13:33:16 2009
+
 * Resolve RT #52348 Duplicate test output, reported by Apocalypse
 * Fixed typo in Shell::Default, RT #52376, reported by Apocalypse
 
-Changes for 0.89_11     Tue Dec  1 13:14:24 2009
-================================================
+0.89_11     Tue Dec  1 13:14:24 2009
+
 * Fixed RT #52287 reported by Apocalypse regarding
   Test::Reporter barfing on send()
 * Change SQLite to AutoCommit, resolves RT #52308,
   reported by Apocalypse
 
-Changes for 0.89_10     Sat Nov 28 23:20:09 2009
-================================================
+0.89_10     Sat Nov 28 23:20:09 2009
+
 * Resolve RT #51516 setting conf options which
   include spaces.
 * Explicitly use Cwd's chdir in _chdir()
 
-Changes for 0.89_09     Thu Nov 12 21:54:01 2009
-================================================
+0.89_09     Thu Nov 12 21:54:01 2009
+
 * Only look for missing prereqs in the output of the last
   set of tests that were run. This resolves RT #51408,
   reported by Andreas Koenig
 
-Changes for 0.89_08     Tue Nov 10 23:29:06 2009
-================================================
+0.89_08     Tue Nov 10 23:29:06 2009
+
 * Make the default config prefer Build.PL if perl version is
   greater than or equal to 5.10.1
 * Fix a problem with parse_module() where it would not
   resolve some edge-case distributions, addresses
   http://perlmonks.org/?node_id=805957
 
-Changes for 0.89_07     Thu Nov  5 14:05:11 2009
-================================================
+0.89_07     Thu Nov  5 14:05:11 2009
+
 * MYMETA.yml support added from Jos' branch
 
-Changes for 0.89_06     Thu Oct 29 14:55:25 2009
-================================================
+0.89_06     Thu Oct 29 14:55:25 2009
+
 * Fool the installer into replacing our scripts that were installed
   by core with versiononly set.
 * Handle PREREQS being mentioned twice in Makefile. Use _vcmp()
   to compare the versions, take the highest.
 
-Changes for 0.89_05     Tue Oct 27 09:24:55 2009
-================================================
+0.89_05     Tue Oct 27 09:24:55 2009
+
 * Change the way editing config files is called. This fixes RT #50832,
   reported by Dave Golden
 * Issue a warning in the shell if we are on MSWin32, don't have IPC::Run
@@ -332,23 +337,23 @@ Changes for 0.89_05     Tue Oct 27 09:24:55 2009
 * Apply several patches from Alexandr Ciornii (CHORNY) RT #48636 that
   add toolchain versions listing to tester reports.
 
-Changes for 0.89_04     Fri Oct 23 11:12:57 2009
-================================================
+0.89_04     Fri Oct 23 11:12:57 2009
+
 * Added deprecated dual-life module support which
   requires newer versions of Module::CoreList and
   Module::Load::Conditional
 
-Changes for 0.89_03     Mon Oct 19 20:06:03 2009
-================================================
+0.89_03     Mon Oct 19 20:06:03 2009
+
 * Work out if a prereq is a core module and only warn if we can't
   satisfy the required version.
 
-Changes for 0.89_02     Sat Oct 17 13:04:59 2009
-================================================
+0.89_02     Sat Oct 17 13:04:59 2009
+
 * Core module prereqs should be dealt with correctly now.
 
-Changes for 0.89_01     Fri Oct 16 10:22:43 2009
-================================================
+0.89_01     Fri Oct 16 10:22:43 2009
+
 * Corrected spelling mistake in CPANPLUS::Configure documentation
 * Fixed a problem with the core module detection when sending
   NA reports
@@ -361,8 +366,8 @@ Changes for 0.89_01     Fri Oct 16 10:22:43 2009
 * Address #47820 Don't try to update custom sources if they are disabled
   in configuration, reported by Curtis Jewell
 
-Changes for 0.88        Tue Jul  7 12:47:08 2009
-================================================
+0.88        Tue Jul  7 12:47:08 2009
+
 * Adress #47640: [PATCH] [Documentation] Add links to the CPANPLUS
   Subversion repository
 * Address #47543: Snapshot installation instructions are incorrect
@@ -371,8 +376,8 @@ Changes for 0.88        Tue Jul  7 12:47:08 2009
 * CPANPLUS::Dist::MM was using an incorrect capture argument for
   passing tests. Spotted by Mst.
 
-Changes for 0.87_03     Sat Jun 27 16:27:34 2009
-================================================
+0.87_03     Sat Jun 27 16:27:34 2009
+
 * Apply VMS patches from Craig Berry
 * Address #47250: cpanp always returns true when run in batch mode
   $shell->dispatch_on_input now returns a failure indicator if run in
@@ -380,12 +385,12 @@ Changes for 0.87_03     Sat Jun 27 16:27:34 2009
 * With the new cpantesters, the yaml files got redone which broke
   the ->fetch_report code
 
-Changes for 0.87_02     Sat Jun 13 13:13:58 2009
-================================================
+0.87_02     Sat Jun 13 13:13:58 2009
+
 * Fix typo in the help message for the default shell
 
-Changes for 0.87_01     Fri Jun 12 18:54:27 2009
-================================================
+0.87_01     Fri Jun 12 18:54:27 2009
+
 * CPANPLUS now supports installing a directory as well. From the shell,
   try: 'i /path/to/module' or 'i .' for the current directory.
   Thanks to Chris Williams for the feature.
@@ -403,21 +408,21 @@ Changes for 0.87_01     Fri Jun 12 18:54:27 2009
 * Find_configure_requires should return an empty hashref on parse
   errors, DateTime::Format::Pg triggers this for example
 
-Changes for 0.8601      Mon Apr 27 18:07:34 2009
-================================================
+0.8601      Mon Apr 27 18:07:34 2009
+
 * Older versions of CPANPLUS::Dist::Build use the (private) module
   CPANPLUS::inc, which got removed in the 0.86 release.
   C::D::Build versions of 0.24 and higher are not affected by this,
   and CPANPLUS now specifies 0.24 as a minimum requirement.
   Users of C::D::Build of version 0.24 or higher need not upgrade.
 
-Changes for 0.86        Sun Apr 26 17:27:54 2009
-================================================
+0.86        Sun Apr 26 17:27:54 2009
+
 * Promote 0.85_09 to stable
 * Update bundled modules
 
-Changes for 0.85_09     Thu Apr 23 15:32:49 2009
-================================================
+0.85_09     Thu Apr 23 15:32:49 2009
+
 * ExtUtils::Installed functions wouldn't work properly if the install
   prefix was set to something containing ~, like for example '~/perl'.
   If we encounter this, substitute the ~ for the real home dir so
@@ -426,13 +431,13 @@ Changes for 0.85_09     Thu Apr 23 15:32:49 2009
   to fail big version comparisons. See here for details:
   https://rt.cpan.org/Ticket/Display.html?id=45241
 
-Changes for 0.85_08     Mon Apr 20 18:54:49 2009
-================================================
+0.85_08     Mon Apr 20 18:54:49 2009
+
 * Fix issues with $mod->package_is_perl_core; The conditionals were
   the wrong way around, thanks to BingOS for spotting
 
-Changes for 0.85_07     Tue Feb 24 18:27:37 2009
-================================================
+0.85_07     Tue Feb 24 18:27:37 2009
+
 * Address: #44562: $mod->package_is_perl_code: problem comparing version
   strings. The method would warn when a version contained a non-numeric
   character. This is now fixed.
@@ -453,15 +458,15 @@ Changes for 0.85_07     Tue Feb 24 18:27:37 2009
 * Remove deleted files from manifest
 * Update bundled modules
 
-Changes for 0.85_06     Tue Feb 24 18:27:37 2009
-================================================
+0.85_06     Tue Feb 24 18:27:37 2009
+
 * This is a test suite fix. Users of 0.85_05 need not upgrade.
 * With configure_requires/C::D::Build bootstrapping, the tests in
   t/21_CPANPLUS-Dist-No-Build.t were no longer correct and caused test
   failures on machines without C::D::Build installed.
 
-Changes for 0.85_05     Mon Feb 16 12:13:18 2009
-================================================
+0.85_05     Mon Feb 16 12:13:18 2009
+
 * Address: #39399: configure_requires doesn't quite work yet; CPANPLUS now
   bootstraps CPANPLUS::Dist::Build and Module::Build if the module-to-be-
   installed requires it. Used 't CPAN::Test::Dummy::Perl5::Build' to verify
@@ -502,8 +507,8 @@ Changes for 0.85_05     Mon Feb 16 12:13:18 2009
   0.42, which parses whitespace slightly different on win32
 * Updated bundled modules
 
-Changes for 0.85_04     Mon Sep  8 15:37:01 2008
-================================================
+0.85_04     Mon Sep  8 15:37:01 2008
+
 * Updated CPAN Testers reporting to follow new project guidelines:
   modules authors are no longer copied on reports (the dontcc config option
   has been removed); failures during *.PL or make stages are now reported
@@ -527,8 +532,8 @@ Changes for 0.85_04     Mon Sep  8 15:37:01 2008
 * Address: #37652: Infinite loop in Setup.pm
   This was merely a wording issue; made the help text more clear
 
-Changes for 0.85_03     Wed Jul 23 02:07:11 2008
-================================================
+0.85_03     Wed Jul 23 02:07:11 2008
+
 * Add experimental SQLite backend for sources. This can be
   used instead of the normal memory/storable implementation.
   You can enable it by running by starting the default shell
@@ -543,8 +548,8 @@ Changes for 0.85_03     Wed Jul 23 02:07:11 2008
 * Add diagnostic to 's mirrors' to show how to edit the list
   This address #37651: Explain the best way to add mirrors
 
-Changes for 0.85_02     Sun May 18 17:40:56 2008
-================================================
+0.85_02     Sun May 18 17:40:56 2008
+
 * Speed up search slightly be not checking the template
 * Speed up $author->distributions call a *lot* by not using clone (which
   in the end scans through the entire module tree for dslip info)
@@ -553,8 +558,8 @@ Changes for 0.85_02     Sun May 18 17:40:56 2008
 * Meta files were showing up in the $author->distributions call. These
   are now filtered out.
 
-Changes for 0.85_01     Sun Apr  6 15:22:43 2008
-================================================
+0.85_01     Sun Apr  6 15:22:43 2008
+
 * Address #34519 Getting Wrong File with SENGER/NET-IPFilterSimple_V1.1.tar.gz
   The delimiter (_) was being replaced by - after parsing. This is now fixed.
 * Depend on a newer EU::Installed (1.42), so we can now install into a non-site
@@ -586,12 +591,12 @@ Changes for 0.85_01     Sun Apr  6 15:22:43 2008
   version numbers.
 * In the default shell, show version numbers in loaded plugin overview.
 
-Changes for 0.84        Fri Dec 14 13:31:39 2007
-================================================
+0.84        Fri Dec 14 13:31:39 2007
+
 * Promote 0.83_10 to stable.
 
-Changes for 0.83_10     Wed Nov 14 12:57:45 2007
-================================================
+0.83_10     Wed Nov 14 12:57:45 2007
+
 * Various VMS patches from John M.
 * Skip tests for custom sources on Win32 if the full file
   path is longer than 260 chars (longest file size supported
@@ -599,8 +604,8 @@ Changes for 0.83_10     Wed Nov 14 12:57:45 2007
 * Depend on File::Fetch 0.13_04 for Win32 & VMS file:// support
 * Depend on Term::UI 0.18 for default shell option parsing
 
-Changes for 0.83_09     Fri Nov  9 14:17:14 2007
-================================================
+0.83_09     Fri Nov  9 14:17:14 2007
+
 * Make sure to use $Config{path_sep} to create
   environment variables portably. This addresses
   a test failure on VMS.
@@ -610,20 +615,20 @@ Changes for 0.83_09     Fri Nov  9 14:17:14 2007
   do not need sudo. This can of course be overriden using
   your config.
 
-Changes for 0.83_08     Sat Nov  3 18:35:54 2007
-================================================
+0.83_08     Sat Nov  3 18:35:54 2007
+
 * Apply adapted version of dmq's Win32 fixes for fetching
   file:// URIs. This depends on File::Fetch 0.13_01 or greater.
 
-Changes for 0.83_07     Wed Oct 24 17:42:43 2007
-================================================
+0.83_07     Wed Oct 24 17:42:43 2007
+
 * VMS patch from John M:
   _safe_path must be called before catdir because catdir on
   VMS currently will not handle the extra dots in the directories.
 * Make sure we clean up tempdirs when writing custom index files.
 
-Changes for 0.83_06     Tue Oct 23 11:31:10 2007
-================================================
+0.83_06     Tue Oct 23 11:31:10 2007
+
 More VMS fixes from John M:
   * C::I::Utils->_safe_path should do nothing if it is given a path
     in VMS format already.
@@ -633,8 +638,8 @@ More VMS fixes from John M:
   * In C::Shell::Default::Plugins::CustomSource, try the hash lookup with a
     lower case key on VMS if the exact case key failed.
 
-Changes for 0.83_05     Wed Oct 17 15:21:01 2007
-================================================
+0.83_05     Wed Oct 17 15:21:01 2007
+
 * Address #29904: make test should not use sudo. Don't try to install if
   the configuration thinks sudo is needed -- that's no guarantee it will work
 * More VMS fixes from John M:
@@ -648,21 +653,21 @@ Changes for 0.83_05     Wed Oct 17 15:21:01 2007
   the core cpanplus chain
 * Update bundled modules
 
-Changes for 0.83_04     Mon Oct 15 14:18:40 2007
-================================================
+0.83_04     Mon Oct 15 14:18:40 2007
+
 * Set ENV COLUMNS & LINES to make sure Term::ReadKey can figure
   out dimensions and stop it from dying in the test suite.
 * More VMS fixes from John Malmberg
 
-Changes for 0.83_03     Mon Oct 15 11:38:39 2007
-================================================
+0.83_03     Mon Oct 15 11:38:39 2007
+
 * Make $mod->dslip() query other modules in the same package if there's no
   dslip entry for this particular module.
 * Add an --install option to cpan2dist
 * More VMS fixes from John Malmberg
 
-Changes for 0.83_02     Tue Oct  9 13:46:48 2007
-================================================
+0.83_02     Tue Oct  9 13:46:48 2007
+
 * Add a /cs plugin to CPANPLUS::Shell::Default allowing you to add custom
   sources from outside the CPAN. These custom sources are attributed to the
   author 'LOCAL' -- See '/cs --help' from the default shell.
@@ -730,8 +735,8 @@ Changes for 0.83_02     Tue Oct  9 13:46:48 2007
 * Apply Change 31776 by craigb@craigb-brianor on 2007/08/31 22:42:43
   catdir was used where catfile was meant in C::I::Extract
 
-Changes for 0.82        Wed Aug 15 15:36:57 2007
-================================================
+0.82        Wed Aug 15 15:36:57 2007
+
 * Address [perl #43629] Perl 5.9.5. cpanp-run-perl not present
   as reported by Michael Cartmell. When running the tests, don't
   scan your include dirs/home dir for other CPANPLUS::Config::*
@@ -743,8 +748,8 @@ Changes for 0.82        Wed Aug 15 15:36:57 2007
   plugin.
 * Small documentation fixes.
 
-Changes for 0.81_01     Sat Jul  7 10:45:37 2007
-================================================
+0.81_01     Sat Jul  7 10:45:37 2007
+
 * Add a callback to the CPANPLUS core for munging metafiles
 * Address #27562 (A way to specify external dependencies would be
   grand) by adding a --edit-metafile option to cpan2dist to allow
@@ -763,8 +768,8 @@ Changes for 0.81_01     Sat Jul  7 10:45:37 2007
   looking for installed programs
 * Whitespace patch from audreyt
 
-Changes for 0.80        Sun Jun 17 13:50:01 2007
-================================================
+0.80        Sun Jun 17 13:50:01 2007
+
 * Promote 0.79_04 to stable
 * apply patch to fix win32 short path fixing when arguments are
   given (thanks to steve hay for tracking it down)
@@ -772,14 +777,14 @@ Changes for 0.80        Sun Jun 17 13:50:01 2007
   tests in verbose mode for added debug output
 * Update bundled modules
 
-Changes for 0.79_04     Tue May 29 08:50:07 2007
-================================================
+0.79_04     Tue May 29 08:50:07 2007
+
 * Removed a fatal debug statement from cpan2dist. Users of
   cpan2dist should upgrade to this release. No other users
   should be affected.
 
-Changes for 0.79_03     Fri May 18 19:44:35 2007
-================================================
+0.79_03     Fri May 18 19:44:35 2007
+
 * address: #27057: Dry runs and dep tree. Make it possible to view
   which modules will be updated for what reasons when running
   'selfupdate'. 's selfupdate' in the shell now prints this
@@ -807,8 +812,8 @@ Changes for 0.79_03     Fri May 18 19:44:35 2007
   has 'nmake.exe' configured as their 'make' program, to limit
   the amount of noise on the terminal.
 
-Changes for 0.79_02     Tue May  8 13:14:12 2007
-================================================
+0.79_02     Tue May  8 13:14:12 2007
+
 * address #26914 : CPANPLUS depending on Crypt::OpenPGP even when gpg
   is available. Change heuristics so we always use gpg when it's there
   and don't suggest to install Crypt::OpenPGP, as it's quite broken on
@@ -827,8 +832,8 @@ Changes for 0.79_02     Tue May  8 13:14:12 2007
 * make sure we pass 'prereq_format' along, so prereqs get packaged
   properly as well. This addresses a mail from Hans Dieter Pearcey (hdp@icgroup.com) raising the issue.
 
-Changes for 0.79_01     Sun Apr 22 09:57:45 2007
-================================================
+0.79_01     Sun Apr 22 09:57:45 2007
+
 * Updates to integrate perl-core integration. Regular users
   do not need to upgrade.
 * Add clean up calls at the end of the tests as well if
@@ -847,8 +852,8 @@ Changes for 0.79_01     Sun Apr 22 09:57:45 2007
   shell is bundled with CPANPLUS itself.
 * Add simple loadtest for CPANPLUS::Shell
 
-Changes for 0.78        Sat Mar 31 18:26:13 CEST 2007
-=====================================================
+0.78        Sat Mar 31 18:26:13 CEST 2007
+
 * Promote 0.77_07 to stable
 * Update license & contact information
 * Make sure we don't install 'cpanp-boxed' when running
@@ -856,8 +861,8 @@ Changes for 0.78        Sat Mar 31 18:26:13 CEST 2007
 * Update bundled version of Module::Install
 * Set install target to 'perl' for perl5.9.5 and higher
 
-Changes for 0.77_07     Fri Mar 23 17:19:07 CET 2007
-=====================================================
+0.77_07     Fri Mar 23 17:19:07 CET 2007
+
 * Smoke test revealed issue that PERL5_CPANPLUS_IS_VERSION
   may not be formatted identically as $CPANPLUS::VERSION
   if certain versions of 'version.pm' are loaded. This is
@@ -867,8 +872,8 @@ Changes for 0.77_07     Fri Mar 23 17:19:07 CET 2007
   addressed by calling Win32::GetShortPathName() if run
   on Win32.
 
-Changes for 0.77_06     Fri Mar 23 13:29:54 CET 2007
-=====================================================
+0.77_06     Fri Mar 23 13:29:54 CET 2007
+
 * Various test reporting fixes;
   * Add the leading '!' to missing prereqs, inspired by CPAN::Reporter
   * Address bug #25327: do not count as FAIL modules where prereqs are
@@ -886,22 +891,22 @@ Changes for 0.77_06     Fri Mar 23 13:29:54 CET 2007
 * Address #25038 (Wrong platforms for MSDOS) and actually
   test modules in the MSDOS:: namespace on dos|os2|MSWin32|cygwin
 
-Changes for 0.77_05     Sun Feb 25 17:17:44 CET 2007
-=====================================================
+0.77_05     Sun Feb 25 17:17:44 CET 2007
+
 * Set $ENV{PERL5_CPANPLUS_IS_EXECUTING} to the full path of the
   Makefile.PL file when running 'perl Makefile.PL'.
   Requested by Adam Kennedy <cpan@ali.as>.
 
-Changes for 0.77_04     Mon Feb 19 08:05:52 CET 2007
-=====================================================
+0.77_04     Mon Feb 19 08:05:52 CET 2007
+
 * CPAN testers reported test counter mismatches when test reporting
   was enabled vs disabled. This is purely a test counter issue. No
   functional code has been replaced.
   If you have installed 0.77_03, there is no need to upgrade to
   0.77_04.
 
-Changes for 0.77_03     Sun Feb 18 17:35:12 CET 2007
-=====================================================
+0.77_03     Sun Feb 18 17:35:12 CET 2007
+
 * Rework the parse_module code; regex is more complex, but also more correct
 * Allow for more lenient parsing of module names, when the module name
   and package name do not match
@@ -952,8 +957,8 @@ Changes for 0.77_03     Sun Feb 18 17:35:12 CET 2007
 * Add realclean targets for our dummy perl directory
 
 
-Changes for 0.077_02    Fri Oct 20 15:28:22 CEST 2006
-=====================================================
+0.077_02    Fri Oct 20 15:28:22 CEST 2006
+
 * Implemented selfupdate functionality. You can use
   's selfupdate' from the default shell. This will also
   work for bootstrapping purposes
@@ -968,8 +973,8 @@ Changes for 0.077_02    Fri Oct 20 15:28:22 CEST 2006
   cpanp from cpanp-boxed
 * Depend on newer versions of Object::Accessor and IPC::Cmd
 
-Changes for 0.076       Fri Oct 13 14:37:27 CEST 2006
-=====================================================
+0.076       Fri Oct 13 14:37:27 CEST 2006
+
 * run external perl commands using cpanp-run-perl to enable
   autoflushing cross-platform, cross-ipc-module.
 * separate formats for printing 'conf' and 'program' sections
@@ -980,8 +985,8 @@ Changes for 0.076       Fri Oct 13 14:37:27 CEST 2006
 * update bundled modules, most notably IPC::Cmd, which should
   improve executing sub-commands significantly.
 
-Changes for 0.075_01    Thu Oct  5 17:08:27 CEST 2006
-=====================================================
+0.075_01    Thu Oct  5 17:08:27 CEST 2006
+
 * Various small fixes to make CPANPLUS work better on Win32
   Most of these fixes are done in the bundled modules or
   dependencies of CPANPLUS
@@ -991,8 +996,8 @@ Changes for 0.075_01    Thu Oct  5 17:08:27 CEST 2006
 * make sure we use 4-arg substr to avoid warning in default shell
 * skip undefined messages to error()/msg()
 
-Changes for 0.074       Fri Sep  8 13:12:37 CEST 2006
-=====================================================
+0.074       Fri Sep  8 13:12:37 CEST 2006
+
 *  remove the requires: section in META.yml; CPAN.pm
    thinks it's authoritive for requirement declarations
    and therefor gets our prereqs wrong.
@@ -1005,8 +1010,8 @@ Changes for 0.074       Fri Sep  8 13:12:37 CEST 2006
    default shell
 *  update bundled modules
 
-Changes for 0.073_01    Wed Aug  2 15:40:38 CEST 2006
-=====================================================
+0.073_01    Wed Aug  2 15:40:38 CEST 2006
+
 
 *   'install Bundle::CPANPLUS::Dependencies' should
     now work properly from cpanp-boxed, even without
@@ -1034,8 +1039,8 @@ Changes for 0.073_01    Wed Aug  2 15:40:38 CEST 2006
     *   sent mail to module-build@perl.org with the
         patch for C::D::Build to have the same behaviour
 
-Changes for 0.072       Fri Jun 23 18:17:00 CEST 2006
-=====================================================
+0.072       Fri Jun 23 18:17:00 CEST 2006
+
 
 *   This is a major release of CPANPLUS. It includes
     all the changes from release 0.070_01, including
@@ -1053,8 +1058,8 @@ Changes for 0.072       Fri Jun 23 18:17:00 CEST 2006
     by the checksums file
 *   Fix file fetching testing issue on Win32 (#18702)
 
-Changes for 0.070_01    Mon Jun 19 17:23:38 CEST 2006
-=====================================================
+0.070_01    Mon Jun 19 17:23:38 CEST 2006
+
 *   This is a major beta release of CPANPLUS, revamping
     the configuration mechanism. From now on, CPANPLUS
     no longer requires a setup to be run at installation
@@ -1134,8 +1139,8 @@ Changes for 0.070_01    Mon Jun 19 17:23:38 CEST 2006
 
 
 
-Changes for 0.061       Wed Mar 15 16:09:03 CET 2006
-=====================================================
+0.061       Wed Mar 15 16:09:03 CET 2006
+
 
 *   The template for the original configuration got shipped
     with a few default values that will not work on every
@@ -1146,8 +1151,8 @@ Changes for 0.061       Wed Mar 15 16:09:03 CET 2006
     users, this release ships a template with sensible
     cross-platform defaults again
 
-Changes for 0.060       Fri Mar 10 17:19:06 CET 2006
-=====================================================
+0.060       Fri Mar 10 17:19:06 CET 2006
+
 
 *   This is a major release of CPANPLUS, supporting
     3rd party package creation and shell plugins
@@ -1177,8 +1182,8 @@ Changes for 0.060       Fri Mar 10 17:19:06 CET 2006
     report when a signature check fails
 *   address #17984: (Two Problems in Makefile.PL)
 
-Changes for 0.059_01    Sat Oct 15 14:20:16 CEST 2005
-=====================================================
+0.059_01    Sat Oct 15 14:20:16 CEST 2005
+
 
 *   This is a development release supporting 3rd party
     package creation and shell plugins
@@ -1230,8 +1235,8 @@ Changes for 0.059_01    Sat Oct 15 14:20:16 CEST 2005
 *   Update bundled modules to their latest version
 
 
-Changes for 0.0561      Sat Aug 20 19:57:15 CEST 2005
-=====================================================
+0.0561      Sat Aug 20 19:57:15 CEST 2005
+
 
 *   This release holds no functional changes over 0.056
 *   The META.yml did not get included in this distribution,
@@ -1239,14 +1244,14 @@ Changes for 0.0561      Sat Aug 20 19:57:15 CEST 2005
     well.
 
 
-Changes for 0.056       Sat Aug 20 13:31:17 CEST 2005
-=====================================================
+0.056       Sat Aug 20 13:31:17 CEST 2005
+
 
 *   This release is identical to 0.056_01 but no longer
     marked as 'development release'.
 
-Changes for 0.056_01    Thu Aug 18 16:26:52 CEST 2005
-=====================================================
+0.056_01    Thu Aug 18 16:26:52 CEST 2005
+
 
 *   This is a development release testing the splitting
     off of CPANPLUS::Dist::Buid into it's own package.
@@ -1286,8 +1291,8 @@ Changes for 0.056_01    Thu Aug 18 16:26:52 CEST 2005
 *   All bundled modules are updated to their most recent version.
 
 
-Changes for 0.055       Sat Jun  4 15:53:37 CEST 2005
-=====================================================
+0.055       Sat Jun  4 15:53:37 CEST 2005
+
 
 *   This release just affects users of the Test::Reporter
     and 'cpantest' utilities.
@@ -1295,8 +1300,8 @@ Changes for 0.055       Sat Jun  4 15:53:37 CEST 2005
     grade passed as of 0.054, but the default callback
     was now returning the wrong item. [#13086]
 
-Changes for 0.054       Fri Jun  3 17:44:40 CEST 2005
-=====================================================
+0.054       Fri Jun  3 17:44:40 CEST 2005
+
 
 *   This release paves the way for the CPANPLUS::Dist::*
     plugins, providing a framework from which to
@@ -1339,8 +1344,8 @@ Changes for 0.054       Fri Jun  3 17:44:40 CEST 2005
 *   Tell users why their sudo password might be asked during
     'make test'
 
-Changes for 0.053       Fri Feb 11 10:07:08 CET 2005
-====================================================
+0.053       Fri Feb 11 10:07:08 CET 2005
+
 
 *   0.052 did not ship with its META.yml, causing a few
     of the bundles modules to be indexed. This release is
@@ -1348,8 +1353,8 @@ Changes for 0.053       Fri Feb 11 10:07:08 CET 2005
     on the client side whatsoever.
 
 
-Changes for 0.052       Wed Feb  9 18:44:13 CET 2005
-====================================================
+0.052       Wed Feb  9 18:44:13 CET 2005
+
 
 *   Make auto-installation work (with some guess work) if
     $ENV{PERL_MM_USE_DEFAULT} is set.
@@ -1410,8 +1415,8 @@ Changes for 0.052       Wed Feb  9 18:44:13 CET 2005
 *   Update bundled Module::Build to version 0.26081
 *   Improve tests
 
-Changes for 0.051       Fri Jan 14 15:10:02 CET 2005
-====================================================
+0.051       Fri Jan 14 15:10:02 CET 2005
+
 
 *   First official release in the ground-up rewrite '0.05x'
     series
@@ -1441,8 +1446,8 @@ Changes for 0.051       Fri Jan 14 15:10:02 CET 2005
 *   Improve tests
 
 
-Changes for 0.050_04    Sun Dec 26 16:54:46 CET 2004
-====================================================
+0.050_04    Sun Dec 26 16:54:46 CET 2004
+
 
 *   Add rsync support to CPANPLUS
 *   List rsync mirrors during setup
@@ -1472,8 +1477,8 @@ Changes for 0.050_04    Sun Dec 26 16:54:46 CET 2004
 
 
 
-Changes for 0.050_03    Fri Dec 17 13:54:48 CET 2004
-====================================================
+0.050_03    Fri Dec 17 13:54:48 CET 2004
+
 
 *   Move to Module::Pluggable to find CPANPLUS::Dist::*
     plugins.
@@ -1502,8 +1507,8 @@ Changes for 0.050_03    Fri Dec 17 13:54:48 CET 2004
 *   Update MANIFEST
 
 
-Changes for 0.050_02    Fri Dec 10 15:03:39 CET 2004
-====================================================
+0.050_02    Fri Dec 10 15:03:39 CET 2004
+
 
 *   Move CPANPLUS::Dist::(Deb|Ports) to it's own repository
 *   Fix error when Test::Reporter is unavaliable
@@ -1545,8 +1550,8 @@ Changes for 0.050_02    Fri Dec 10 15:03:39 CET 2004
     mode, making sure it makes no suggestions with require interactivity
 *   Add a message about where the module was extracted to in verbose mode
 
-Changes for 0.050_1     Fri Dec 3 21:07:12 CET 2004
-====================================================
+0.050_1     Fri Dec 3 21:07:12 CET 2004
+
 
 *   Initial beta release of CPANPLUS 0.050
 *   Complete ground up rewrite

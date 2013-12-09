@@ -2,7 +2,7 @@ package CPANPLUS::Error;
 
 use strict;
 use vars qw[$VERSION];
-$VERSION = "0.9142";
+$VERSION = "0.9144";
 
 use Log::Message private => 0;;
 

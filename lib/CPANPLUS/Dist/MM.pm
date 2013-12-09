@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use vars    qw[@ISA $STATUS $VERSION];
 use base    'CPANPLUS::Dist::Base';
-$VERSION = "0.9142";
+$VERSION = "0.9144";
 
 use CPANPLUS::Internals::Constants;
 use CPANPLUS::Internals::Constants::Report;
