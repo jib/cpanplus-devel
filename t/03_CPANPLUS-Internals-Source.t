@@ -35,7 +35,7 @@ my $modname = TEST_CONF_MODULE;
     my $at      = $cb->_author_tree;
 
     ### source files should be copied from the 'server' now
-    for my $name (qw[auth mod dslip] ) {
+    for my $name (qw[auth mod] ) {
         my $file = File::Spec->catfile(
                             $conf->get_conf('base'),
                             $conf->_get_source($name)
