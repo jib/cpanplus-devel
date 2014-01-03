@@ -13,7 +13,7 @@ use strict;
 BEGIN {
     use vars        qw[$VERSION $AUTOREPLY $VERBOSE $INVALID];
     $VERBOSE    =   1;
-    $VERSION    =   '0.38';
+    $VERSION    =   '0.42';
     $INVALID    =   loc('Invalid selection, please try again: ');
 }
 
@@ -122,7 +122,7 @@ sub get_reply {
     my %hash = @_;
 
     my $tmpl = {
-        default     => { default => undef,  strict_type => 1 },
+        default     => { default => undef,  strict_type => 0 },
         prompt      => { default => '',     strict_type => 1, required => 1 },
         choices     => { default => [],     strict_type => 1 },
         multi       => { default => 0,      allow => [0, 1] },
@@ -133,6 +133,10 @@ sub get_reply {
     my $args = check( $tmpl, \%hash, $VERBOSE )
                 or ( carp( loc(q[Could not parse arguments]) ), return );
 
+    # Check for legacy default on multi=1
+    if ($args->{multi} and ref($args->{default}) ne "ARRAY") {
+        $args->{default} = [ $args->{default} ];
+    }
 
     ### add this to the prompt to indicate the default
     ### answer to the question if there is one.
@@ -149,11 +153,20 @@ sub get_reply {
 
             ### so this choice is the default? add it to 'prompt_add'
             ### so we can construct a "foo? [DIGIT]" type prompt
-            $prompt_add = $i if (defined $args->{default} and $choice eq $args->{default});
+            if (defined $args->{default}) {
+                if ($args->{multi}) {
+                    push @$prompt_add, $i if (scalar(grep { m/^$choice$/ } @{$args->{default}}));
+                }
+                else {
+                    $prompt_add = $i if ($choice eq $args->{default});
+                }
+            }
 
             ### create a "DIGIT> choice" type line
             $args->{print_me} .= sprintf "\n%3s> %-s", $i, $choice;
         }
+
+        $prompt_add = join(" ", @$prompt_add) if ($args->{multi});
 
         ### we listed some choices -- add another newline for
         ### pretty printing
@@ -165,7 +178,12 @@ sub get_reply {
     ### no choices, but a default? set 'prompt_add' to the default
     ### to construct a 'foo? [DEFAULT]' type prompt
     } elsif ( defined $args->{default} ) {
-        $prompt_add = $args->{default};
+        if ($args->{multi} and ref($args->{default}) eq "ARRAY") {
+            $prompt_add = join(" ", @{$args->{default}});
+        }
+        else {
+            $prompt_add = $args->{default};
+        }
     }
 
     ### we set up the defaults, prompts etc, dispatch to the readline call
@@ -249,7 +267,7 @@ sub _tt_readline {
 
     my ($default, $prompt, $choices, $multi, $allow, $prompt_add, $print_me);
     my $tmpl = {
-        default     => { default => undef,  strict_type => 1,
+        default     => { default => undef,  strict_type => 0,
                             store => \$default },
         prompt      => { default => '',     strict_type => 1, required => 1,
                             store => \$prompt },
@@ -257,7 +275,7 @@ sub _tt_readline {
                             store => \$choices },
         multi       => { default => 0,      allow => [0, 1], store => \$multi },
         allow       => { default => qr/.*/, store => \$allow, },
-        prompt_add  => { default => '',     store => \$prompt_add },
+        prompt_add  => { default => '',     store => \$prompt_add, strict_type => 1 },
         print_me    => { default => '',     store => \$print_me },
     };
 
@@ -288,12 +306,22 @@ sub _tt_readline {
         ) if( !defined $default && $VERBOSE);
 
         ### print it out for visual feedback
-        history( join ' ', grep { defined } $prompt, $default );
+        if ($multi and defined($default)) {
+            history( join ' ', grep { defined } $prompt, @$default );
+            ### and return the default
+            return @$default;
+        }
+        else {
+            history( join ' ', grep { defined } $prompt, $default );
+            ### and return the default
+            return $default;
+        }
 
-        ### and return the default
-        return $default;
     }
 
+    if ($multi and defined($default)) {
+        $default = join(' ', @$default);
+    }
 
     ### so, no AUTOREPLY, let's see what the user will answer
     LOOP: {
@@ -337,15 +365,14 @@ sub _tt_readline {
                     ### the choices, because humans want to start counting
                     ### at 1, not at 0
                     push @rv, $choices->[ $answer - 1 ]
-                        if $answer > 0 && defined $choices->[ $answer - 1];
+                        if $answer > 0 && defined $choices->[ $answer - 1 ];
                 }
             }
 
         ### no fixed list of choices.. just check if the answers
         ### (or otherwise the default!) pass the allow handler
         } else {
-            push @rv, grep { allow( $_, $allow ) }
-                        scalar @answers ? @answers : ($default);
+            push @rv, grep { allow( $_, $allow ) } @answers;
         }
 
         ### if not all the answers made it to the return value list,
