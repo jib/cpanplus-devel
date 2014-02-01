@@ -18,7 +18,7 @@ use Locale::Maketext::Simple    Style => 'gettext';
 use constant ON_SOLARIS     => $^O eq 'solaris' ? 1 : 0;
 use constant ON_NETBSD      => $^O eq 'netbsd' ? 1 : 0;
 use constant ON_OPENBSD     => $^O =~ m!^(openbsd|bitrig)$! ? 1 : 0;
-use constant ON_FREEBSD     => $^O =~ m!^(free|midnight)bsd$! ? 1 : 0;
+use constant ON_FREEBSD     => $^O =~ m!^(free|midnight|dragonfly)(bsd)?$! ? 1 : 0;
 use constant ON_LINUX       => $^O eq 'linux' ? 1 : 0;
 use constant FILE_EXISTS    => sub { -e $_[0] ? 1 : 0 };
 
@@ -48,7 +48,7 @@ use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG
             $_ALLOW_BIN $_ALLOW_PURE_PERL $_ALLOW_TAR_ITER
          ];
 
-$VERSION            = '0.70';
+$VERSION            = '0.72';
 $PREFER_BIN         = 0;
 $WARN               = 1;
 $DEBUG              = 0;
@@ -130,6 +130,10 @@ See the C<HOW IT WORKS> section further down for details.
 ### see what /bin/programs are available ###
 $PROGRAMS = {};
 CMD: for my $pgm (qw[tar unzip gzip bunzip2 uncompress unlzma unxz]) {
+    if ( $pgm eq 'unzip' and ON_FREEBSD and my $unzip = can_run('info-unzip') ) {
+      $PROGRAMS->{$pgm} = $unzip;
+      next CMD;
+    }
     if ( $pgm eq 'unzip' and ( ON_NETBSD or ON_FREEBSD ) ) {
       local $IPC::Cmd::INSTANCES = 1;
       ($PROGRAMS->{$pgm}) = grep { ON_NETBSD ? m!/usr/pkg/! : m!/usr/local! } can_run($pgm);
