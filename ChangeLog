@@ -1,3 +1,8 @@
+0.9146      Sat Feb  1 14:29:28 GMT 2014
+
+* revise fatpacker code
+* enable testsuite to run in parallel
+
 0.9144      Mon Dec  9 20:04:25 GMT 2013
 
 * Recognise bitrig as a UNIX
