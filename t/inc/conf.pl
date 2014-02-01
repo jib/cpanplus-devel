@@ -85,6 +85,7 @@ use CPANPLUS::Error ();
 use File::Path      qw[rmtree];
 use FileHandle;
 use File::Basename  qw[basename];
+use File::Temp      qw[tempdir];
 
 {   ### Force the ignoring of .po files for L::M::S
     $INC{'Locale::Maketext::Lexicon.pm'} = __FILE__;
@@ -102,7 +103,7 @@ use constant TEST_CONF_INST_MODULE      => 'Foo::Bar';
 use constant TEST_CONF_INVALID_MODULE   => 'fnurk';
 use constant TEST_CONF_MIRROR_DIR       => 'dummy-localmirror';
 use constant TEST_CONF_CPAN_DIR         => 'dummy-CPAN';
-use constant TEST_CONF_CPANPLUS_DIR     => 'dummy-cpanplus';
+use constant TEST_CONF_CPANPLUS_DIR     => tempdir( DIR => 'dummy-cpanplus', CLEANUP => 1 );
 use constant TEST_CONF_INSTALL_DIR      => File::Spec->rel2abs(
                                                 File::Spec->catdir(
                                                     TEST_CONF_CPANPLUS_DIR,
