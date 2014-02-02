@@ -50,6 +50,7 @@ inc/bundle/Term/UI.pm
 inc/bundle/Term/UI/History.pm
 inc/bundle/version.pm
 inc/bundle/version.pod
+inc/bundle/version/regex.pm
 inc/bundle/version/typemap
 inc/bundle/version/vpp.pm
 inc/Module/Install.pm
