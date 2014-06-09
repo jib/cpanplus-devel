@@ -4,7 +4,7 @@ use strict;
 use vars qw(@ISA $VERSION);
 require File::Spec::Unix;
 
-$VERSION = '3.40';
+$VERSION = '3.47';
 $VERSION =~ tr/_//;
 
 @ISA = qw(File::Spec::Unix);
@@ -374,10 +374,10 @@ directory on your startup volume.
 
 =cut
 
-my $tmpdir;
 sub tmpdir {
-    return $tmpdir if defined $tmpdir;
-    $tmpdir = $_[0]->_tmpdir( $ENV{TMPDIR} );
+    my $cached = $_[0]->_cached_tmpdir('TMPDIR');
+    return $cached if defined $cached;
+    $_[0]->_cache_tmpdir($_[0]->_tmpdir( $ENV{TMPDIR} ), 'TMPDIR');
 }
 
 =item updir

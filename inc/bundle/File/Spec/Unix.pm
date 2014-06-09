@@ -3,8 +3,20 @@ package File::Spec::Unix;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = '3.40';
+$VERSION = '3.47';
+my $xs_version = $VERSION;
 $VERSION =~ tr/_//;
+
+unless (defined &canonpath) {
+  eval {
+    if ( $] >= 5.006 ) {
+	require XSLoader;
+	XSLoader::load("Cwd", $xs_version);
+    } else {
+	require Cwd;
+    }
+  };
+}
 
 =head1 NAME
 
@@ -40,7 +52,7 @@ actually traverse the filesystem cleaning up paths like this.
 
 =cut
 
-sub canonpath {
+sub _pp_canonpath {
     my ($self,$path) = @_;
     return unless defined $path;
     
@@ -69,6 +81,7 @@ sub canonpath {
     $path =~ s|/\z|| unless $path eq "/";          # xx/       -> xx
     return "$node$path";
 }
+*canonpath = \&_pp_canonpath unless defined &canonpath;
 
 =item catdir()
 
@@ -80,11 +93,12 @@ trailing slash :-)
 
 =cut
 
-sub catdir {
+sub _pp_catdir {
     my $self = shift;
 
     $self->canonpath(join('/', @_, '')); # '' because need a trailing '/'
 }
+*catdir = \&_pp_catdir unless defined &catdir;
 
 =item catfile
 
@@ -93,7 +107,7 @@ complete path ending with a filename
 
 =cut
 
-sub catfile {
+sub _pp_catfile {
     my $self = shift;
     my $file = $self->canonpath(pop @_);
     return $file unless @_;
@@ -101,6 +115,7 @@ sub catfile {
     $dir .= "/" unless substr($dir,-1) eq "/";
     return $dir.$file;
 }
+*catfile = \&_pp_catfile unless defined &catfile;
 
 =item curdir
 
@@ -109,6 +124,7 @@ Returns a string representation of the current directory.  "." on UNIX.
 =cut
 
 sub curdir { '.' }
+use constant _fn_curdir => ".";
 
 =item devnull
 
@@ -117,6 +133,7 @@ Returns a string representation of the null device. "/dev/null" on UNIX.
 =cut
 
 sub devnull { '/dev/null' }
+use constant _fn_devnull => "/dev/null";
 
 =item rootdir
 
@@ -125,6 +142,7 @@ Returns a string representation of the root directory.  "/" on UNIX.
 =cut
 
 sub rootdir { '/' }
+use constant _fn_rootdir => "/";
 
 =item tmpdir
 
@@ -140,21 +158,33 @@ is tainted, it is not used.
 
 =cut
 
-my $tmpdir;
+my ($tmpdir, %tmpenv);
+# Cache and return the calculated tmpdir, recording which env vars
+# determined it.
+sub _cache_tmpdir {
+    @tmpenv{@_[2..$#_]} = @ENV{@_[2..$#_]};
+    return $tmpdir = $_[1];
+}
+# Retrieve the cached tmpdir, checking first whether relevant env vars have
+# changed and invalidated the cache.
+sub _cached_tmpdir {
+    shift;
+    local $^W;
+    return if grep $ENV{$_} ne $tmpenv{$_}, @_;
+    return $tmpdir;
+}
 sub _tmpdir {
-    return $tmpdir if defined $tmpdir;
     my $self = shift;
     my @dirlist = @_;
-    {
-	no strict 'refs';
-	if (${"\cTAINT"}) { # Check for taint mode on perl >= 5.8.0
-            require Scalar::Util;
-	    @dirlist = grep { ! Scalar::Util::tainted($_) } @dirlist;
-	}
-	elsif ($] < 5.007) { # No ${^TAINT} before 5.8
-	    @dirlist = grep { eval { eval('1'.substr $_,0,0) } } @dirlist;
-	}
+    my $taint = do { no strict 'refs'; ${"\cTAINT"} };
+    if ($taint) { # Check for taint mode on perl >= 5.8.0
+	require Scalar::Util;
+	@dirlist = grep { ! Scalar::Util::tainted($_) } @dirlist;
     }
+    elsif ($] < 5.007) { # No ${^TAINT} before 5.8
+	@dirlist = grep { eval { eval('1'.substr $_,0,0) } } @dirlist;
+    }
+    
     foreach (@dirlist) {
 	next unless defined && -d && -w _;
 	$tmpdir = $_;
@@ -162,12 +192,22 @@ sub _tmpdir {
     }
     $tmpdir = $self->curdir unless defined $tmpdir;
     $tmpdir = defined $tmpdir && $self->canonpath($tmpdir);
+    if ( !$self->file_name_is_absolute($tmpdir) ) {
+        # See [perl #120593] for the full details
+        # If possible, return a full path, rather than '.' or 'lib', but
+        # jump through some hoops to avoid returning a tainted value.
+        ($tmpdir) = grep {
+            $taint     ? ! Scalar::Util::tainted($_) :
+            $] < 5.007 ? eval { eval('1'.substr $_,0,0) } : 1
+        } $self->rel2abs($tmpdir), $tmpdir;
+    }
     return $tmpdir;
 }
 
 sub tmpdir {
-    return $tmpdir if defined $tmpdir;
-    $tmpdir = $_[0]->_tmpdir( $ENV{TMPDIR}, "/tmp" );
+    my $cached = $_[0]->_cached_tmpdir('TMPDIR');
+    return $cached if defined $cached;
+    $_[0]->_cache_tmpdir($_[0]->_tmpdir( $ENV{TMPDIR}, "/tmp" ), 'TMPDIR');
 }
 
 =item updir
@@ -177,6 +217,7 @@ Returns a string representation of the parent directory.  ".." on UNIX.
 =cut
 
 sub updir { '..' }
+use constant _fn_updir => "..";
 
 =item no_upwards
 
@@ -198,6 +239,7 @@ is not or is significant when comparing file specifications.
 =cut
 
 sub case_tolerant { 0 }
+use constant _fn_case_tolerant => 0;
 
 =item file_name_is_absolute
 
@@ -374,21 +416,21 @@ sub abs2rel {
     if (grep $self->file_name_is_absolute($_), $path, $base) {
 	($path, $base) = map $self->rel2abs($_), $path, $base;
 
-    my ($path_volume) = $self->splitpath($path, 1);
-    my ($base_volume) = $self->splitpath($base, 1);
+	my ($path_volume) = $self->splitpath($path, 1);
+	my ($base_volume) = $self->splitpath($base, 1);
 
-    # Can't relativize across volumes
-    return $path unless $path_volume eq $base_volume;
+	# Can't relativize across volumes
+	return $path unless $path_volume eq $base_volume;
 
 	$path_directories = ($self->splitpath($path, 1))[1];
 	$base_directories = ($self->splitpath($base, 1))[1];
 
-    # For UNC paths, the user might give a volume like //foo/bar that
-    # strictly speaking has no directory portion.  Treat it as if it
-    # had the root directory for that volume.
-    if (!length($base_directories) and $self->file_name_is_absolute($base)) {
-      $base_directories = $self->rootdir;
-    }
+	# For UNC paths, the user might give a volume like //foo/bar that
+	# strictly speaking has no directory portion.  Treat it as if it
+	# had the root directory for that volume.
+	if (!length($base_directories) and $self->file_name_is_absolute($base)) {
+	    $base_directories = $self->rootdir;
+	}
     }
     else {
 	my $wd= ($self->splitpath($self->_cwd(), 1))[1];

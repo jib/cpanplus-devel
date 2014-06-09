@@ -2,7 +2,7 @@ package CPANPLUS::Configure::Setup;
 
 use strict;
 use vars    qw[@ISA $VERSION];
-$VERSION = "0.9148";
+$VERSION = "0.9150";
 
 use base    qw[CPANPLUS::Internals::Utils];
 use base    qw[Object::Accessor];

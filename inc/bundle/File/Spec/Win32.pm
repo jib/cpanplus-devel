@@ -5,7 +5,7 @@ use strict;
 use vars qw(@ISA $VERSION);
 require File::Spec::Unix;
 
-$VERSION = '3.40';
+$VERSION = '3.47';
 $VERSION =~ tr/_//;
 
 @ISA = qw(File::Spec::Unix);
@@ -62,13 +62,13 @@ from the following list:
 The SYS:/temp is preferred in Novell NetWare and the C:\system\temp
 for Symbian (the File::Spec::Win32 is used also for those platforms).
 
-Since Perl 5.8.0, if running under taint mode, and if the environment
+If running under taint mode, and if the environment
 variables are tainted, they are not used.
 
 =cut
 
-my $tmpdir;
 sub tmpdir {
+    my $tmpdir = $_[0]->_cached_tmpdir(qw(TMPDIR TEMP TMP));
     return $tmpdir if defined $tmpdir;
     $tmpdir = $_[0]->_tmpdir( map( $ENV{$_}, qw(TMPDIR TEMP TMP) ),
 			      'SYS:/temp',
@@ -76,6 +76,7 @@ sub tmpdir {
 			      'C:/temp',
 			      '/tmp',
 			      '/'  );
+    $_[0]->_cache_tmpdir($tmpdir, qw(TMPDIR TEMP TMP));
 }
 
 =item case_tolerant
@@ -188,9 +189,9 @@ sub canonpath {
 
 =item splitpath
 
-    ($volume,$directories,$file) = File::Spec->splitpath( $path );
-    ($volume,$directories,$file) = File::Spec->splitpath( $path,
-                                                          $no_file );
+   ($volume,$directories,$file) = File::Spec->splitpath( $path );
+   ($volume,$directories,$file) = File::Spec->splitpath( $path,
+                                                         $no_file );
 
 Splits a path into volume, directory, and filename portions. Assumes that 
 the last file is a path unless the path ends in '\\', '\\.', '\\..'
