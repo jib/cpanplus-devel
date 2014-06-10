@@ -1,3 +1,7 @@
+0.9152      Tue Jun 10 16:25:29 BST 2014
+
+* Shield tests from PERL_INSTALL_QUIET env var
+
 0.9150      Mon Jun  9 14:48:10 BST 2014
 
 * Update bundled modules
