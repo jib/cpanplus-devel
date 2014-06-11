@@ -150,6 +150,7 @@ sub _extract {
                         $conf->_get_build('moddir'),
                 );
 
+    msg(loc("Extracting '%1'", $mod->package), $verbose);
     ### delegate to Archive::Extract ###
     ### set up some flags for archive::extract ###
     local $Archive::Extract::PREFER_BIN = $args->{'prefer_bin'};
