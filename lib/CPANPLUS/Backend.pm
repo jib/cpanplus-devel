@@ -361,7 +361,7 @@ that module's documentation on how to interpret the return value.
 
 =cut
 
-### XXX add direcotry_tree, packlist etc? or maybe remove files? ###
+### XXX add directory_tree, packlist etc? or maybe remove files? ###
 for my $func (qw[fetch extract install readme files distributions]) {
     no strict 'refs';
 
@@ -1032,7 +1032,7 @@ different or on a different machine by issuing the following commands:
     $modobj->install;
 
 It will, by default, write to an 'autobundle' directory under your
-cpanplus homedirectory, but you can override that by supplying a
+cpanplus home directory, but you can override that by supplying a
 C<path> argument.
 
 It will return the location of the output file on success and false on
@@ -1138,7 +1138,7 @@ $perl_v
 
 $head AUTHOR
 
-This bundle has been generated autotomatically by
+This bundle has been generated automatically by
     $pkg $version
 
 EOF
@@ -1188,7 +1188,7 @@ The methodology behind this works much like C<Debian's apt-sources>.
 The methods below show you how to make use of this functionality. Also
 note that most of these methods are available through the default shell
 plugin command C</cs>, making them available as shortcuts through the
-shell and via the commandline.
+shell and via the command line.
 
 =head2 %files = $cb->list_custom_sources
 
@@ -1242,7 +1242,7 @@ sub remove_custom_source {
 =head2 $bool = $cb->update_custom_source( [remote => URI] );
 
 Updates the indexes for all your custom sources. It does this by fetching
-a file called C<packages.txt> in the root of the custom sources's C<URI>.
+a file called C<packages.txt> in the root of the custom sources' C<URI>.
 If you provide the C<remote> argument, it will only update the index for
 that specific C<URI>.
 
