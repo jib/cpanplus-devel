@@ -187,6 +187,21 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
             'IO-Stty',
             '.02',
         ],
+        'MARKOV/POSIX-1003-0.99_05' => [
+            'MARKOV',
+            'POSIX-1003',
+            '0.99_05',
+        ],
+        'BBENNETT/Unicode-Collate-Standard-V3_1_1-0.1' => [
+            'BBENNETT',
+            'Unicode-Collate-Standard-V3_1_1',
+            '0.1',
+        ],
+        'RURBAN/B-Utils1-1.02.tar.gz' => [
+            'RURBAN',
+            'B-Utils1',
+            '1.02',
+        ],
         '.' => [
             'CPANPLUS',
             't',
@@ -218,8 +233,14 @@ ok( IS_CONFOBJ->(conf => $conf_obj),    "Configure object found" );
         ### VMS doesn't preserve case, so match them after normalizing case
         is( uc($obj->package_name), uc($pkg_name),
                                 "   Proper package_name found: $pkg_name" );
-        unlike( $obj->package_name, qr/\d/,
+        if ( $pkg_name =~ m!\d! ) {
+          like( $obj->package_name, qr/\d/,
+                                "       Digits in package name" );
+        }
+        else {
+          unlike( $obj->package_name, qr/\d/,
                                 "       No digits in package name" );
+        }
         {   my $ext = $obj->package_extension;
             ok( $ext,           "       Has extension as well: $ext" );
         }
