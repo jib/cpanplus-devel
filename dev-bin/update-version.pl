@@ -45,6 +45,8 @@ my %Files = (
             ]],
     qq[s/^version:.*\$/version: $Ver/]
         => [qw[ META.yml]],
+    qq[s/"version" : ".+?"/"version" : "$Ver"/]
+        => [qw[ META.json]],
 );
 
 #map { system( "p4 edit $_" ) } map { @$_ } values %Files;
