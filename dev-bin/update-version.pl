@@ -45,7 +45,7 @@ my %Files = (
             ]],
     qq[s/^version:.*\$/version: $Ver/]
         => [qw[ META.yml]],
-    qq[s/"version" : ".+?"/"version" : "$Ver"/]
+    qq[s/"version" : ".+?",/"version" : "$Ver",/]
         => [qw[ META.json]],
 );
 

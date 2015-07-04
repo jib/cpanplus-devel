@@ -2,7 +2,7 @@ package CPANPLUS::Backend::RV;
 
 use strict;
 use vars qw[$STRUCT $VERSION];
-$VERSION = "0.9152";
+$VERSION = "0.9154";
 
 use CPANPLUS::Error;
 use CPANPLUS::Internals::Constants;

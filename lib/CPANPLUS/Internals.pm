@@ -39,7 +39,7 @@ use vars qw[@ISA $VERSION];
             CPANPLUS::Internals::Report
         ];
 
-$VERSION = "0.9152";
+$VERSION = "0.9154";
 
 =pod
 

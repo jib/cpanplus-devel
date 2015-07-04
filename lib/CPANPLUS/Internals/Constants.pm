@@ -13,7 +13,7 @@ use vars    qw[$VERSION @ISA @EXPORT];
 
 use Package::Constants;
 
-$VERSION = "0.9152";
+$VERSION = "0.9154";
 @ISA        = qw[Exporter];
 @EXPORT     = Package::Constants->list( __PACKAGE__ );
 
