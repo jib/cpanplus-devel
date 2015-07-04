@@ -2,11 +2,12 @@ package Package::Constants;
 
 use if $] >= 5.019006, 'deprecate';
 
+use 5.006;
 use strict;
-use vars qw[$VERSION $DEBUG];
+use warnings;
 
-$VERSION    = '0.04';
-$DEBUG      = 0;
+our $VERSION    = '0.06';
+our $DEBUG      = 0;
 
 =head1 NAME
 
@@ -84,6 +85,10 @@ Defaults to false.
 sub _debug { warn "@_\n" if $DEBUG; }
 
 1;
+
+=head1 SEE ALSO
+
+L<Module::Functions> - get a list of all the public functions defined in a package.
 
 =head1 BUG REPORTS
 

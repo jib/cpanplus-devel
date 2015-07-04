@@ -119,11 +119,18 @@ package version::vpp;
 
 use 5.006002;
 use strict;
+use warnings::register;
 
 use Config;
-use vars qw($VERSION $CLASS @ISA $LAX $STRICT);
-$VERSION = 0.9908;
+use vars qw($VERSION $CLASS @ISA $LAX $STRICT $WARN_CATEGORY);
+$VERSION = 0.9912;
 $CLASS = 'version::vpp';
+if ($] > 5.015) {
+    warnings::register_categories(qw/version/);
+    $WARN_CATEGORY = 'version';
+} else {
+    $WARN_CATEGORY = 'numeric';
+}
 
 require version::regex;
 *version::vpp::is_strict = \&version::regex::is_strict;
@@ -147,16 +154,6 @@ use overload (
     '/='        => \&vnoop,
     'abs'      => \&vnoop,
 );
-
-eval "use warnings";
-if ($@) {
-    eval '
-	package
-	warnings;
-	sub enabled {return $^W;}
-	1;
-    ';
-}
 
 sub import {
     no strict 'refs';
@@ -196,7 +193,7 @@ sub import {
     }
 
     if (exists($args{'UNIVERSAL::VERSION'})) {
-	local $^W;
+	no warnings qw/redefine/;
 	*UNIVERSAL::VERSION
 		= \&{$CLASS.'::_VERSION'};
     }
@@ -438,6 +435,10 @@ version_prescan_finish:
 	# trailing non-numeric data
 	return BADVERSION($s,$errstr,"Invalid version format (non-numeric data)");
     }
+    if ($saw_decimal > 1 && ($d-1) eq '.') {
+	# no trailing period allowed
+	return BADVERSION($s,$errstr,"Invalid version format (trailing decimal)");
+    }
 
     if (defined $sqv) {
 	$$sqv = $qv;
@@ -560,7 +561,14 @@ sub scan_version {
 		last;
 	    }
 	    elsif ( $pos eq '.' ) {
-		$s = ++$pos;
+		$pos++;
+		if ($qv) {
+		    # skip leading zeros
+		    while ($pos eq '0') {
+			$pos++;
+		    }
+		}
+		$s = $pos;
 	    }
 	    elsif ( $pos eq '_' && isDIGIT($pos+1) ) {
 		$s = ++$pos;
@@ -717,6 +725,10 @@ sub numify {
     my $digit = $self->{version}[0];
     my $string = sprintf("%d.", $digit );
 
+    if ($alpha and warnings::enabled()) {
+	warnings::warn($WARN_CATEGORY, 'alpha->numify() is lossy');
+    }
+
     for ( my $i = 1 ; $i < $len ; $i++ ) {
 	$digit = $self->{version}[$i];
 	if ( $width < 3 ) {
@@ -752,6 +764,8 @@ sub normal {
 	Carp::croak("Invalid version object");
     }
     my $alpha = $self->{alpha} || "";
+    my $qv = $self->{qv} || "";
+
     my $len = $#{$self->{version}};
     my $digit = $self->{version}[0];
     my $string = sprintf("v%d", $digit );
@@ -925,16 +939,16 @@ sub _is_non_alphanumeric {
 sub _un_vstring {
     my $value = shift;
     # may be a v-string
-    if ( length($value) >= 3 && $value !~ /[._]/
+    if ( length($value) >= 1 && $value !~ /[,._]/
 	&& _is_non_alphanumeric($value)) {
 	my $tvalue;
-	if ( $] ge 5.008_001 ) {
+	if ( $] >= 5.008_001 ) {
 	    $tvalue = _find_magic_vstring($value);
 	    $value = $tvalue if length $tvalue;
 	}
-	elsif ( $] ge 5.006_000 ) {
+	elsif ( $] >= 5.006_000 ) {
 	    $tvalue = sprintf("v%vd",$value);
-	    if ( $tvalue =~ /^v\d+(\.\d+){2,}$/ ) {
+	    if ( $tvalue =~ /^v\d+(\.\d+)*$/ ) {
 		# must be a v-string
 		$value = $tvalue;
 	    }

@@ -48,7 +48,7 @@ use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG
             $_ALLOW_BIN $_ALLOW_PURE_PERL $_ALLOW_TAR_ITER
          ];
 
-$VERSION            = '0.72';
+$VERSION            = '0.74';
 $PREFER_BIN         = 0;
 $WARN               = 1;
 $DEBUG              = 0;
@@ -146,7 +146,7 @@ CMD: for my $pgm (qw[tar unzip gzip bunzip2 uncompress unlzma unxz]) {
       ($PROGRAMS->{$pgm}) = grep { scalar run(command=> [ $_, $opt, '-1' ]) } can_run($pgm);
       next CMD;
     }
-    if ( $pgm eq 'tar' and ON_OPENBSD || ON_SOLARIS ) {
+    if ( $pgm eq 'tar' and ( ON_OPENBSD || ON_SOLARIS || ON_NETBSD ) ) {
       # try gtar first
       next CMD if $PROGRAMS->{$pgm} = can_run('gtar');
     }
