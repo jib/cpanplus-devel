@@ -48,7 +48,7 @@ use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG
             $_ALLOW_BIN $_ALLOW_PURE_PERL $_ALLOW_TAR_ITER
          ];
 
-$VERSION            = '0.74';
+$VERSION            = '0.76';
 $PREFER_BIN         = 0;
 $WARN               = 1;
 $DEBUG              = 0;
@@ -1111,8 +1111,8 @@ sub _unzip_bin {
             ### Annoyingly, pesky MSWin32 can either have 'native' tools
             ### which have \r\n line endings or Cygwin-based tools which
             ### have \n line endings. Jan Dubois suggested using this fix
-            local $/ = ON_WIN32 ? qr/\r?\n/ : "\n";
-            $self->files( [split $/, $buffer] );
+            my $split = ON_WIN32 ? qr/\r?\n/ : "\n";
+            $self->files( [split $split, $buffer] );
         }
     }
 
