@@ -6,6 +6,8 @@ use CPANPLUS::Error;
 use CPANPLUS::Internals::Constants;
 
 use File::Spec                  ();
+use File::Path                  ();
+use File::Temp                  ();
 use File::Basename              ();
 use Archive::Extract;
 use IPC::Cmd                    qw[run];
@@ -149,6 +151,9 @@ sub _extract {
                         $self->_perl_version( perl => $args->{'perl'} ),
                         $conf->_get_build('moddir'),
                 );
+
+    File::Path::mkpath( $to ) unless -d $to;
+    $to = File::Temp::tempdir( DIR => $to, CLEANUP => 0 );
 
     msg(loc("Extracting '%1'", $mod->package), $verbose);
     ### delegate to Archive::Extract ###
