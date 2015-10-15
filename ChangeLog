@@ -1,3 +1,8 @@
+0.9156      Thu Oct 15 13:29:38 BST 2015
+
+* Handle dists that have numerics in last part of distname
+* Compartmentalise build dirs like CPANpm does
+
 0.9154      Sat Jul  4 10:39:23 BST 2015
 
 * Fixed an issue with @INC mangling in CPANPLUS process
