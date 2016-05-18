@@ -350,6 +350,7 @@ use constant REPORT_TOOLCHAIN_VERSIONS
                                     Pod::Simple
                                     Test::Harness
                                     Test::More
+                                    Test2
                                     version
                                 );
 
