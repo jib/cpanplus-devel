@@ -1,3 +1,7 @@
+0.9158      Wed May 18 21:08:19 BST 2016
+
+* Added Test2 to the reported toolchain in test reporting
+
 0.9156      Thu Oct 15 13:29:38 BST 2015
 
 * Handle dists that have numerics in last part of distname
