@@ -30,7 +30,6 @@ my %Files = (
                 lib/CPANPLUS/Dist/Sample.pm
                 lib/CPANPLUS/Configure/Setup.pm
                 lib/CPANPLUS/Shell/Default/Plugins/CustomSource.pm
-                lib/CPANPLUS/Shell/Default/Plugins/Remote.pm
                 lib/CPANPLUS/Shell/Default/Plugins/Source.pm
                 lib/CPANPLUS/Shell/Classic.pm
                 lib/CPANPLUS/Backend.pm
@@ -43,6 +42,8 @@ my %Files = (
                 lib/CPANPLUS/Shell.pm
                 lib/CPANPLUS/Config/HomeEnv.pm
             ]],
+    qq[s/\$VERSION =.*?;/\$VERSION = "$Ver";/]
+        => [qw[lib/CPANPLUS/Shell/Default/Plugins/Remote.pm]],
     qq[s/^version:.*\$/version: $Ver/]
         => [qw[ META.yml]],
     qq[s/"version" : ".+?",/"version" : "$Ver",/]

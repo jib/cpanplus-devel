@@ -1,3 +1,7 @@
+0.9160      Wed May 18 21:27:41 BST 2016
+
+* Add new bundled module to the MANIFEST *doh*
+
 0.9158      Wed May 18 21:08:19 BST 2016
 
 * Added Test2 to the reported toolchain in test reporting

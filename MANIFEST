@@ -12,6 +12,7 @@ inc/bundle/Devel/InnerPackage.pm
 inc/bundle/File/Fetch.pm
 inc/bundle/File/Fetch/Item.pm
 inc/bundle/File/Spec.pm
+inc/bundle/File/Spec/AmigaOS.pm
 inc/bundle/File/Spec/Cygwin.pm
 inc/bundle/File/Spec/Epoc.pm
 inc/bundle/File/Spec/Functions.pm
