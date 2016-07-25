@@ -496,7 +496,7 @@ Options:
                   May be given multiple times.
     --logfile     File to log all output to. By default, all output goes
                   to the console.
-    --timeout     The allowed time for buliding a distribution before
+    --timeout     The allowed time for building a distribution before
                   aborting. This is useful to terminate any build that
                   hang or happen to be interactive despite being told not
                   to be. Defaults to 300 seconds. To turn off, you can
