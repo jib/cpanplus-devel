@@ -134,6 +134,7 @@ t/40_CPANPLUS-Internals-Report.t
 t/dummy-CPAN/authors/01mailrc.txt.gz
 t/dummy-CPAN/authors/id/EUNOXS/Bundle-Foo-Bar-0.01.tar.gz
 t/dummy-CPAN/authors/id/EUNOXS/CHECKSUMS
+t/dummy-CPAN/authors/id/EUNOXS/CPANPLUS-0.01.tar.gz
 t/dummy-CPAN/authors/id/EUNOXS/Foo-Bar-0.01.meta
 t/dummy-CPAN/authors/id/EUNOXS/Foo-Bar-0.01.readme
 t/dummy-CPAN/authors/id/EUNOXS/Foo-Bar-0.01.tar.gz

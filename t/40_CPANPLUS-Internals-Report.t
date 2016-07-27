@@ -310,9 +310,9 @@ my $map = {
         my $str = REPORT_TOOLCHAIN_VERSIONS->( $clone );
 
         like($str, qr/toolchain/,  "Correct message in report" );
-        use Cwd;
-        like($str, qr/Cwd\s+\Q$Cwd::VERSION\E/,
-                                        "Cwd has correct version in report" );
+        use CPANPLUS;
+        like($str, qr/CPANPLUS\s+\Q$CPANPLUS::VERSION\E/,
+                                        "CPANPLUS has correct version in report" );
     }
 }
 
