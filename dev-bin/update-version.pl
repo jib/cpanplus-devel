@@ -42,7 +42,7 @@ my %Files = (
                 lib/CPANPLUS/Shell.pm
                 lib/CPANPLUS/Config/HomeEnv.pm
             ]],
-    qq[s/\$VERSION =.*?;/\$VERSION = "$Ver";/]
+    qq[s/\$VERSION = "[0-9.]+";/\$VERSION = "$Ver";/]
         => [qw[lib/CPANPLUS/Shell/Default/Plugins/Remote.pm]],
     qq[s/^version:.*\$/version: $Ver/]
         => [qw[ META.yml]],

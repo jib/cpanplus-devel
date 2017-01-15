@@ -14,7 +14,7 @@ use Package::Constants;
 ### for the version
 require CPANPLUS::Internals;
 
-$VERSION = "0.9160";
+$VERSION = "0.9162";
 @ISA        = qw[Exporter];
 @EXPORT     = Package::Constants->list( __PACKAGE__ );
 
