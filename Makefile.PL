@@ -10,15 +10,15 @@ use warnings;
 BEGIN {
     ### chdir to the makefile.pl dir
     use FindBin;
-    chdir $FindBin::Bin;
+    use lib $FindBin::Bin;
 
     use File::Spec;
-    use lib qw[lib];        # cpanplus modules
+    use lib File::Spec->catdir( $FindBin::Bin, qw[lib] );        # cpanplus modules
 
     ### add the directory to our bundled modules
     use vars qw[@ORIG_INC];
     @ORIG_INC = @INC;       # store for later use
-    lib->import( File::Spec->catdir(qw[inc bundle]) );
+    lib->import( File::Spec->catdir( $FindBin::Bin, qw[inc bundle]) );
 }
 
 
