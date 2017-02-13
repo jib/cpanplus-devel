@@ -261,6 +261,9 @@ sub prepare {
     my $fail;
     RUN: {
 
+        local $ENV{PERL_USE_UNSAFE_INC} = 1
+          unless exists $ENV{PERL_USE_UNSAFE_INC};
+
         ### we resolve 'configure requires' here, so we can run the 'perl
         ### Makefile.PL' command
         ### XXX for tests: mock f_c_r to something that *can* resolve and
@@ -610,6 +613,10 @@ sub create {
     my $fail; my $prereq_fail; my $test_fail;
     my $status = { };
     RUN: {
+
+        local $ENV{PERL_USE_UNSAFE_INC} = 1
+          unless exists $ENV{PERL_USE_UNSAFE_INC};
+
         ### this will set the directory back to the start
         ### dir, so we must chdir /again/
         my $ok = $dist->_resolve_prereqs(
@@ -831,6 +838,9 @@ sub install {
     }
 
     my $fail; my $captured;
+
+    local $ENV{PERL_USE_UNSAFE_INC} = 1
+      unless exists $ENV{PERL_USE_UNSAFE_INC};
 
     ### 'make install' section ###
     ### XXX need makeflags here too?
