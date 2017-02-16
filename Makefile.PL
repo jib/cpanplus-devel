@@ -209,7 +209,7 @@ _check_site_bin();
 
 sub _scripts {
   my @scripts = grep { $_ !~ /cpanp-boxed/ } glob('bin/*');
-  if ( $] >= 5.009005 ) {
+  if ( $] >= 5.009005 && $] < 5.019000 ) {
     require Config;
     my $version = sprintf("%vd",$^V);
     if ( $Config::Config{versiononly} and
