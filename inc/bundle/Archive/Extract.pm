@@ -48,7 +48,7 @@ use vars qw[$VERSION $PREFER_BIN $PROGRAMS $WARN $DEBUG
             $_ALLOW_BIN $_ALLOW_PURE_PERL $_ALLOW_TAR_ITER
          ];
 
-$VERSION            = '0.78';
+$VERSION            = '0.80';
 $PREFER_BIN         = 0;
 $WARN               = 1;
 $DEBUG              = 0;
@@ -135,7 +135,7 @@ CMD: for my $pgm (qw[tar unzip gzip bunzip2 uncompress unlzma unxz]) {
       $PROGRAMS->{$pgm} = $unzip;
       next CMD;
     }
-    if ( $pgm eq 'unzip' and ON_FREEBSD ) {
+    if ( $pgm eq 'unzip' and ( ON_FREEBSD || ON_LINUX ) ) {
       local $IPC::Cmd::INSTANCES = 1;
       ($PROGRAMS->{$pgm}) = grep { _is_infozip_esque($_) } can_run($pgm);
       next CMD;
@@ -143,13 +143,6 @@ CMD: for my $pgm (qw[tar unzip gzip bunzip2 uncompress unlzma unxz]) {
     if ( $pgm eq 'unzip' and ON_NETBSD ) {
       local $IPC::Cmd::INSTANCES = 1;
       ($PROGRAMS->{$pgm}) = grep { m!/usr/pkg/! } can_run($pgm);
-      next CMD;
-    }
-    if ( $pgm eq 'unzip' and ON_LINUX ) {
-      # Check if 'unzip' is busybox masquerading
-      local $IPC::Cmd::INSTANCES = 1;
-      my $opt = ON_VMS ? '"-Z"' : '-Z';
-      ($PROGRAMS->{$pgm}) = grep { scalar run(command=> [ $_, $opt, '-1' ]) } can_run($pgm);
       next CMD;
     }
     if ( $pgm eq 'tar' and ( ON_OPENBSD || ON_SOLARIS || ON_NETBSD ) ) {
