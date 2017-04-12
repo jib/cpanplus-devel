@@ -1,3 +1,8 @@
+0.9166      Wed Apr 12 09:37:20 BST 2017
+
+* make Autoflush do STDOUT and STDERR
+* switch from PERLWRAPPER to Autoflush
+
 0.9164      Thu Feb 16 12:05:02 GMT 2017
 
 * Set env var PERL_USE_UNSAFE_INC if required [rt.cpan.org #120227]
