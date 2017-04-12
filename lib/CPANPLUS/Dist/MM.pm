@@ -358,7 +358,7 @@ sub prepare {
             ### in @INC, stopping us from resolving dependencies on CPANPLUS
             ### at bootstrap time properly.
 
-            my @run_perl    = ( '-e', PERL_WRAPPER );
+            my @run_perl    = ( '-MCPANPLUS::Internals::Utils::Autoflush' );
             my $cmd         = [$perl, @run_perl, $makefile_pl, @mmflags];
 
             ### set ENV var to tell underlying code this is what we're
