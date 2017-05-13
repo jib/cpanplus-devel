@@ -33,7 +33,7 @@ sub init {
     my $status  = $dist->status;
 
     $status->mk_accessors(
-        qw[prepared created installed _prepare_args _create_args _install_args]
+        qw[prepared created installed _prepare_args _create_args _install_args _metadata]
     );
 
     return 1;
