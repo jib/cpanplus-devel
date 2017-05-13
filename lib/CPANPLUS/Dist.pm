@@ -422,7 +422,7 @@ sub _prereqs_from_meta_file {
         ### Parse::CPAN::Meta uses exceptions for errors
         ### hash returned in list context!!!
 
-        local $ENV{PERL_JSON_BACKEND};
+        local $ENV{PERL_YAML_BACKEND};
 
         my ($doc) = eval { Parse::CPAN::Meta::LoadFile( $meta ) };
 
