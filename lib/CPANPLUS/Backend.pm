@@ -625,6 +625,15 @@ sub parse_module {
         $author = shift @parts || '';
     }
 
+    {
+      my $guess = $dist;
+      $guess =~ s!-!::!g if $guess;
+      my $maybe = $self->module_tree( $guess );
+      if ( IS_MODOBJ->( module => $maybe ) ) {
+         $dist = $maybe->package;
+      }
+    }
+
     my($pkg, $version, $ext, $full) =
         $self->_split_package_string( package => $dist );
 
