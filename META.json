@@ -16,6 +16,7 @@
    "no_index" : {
       "directory" : [
          "lib/CPANPLUS/inc",
+         "bundled",
          "inc",
          "t"
       ]
