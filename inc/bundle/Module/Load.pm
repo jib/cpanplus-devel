@@ -92,8 +92,7 @@ sub _load{
         $import = $mod->can('import')
         ) and (
         unshift(@_, $mod),
-        goto &$import,
-        return
+        goto &$import
         )
     );
     }

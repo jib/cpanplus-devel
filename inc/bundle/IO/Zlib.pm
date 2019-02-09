@@ -610,7 +610,6 @@ sub gzopen_external {
     } else {
 	croak "IO::Zlib::gzopen_external: mode '$mode' is illegal";
     }
-    return undef;
 }
 
 sub gzread_external {

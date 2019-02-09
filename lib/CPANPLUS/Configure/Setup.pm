@@ -154,8 +154,6 @@ Quitting setup, changes are saved to '%1'
         ### otherwise, present choice again
         redo PICK_SECTION;
     }
-
-    return 1;
 }
 
 
