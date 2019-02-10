@@ -1205,7 +1205,7 @@ sub _print {
     my $old; my $fh;
     if( $file ) {
         $fh = FileHandle->new( ">$file" )
-                    or( warn loc("Could not open '%1': '%2'", $file, $!),
+                    or( warn(loc("Could not open '%1': '%2'", $file, $!)),
                         return
                     );
         $old = select $fh;
