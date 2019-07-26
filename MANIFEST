@@ -133,6 +133,7 @@ t/21_CPANPLUS-Dist-No-Build.t
 t/25_CPANPLUS.t
 t/30_CPANPLUS-Internals-Selfupdate.t
 t/40_CPANPLUS-Internals-Report.t
+t/testrules.yml
 t/dummy-CPAN/authors/01mailrc.txt.gz
 t/dummy-CPAN/authors/id/EUNOXS/Bundle-Foo-Bar-0.01.tar.gz
 t/dummy-CPAN/authors/id/EUNOXS/CHECKSUMS
