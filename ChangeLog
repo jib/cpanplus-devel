@@ -1,3 +1,8 @@
+0.9902      Fri Nov 29 10:40:56 GMT 2019
+
+* Add shebang to cpanp-run-perl
+* Remove duplicate entry from MANIFEST
+
 0.9180      Thu Nov 28 17:48:53 GMT 2019
 
 * Do not run t/08_CPANPLUS-Backend.t in parallel
