@@ -1051,7 +1051,22 @@ sub _split_like_shell {
   return () unless length($string);
 
   require Text::ParseWords;
-  return Text::ParseWords::shellwords($string);
+  return Text::ParseWords::shellwords($self->_quote_literal($string));
+}
+
+sub _quote_literal {
+  my ($self, $text) = @_;
+  return $self->_quote_literal_vms($text) if ON_VMS;
+  $text =~ s{'}{'\\''}g;
+  $text =~ s{\$ (?!\() }{\$\$}gx;
+  return "'$text'";
+}
+
+sub _quote_literal_vms {
+  my ($self, $text) = @_;
+  $text =~ s{"}{""}g;
+  $text =~ s{\$ (?!\() }{"\$"}gx;
+  return qq{"$text"};
 }
 
 1;
