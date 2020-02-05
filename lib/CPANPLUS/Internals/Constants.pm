@@ -49,6 +49,7 @@ use constant ON_WIN32       => $^O eq 'MSWin32';
 use constant ON_NETWARE     => $^O eq 'NetWare';
 use constant ON_CYGWIN      => $^O eq 'cygwin';
 use constant ON_VMS         => $^O eq 'VMS';
+use constant ON_MINIX       => $^O eq 'minix';
 
 use constant DOT_CPANPLUS   => ON_VMS ? '_cpanplus' : '.cpanplus';
 
