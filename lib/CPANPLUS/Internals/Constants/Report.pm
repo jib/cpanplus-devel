@@ -11,9 +11,6 @@ use vars    qw[$VERSION @ISA @EXPORT];
 
 use Package::Constants;
 
-### for the version
-require CPANPLUS::Internals;
-
 $VERSION = "0.9910";
 @ISA        = qw[Exporter];
 @EXPORT     = Package::Constants->list( __PACKAGE__ );
